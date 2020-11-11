@@ -1,0 +1,151 @@
+import 'package:flutter/material.dart';
+import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/rounded_button.dart';
+import 'package:walkietaskv2/utils/textfield_generic.dart';
+import 'package:walkietaskv2/utils/walkietask_style.dart';
+import 'package:walkietaskv2/views/Register/widgets/form_register.dart';
+
+class RecoverPassword extends StatefulWidget {
+  @override
+  _RecoverPasswordState createState() => _RecoverPasswordState();
+}
+
+class _RecoverPasswordState extends State<RecoverPassword> {
+
+  double sizeH = 0;
+  double sizeW = 0;
+
+  bool isLoad = false;
+  bool isAccepted = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    sizeH = MediaQuery.of(context).size.height;
+    sizeW = MediaQuery.of(context).size.width;
+
+    TextStyle textStyle1 = WalkieTaskStyles().styleNunitoRegular(size: sizeH * 0.02);
+
+    return Scaffold(
+      backgroundColor: WalkieTaskColors.white,
+      appBar: appBarWidget( sizeH,()=>Navigator.of(context).pop(),'¿Olvidaste tu clave?'),
+      body: Container(
+        margin: EdgeInsets.only(left: 24,right: 24),
+        height: sizeH,
+        width: sizeW,
+        child: isLoad
+            ? Center(
+          child: CircularProgressIndicator(),
+        )
+            : GestureDetector(
+          onTap: () {
+            FocusScope.of(context).requestFocus(new FocusNode());
+          },
+          child: Container(
+            margin: EdgeInsets.only(left: 3, right: 3),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(height: 20,),
+                  Container(
+                    width: sizeW,
+                    child: Text(
+                      'No hay problema. Digita tu email o tu usuario de Walkietask y te enviaremos un email para recuperarla.',
+                      style: textStyle1,
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                  SizedBox(height: sizeH * 0.06,),
+                  Container(
+                    width: sizeW,
+                    child: Text(
+                      'Correo o usuario:',
+                      style: textStyle1,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizedBox(height: sizeH * 0.01,),
+                  Container(
+                    width: sizeW,
+                    child: Center(
+                      child: Container(
+                        width: sizeW * 0.5,
+                        child: TextFildGeneric(
+                          onChanged: (text) {
+
+                          },
+                          labelStyle: WalkieTaskStyles().styleNunitoRegular(size: sizeH * 0.025),
+                          textInputType: TextInputType.emailAddress,
+                          sizeH: sizeH,
+                          sizeW: sizeW,
+                          borderColor: WalkieTaskColors.color_B7B7B7,
+                          sizeHeight: sizeH * 0.045,
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: sizeH * 0.06,),
+                  _buttonPressSaveUser(),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buttonPressSaveUser(){
+    return Container(
+      width: sizeW,
+      child: Center(
+        child: isAccepted ?
+        CircularProgressIndicator()
+            :
+        RoundedButton(
+          borderColor: WalkieTaskColors.primary,
+          width: sizeW * 0.2,
+          height: sizeH * 0.045,
+          radius: 5.0,
+          title: 'Aceptar',
+          textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: sizeH * 0.02, color: WalkieTaskColors.white,fontWeight: FontWeight.bold),
+          backgroundColor: WalkieTaskColors.primary,
+          onPressed: () async{
+            setState(() {
+              isAccepted = true;
+            });
+            await Future.delayed(Duration(seconds: 3));
+            setState(() {
+              isAccepted = false;
+            });
+            Navigator.of(context).pop();
+            // Navigator.push(context, new MaterialPageRoute(
+            //     builder: (BuildContext context) => new RegisterCode()));
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget appBarWidget(double sizeH,Function() onTap,String title){
+    return AppBar(
+      leading: InkWell(
+        child: Icon(Icons.arrow_left,size: sizeH * 0.07,color: WalkieTaskColors.white,),
+        onTap: onTap,
+      ),
+      title: Text(title,style: WalkieTaskStyles().styleNunitoBold()),
+    );
+  }
+}

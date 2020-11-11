@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "490041223077",
+    "firebase_url": "https://walkietask.firebaseio.com",
+    "project_id": "walkietask",
+    "storage_bucket": "walkietask.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:490041223077:android:8066a952f65a1e2896aa4c",
+        "android_client_info": {
+          "package_name": "com.imprevia.walkietaskv2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "490041223077-lccsbp1j4h80vlnvctq63d0347qll5hr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAwK2htJwUQT-ibo48u8g3rUVYHlFeVE4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "490041223077-lccsbp1j4h80vlnvctq63d0347qll5hr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
