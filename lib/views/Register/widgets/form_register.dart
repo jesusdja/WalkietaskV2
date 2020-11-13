@@ -79,6 +79,12 @@ class _FormRegisterState extends State<FormRegister> {
     Widget userErrorW = Container();
     if(showErrorCheck  && !validateUserAddress(user)['valid']){
       userErrorW = _error(sizeW,validateUserAddress(user)['sms']);
+      checkUser = 0;
+    }
+
+    if(showError && user.isEmpty){
+      userErrorW = _error(sizeW,'Este espacio es requerido.');
+      checkUser = 0;
     }
 
     Widget nameErrorW = Container();
@@ -412,18 +418,24 @@ class _FormRegisterState extends State<FormRegister> {
           onPressed: () async{
             bool isError = false;
             setState(() {
-              isAccepted = true;
+              isLoad = true;
             });
-            await Future.delayed(Duration(seconds: 3));
 
-            isError = true;
+            await Future.delayed(Duration(seconds: 2));
 
+            if(name.isNotEmpty && !showErrorCheck && surname.isNotEmpty &&
+                validateEmailAddress(email)['valid'] &&
+                validatePassword(pass)['valid']){
+
+
+              Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => new RegisterCode()));
+            }else{
+              isError = true;
+            }
             setState(() {
-              isAccepted = false;
+              isLoad = false;
               showError = isError;
             });
-            // Navigator.push(context, new MaterialPageRoute(
-            //     builder: (BuildContext context) => new RegisterCode()));
           },
         ),
       ),
