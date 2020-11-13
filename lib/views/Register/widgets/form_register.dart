@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:walkietaskv2/bloc/blocUserCheck.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
@@ -22,7 +25,7 @@ class _FormRegisterState extends State<FormRegister> {
 
   bool isLoad = false;
   bool showError = false;
-  bool isCheckUser = false;
+  bool showErrorCheck = false;
   bool isAccepted = false;
 
   String name = '';
@@ -33,6 +36,26 @@ class _FormRegisterState extends State<FormRegister> {
 
   double sizeH = 0;
   double sizeW = 0;
+  int checkUser = 0;
+
+  BlocUserCheck _blocUserCheck;
+  StreamSubscription streamSubscriptionUser;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _blocUserCheck = BlocUserCheck();
+    listenBlocCheck();
+  }
+
+  void listenBlocCheck(){
+    streamSubscriptionUser = _blocUserCheck.outList.listen((newVal) {
+      setState(() {
+        checkUser = newVal;
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -42,6 +65,8 @@ class _FormRegisterState extends State<FormRegister> {
     focusNodeLastName.dispose();
     focusNodeEmail.dispose();
     focusNodePass.dispose();
+    streamSubscriptionUser.cancel();
+    _blocUserCheck.dispose();
   }
 
   @override
@@ -52,7 +77,7 @@ class _FormRegisterState extends State<FormRegister> {
     Map<String, FocusNode> mapError = {};
 
     Widget userErrorW = Container();
-    if(showError && user.isNotEmpty && !validateUserAddress(user)['valid']){
+    if(showErrorCheck  && !validateUserAddress(user)['valid']){
       userErrorW = _error(sizeW,validateUserAddress(user)['sms']);
     }
 
@@ -63,7 +88,7 @@ class _FormRegisterState extends State<FormRegister> {
     }
     Widget lastNameErrorW = Container();
     if (showError && surname.isEmpty) {
-      lastNameErrorW = _error(sizeW,'Error con Apellido',);
+      lastNameErrorW = _error(sizeW,'Este espacio es requerido',);
       if (mapError.isEmpty) mapError['error'] = focusNodeLastName;
     }
 
@@ -260,17 +285,20 @@ class _FormRegisterState extends State<FormRegister> {
                         focusNode: focusNodeUser,
                         initialValue: user,
                         onChanged: (String value) {
-                          if (value.length != 0) {
+                          if (value.isNotEmpty && validateUserAddress(user)['valid']) {
+                            showErrorCheck = false;
                             user = value;
-                            isCheckUser = true;
-                          } else {
-                            isCheckUser = false;
+                            _blocUserCheck.check(value);
+                          }else{
+                            user = value;
+                            showErrorCheck = true;
+                            checkUser = 0;
                           }
                           setState(() {});
                         },
                         sizeW: sizeW,
                         sizeH: sizeH,
-                        check: 1,
+                        check: checkUser,
                       ),
                     )
                   ],
@@ -341,10 +369,7 @@ class _FormRegisterState extends State<FormRegister> {
     );
   }
 
-  Widget _error(
-    double sizeW,
-    String texto,
-  ) {
+  Widget _error(double sizeW,String texto,) {
     return Container(
       width: sizeW,
       child: Row(
@@ -385,15 +410,20 @@ class _FormRegisterState extends State<FormRegister> {
           textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: sizeH * 0.02, color: WalkieTaskColors.white,fontWeight: FontWeight.bold),
           backgroundColor: WalkieTaskColors.primary,
           onPressed: () async{
+            bool isError = false;
             setState(() {
               isAccepted = true;
             });
             await Future.delayed(Duration(seconds: 3));
+
+            isError = true;
+
             setState(() {
               isAccepted = false;
+              showError = isError;
             });
-            Navigator.push(context, new MaterialPageRoute(
-                builder: (BuildContext context) => new RegisterCode()));
+            // Navigator.push(context, new MaterialPageRoute(
+            //     builder: (BuildContext context) => new RegisterCode()));
           },
         ),
       ),
