@@ -122,6 +122,22 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     uploadData();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    streamSubscriptionUser.cancel();
+    streamSubscriptionTaskSend.cancel();
+    streamSubscriptionTaskRecived.cancel();
+    streamSubscriptionCasos.cancel();
+    streamSubscriptionProgress.cancel();
+    blocUser.dispose();
+    blocTaskSend.dispose();
+    blocTaskReceived.dispose();
+    blocCasos.dispose();
+    blocEmpresa.dispose();
+    blocIndicatorProgress.dispose();
+  }
+
   List<dynamic> listDocuments= [];
   void uploadData() async {
     uploadBackDocuments(blocIndicatorProgress);
@@ -237,7 +253,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       ),
     );
   }
-  navigatorBottonContenido(bottonSelect index,String num,String tit, subTitle){
+  Widget navigatorBottonContenido(bottonSelect index,String num,String tit, subTitle){
     return InkWell(
       child: Container(
         color: mapNavigatorBotton[index] ? Colors.white : Colors.grey[200],
@@ -351,7 +367,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                 await prefs.remove('unityLogin');
                 await prefs.remove('unityIdMyUser');
                 await prefs.remove('WalListDocument');
-                Navigator.pushReplacement(context, new MaterialPageRoute(
+                Navigator.push(context, new MaterialPageRoute(
                     builder: (BuildContext context) => new App()));
               }
             }),
