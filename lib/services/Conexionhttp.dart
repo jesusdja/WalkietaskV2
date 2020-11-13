@@ -6,7 +6,8 @@ import 'package:walkietaskv2/utils/Globales.dart';
 
 class conexionHttp{
 
-  String enlace = 'http://www.unitydbm.com.php73-37.phx1-1.websitetestlink.com';
+  //String enlace = 'http://www.unitydbm.com.php73-37.phx1-1.websitetestlink.com';
+  String enlace = 'http://www.unitydbm.com';
 
 
   Future<http.Response> httpListTareasRecibidas() async{
@@ -159,5 +160,21 @@ class conexionHttp{
     return response;
   }
 
-
+  Future<http.Response> httpRegisterUser(Map<String,dynamic> body) async{
+    var response;
+    try{
+      Map<String,String> headers = {
+        'Content-Type':'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      };
+      final msg = jsonEncode(body);
+      response = await http.post('$enlace/api/auth/signup',
+        headers: headers,
+        body: msg,
+      );
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
 }

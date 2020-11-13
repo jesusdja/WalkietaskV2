@@ -3,20 +3,15 @@ import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Register/widgets/form_register.dart';
 
-class RegisterPage extends StatefulWidget {
-  @override
-  _RegisterPageState createState() => _RegisterPageState();
-}
+class RegisterPage extends StatelessWidget {
 
-class _RegisterPageState extends State<RegisterPage> {
-
-  double sizeH = 0;
-  double sizeW = 0;
+  RegisterPage({this.contextLogin});
+  final BuildContext contextLogin;
 
   @override
   Widget build(BuildContext context) {
-    sizeH = MediaQuery.of(context).size.height;
-    sizeW = MediaQuery.of(context).size.width;
+    double sizeH = MediaQuery.of(context).size.height;
+    double sizeW = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: WalkieTaskColors.white,
       appBar: appBarWidget( sizeH,()=>Navigator.of(context).pop(),'Crear Cuenta'),
@@ -24,7 +19,7 @@ class _RegisterPageState extends State<RegisterPage> {
         margin: EdgeInsets.only(left: 24,right: 24),
         height: sizeH,
         width: sizeW,
-        child: FormRegister()
+        child: FormRegister(contextLogin: contextLogin,)
       ),
     );
   }

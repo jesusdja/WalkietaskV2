@@ -94,7 +94,7 @@ class _LoginHomeState extends State<LoginHome> {
             ),
             onTap: () {
               Navigator.push(context, new MaterialPageRoute(
-                  builder: (BuildContext context) => new RegisterPage()));
+                  builder: (BuildContext context) => new RegisterPage(contextLogin: context,)));
             },
           ),
         ],
@@ -257,19 +257,15 @@ class _LoginHomeState extends State<LoginHome> {
           if(myUser != null){
             await prefs.setInt('unityLogin',1);
             await prefs.setString('unityIdMyUser','${myUser.id}');
-
             await PermisoStore();
             await PermisoSonido();
             await PermisoPhotos();
-
-
             try{
               AuthService auth = Provider.of<AuthService>(context);
               auth.init();
             }catch(ex){
               print(ex);
             }
-
           }else{
             print('No se encontro mi usuario');
             showAlert('Error en conexión',Colors.red[400]);

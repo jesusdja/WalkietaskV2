@@ -4,7 +4,6 @@ import 'package:walkietaskv2/services/auth.dart';
 import 'package:walkietaskv2/views/Home/NavigatorBotton.dart';
 import 'package:walkietaskv2/views/Login/LoginHome.dart';
 import 'package:walkietaskv2/views/Home/StarLogo.dart';
-import 'package:walkietaskv2/views/Home/home.dart';
 class App extends StatefulWidget {
   @override
   _AppState createState() => _AppState();

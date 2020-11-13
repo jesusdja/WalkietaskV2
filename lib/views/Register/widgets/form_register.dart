@@ -1,9 +1,9 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/bloc/blocUserCheck.dart';
-import 'package:walkietaskv2/utils/Cargando.dart';
+import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/textfield_generic_verific.dart';
@@ -12,6 +12,9 @@ import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Register/widgets/register_code.dart';
 
 class FormRegister extends StatefulWidget {
+  FormRegister({this.contextLogin});
+  final BuildContext contextLogin;
+
   @override
   _FormRegisterState createState() => _FormRegisterState();
 }
@@ -421,14 +424,26 @@ class _FormRegisterState extends State<FormRegister> {
               isLoad = true;
             });
 
-            await Future.delayed(Duration(seconds: 2));
-
             if(name.isNotEmpty && !showErrorCheck && surname.isNotEmpty &&
                 validateEmailAddress(email)['valid'] &&
                 validatePassword(pass)['valid']){
-
-
-              Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => new RegisterCode()));
+              conexionHttp connectionHttp = new conexionHttp();
+              try{
+                Map<String,dynamic> body = {
+                  'name' : '$name $surname',
+                  'username' : user,
+                  'email' : email,
+                  'password' : pass,
+                  'password_confirmation' : pass,
+                };
+                Navigator.push(context,
+                  new MaterialPageRoute(builder: (BuildContext context) =>
+                  new RegisterCode(mapBody: body,contextLogin: widget.contextLogin,))
+                );
+              }catch(e){
+                print(e.toString());
+                showAlert('Error al enviar datos.',Colors.red[400]);
+              }
             }else{
               isError = true;
             }

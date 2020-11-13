@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:walkietaskv2/services/auth.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
+import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Register/widgets/form_register.dart';
 
 class RegisterCode extends StatefulWidget {
+  RegisterCode({ this.mapBody , this.contextLogin});
+  final Map<String,dynamic> mapBody;
+  final BuildContext contextLogin;
   @override
   _RegisterCodeState createState() => _RegisterCodeState();
 }
@@ -86,7 +92,7 @@ class _RegisterCodeState extends State<RegisterCode> {
                   Container(
                     width: sizeW,
                     child: Text(
-                      'Para activar tu cuenta hemos enviado un correo a usuario@email.com con un número de activación.\nDigitalo aquí:',
+                      'Para activar tu cuenta hemos enviado un correo a ${widget.mapBody['email']} con un número de activación.\nDigitalo aquí:',
                       style: textStyle1,
                       textAlign: TextAlign.left,
                     ),
@@ -133,7 +139,52 @@ class _RegisterCodeState extends State<RegisterCode> {
             setState(() {
               isAccepted = true;
             });
-            await Future.delayed(Duration(seconds: 3));
+            await Future.delayed(Duration(seconds: 2));
+            await SharedPrefe().setIntValue('unityLogin',1);
+            try{
+              AuthService auth = Provider.of<AuthService>(widget.contextLogin);
+              auth.init();
+            }catch(e){
+              print(e.toString());
+            }
+
+            // var response = await connectionHttp.httpRegisterUser(body);
+            // var value = jsonDecode(response.body);
+            // print(value);
+            // if(response.statusCode == 201){
+            //     var response2 = await connectionHttp.httpIniciarSesion(email,pass);
+            //     var value2 = jsonDecode(response2.body);
+            //     if(value2['access_token'] != null){
+            //       String token = value2['access_token'];
+            //       String tokenExp = value2['access_token'];
+            //       await SharedPrefe().setStringValue('unityToken','$token');
+            //       await SharedPrefe().setStringValue('unityTokenExp','$tokenExp');
+            //       UpdateData updateData = new UpdateData();
+            //       Usuario myUser = await updateData.getMyUser();
+            //       if(myUser != null){
+            //         await SharedPrefe().setIntValue('unityLogin',2);
+            //         await SharedPrefe().setStringValue('unityIdMyUser','${myUser.id}');
+            //         await PermisoStore();
+            //         await PermisoSonido();
+            //         await PermisoPhotos();
+            //         try{
+            //           AuthService auth = Provider.of<AuthService>(widget.contextLogin);
+            //           auth.init();
+            //         }catch(ex){
+            //           print(ex);
+            //           showAlert('Error al enviar datos.',Colors.red[400]);
+            //         }
+            //       }else{
+            //         showAlert('Error al enviar datos.',Colors.red[400]);
+            //       }
+            //     }
+            //   }else{
+            //     if(value['errors'] != null && value['errors']['email'][0] != null){
+            //       showAlert(value['errors']['email'][0],Colors.red[400]);
+            //     }else{
+            //       showAlert('Error al enviar datos.',Colors.red[400]);
+            //     }
+            //   }
             setState(() {
               isAccepted = false;
             });
