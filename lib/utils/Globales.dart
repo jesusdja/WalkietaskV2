@@ -9,7 +9,8 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 
-String directorioImage = 'http://www.unitydbm.com.php73-37.phx1-1.websitetestlink.com/uploads/photo/';
+//String directorioImage = 'http://www.unitydbm.com.php73-37.phx1-1.websitetestlink.com/uploads/photo/';
+String directorioImage = 'http://www.unitydbm.com/uploads/photo/';
 String avatarImage = 'http://www.nabu.me.php72-7.phx1-1.websitetestlink.com/uploads/system/avatar.png';
 
 

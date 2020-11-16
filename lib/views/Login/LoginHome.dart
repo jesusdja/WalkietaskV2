@@ -69,7 +69,7 @@ class _LoginHomeState extends State<LoginHome> {
               SizedBox(height: alto * 0.2,),
               _form(),
               SizedBox(height: alto * 0.15,),
-              _viewRegistre(),
+              _viewRegistre(context),
             ],
           ),
         ),
@@ -78,7 +78,7 @@ class _LoginHomeState extends State<LoginHome> {
     );
   }
 
-  Widget _viewRegistre() {
+  Widget _viewRegistre(BuildContext contextLogin) {
     return Container(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -94,7 +94,7 @@ class _LoginHomeState extends State<LoginHome> {
             ),
             onTap: () {
               Navigator.push(context, new MaterialPageRoute(
-                  builder: (BuildContext context) => new RegisterPage(contextLogin: context,)));
+                  builder: (BuildContext context2) => new RegisterPage(contextLogin: contextLogin,)));
             },
           ),
         ],
