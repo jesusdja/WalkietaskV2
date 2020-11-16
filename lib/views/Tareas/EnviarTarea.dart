@@ -120,7 +120,6 @@ class _MyHomePageState extends State<EnviarTarea> {
     _durationSubscription?.cancel();
     streamSubscriptionUser?.cancel();
     blocUser.dispose();
-    blocIndicatorProgress.dispose();
     super.dispose();
   }
 

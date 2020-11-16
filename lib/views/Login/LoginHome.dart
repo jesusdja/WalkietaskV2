@@ -239,8 +239,8 @@ class _LoginHomeState extends State<LoginHome> {
 //          nombre = 'jesus.cortez.1991@gmail.com';
 //          pasw = '*Jc0473z01#';
 
-      nombre = 'ra@imprevia.com';
-      pasw = '*@Dmin1#';
+      // nombre = 'ra@imprevia.com';
+      // pasw = '*@Dmin1#';
 
       try{
         var response = await conexionHispanos.httpIniciarSesion(nombre,pasw);

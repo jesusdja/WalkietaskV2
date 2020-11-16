@@ -28,34 +28,34 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
       'user_id': myUser,
       'status_id' : '1',
     };
-    await Future.delayed(Duration(seconds: 3));
+    //await Future.delayed(Duration(seconds: 3));
     blocIndicatorProgress.inList.add({'progressIndicator' : 0.2, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
 
-    if(data.length > 0 && data[0] != ''){  jsonBody['user_responsability_id'] = data[0]; }
+    if(data.length > 0 && data[0] != ''){  jsonBody['user_responsability_id'] = data[0] == '0' ? myUser : data[0]; }
     if(data.length > 1 && data[1] != ''){  jsonBody['name'] = data[1]; }
     if(data.length > 2 && data[2] != ''){  /*jsonBody['url_audio'] = data[2];*/ }
 
-    await Future.delayed(Duration(seconds: 3));
+    //await Future.delayed(Duration(seconds: 3));
     blocIndicatorProgress.inList.add({'progressIndicator' : 0.3, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
 
     if(data.length > 3 && data[3] != ''){  jsonBody['project_id'] = data[3]; }
     if(data.length > 4 && data[4] != ''){  jsonBody['description'] = data[4]; }
 
-    await Future.delayed(Duration(seconds: 3));
+    //await Future.delayed(Duration(seconds: 3));
     blocIndicatorProgress.inList.add({'progressIndicator' : 0.4, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
 
     if(data.length > 5 && data[5] != ''){  jsonBody['deadline'] = data[5]; }
     if(data.length > 6 && data[6] != ''){  /*jsonBody['url_attachment'] = data[6];*/ }
 
-    await Future.delayed(Duration(seconds: 3));
+    //await Future.delayed(Duration(seconds: 3));
     blocIndicatorProgress.inList.add({'progressIndicator' : 0.5, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
 
     try{
       var response = await connectionHttp.httpCrearTarea(jsonBody);
-      await Future.delayed(Duration(seconds: 3));
+      //await Future.delayed(Duration(seconds: 3));
       blocIndicatorProgress.inList.add({'progressIndicator' : 0.8, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
       var value = jsonDecode(response.body);
-      await Future.delayed(Duration(seconds: 3));
+      //await Future.delayed(Duration(seconds: 3));
       blocIndicatorProgress.inList.add({'progressIndicator' : 0.9, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
       if(value['status_code'] == 201){
         //ELIMINAR AUDIO
@@ -66,7 +66,7 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
           if(x != x1){ listDocumentsNoSend.add(listDocuments[x]); }
         }
         await SharedPrefe().setStringListValue('WalListDocument',listDocumentsNoSend);
-        await Future.delayed(Duration(seconds: 1));
+        //await Future.delayed(Duration(seconds: 1));
         blocIndicatorProgress.inList.add({'progressIndicator' : 1, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
         print('CREADO - ${data[1]}');
       }else{

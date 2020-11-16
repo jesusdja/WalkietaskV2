@@ -291,21 +291,16 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                           WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.black) :
                           WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02, color: Colors.grey[600])), //estiloLetras(alto * 0.02,Colors.grey[600]),),
                     ),
-                    tarea.name.isNotEmpty ?
                     Flexible(
                         flex: 1,
-                        child: Text(tarea.name,
+                        child: Text(tarea.name.isNotEmpty ? tarea.name : 'Tarea sin título. Tap para nombrarla',
                           maxLines: 1,
-                          style: favorite ?
+                      style: tarea.name.isNotEmpty ? favorite ?
                           WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.black) :
-                          WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02, color: WalkieTaskColors.black),)
-                    ) :
-                    Flexible(
-                        flex: 1,
-                        child: Text('Tarea sin título. Tap para nombrarla',
-                          maxLines: 1,
-                          style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.018, color: WalkieTaskColors.primary),)
+                          WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02, color: WalkieTaskColors.black) :
+                        WalkieTaskStyles().styleNunitoRegular(size: alto * 0.018, color: WalkieTaskColors.primary),)
                     ),
+                    Text('(Sin proyecto asignado)',style: estiloLetras(alto * 0.017,Colors.grey[600]),maxLines: 1,),
                   ],
                 ),
               ),
