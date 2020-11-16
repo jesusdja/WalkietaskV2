@@ -75,6 +75,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
   bool viewIndicatorProgress = false;
   double progressIndicator = 0;
+  bool loadTaskSend = false;
+  bool loadTaskRecived = false;
 
   @override
   void initState() {
@@ -216,12 +218,15 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         return EnviarTarea(blocUserRes: blocUser,listUserRes: listaUser,
           myUserRes: myUser,listaCasosRes: listaCasos,blocTaskReceived: blocTaskReceived,blocTaskSend: blocTaskSend,blocIndicatorProgress: blocIndicatorProgress,);
       case bottonSelect.opcion2:
-        return listRecibidos.length != 0 ?
+        return loadTaskSend ? listRecibidos.length != 0 ?
         ListadoTareasRecibidas(mapIdUserRes: mapIdUser,listRecibidos: listRecibidos,blocTaskReceivedRes: blocTaskReceived,listaCasosRes: listaCasos,) :
+        Center(child: Text('No existen tareas enviadas',style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
         Container(child: Cargando('Buscando tareas recibidas',context),) ;
       case bottonSelect.opcion3:
-        return listEnviados.length != 0 ?
+        return loadTaskRecived ?
+        listEnviados.length != 0 ?
         ListadoTareasEnviadas(listEnviadosRes: listEnviados,mapIdUserRes: mapIdUser,blocTaskSendRes: blocTaskSend,listaCasosRes: listaCasos,) :
+        Center(child: Text('No existen tareas recibidas',style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
         Container(child: Cargando('Buscando tareas enviadas',context),);
       case bottonSelect.opcion4:
         return MyProyects(myUser, listaUser);
@@ -473,6 +478,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
   _inicializarTaskRecived() async {
     listRecibidos = await TaskDatabaseProvider.db.getAllRecevid();
+    loadTaskRecived = true;
     setState(() {});
   }
   _inicializarTaskSend() async {
@@ -480,6 +486,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     prefs = await SharedPreferences.getInstance();
     String idMyUser = prefs.getString('unityIdMyUser');
     listEnviados = await TaskDatabaseProvider.db.getAllSend(idMyUser);
+    loadTaskSend = true;
     setState(() {});
   }
   _inicializarUser() async {

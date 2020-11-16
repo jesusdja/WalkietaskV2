@@ -118,7 +118,9 @@ class _MyHomePageState extends State<EnviarTarea> {
   void dispose() {
     audioPlayer.stop();
     _durationSubscription?.cancel();
-    streamSubscriptionUser.cancel();
+    streamSubscriptionUser?.cancel();
+    blocUser.dispose();
+    blocIndicatorProgress.dispose();
     super.dispose();
   }
 
@@ -781,7 +783,7 @@ class _MyHomePageState extends State<EnviarTarea> {
     return Container(
       child: Row(
         children: <Widget>[
-          Text('Asignar a caso:',textAlign: TextAlign.right,
+          Text('Asignar a proyecto:',textAlign: TextAlign.right,
               style: textStylePrimary),
           Expanded(
             child: Container(

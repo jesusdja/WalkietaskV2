@@ -172,10 +172,10 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
       },
       child: Column(
         children: <Widget>[
-          Text(text, style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.018, color: WalkieTaskColors.primary),),
+          Text(text, style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.016, color: WalkieTaskColors.primary),),
           mapAppBar[index] ? Container(
-            width: ancho * 0.2,
-            height: alto * 0.007,
+            width: ancho * 0.18,
+            height: alto * 0.006,
             decoration: new BoxDecoration(
               shape: BoxShape.rectangle,
               color: WalkieTaskColors.primary,
@@ -261,7 +261,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                         shape: BoxShape.circle,
                       ),
                       child: CircleAvatar(
-                        radius: alto * 0.035,
+                        radius: alto * 0.03,
                         backgroundImage: avatarUser.image,
                         //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
                       ),
@@ -271,7 +271,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                     alignment: Alignment.bottomRight,
                     child: Container(
                       margin: EdgeInsets.only(right: ancho * 0.02),
-                      child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.032,),
+                      child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
                     ),
                   ) : Container(),
                 ],
@@ -286,23 +286,31 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                     Flexible(
                       flex: 1,
                       child: Text(mapIdUser[tarea.user_id] == null ? '' : mapIdUser[tarea.user_id].name,
+                          maxLines: 1,
                           style: favorite ?
                           WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.black) :
                           WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02, color: Colors.grey[600])), //estiloLetras(alto * 0.02,Colors.grey[600]),),
                     ),
+                    tarea.name.isNotEmpty ?
                     Flexible(
                         flex: 1,
                         child: Text(tarea.name,
+                          maxLines: 1,
                           style: favorite ?
                           WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.black) :
-                          WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02, color: WalkieTaskColors.primary),)
+                          WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02, color: WalkieTaskColors.black),)
+                    ) :
+                    Flexible(
+                        flex: 1,
+                        child: Text('Tarea sin título. Tap para nombrarla',
+                          maxLines: 1,
+                          style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.018, color: WalkieTaskColors.primary),)
                     ),
                   ],
                 ),
               ),
             ),
             Container(
-              width: ancho * 0.3,
               margin: EdgeInsets.only(right: ancho * 0.03),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -709,7 +717,6 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
             //ENVIAR A API
             try{
               var result = await conexionHispanos.httpModificarTarea(tarea);
-              print('${result.body}');
             }catch(e){
             //SI NO HAY CONEXION GUARDAR EN TABLA LOCAL
 
