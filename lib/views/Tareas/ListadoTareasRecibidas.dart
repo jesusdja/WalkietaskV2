@@ -42,6 +42,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
   conexionHttp conexionHispanos = new conexionHttp();
 
   Map<int,bool> openForUserTask = {};
+  Map<int,Caso> mapCasos = {};
 
   @override
   void initState() {
@@ -50,6 +51,8 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     blocTaskReceived = widget.blocTaskReceivedRes;
     _inicializar();
     _inicializar2();
+
+    widget.listaCasosRes.forEach((element) { mapCasos[element.id] = element;});
   }
 
   _inicializar(){
@@ -244,6 +247,11 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
       }
     }
 
+    String proyectName = '(Sin proyecto asignado)';
+    if(tarea.project_id != null && tarea.project_id != 0){
+      proyectName = mapCasos[tarea.project_id].name;
+    }
+
     return InkWell(
       onTap: () =>clickTarea(tarea),
       child: Container(
@@ -300,7 +308,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                           WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02, color: WalkieTaskColors.black) :
                         WalkieTaskStyles().styleNunitoRegular(size: alto * 0.018, color: WalkieTaskColors.primary),)
                     ),
-                    Text('(Sin proyecto asignado)',style: estiloLetras(alto * 0.017,Colors.grey[600]),maxLines: 1,),
+                    Text(proyectName,style: estiloLetras(alto * 0.017,Colors.grey[600]),maxLines: 1,),
                   ],
                 ),
               ),
@@ -453,12 +461,17 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
 
   List<Widget> listTaskGet(Usuario user, List<Tarea> listTask){
     List<Widget> listTaskRes = [];
-    bool smsRecived = true;
     listTask.forEach((task) {
 
       String daysLeft = 'Ahora';
       DateTime dateCreate = DateTime.parse(task.created_at);
       Duration difDays = DateTime.now().difference(dateCreate);
+
+      String proyectName = '(Sin proyecto asignado)';
+      if(task.project_id != null && task.project_id != 0){
+        proyectName = mapCasos[task.project_id].name;
+      }
+
       if(difDays.inMinutes > 5){
         if(difDays.inMinutes < 60){
           daysLeft = 'Hace ${difDays.inMinutes} min';
@@ -471,8 +484,6 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
           }
         }
       }
-
-      smsRecived = !smsRecived;
 
       listTaskRes.add(
           InkWell(
@@ -489,13 +500,11 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Text(task.name.isEmpty ? 'Nombre no asignado' : task.name,
-                                style: smsRecived ?
-                                WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.black) :
-                                WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02, color: Colors.grey[600])),
-                            Text(task.name,
-                              style: smsRecived ?
-                              WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.black) :
-                              WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02, color: WalkieTaskColors.primary),),
+                                maxLines: 1,
+                                style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.022, color: Colors.grey[600])),
+                            Text(proyectName,
+                              maxLines: 1,
+                              style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.018, color: WalkieTaskColors.color_969696),),
                           ],
                         ),
                       ),
@@ -514,12 +523,12 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
                               //Icon(Icons.message,color: Colors.grey[600],size: alto * 0.03),
-                              smsRecived ? CircleAvatar(
-                                backgroundColor: WalkieTaskColors.primary,
-                                radius: alto * 0.012,
-                                child: Text('2',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
-                              ) : Container(),
-                              smsRecived ? SizedBox(width: ancho * 0.01,) : Container(),
+                              // smsRecived ? CircleAvatar(
+                              //   backgroundColor: WalkieTaskColors.primary,
+                              //   radius: alto * 0.012,
+                              //   child: Text('2',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
+                              // ) : Container(),
+                              // smsRecived ? SizedBox(width: ancho * 0.01,) : Container(),
                               task.url_audio != '' ? Icon(Icons.volume_up,color:  Colors.grey[600],size: alto * 0.03,) : Container()
                             ],
                           )

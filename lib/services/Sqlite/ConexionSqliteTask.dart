@@ -102,28 +102,50 @@ class TaskDatabaseProvider{
     return listTarea;
   }
   //OBTENER TODAS LAS TAREAS ENVIADAS
-  Future<Map<int,List<Tarea>>> getAllSend(String myId) async {
+  Future<List<Tarea>> getAllSend(String myId) async {
     print(myId);
-    Map<int,List<Tarea>> mapTarea = new Map<int,List<Tarea>>();
+    List<Tarea> mapTarea = new List<Tarea>();
     final db = await database;
     try{
       List<Map> list = await db.rawQuery('SELECT * FROM Tareas WHERE user_id = $myId AND user_responsability_id != 0 AND is_priority = 1 ORDER BY ord');
       list.forEach((mapa){
         Tarea tarea = new Tarea.fromMap(mapa);
-        if(mapTarea[0] == null){mapTarea[0] = new List<Tarea>();}
-        mapTarea[0].add(tarea);
+        mapTarea.add(tarea);
       });
       list = await db.rawQuery('SELECT * FROM Tareas WHERE user_id = $myId AND user_responsability_id != 0 AND is_priority = 0 ORDER BY ord');
       list.forEach((mapa){
         Tarea tarea = new Tarea.fromMap(mapa);
-        if(mapTarea[tarea.user_responsability_id] == null){mapTarea[tarea.user_responsability_id] = new List<Tarea>();}
-        mapTarea[tarea.user_responsability_id].add(tarea);
+        mapTarea.add(tarea);
       });
     }catch(e){
       print(e.toString());
     }
     return mapTarea;
   }
+
+  // //OBTENER TODAS LAS TAREAS ENVIADAS
+  // Future<Map<int,List<Tarea>>> getAllSend(String myId) async {
+  //   print(myId);
+  //   Map<int,List<Tarea>> mapTarea = new Map<int,List<Tarea>>();
+  //   final db = await database;
+  //   try{
+  //     List<Map> list = await db.rawQuery('SELECT * FROM Tareas WHERE user_id = $myId AND user_responsability_id != 0 AND is_priority = 1 ORDER BY ord');
+  //     list.forEach((mapa){
+  //       Tarea tarea = new Tarea.fromMap(mapa);
+  //       if(mapTarea[0] == null){mapTarea[0] = new List<Tarea>();}
+  //       mapTarea[0].add(tarea);
+  //     });
+  //     list = await db.rawQuery('SELECT * FROM Tareas WHERE user_id = $myId AND user_responsability_id != 0 AND is_priority = 0 ORDER BY ord');
+  //     list.forEach((mapa){
+  //       Tarea tarea = new Tarea.fromMap(mapa);
+  //       if(mapTarea[tarea.user_responsability_id] == null){mapTarea[tarea.user_responsability_id] = new List<Tarea>();}
+  //       mapTarea[tarea.user_responsability_id].add(tarea);
+  //     });
+  //   }catch(e){
+  //     print(e.toString());
+  //   }
+  //   return mapTarea;
+  // }
 
   //INSERTAR TAREA
   Future<int> saveTask(Tarea tarea) async {
