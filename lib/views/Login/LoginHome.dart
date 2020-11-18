@@ -12,6 +12,7 @@ import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
+import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
@@ -255,7 +256,20 @@ class _LoginHomeState extends State<LoginHome> {
           UpdateData updateData = new UpdateData();
           Usuario myUser = await updateData.getMyUser();
           if(myUser != null){
-            await prefs.setInt('unityLogin',1);
+
+            int userCheck = 1;
+            var response3 = await conexionHispanos.httpCheckUser(nombre);
+            var value3 = jsonDecode(response3.body);
+            if(value3['status_code'] == 500){
+              userCheck = 2;
+            }
+            if(value3['status_code'] != 500 && value3['status_code'] != 200){
+              userCheck = 0;
+              showAlert('Codigo vencido. Registrar nuevamente.',Colors.red[400]);
+              await Future.delayed(Duration(seconds: 3));
+            }
+            await prefs.setInt('unityLogin',userCheck);
+            await SharedPrefe().setStringValue('unityEmail',myUser.email);
             await prefs.setString('unityIdMyUser','${myUser.id}');
             await PermisoStore();
             await PermisoSonido();

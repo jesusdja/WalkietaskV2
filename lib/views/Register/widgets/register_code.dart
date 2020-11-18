@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
+import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
@@ -10,6 +11,8 @@ class RegisterCode extends StatefulWidget {
 }
 
 class _RegisterCodeState extends State<RegisterCode> {
+
+  String meEmail = '';
 
   double sizeH = 0;
   double sizeW = 0;
@@ -42,6 +45,12 @@ class _RegisterCodeState extends State<RegisterCode> {
     controller_2 = TextEditingController(text: '');
     controller_3 = TextEditingController(text: '');
     controller_4 = TextEditingController(text: '');
+    getEmail();
+  }
+
+  Future<void> getEmail() async {
+    meEmail = await SharedPrefe().getValue('unityEmail');
+    setState(() {});
   }
 
   @override
@@ -85,7 +94,7 @@ class _RegisterCodeState extends State<RegisterCode> {
                   Container(
                     width: sizeW,
                     child: Text(
-                      'Para activar tu cuenta hemos enviado un correo a xxxxx@xxx.com con un número de activación.\nDigitalo aquí:',
+                      'Para activar tu cuenta hemos enviado un correo a $meEmail con un número de activación.\nDigitalo aquí:',
                       style: textStyle1,
                       textAlign: TextAlign.left,
                     ),
@@ -261,10 +270,7 @@ class _RegisterCodeState extends State<RegisterCode> {
 
   Widget appBarWidget(double sizeH,Function() onTap,String title){
     return AppBar(
-      leading: InkWell(
-        child: Icon(Icons.arrow_left,size: sizeH * 0.07,color: WalkieTaskColors.white,),
-        onTap: onTap,
-      ),
+      leading: Container(),
       title: Text(title,style: WalkieTaskStyles().styleNunitoBold()),
     );
   }

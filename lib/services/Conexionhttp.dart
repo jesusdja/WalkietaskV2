@@ -97,6 +97,26 @@ class conexionHttp{
     return response;
   }
 
+  Future<http.Response> httpCheckUser(String correo) async{
+    var response;
+    try{
+      Map<String,String> headers = {
+        'Content-Type':'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      };
+      final msg = jsonEncode({
+        'email': correo,
+      });
+      response = await http.post('http://www.unitydbm.com/api/auth/checkemailverified',
+        headers: headers,
+        body: msg,
+      );
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
+
   Future<http.Response> httpModificarTarea(Tarea tarea) async {
 
     String token  = await obtenerToken();
