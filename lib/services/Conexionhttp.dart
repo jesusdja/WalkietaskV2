@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/shared_preferences.dart';
 
 class conexionHttp{
 
@@ -138,6 +139,29 @@ class conexionHttp{
           'user_id': tarea.user_id.toString(),
           'status_id': tarea.status_id.toString(),
           'is_priority' : tarea.is_priority.toString(),
+        },
+      );
+    }catch(e){
+      print(e.toString());
+    }
+    return response;
+  }
+
+  Future<http.Response> httpConfirmUser(String code) async {
+
+    String token  = await obtenerToken();
+    String idUser = await SharedPrefe().getValue('unityIdMyUser');
+    Map<String,String> headers = {
+      'Content-Type':'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Authorization': 'Bearer $token'
+    };
+    var response;
+    try{
+      response = await http.put('$enlace/api/auth/users/entercode/$idUser.',
+        headers: headers,
+        body: {
+          'code': code,
         },
       );
     }catch(e){

@@ -1,11 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/services/auth.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
 class RegisterCode extends StatefulWidget {
+  RegisterCode(this.contextLogin);
+  final BuildContext contextLogin;
   @override
   _RegisterCodeState createState() => _RegisterCodeState();
 }
@@ -141,14 +149,33 @@ class _RegisterCodeState extends State<RegisterCode> {
             setState(() {
               isAccepted = true;
             });
-            //await Future.delayed(Duration(seconds: 2));
-            // await SharedPrefe().setIntValue('unityLogin',1);
-            // try{
-            //   AuthService auth = Provider.of<AuthService>(widget.contextLogin);
-            //   auth.init();
-            // }catch(e){
-            //   print(e.toString());
-            // }
+            if(mapCode[1] && mapCode[2] && mapCode[3] && mapCode[4]){
+              conexionHttp conexionHispanos = new conexionHttp();
+              String code = '${controller_1.text}${controller_2.text}${controller_3.text}${controller_4.text}';
+              var response = await conexionHispanos.httpConfirmUser(code);
+              var value3 = jsonDecode(response.body);
+              if(value3['status_code'] == 404){
+                showAlert('Código de activación inválido.',Colors.red[400]);
+              }else{
+                int statusCode = 0;
+                if(value3['status_code'] == 200){
+                  statusCode = 1;
+                }else{
+                  showAlert('Codigo vencido. Registrar nuevamente.',Colors.red[400]);
+                  await Future.delayed(Duration(seconds: 3));
+                }
+                try{
+                  await SharedPrefe().setIntValue('unityLogin',statusCode);
+                  AuthService auth = Provider.of<AuthService>(widget.contextLogin);
+                  auth.init();
+                }catch(ex){
+                  print(ex);
+                  showAlert('Error al enviar datos.',Colors.red[400]);
+                }
+              }
+            }else{
+              showAlert('Se debe agregar todos los campos.',Colors.red[400]);
+            }
             setState(() {
               isAccepted = false;
             });

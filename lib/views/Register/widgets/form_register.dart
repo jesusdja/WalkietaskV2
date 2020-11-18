@@ -473,11 +473,6 @@ class _FormRegisterState extends State<FormRegister> {
                       await PermisoStore();
                       await PermisoSonido();
                       await PermisoPhotos();
-
-                      // Navigator.push(context,
-                      //   new MaterialPageRoute(builder: (BuildContext context) =>
-                      //   new RegisterCode(mapBody: body,contextLogin: widget.contextLogin,))
-                      // );
                       try{
                         AuthService auth = Provider.of<AuthService>(widget.contextLogin);
                         auth.init();

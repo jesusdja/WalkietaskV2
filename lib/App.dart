@@ -27,7 +27,7 @@ class _AppState extends State<App>{
             case Status.home:
               return NavigatorBottonPage();
             case Status.code:
-              return RegisterCode();
+              return RegisterCode(context);
           }
         },
       ),
