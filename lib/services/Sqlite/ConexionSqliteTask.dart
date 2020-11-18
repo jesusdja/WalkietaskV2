@@ -4,6 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/shared_preferences.dart';
 
 class TaskDatabaseProvider{
   TaskDatabaseProvider._();
@@ -84,14 +85,15 @@ class TaskDatabaseProvider{
   //OBTENER TODAS LAS TAREAS RECIBIDAS
   Future<List<Tarea>> getAllRecevid() async {
     List<Tarea> listTarea = new List<Tarea>();
+    String idUser = await SharedPrefe().getValue('unityIdMyUser');
     final db = await database;
     try{
-      List<Map> list = await db.rawQuery('SELECT * FROM Tareas WHERE project_id = 0 AND is_priority = 1 ORDER BY ord');
+      List<Map> list = await db.rawQuery('SELECT * FROM Tareas WHERE user_responsability_id = $idUser AND is_priority = 1 ORDER BY ord');
       list.forEach((mapa){
         Tarea tarea = new Tarea.fromMap(mapa);
         listTarea.add(tarea);
       });
-      list = await db.rawQuery('SELECT * FROM Tareas WHERE project_id = 0 AND is_priority = 0 ORDER BY ord');
+      list = await db.rawQuery('SELECT * FROM Tareas WHERE user_responsability_id = $idUser AND is_priority = 0 ORDER BY ord');
       list.forEach((mapa){
         Tarea tarea = new Tarea.fromMap(mapa);
         listTarea.add(tarea);
@@ -102,8 +104,8 @@ class TaskDatabaseProvider{
     return listTarea;
   }
   //OBTENER TODAS LAS TAREAS ENVIADAS
-  Future<List<Tarea>> getAllSend(String myId) async {
-    print(myId);
+  Future<List<Tarea>> getAllSend() async {
+    String myId = await SharedPrefe().getValue('unityIdMyUser');
     List<Tarea> mapTarea = new List<Tarea>();
     final db = await database;
     try{

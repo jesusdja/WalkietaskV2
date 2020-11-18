@@ -243,13 +243,13 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       case bottonSelect.opcion2:
         return loadTaskSend ? listRecibidos.length != 0 ?
         ListadoTareasRecibidas(mapIdUserRes: mapIdUser,listRecibidos: listRecibidos,blocTaskReceivedRes: blocTaskReceived,listaCasosRes: listaCasos,) :
-        Center(child: Text('No existen tareas enviadas',style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
+        Center(child: Text('No existen tareas recibidas',style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
         Container(child: Cargando('Buscando tareas recibidas',context),) ;
       case bottonSelect.opcion3:
         return loadTaskRecived ?
         listEnviados.length != 0 ?
         ListadoTareasEnviadas(listEnviadosRes: listEnviados,mapIdUserRes: mapIdUser,blocTaskSendRes: blocTaskSend,listaCasosRes: listaCasos,) :
-        Center(child: Text('No existen tareas recibidas',style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
+        Center(child: Text('No existen tareas enviadas',style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
         Container(child: Cargando('Buscando tareas enviadas',context),);
       case bottonSelect.opcion4:
         return MyProyects(myUser, listaUser);
@@ -509,10 +509,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     setState(() {});
   }
   _inicializarTaskSend() async {
-
-    prefs = await SharedPreferences.getInstance();
-    String idMyUser = prefs.getString('unityIdMyUser');
-    listEnviados = await TaskDatabaseProvider.db.getAllSend(idMyUser);
+    listEnviados = await TaskDatabaseProvider.db.getAllSend();
     loadTaskSend = true;
     setState(() {});
   }

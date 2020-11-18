@@ -19,7 +19,7 @@ class conexionHttp{
     };
     try{
       response = http.get(
-          '$enlace/api/auth/tasks/getAllTasksReceived',
+          '$enlace/api/auth/tasks/myreceivedtasks',
         headers: requestHeaders
       );
     }catch(ex){
