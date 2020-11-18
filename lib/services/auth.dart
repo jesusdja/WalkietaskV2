@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum Status { Logo,Login,home}
+enum Status { Logo,Login,home,code}
 
 class AuthService with ChangeNotifier{
   Status _status = Status.Logo;
@@ -24,6 +24,9 @@ class AuthService with ChangeNotifier{
       }
       if(counter == 1){
         _status = Status.home;
+      }
+      if(counter == 2){
+        _status = Status.code;
       }
     }else{
       _status = Status.Login;

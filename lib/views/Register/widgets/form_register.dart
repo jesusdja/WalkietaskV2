@@ -1,10 +1,17 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:walkietaskv2/bloc/blocUserCheck.dart';
+import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/services/Permisos.dart';
+import 'package:walkietaskv2/services/auth.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
+import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/textfield_generic_verific.dart';
 import 'package:walkietaskv2/utils/value_validators.dart';
@@ -423,6 +430,14 @@ class _FormRegisterState extends State<FormRegister> {
             setState(() {
               isLoad = true;
             });
+            // try{
+            //   await SharedPrefe().setIntValue('unityLogin',2);
+            //   AuthService auth = Provider.of<AuthService>(widget.contextLogin);
+            //   auth.init();
+            //   Navigator.of(context).pop();
+            // }catch(e){
+            //   print(e.toString());
+            // }
 
             if(name.isNotEmpty && !showErrorCheck && surname.isNotEmpty &&
                 validateEmailAddress(email)['valid'] &&
@@ -436,10 +451,53 @@ class _FormRegisterState extends State<FormRegister> {
                   'password' : pass,
                   'password_confirmation' : pass,
                 };
-                Navigator.push(context,
-                  new MaterialPageRoute(builder: (BuildContext context) =>
-                  new RegisterCode(mapBody: body,contextLogin: widget.contextLogin,))
-                );
+
+
+                var response = await connectionHttp.httpRegisterUser(body);
+                var value = jsonDecode(response.body);
+                print(value);
+                if(response.statusCode == 201){
+                  var response2 = await connectionHttp.httpIniciarSesion(body['email'], body['password']);
+                  var value2 = jsonDecode(response2.body);
+                  if(value2['access_token'] != null){
+                    String token = value2['access_token'];
+                    String tokenExp = value2['access_token'];
+                    await SharedPrefe().setStringValue('unityToken','$token');
+                    await SharedPrefe().setStringValue('unityTokenExp','$tokenExp');
+                    UpdateData updateData = new UpdateData();
+                    Usuario myUser = await updateData.getMyUser();
+                    if(myUser != null){
+                      await SharedPrefe().setIntValue('unityLogin',2);
+                      await SharedPrefe().setStringValue('unityEmail',myUser.email);
+                      await SharedPrefe().setStringValue('unityIdMyUser','${myUser.id}');
+                      await PermisoStore();
+                      await PermisoSonido();
+                      await PermisoPhotos();
+
+                      // Navigator.push(context,
+                      //   new MaterialPageRoute(builder: (BuildContext context) =>
+                      //   new RegisterCode(mapBody: body,contextLogin: widget.contextLogin,))
+                      // );
+                      try{
+                        AuthService auth = Provider.of<AuthService>(widget.contextLogin);
+                        auth.init();
+                        Navigator.of(context).pop();
+                      }catch(ex){
+                        print(ex);
+                        showAlert('Error al enviar datos.',Colors.red[400]);
+                      }
+                    }else{
+                      showAlert('Error al enviar datos.',Colors.red[400]);
+                    }
+                  }
+                }else{
+                  if(value['errors'] != null && value['errors']['email'][0] != null){
+                    showAlert(value['errors']['email'][0],Colors.red[400]);
+                  }else{
+                    showAlert('Error al enviar datos.',Colors.red[400]);
+                  }
+                }
+
               }catch(e){
                 print(e.toString());
                 showAlert('Error al enviar datos.',Colors.red[400]);

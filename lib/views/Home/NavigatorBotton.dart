@@ -51,7 +51,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   Map<bottonSelect,bool> mapNavigatorBotton = new Map<bottonSelect,bool>();
 
   List<Tarea> listRecibidos;
-  Map<int,List<Tarea>> listEnviados;
+  List<Tarea> listEnviados;
   Map<int,Usuario> mapIdUser;
   List<Usuario> listaUser;
   List<Caso> listaCasos;
@@ -93,7 +93,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     blocIndicatorProgress = new BlocProgress();
 
     listRecibidos = new List<Tarea>();
-    listEnviados = new Map<int,List<Tarea>>();
+    listEnviados = new List<Tarea>();
     mapIdUser = new Map();
     listaUser = new List<Usuario>();
     listaCasos = new List<Caso>();
@@ -395,6 +395,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                 await prefs.remove('unityLogin');
                 await prefs.remove('unityIdMyUser');
                 await prefs.remove('WalListDocument');
+                await prefs.remove('unityEmail');
                 TaskDatabaseProvider.db.deleteDatabaseInstance();
                 UserDatabaseProvider.db.deleteDatabaseInstance();
                 CasosDatabaseProvider.db.deleteDatabaseInstance();

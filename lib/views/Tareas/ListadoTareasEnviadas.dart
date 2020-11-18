@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'dart:async';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
-import 'package:walkietaskv2/bloc/blocUser.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
-import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
@@ -18,7 +15,7 @@ import 'package:walkietaskv2/views/Chat/ChatForTarea.dart';
 class ListadoTareasEnviadas extends StatefulWidget {
 
   ListadoTareasEnviadas({this.listEnviadosRes,this.mapIdUserRes,this.blocTaskSendRes,this.listaCasosRes});
-  final Map<int,List<Tarea>> listEnviadosRes;
+  List<Tarea> listEnviadosRes;
   final Map<int,Usuario> mapIdUserRes;
   final BlocTask blocTaskSendRes;
   final List<Caso> listaCasosRes;
@@ -32,13 +29,13 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
   Map<int,bool> mapAppBar = {0:true,1:false,2:false};
   bool valueSwitch = true;
 
-  Map<int,List<Tarea>> listEnviados;
+  List<Tarea> listEnviados;
   Map<int,Usuario> mapIdUser;
+  Map<int,Caso> mapCasos = {};
 
   double alto = 0;
   double ancho = 0;
 
-  Map<int,bool> abrirMenu = new Map<int,bool>();
   BlocTask blocTaskSend;
 
   conexionHttp conexionHispanos = new conexionHttp();
@@ -50,10 +47,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     super.initState();
     blocTaskSend = widget.blocTaskSendRes;
     _inicializar();
-    abrirMenu[0] = false;
-    listEnviados.forEach((key,value){
-      abrirMenu[key] = false;
-    });
+    widget.listaCasosRes.forEach((element) { mapCasos[element.id] = element;});
   }
 
   _inicializar(){
@@ -185,8 +179,8 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     return Container(
         height: alto * 0.7,
         child: ReorderableListView(
-          children: List.generate(listRecibidos.length, (index) {
-            Tarea tarea = listRecibidos[index];
+          children: List.generate(listEnviados.length, (index) {
+            Tarea tarea = listEnviados[index];
             return Container(
               height: alto * 0.1,
               key: ValueKey("value$index"),
@@ -208,7 +202,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
             );
           }),
           onReorder: (int oldIndex, int newIndex) {
-            _updateMyItems(oldIndex, newIndex);
+            //_updateMyItems(oldIndex, newIndex);
           },
         )
     );
@@ -334,7 +328,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
       ),
     );
   }
-
+/*
   _listado2(){
     return Container(
       height: alto * 0.74,
@@ -402,7 +396,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
       )
     );
   }
-
+*/
   clickTarea(Tarea tarea){
     Navigator.push(context, new MaterialPageRoute(
         builder: (BuildContext context) => new ChatForTarea(tareaRes: tarea,listaCasosRes: widget.listaCasosRes,)));
