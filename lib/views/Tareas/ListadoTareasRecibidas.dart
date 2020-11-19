@@ -42,6 +42,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
   conexionHttp conexionHispanos = new conexionHttp();
 
   Map<int,bool> openForUserTask = {};
+  Map<int,bool> openForProyectTask = {0 : false};
   Map<int,Caso> mapCasos = {};
 
   @override
@@ -49,10 +50,10 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     // TODO: implement initState
     super.initState();
     blocTaskReceived = widget.blocTaskReceivedRes;
+    widget.listaCasosRes.forEach((element) { mapCasos[element.id] = element;});
     _inicializar();
     _inicializar2();
-
-    widget.listaCasosRes.forEach((element) { mapCasos[element.id] = element;});
+    _inicializar3();
   }
 
   _inicializar(){
@@ -65,6 +66,15 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     if(widget.mapIdUserRes != null){
       mapIdUser.forEach((key, value) {
         openForUserTask[key] = false;
+      });
+    }
+    setState(() {});
+  }
+
+  _inicializar3(){
+    if(widget.listaCasosRes.isNotEmpty){
+      mapCasos.forEach((key, value) {
+        openForProyectTask[key] = false;
       });
     }
     setState(() {});
@@ -393,33 +403,19 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                   child: CircleAvatar(
                     radius: alto * 0.03,
                     backgroundImage: avatarUser.image,
-                    //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
                   ),
                 ),
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.only(left: ancho * 0.03,right: ancho * 0.03,),
-                    // child: Text('${user.name}',
-                    //     style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.025, color: WalkieTaskColors.color_76ADE3)),
-                    child: RichText(
-                      textAlign: TextAlign.justify,
-                      text: TextSpan(
-                        text: '${user.name}',
-                        style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.025, color: WalkieTaskColors.color_76ADE3),
-                        children: [
-                          TextSpan(
-                            text: '   (${listTask.length} ${listTask.length < 1 ? 'tarea' : 'Tareas'})',
-                            style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 1),
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: Text('${user.name}',
+                        style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.025, color: WalkieTaskColors.color_76ADE3)),
                   ),
                 ),
-                // Container(
-                //   child: Text('(${listTask.length} ${listTask.length < 1 ? 'tarea' : 'Tareas'})',
-                //       style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 1)),
-                // ),
+                Container(
+                  child: Text('(${listTask.length} ${listTask.length < 1 ? 'tarea' : 'Tareas'})',
+                      style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 1)),
+                ),
                 InkWell(
                   child: Container(
                     child: !openForUserTask[user.id] ?
@@ -546,12 +542,125 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
   }
 
   Widget _listadoProyect(){
+    Map<int,List<Tarea>> mapTask = {};
+    listRecibidos.forEach((element) {
+      int idProyect = element.project_id ?? 0;
+      if(mapTask[idProyect] == null){ mapTask[idProyect] = [];}
+      mapTask[idProyect].add(element);
+    });
     return Container(
-        height: alto * 0.7,
-        child: ReorderableListView(
-          children: List.generate(listRecibidos.length, (index) {
-            Tarea tarea = listRecibidos[index];
-            return Container(
+      width: ancho,
+      height: alto * 0.7,
+      child: ListView.builder(
+        itemCount: mapTask.length,
+        itemBuilder: (context, index){
+          List<Tarea> listTask = mapTask[mapTask.keys.elementAt(index)];
+          Caso proyect;
+          if(listTask[0].project_id != null){
+            proyect = mapCasos[listTask[0].project_id];
+          }
+          return _tareasProyect(proyect, listTask);
+        },
+      ),
+    );
+  }
+
+  Widget _tareasProyect(Caso proyect, List<Tarea> listTask,){
+
+    String nameProyect = proyect == null ? 'Sin proyecto asignado' : proyect.name;
+    int keyOpen = proyect == null ? 0 : proyect.id;
+
+    List<Widget> listTaskWidget = listTaskGetProyect(proyect, listTask);
+
+    return Container(
+      width: ancho,
+      child: Column(
+        children: <Widget>[
+          Container(
+            width: ancho,
+            padding: EdgeInsets.all(alto * 0.015),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.only(left: ancho * 0.03,right: ancho * 0.03,),
+                    child: Text(nameProyect,
+                        style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.025, color: WalkieTaskColors.color_76ADE3)),
+                  ),
+                ),
+                Container(
+                  child: Text('(${listTask.length} ${listTask.length < 1 ? 'tarea' : 'Tareas'})',
+                      style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 1)),
+                ),
+                InkWell(
+                  child: Container(
+                    child: !openForProyectTask[keyOpen] ?
+                    Container(
+                      width: ancho * 0.12,
+                      height: alto * 0.06,
+                      child: Image.asset('assets/image/icon_close_option.png',fit: BoxFit.fill,color: Colors.grey,),
+                    ) :
+                    Container(
+                      width: ancho * 0.12,
+                      height: alto * 0.06,
+                      child: Image.asset('assets/image/icon_open_option.png',fit: BoxFit.fill,color: Colors.grey,),
+                    ),
+                  ),
+                  onTap: (){
+                    openForProyectTask[keyOpen] = !openForProyectTask[keyOpen];
+                    setState(() {});
+                  },
+                ),
+              ],
+            ),
+          ),
+          openForProyectTask[keyOpen] ?
+          Container(
+            width: ancho,
+            child: Column(
+              children: listTaskWidget,
+            ),
+          ) : Container(),
+          Container(
+            height: 1,
+            margin: EdgeInsets.only(left: ancho * 0.2, right: ancho * 0.2, top: alto * 0.01),
+            color: WalkieTaskColors.color_E3E3E3,
+          )
+        ],
+      ),
+    );
+  }
+
+  List<Widget> listTaskGetProyect(Caso proyect, List<Tarea> listTask){
+    List<Widget> listTaskRes = [];
+    for(int index = 0; index < listTask.length; index++) {
+      Tarea task = listTask[index];
+      String daysLeft = 'Ahora';
+      DateTime dateCreate = DateTime.parse(task.created_at);
+      Duration difDays = DateTime.now().difference(dateCreate);
+
+      String proyectName = '(Sin proyecto asignado)';
+      if(task.project_id != null && task.project_id != 0){
+        proyectName = mapCasos[task.project_id].name;
+      }
+
+      if(difDays.inMinutes > 5){
+        if(difDays.inMinutes < 60){
+          daysLeft = 'Hace ${difDays.inMinutes} min';
+        }else{
+          if(difDays.inHours < 24){
+            daysLeft = 'Hace ${difDays.inHours} horas';
+          }else{
+            double days = difDays.inHours / 24;
+            daysLeft = 'Hace ${days.toStringAsFixed(0)} días';
+          }
+        }
+      }
+
+      listTaskRes.add(
+          InkWell(
+            onTap: () =>clickTarea(task),
+            child: Container(
               height: alto * 0.1,
               key: ValueKey("value$index"),
               padding: EdgeInsets.only(top: alto * 0.01,bottom: alto * 0.01),
@@ -559,139 +668,21 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
               child: Slidable(
                 actionPane: SlidableDrawerActionPane(),
                 actionExtentRatio: 0.25,
-                child:  _tareasProyect(tarea, tarea.is_priority != 0),
+                child: _tareas(task, task.is_priority != 0),
                 actions: <Widget>[
-                  _ButtonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: Colors.white,size: 30,),Colors.yellow[600],Colors.white,1,tarea),
-                  _ButtonSliderAction('COMENTAR',Icon(Icons.message,color: Colors.white,size: 30,),Colors.deepPurple[200],Colors.white,2,tarea),
+                  _ButtonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: Colors.white,size: 30,),Colors.yellow[600],Colors.white,1,task),
+                  _ButtonSliderAction('COMENTAR',Icon(Icons.message,color: Colors.white,size: 30,),Colors.deepPurple[200],Colors.white,2,task),
                 ],
                 secondaryActions: <Widget>[
-                  _ButtonSliderAction('TRABAJANDO',Icon(Icons.build,color: Colors.white,size: 30,),colorSliderTrabajando,Colors.white,3,tarea),
-                  _ButtonSliderAction('LISTO',Icon(Icons.check,color: Colors.white,size: 30,),colorSliderListo,Colors.white,4,tarea),
+                  _ButtonSliderAction('TRABAJANDO',Icon(Icons.build,color: Colors.white,size: 30,),colorSliderTrabajando,Colors.white,3,task),
+                  _ButtonSliderAction('LISTO',Icon(Icons.check,color: Colors.white,size: 30,),colorSliderListo,Colors.white,4,task),
                 ],
               ),
-            );
-          }),
-          onReorder: (int oldIndex, int newIndex) {
-            _updateMyItems(oldIndex, newIndex);
-          },
-        )
-    );
-  }
-
-  Widget _tareasProyect(Tarea tarea, bool favorite,){
-
-    return Container();
-    /*
-    Image avatarUser = Image.network(avatarImage);
-    if(mapIdUser != null){
-      if(mapIdUser[tarea.user_id] != null && mapIdUser[tarea.user_id].avatar != ''){
-        avatarUser = Image.network('$directorioImage${mapIdUser[tarea.user_id].avatar}');
-      }
+            ),
+          )
+      );
     }
-
-    String daysLeft = 'Ahora';
-    DateTime dateCreate = DateTime.parse(tarea.created_at);
-    Duration difDays = DateTime.now().difference(dateCreate);
-    if(difDays.inMinutes > 5){
-      if(difDays.inMinutes < 60){
-        daysLeft = 'Hace ${difDays.inMinutes} min';
-      }else{
-        if(difDays.inHours < 24){
-          daysLeft = 'Hace ${difDays.inHours} horas';
-        }else{
-          double days = difDays.inHours / 24;
-          daysLeft = 'Hace ${days.toStringAsFixed(0)} días';
-        }
-      }
-    }
-    return InkWell(
-      onTap: () =>clickTarea(tarea),
-      child: Container(
-        child: Row(
-          children: <Widget>[
-            Container(
-              width: ancho * 0.2,
-              child: Stack(
-                children: <Widget>[
-                  Center(
-                    child: Container(
-                      padding: const EdgeInsets.all(3.0), // borde width
-                      decoration: new BoxDecoration(
-                        color: bordeCirculeAvatar, // border color
-                        shape: BoxShape.circle,
-                      ),
-                      child: CircleAvatar(
-                        radius: alto * 0.035,
-                        backgroundImage: avatarUser.image,
-                        //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
-                      ),
-                    ),
-                  ),
-                  favorite ? Align(
-                    alignment: Alignment.bottomRight,
-                    child: Container(
-                      margin: EdgeInsets.only(right: ancho * 0.02),
-                      child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.032,),
-                    ),
-                  ) : Container(),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Flexible(
-                      flex: 1,
-                      child: Text(mapIdUser[tarea.user_id] == null ? '' : mapIdUser[tarea.user_id].name,
-                          style: favorite ?
-                          WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.black) :
-                          WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02, color: Colors.grey[600])), //estiloLetras(alto * 0.02,Colors.grey[600]),),
-                    ),
-                    Flexible(
-                        flex: 1,
-                        child: Text(tarea.name,
-                          style: favorite ?
-                          WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.black) :
-                          WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02, color: WalkieTaskColors.primary),)
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              width: ancho * 0.3,
-              margin: EdgeInsets.only(right: ancho * 0.03),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(daysLeft,style: estiloLetras(alto * 0.018,Colors.grey[600]),),
-                  SizedBox(height: alto * 0.006,),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      //Icon(Icons.message,color: Colors.grey[600],size: alto * 0.03),
-                      favorite ? CircleAvatar(
-                        backgroundColor: WalkieTaskColors.primary,
-                        radius: alto * 0.012,
-                        child: Text('2',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
-                      ) : Container(),
-                      favorite ? SizedBox(width: ancho * 0.01,) : Container(),
-                      tarea.url_audio != '' ? Icon(Icons.volume_up,color:  Colors.grey[600],size: alto * 0.03,) : Container()
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-    */
+    return listTaskRes;
   }
 
   Widget clickTarea(Tarea tarea){
