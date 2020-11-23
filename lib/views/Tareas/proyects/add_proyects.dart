@@ -10,9 +10,11 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:walkietaskv2/models/Policy.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
@@ -35,12 +37,21 @@ class _AddProyectsState extends State<AddProyects> {
   Usuario myUser;
   double alto = 0;
   double ancho = 0;
+
   bool cargando = false;
+  bool iconBuscador = false;
+
   List<Usuario> listUser;
+  Map<int,bool> checkUser = {};
+
   TextStyle textStylePrimary;
   TextStyle textStylePrimaryBold;
+
   TextEditingController controlleBuscador;
   TextEditingController controlleNewName;
+
+  conexionHttp connectionHttp = new conexionHttp();
+
 
   @override
   void initState() {
@@ -106,9 +117,6 @@ class _AddProyectsState extends State<AddProyects> {
             Container(
               height: alto * 0.04,
               child: TextFildGeneric(
-                onChanged: (text) {
-
-                },
                 labelStyle: textStylePrimary,
                 sizeH: alto,
                 sizeW: ancho,
@@ -133,7 +141,7 @@ class _AddProyectsState extends State<AddProyects> {
             RoundedButton(
               backgroundColor: WalkieTaskColors.primary,
               title: 'Aceptar',
-              onPressed: () {},
+              onPressed: () => _sumit(),
               radius: 5.0,
               textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022,color: WalkieTaskColors.white,fontWeight: FontWeight.bold),
               width: ancho * 0.3,
@@ -145,7 +153,6 @@ class _AddProyectsState extends State<AddProyects> {
     );
   }
 
-  bool iconBuscador = false;
   Widget buscador(){
     return Container(
       child: Row(
@@ -207,7 +214,7 @@ class _AddProyectsState extends State<AddProyects> {
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(5.0)),
         border: new Border.all(
-          width: 2.0,
+          width: 1.0,
           color: WalkieTaskColors.grey,
         ),
       ),
@@ -219,7 +226,6 @@ class _AddProyectsState extends State<AddProyects> {
     );
   }
 
-  Map<int,bool> checkUser = {};
   Widget _cardInvitation(Usuario user){
     Image avatarUser = Image.network(avatarImage);
     if(user.avatar != ''){
@@ -252,5 +258,51 @@ class _AddProyectsState extends State<AddProyects> {
         ],
       ),
     );
+  }
+
+  Future<void> _sumit() async{
+    setState(() {
+      cargando = true;
+    });
+
+
+    List<int> members = [];
+    checkUser.forEach((key, value) {
+      if(value){
+        members.add(key);}
+    });
+
+    if(controlleNewName.text.isNotEmpty){
+      if(members.isNotEmpty){
+        Map jsonBody = {
+          'name': controlleNewName.text,
+        };
+        for(int x = 0; x < members.length; x++){
+          jsonBody['users[$x]'] = '${members[x]}';
+        }
+        try{
+          var response = await connectionHttp.httpCreateProyect(jsonBody);
+          var value = jsonDecode(response.body);
+          if(value['status_code'] == 201){
+            showAlert('Creado con exito.',WalkieTaskColors.color_89BD7D);
+            controlleNewName.text = '';
+            checkUser = {};
+            setState(() {});
+          }else{
+            showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+          }
+        }catch(e){
+          print(e.toString());
+          showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+        }
+      }else{
+        showAlert('Debe seleccionar al menos un contacto.',WalkieTaskColors.color_E07676);
+      }
+    }else{
+      showAlert('Se debe agregar un nombre de proyecto.',WalkieTaskColors.color_E07676);
+    }
+    setState(() {
+      cargando = false;
+    });
   }
 }

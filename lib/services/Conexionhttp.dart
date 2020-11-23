@@ -204,6 +204,25 @@ class conexionHttp{
     return response;
   }
 
+  Future<http.Response> httpCreateProyect(Map jsonBody) async{
+    var response;
+    try{
+      String token  = await obtenerToken();
+      Map<String,String> headers = {
+        'Content-Type':'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Authorization': 'Bearer $token'
+      };
+      response = await http.post('$enlace/api/auth/projects/createProjects',
+        headers: headers,
+        body: jsonBody,
+      );
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
+
   Future<http.Response> httpRegisterUser(Map<String,dynamic> body) async{
     var response;
     try{
