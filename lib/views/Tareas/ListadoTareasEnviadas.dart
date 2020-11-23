@@ -32,6 +32,8 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
   List<Tarea> listEnviados;
   Map<int,Usuario> mapIdUser;
   Map<int,Caso> mapCasos = {};
+  Map<int,bool> openForUserTask = {};
+  Map<int,bool> openForProyectTask = {0 : false};
 
   double alto = 0;
   double ancho = 0;
@@ -46,13 +48,33 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     // TODO: implement initState
     super.initState();
     blocTaskSend = widget.blocTaskSendRes;
-    _inicializar();
     widget.listaCasosRes.forEach((element) { mapCasos[element.id] = element;});
+    _inicializar();
+    _inicializar2();
+    _inicializar3();
   }
 
-  _inicializar(){
+  void _inicializar(){
     listEnviados = widget.listEnviadosRes;
     mapIdUser = widget.mapIdUserRes;
+  }
+
+  void _inicializar2(){
+    if(widget.mapIdUserRes != null){
+      mapIdUser.forEach((key, value) {
+        openForUserTask[key] = false;
+      });
+    }
+    setState(() {});
+  }
+
+  void _inicializar3(){
+    if(widget.listaCasosRes.isNotEmpty){
+      mapCasos.forEach((key, value) {
+        openForProyectTask[key] = false;
+      });
+    }
+    setState(() {});
   }
 
   @override
@@ -116,7 +138,6 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     );
   }
 
-
   Widget _contenido(){
     return SingleChildScrollView(
       child: Column(
@@ -136,8 +157,8 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 mapAppBar[0] ? _listado() : Container(),
-                mapAppBar[1] ? _listado() : Container(),
-                mapAppBar[2] ? _listado() : Container(),
+                mapAppBar[1] ? _listadoUser() : Container(),
+                mapAppBar[2] ? _listadoProyect() : Container(),
               ],
             ),
           )
@@ -211,8 +232,8 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
   Widget _tareas(Tarea tarea, bool favorite,){
     Image avatarUser = Image.network(avatarImage);
     if(mapIdUser != null){
-      if(mapIdUser[tarea.user_id] != null && mapIdUser[tarea.user_id].avatar != ''){
-        avatarUser = Image.network('$directorioImage${mapIdUser[tarea.user_id].avatar}');
+      if(mapIdUser[tarea.user_responsability_id] != null && mapIdUser[tarea.user_responsability_id].avatar != ''){
+        avatarUser = Image.network('$directorioImage${mapIdUser[tarea.user_responsability_id].avatar}');
       }
     }
 
@@ -278,7 +299,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                   children: <Widget>[
                     Flexible(
                       flex: 1,
-                      child: Text(mapIdUser[tarea.user_id] == null ? '' : mapIdUser[tarea.user_id].name,
+                      child: Text(mapIdUser[tarea.user_responsability_id] == null ? '' : mapIdUser[tarea.user_responsability_id].name,
                           maxLines: 1,
                           style: favorite ?
                           WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.black) :
@@ -397,177 +418,341 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     );
   }
 */
-  clickTarea(Tarea tarea){
-    Navigator.push(context, new MaterialPageRoute(
-        builder: (BuildContext context) => new ChatForTarea(tareaRes: tarea,listaCasosRes: widget.listaCasosRes,)));
-  }
 
-  Widget _tareasPorUser(List<Tarea> listTareas){
+  Widget _listadoUser(){
+    Map<int,List<Tarea>> mapTask = {};
+    listEnviados.forEach((element) {
+      if(mapTask[element.user_responsability_id] == null){ mapTask[element.user_responsability_id] = [];}
+      mapTask[element.user_responsability_id].add(element);
+    });
+
     return Container(
-      height: (alto * 0.1006) * listTareas.length,
+      width: ancho,
+      height: alto * 0.7,
       child: ListView.builder(
-        itemCount: listTareas.length,
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (context,index){
-          return Slidable(
-            actionPane: SlidableDrawerActionPane(),
-            actionExtentRatio: 0.25,
-            child: Container(
-              color: index % 2 != 0 ? Colors.white : Colors.grey[100],
-              height: alto * 0.1,
-              child: listTareas[index].is_priority == 1 ?
-              _tareasFavoritas(listTareas[index])
-                  :
-              _tareasDeUsu(listTareas[index]),
-            ),
-            actions: <Widget>[
-              _ButtonSliderAction(listTareas[index].is_priority == 1 ? 'OLVIDAR' : 'DESTACAR',Icon(Icons.star,color: Colors.white,size: 30,),Colors.yellow[600],Colors.white,1,listTareas[index]),
-              _ButtonSliderAction('COMENTAR',Icon(Icons.message,color: Colors.white,size: 30,),Colors.deepPurple[200],Colors.white,2,listTareas[index]),
-            ],
-            secondaryActions: <Widget>[
-              _ButtonSliderAction('TRABAJANDO',Icon(Icons.build,color: Colors.white,size: 30,),colorSliderTrabajando,Colors.white,3,listTareas[index]),
-              _ButtonSliderAction('LISTO',Icon(Icons.check,color: Colors.white,size: 30,),colorSliderListo,Colors.white,4,listTareas[index]),
-            ],
-          );
+        itemCount: mapTask.length,
+        itemBuilder: (context, index){
+          List<Tarea> listTask = mapTask[mapTask.keys.elementAt(index)];
+          return _tareasUser(mapIdUser[listTask[0].user_responsability_id], listTask);
         },
       ),
     );
   }
 
-  Widget _tareasFavoritas(Tarea tarea){
+  Widget _tareasUser(Usuario user, List<Tarea> listTask){
 
     Image avatarUser = Image.network(avatarImage);
     if(mapIdUser != null){
-      if(mapIdUser[tarea.user_id] != null && mapIdUser[tarea.user_id].avatar != ''){
-        avatarUser = Image.network('$directorioImage${mapIdUser[tarea.user_id].avatar}');
+      if(user != null && user.avatar != ''){
+        avatarUser = Image.network('$directorioImage${user.avatar}');
       }
     }
 
-    return InkWell(
-      onTap: () =>clickTarea(tarea),
-      child: Container(
-        child: Row(
-          children: <Widget>[
-            Container(
-              width: ancho * 0.2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Flexible(
-                    child: Container(
-                      width: ancho * 0.2,
-                      child: Center(
-                        child: Container(
-                          padding: const EdgeInsets.all(3.0), // borde width
-                          decoration: new BoxDecoration(
-                            color: bordeCirculeAvatar, // border color
-                            shape: BoxShape.circle,
-                          ),
-                          child: CircleAvatar(
-                            radius: 11,
-                            backgroundImage: avatarUser.image,
-                            //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
-                          ),
-                        ),
-                      ),
+    List<Widget> listTaskWidget = listTaskGet(user, listTask);
+
+    return Container(
+      width: ancho,
+      child: Column(
+        children: <Widget>[
+          Container(
+            width: ancho,
+            padding: EdgeInsets.all(alto * 0.015),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.all(3.0), // borde width
+                  decoration: new BoxDecoration(
+                    color: bordeCirculeAvatar, // border color
+                    shape: BoxShape.circle,
+                  ),
+                  child: CircleAvatar(
+                    radius: alto * 0.03,
+                    backgroundImage: avatarUser.image,
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.only(left: ancho * 0.03,right: ancho * 0.03,),
+                    child: Text('${user.name}',
+                        style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.025, color: WalkieTaskColors.color_76ADE3)),
+                  ),
+                ),
+                Container(
+                  child: Text('(${listTask.length} ${listTask.length < 1 ? 'tarea' : 'Tareas'})',
+                      style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 1)),
+                ),
+                InkWell(
+                  child: Container(
+                    child: !openForUserTask[user.id] ?
+                    Container(
+                      width: ancho * 0.12,
+                      height: alto * 0.06,
+                      child: Image.asset('assets/image/icon_close_option.png',fit: BoxFit.fill,color: Colors.grey,),
+                    ) :
+                    Container(
+                      width: ancho * 0.12,
+                      height: alto * 0.06,
+                      child: Image.asset('assets/image/icon_open_option.png',fit: BoxFit.fill,color: Colors.grey,),
                     ),
-                    flex: 2,
                   ),
-                  Flexible(
-                      flex: 1,
-                      child: Icon(Icons.star,color: Colors.yellow[600],size: alto * 0.035,)
-                  ),
-                ],
-              ),
+                  onTap: (){
+                    openForUserTask[user.id] = !openForUserTask[user.id];
+                    setState(() {});
+                  },
+                ),
+              ],
             ),
-            Container(
-              width: ancho * 0.5,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(mapIdUser[tarea.user_id] == null ? '' : mapIdUser[tarea.user_id].name,
-                    style: estiloLetras(alto * 0.02,Colors.grey[600],),),
-                  SizedBox(height: alto * 0.006,),
-                  Text(tarea.name,
-                    style: estiloLetras(alto * 0.018,Colors.grey[600]),)
-                ],
-              ),
+          ),
+          openForUserTask[user.id] ?
+          Container(
+            width: ancho,
+            child: Column(
+              children: listTaskWidget,
             ),
-            Container(
-              width: ancho * 0.2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text('Hace 2 días',style: estiloLetras(alto * 0.018, Colors.grey[600]),),
-                ],
-              ),
-            ),
-            Container(
-              width: ancho * 0.1,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Icon(Icons.message,color: Colors.grey[600],size: alto * 0.03),
-                  SizedBox(height: alto * 0.02,),
-                  tarea.url_audio != '' ? Icon(Icons.volume_up,color:  Colors.grey[600],size: alto * 0.03,) : Container()
-                ],
-              ),
-            ),
-          ],
-        ),
+          ) : Container(),
+          Container(
+            height: 1,
+            margin: EdgeInsets.only(left: ancho * 0.2, right: ancho * 0.2, top: alto * 0.01),
+            color: WalkieTaskColors.color_E3E3E3,
+          )
+        ],
       ),
     );
   }
 
-  Widget _tareasDeUsu(Tarea tarea){
-    Image avatarUser = Image.network(avatarImage);
-    if(mapIdUser != null){
-      if(mapIdUser[tarea.user_id] != null && mapIdUser[tarea.user_id].avatar != ''){
-        avatarUser = Image.network('$directorioImage${mapIdUser[tarea.user_id].avatar}');
+  List<Widget> listTaskGet(Usuario user, List<Tarea> listTask){
+    List<Widget> listTaskRes = [];
+    listTask.forEach((task) {
+
+      String daysLeft = 'Ahora';
+      DateTime dateCreate = DateTime.parse(task.created_at);
+      Duration difDays = DateTime.now().difference(dateCreate);
+
+      String proyectName = '(Sin proyecto asignado)';
+      if(task.project_id != null && task.project_id != 0){
+        proyectName = mapCasos[task.project_id].name;
       }
-    }
-    return InkWell(
-      onTap: () =>clickTarea(tarea),
-      child: Center(
-        child: Row(
-          children: <Widget>[
-            Container(
-              width: ancho * 0.85,
-              height: alto * 0.1,
-              padding: EdgeInsets.only(left: ancho * 0.1,top: alto * 0.015),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Text('Hace 7 días'
-                      ,style: estiloLetras(alto * 0.02,Colors.grey[600]),),
-                    SizedBox(height: alto * 0.01,),
-                    Text('${tarea.name}',
-                      style: estiloLetras(alto * 0.02,Colors.grey[600]),),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              width: ancho * 0.1,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.center,
+
+      if(difDays.inMinutes > 5){
+        if(difDays.inMinutes < 60){
+          daysLeft = 'Hace ${difDays.inMinutes} min';
+        }else{
+          if(difDays.inHours < 24){
+            daysLeft = 'Hace ${difDays.inHours} horas';
+          }else{
+            double days = difDays.inHours / 24;
+            daysLeft = 'Hace ${days.toStringAsFixed(0)} días';
+          }
+        }
+      }
+
+      listTaskRes.add(
+          InkWell(
+            onTap: () =>clickTarea(task),
+            child: Container(
+              width: ancho,
+              padding: EdgeInsets.only(left: ancho * 0.04, right: ancho * 0.04,top: alto * 0.005),
+              child: Row(
                 children: <Widget>[
-                  Icon(Icons.message,color: Colors.grey[500],size: alto * 0.03),
-                  SizedBox(height: alto * 0.02,),
-                  tarea.url_audio != '' ? Icon(Icons.volume_up,color:  Colors.grey[600],size: alto * 0.03,) : Container()
+                  Expanded(
+                    child: Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(task.name.isEmpty ? 'Nombre no asignado' : task.name,
+                              maxLines: 1,
+                              style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.022, color: Colors.grey[600])),
+                          Text(proyectName,
+                            maxLines: 1,
+                            style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.018, color: WalkieTaskColors.color_969696),),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: ancho * 0.3,
+                    margin: EdgeInsets.only(right: ancho * 0.03),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(daysLeft,style: estiloLetras(alto * 0.018,Colors.grey[600]),),
+                        SizedBox(height: alto * 0.006,),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            //Icon(Icons.message,color: Colors.grey[600],size: alto * 0.03),
+                            // smsRecived ? CircleAvatar(
+                            //   backgroundColor: WalkieTaskColors.primary,
+                            //   radius: alto * 0.012,
+                            //   child: Text('2',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
+                            // ) : Container(),
+                            // smsRecived ? SizedBox(width: ancho * 0.01,) : Container(),
+                            task.url_audio != '' ? Icon(Icons.volume_up,color:  Colors.grey[600],size: alto * 0.03,) : Container()
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-          ],
-        ),
+          )
+      );
+
+    });
+    return listTaskRes;
+  }
+
+  Widget _listadoProyect(){
+    Map<int,List<Tarea>> mapTask = {};
+    listEnviados.forEach((element) {
+      int idProyect = element.project_id ?? 0;
+      if(mapTask[idProyect] == null){ mapTask[idProyect] = [];}
+      mapTask[idProyect].add(element);
+    });
+    return Container(
+      width: ancho,
+      height: alto * 0.7,
+      child: ListView.builder(
+        itemCount: mapTask.length,
+        itemBuilder: (context, index){
+          List<Tarea> listTask = mapTask[mapTask.keys.elementAt(index)];
+          Caso proyect;
+          if(listTask[0].project_id != null){
+            proyect = mapCasos[listTask[0].project_id];
+          }
+          return _tareasProyect(proyect, listTask);
+        },
       ),
     );
+  }
+
+  Widget _tareasProyect(Caso proyect, List<Tarea> listTask,){
+
+    String nameProyect = proyect == null ? 'Sin proyecto asignado' : proyect.name;
+    int keyOpen = proyect == null ? 0 : proyect.id;
+
+    List<Widget> listTaskWidget = listTaskGetProyect(proyect, listTask);
+
+    return Container(
+      width: ancho,
+      child: Column(
+        children: <Widget>[
+          Container(
+            width: ancho,
+            padding: EdgeInsets.all(alto * 0.015),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.only(left: ancho * 0.03,right: ancho * 0.03,),
+                    child: Text(nameProyect,
+                        style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.025, color: WalkieTaskColors.color_76ADE3)),
+                  ),
+                ),
+                Container(
+                  child: Text('(${listTask.length} ${listTask.length < 1 ? 'tarea' : 'Tareas'})',
+                      style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 1)),
+                ),
+                InkWell(
+                  child: Container(
+                    child: !openForProyectTask[keyOpen] ?
+                    Container(
+                      width: ancho * 0.12,
+                      height: alto * 0.06,
+                      child: Image.asset('assets/image/icon_close_option.png',fit: BoxFit.fill,color: Colors.grey,),
+                    ) :
+                    Container(
+                      width: ancho * 0.12,
+                      height: alto * 0.06,
+                      child: Image.asset('assets/image/icon_open_option.png',fit: BoxFit.fill,color: Colors.grey,),
+                    ),
+                  ),
+                  onTap: (){
+                    openForProyectTask[keyOpen] = !openForProyectTask[keyOpen];
+                    setState(() {});
+                  },
+                ),
+              ],
+            ),
+          ),
+          openForProyectTask[keyOpen] ?
+          Container(
+            width: ancho,
+            child: Column(
+              children: listTaskWidget,
+            ),
+          ) : Container(),
+          Container(
+            height: 1,
+            margin: EdgeInsets.only(left: ancho * 0.2, right: ancho * 0.2, top: alto * 0.01),
+            color: WalkieTaskColors.color_E3E3E3,
+          )
+        ],
+      ),
+    );
+  }
+
+  List<Widget> listTaskGetProyect(Caso proyect, List<Tarea> listTask){
+    List<Widget> listTaskRes = [];
+    for(int index = 0; index < listTask.length; index++) {
+      Tarea task = listTask[index];
+      String daysLeft = 'Ahora';
+      DateTime dateCreate = DateTime.parse(task.created_at);
+      Duration difDays = DateTime.now().difference(dateCreate);
+
+      String proyectName = '(Sin proyecto asignado)';
+      if(task.project_id != null && task.project_id != 0){
+        proyectName = mapCasos[task.project_id].name;
+      }
+
+      if(difDays.inMinutes > 5){
+        if(difDays.inMinutes < 60){
+          daysLeft = 'Hace ${difDays.inMinutes} min';
+        }else{
+          if(difDays.inHours < 24){
+            daysLeft = 'Hace ${difDays.inHours} horas';
+          }else{
+            double days = difDays.inHours / 24;
+            daysLeft = 'Hace ${days.toStringAsFixed(0)} días';
+          }
+        }
+      }
+
+      listTaskRes.add(
+          InkWell(
+            onTap: () =>clickTarea(task),
+            child: Container(
+              height: alto * 0.1,
+              key: ValueKey("value$index"),
+              padding: EdgeInsets.only(top: alto * 0.01,bottom: alto * 0.01),
+              color: Colors.white,
+              child: Slidable(
+                actionPane: SlidableDrawerActionPane(),
+                actionExtentRatio: 0.25,
+                child: _tareas(task, task.is_priority != 0),
+                actions: <Widget>[
+                  _ButtonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: Colors.white,size: 30,),Colors.yellow[600],Colors.white,1,task),
+                  _ButtonSliderAction('COMENTAR',Icon(Icons.message,color: Colors.white,size: 30,),Colors.deepPurple[200],Colors.white,2,task),
+                ],
+                secondaryActions: <Widget>[
+                  _ButtonSliderAction('TRABAJANDO',Icon(Icons.build,color: Colors.white,size: 30,),colorSliderTrabajando,Colors.white,3,task),
+                  _ButtonSliderAction('LISTO',Icon(Icons.check,color: Colors.white,size: 30,),colorSliderListo,Colors.white,4,task),
+                ],
+              ),
+            ),
+          )
+      );
+    }
+    return listTaskRes;
+  }
+
+  clickTarea(Tarea tarea){
+    Navigator.push(context, new MaterialPageRoute(
+        builder: (BuildContext context) => new ChatForTarea(tareaRes: tarea,listaCasosRes: widget.listaCasosRes,)));
   }
 
   Widget _ButtonSliderAction(String titulo,Icon icono,Color color,Color colorText,int accion,Tarea tarea){
