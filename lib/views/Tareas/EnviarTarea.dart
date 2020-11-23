@@ -1093,6 +1093,9 @@ class _MyHomePageState extends State<EnviarTarea> {
     descriptionTask = '';
     titleTask = '';
     opcionesOpen = false;
+
+    mapcasoSelect = {};
+
     setState(() {});
   }
   _reiniciarSonido(){

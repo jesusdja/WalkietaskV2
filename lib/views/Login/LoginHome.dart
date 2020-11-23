@@ -103,6 +103,8 @@ class _LoginHomeState extends State<LoginHome> {
     );
   }
 
+  TextEditingController _email = new TextEditingController();
+
   Widget _form(){
     return Container(
       margin: EdgeInsets.only(left: ancho * 0.05,right: alto * 0.05),
@@ -154,6 +156,8 @@ class _LoginHomeState extends State<LoginHome> {
                           borderColor: WalkieTaskColors.color_B7B7B7,
                           sizeHeight: alto * 0.045,
                           textAlign: TextAlign.left,
+                          textEditingController: _email,
+                          initialValue: null,
                         ),
                       ),
                       SizedBox(height: alto * 0.025,),

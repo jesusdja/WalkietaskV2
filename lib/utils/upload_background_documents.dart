@@ -1,9 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
-import 'package:http/http.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:http/http.dart' as http;
 import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
@@ -38,7 +33,7 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
     //await Future.delayed(Duration(seconds: 3));
     blocIndicatorProgress.inList.add({'progressIndicator' : 0.3, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
 
-    if(data.length > 3 && data[3] != ''){  jsonBody['project_id'] = data[3]; }
+    if(data.length > 3 && data[3] != '' && data[3] != '0'){  jsonBody['project_id'] = data[3]; }
     if(data.length > 4 && data[4] != ''){  jsonBody['description'] = data[4]; }
 
     //await Future.delayed(Duration(seconds: 3));
