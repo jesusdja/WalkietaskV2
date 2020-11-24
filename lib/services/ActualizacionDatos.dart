@@ -28,7 +28,7 @@ class UpdateData{
     try{
       var response = await conexionHispanos.httpListUsuarios();
       var value = jsonDecode(response.body);
-      List<dynamic> usuarios = value["users"];
+      List<dynamic> usuarios = value["contacts"];
       for(int x = 0; x < usuarios.length; x++){
         Usuario usuario = Usuario.fromJson(usuarios[x]);
         //EXTRAER VARIABLE DE USUARIO FIJO

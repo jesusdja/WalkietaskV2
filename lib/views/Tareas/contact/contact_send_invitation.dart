@@ -1,14 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkietaskv2/App.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/DialogAlert.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
+import 'package:walkietaskv2/utils/value_validators.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Login/LoginHome.dart';
 
@@ -22,6 +27,8 @@ class SendInvitation extends StatefulWidget {
 
 class _SendInvitationState extends State<SendInvitation> {
 
+  conexionHttp connectionHttp = new conexionHttp();
+
   Usuario myUser;
   Map<int,Usuario> mapIdUsers;
   double alto = 0;
@@ -30,6 +37,12 @@ class _SendInvitationState extends State<SendInvitation> {
   TextStyle _textStyleSubTitle = TextStyle();
   TextStyle _textStyleDescription = TextStyle();
   TextStyle _textStylehiden = TextStyle();
+
+  bool loadData = false;
+
+  TextEditingController _controllerUser = TextEditingController();
+  TextEditingController _controllerNewUser = TextEditingController();
+  TextEditingController _controllerNewUserSms = TextEditingController();
 
   @override
   void initState() {
@@ -66,7 +79,10 @@ class _SendInvitationState extends State<SendInvitation> {
           },
         ),
       ),
-      body: _contenido(),
+      body: loadData ?
+      Cargando('Enviando invitación',context)
+      :
+      _contenido(),
     );
   }
 
@@ -112,6 +128,8 @@ class _SendInvitationState extends State<SendInvitation> {
                         sizeHeight: alto * 0.041,
                         textAlign: TextAlign.left,
                         sizeBorder: 1.2,
+                        textEditingController: _controllerUser,
+                        initialValue: null,
                       ),
                     ),
                   )
@@ -126,7 +144,7 @@ class _SendInvitationState extends State<SendInvitation> {
                 child: RoundedButton(
                   backgroundColor: WalkieTaskColors.primary,
                   title: 'Invitar',
-                  onPressed: () {},
+                  onPressed: () => inviteUser(),
                   radius: 5.0,
                   textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 1.2),
                   width: ancho * 0.2,
@@ -176,6 +194,8 @@ class _SendInvitationState extends State<SendInvitation> {
                         sizeHeight: alto * 0.041,
                         textAlign: TextAlign.left,
                         sizeBorder: 1.2,
+                        textEditingController: _controllerNewUser,
+                        initialValue: null,
                       ),
                     ),
                   )
@@ -199,6 +219,8 @@ class _SendInvitationState extends State<SendInvitation> {
                 sizeHeight: alto * 0.1,
                 textAlign: TextAlign.left,
                 sizeBorder: 1.2,
+                textEditingController: _controllerNewUserSms,
+                initialValue: null,
               ),
             ),
             SizedBox(height: alto * 0.01,),
@@ -209,7 +231,7 @@ class _SendInvitationState extends State<SendInvitation> {
                 child: RoundedButton(
                   backgroundColor: WalkieTaskColors.primary,
                   title: 'Invitar',
-                  onPressed: () {},
+                  onPressed: () => inviteNewUser(),
                   radius: 5.0,
                   textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 1.2),
                   width: ancho * 0.2,
@@ -221,5 +243,77 @@ class _SendInvitationState extends State<SendInvitation> {
         ),
       ),
     );
+  }
+
+  Future<void> inviteUser() async {
+    setState(() {
+      loadData = true;
+    });
+
+    if(_controllerUser.text.isNotEmpty){
+      Map jsonBody = {
+        'username': _controllerUser.text,
+      };
+
+      try{
+        var response = await connectionHttp.httpSendInvitation(jsonBody);
+        var value = jsonDecode(response.body);
+        if(value['status_code'] == 200){
+          showAlert('Enviada con exito.',WalkieTaskColors.color_89BD7D);
+        }else{
+          if(value['message'] != null){
+            showAlert(value['message'],WalkieTaskColors.color_E07676);
+          }else{
+            showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+          }
+
+        }
+      }catch(e){
+        print(e.toString());
+        showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+      }
+    }else{
+      showAlert('Debe agregar un usuario o correo.',WalkieTaskColors.color_E07676);
+    }
+
+    setState(() {
+      loadData = false;
+    });
+  }
+
+  Future<void> inviteNewUser() async {
+    setState(() {
+      loadData = true;
+    });
+
+    if(_controllerNewUser.text.isNotEmpty){
+      Map jsonBody = {
+        'email': _controllerNewUser.text,
+        'message' : _controllerNewUserSms.text,
+      };
+
+      try{
+        var response = await connectionHttp.httpSendInvitationNewUser(jsonBody);
+        var value = jsonDecode(response.body);
+        if(value['status_code'] == 200){
+          showAlert('Enviada con exito.',WalkieTaskColors.color_89BD7D);
+        }else{
+          if(value['message'] != null){
+            showAlert(value['message'],WalkieTaskColors.color_E07676);
+          }else{
+            showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+          }
+        }
+      }catch(e){
+        print(e.toString());
+        showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+      }
+    }else{
+      showAlert('Debe agregar un correo.',WalkieTaskColors.color_E07676);
+    }
+
+    setState(() {
+      loadData = false;
+    });
   }
 }

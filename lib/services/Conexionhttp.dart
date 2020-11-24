@@ -35,7 +35,7 @@ class conexionHttp{
     };
     var response;
     try{
-      response = http.get('$enlace/api/auth/users/getAllUsers',
+      response = http.get('$enlace/api/auth/contacts/all',
           headers: requestHeaders);
     }catch(ex){
       print(ex.toString());
@@ -214,6 +214,44 @@ class conexionHttp{
         'Authorization': 'Bearer $token'
       };
       response = await http.post('$enlace/api/auth/projects/createProjects',
+        headers: headers,
+        body: jsonBody,
+      );
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
+
+  Future<http.Response> httpSendInvitation(Map jsonBody) async{
+    var response;
+    try{
+      String token  = await obtenerToken();
+      Map<String,String> headers = {
+        'Content-Type':'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Authorization': 'Bearer $token'
+      };
+      response = await http.post('$enlace/api/auth/contacts/sendinvitation',
+        headers: headers,
+        body: jsonBody,
+      );
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
+
+  Future<http.Response> httpSendInvitationNewUser(Map jsonBody) async{
+    var response;
+    try{
+      String token  = await obtenerToken();
+      Map<String,String> headers = {
+        'Content-Type':'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Authorization': 'Bearer $token'
+      };
+      response = await http.post('$enlace/api/auth/contacts/sendinvitationtoapp',
         headers: headers,
         body: jsonBody,
       );

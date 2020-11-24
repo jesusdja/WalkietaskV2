@@ -433,7 +433,11 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
         itemCount: mapTask.length,
         itemBuilder: (context, index){
           List<Tarea> listTask = mapTask[mapTask.keys.elementAt(index)];
-          return _tareasUser(mapIdUser[listTask[0].user_responsability_id], listTask);
+          Usuario user = mapIdUser[listTask[0].user_responsability_id];
+          return user == null ?
+          Container()
+          :
+          _tareasUser(user , listTask);
         },
       ),
     );
