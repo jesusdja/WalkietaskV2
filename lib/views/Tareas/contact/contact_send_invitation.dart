@@ -130,6 +130,7 @@ class _SendInvitationState extends State<SendInvitation> {
                         sizeBorder: 1.2,
                         textEditingController: _controllerUser,
                         initialValue: null,
+                        textInputType: TextInputType.emailAddress,
                       ),
                     ),
                   )
@@ -196,6 +197,7 @@ class _SendInvitationState extends State<SendInvitation> {
                         sizeBorder: 1.2,
                         textEditingController: _controllerNewUser,
                         initialValue: null,
+                        textInputType: TextInputType.emailAddress,
                       ),
                     ),
                   )
@@ -258,8 +260,11 @@ class _SendInvitationState extends State<SendInvitation> {
       try{
         var response = await connectionHttp.httpSendInvitation(jsonBody);
         var value = jsonDecode(response.body);
-        if(value['status_code'] == 200){
+        if(value['status_code'] == 201){
           showAlert('Enviada con exito.',WalkieTaskColors.color_89BD7D);
+          setState(() {
+            _controllerUser.text = '';
+          });
         }else{
           if(value['message'] != null){
             showAlert(value['message'],WalkieTaskColors.color_E07676);
@@ -295,8 +300,12 @@ class _SendInvitationState extends State<SendInvitation> {
       try{
         var response = await connectionHttp.httpSendInvitationNewUser(jsonBody);
         var value = jsonDecode(response.body);
-        if(value['status_code'] == 200){
+        if(value['status_code'] == 201){
           showAlert('Enviada con exito.',WalkieTaskColors.color_89BD7D);
+          setState(() {
+            _controllerNewUser.text = '';
+            _controllerNewUserSms.text = '';
+          });
         }else{
           if(value['message'] != null){
             showAlert(value['message'],WalkieTaskColors.color_E07676);

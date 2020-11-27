@@ -56,7 +56,7 @@ class _ContactsState extends State<Contacts> {
             color: Colors.grey[100],
             child: _appBArMenu(),
           ),
-          mapAppBar[2] ? Container() : Container(
+          !mapAppBar[0] ? Container() : Container(
             width: ancho,
             padding: EdgeInsets.all(alto * 0.015),
             child: Align(

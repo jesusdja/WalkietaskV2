@@ -47,7 +47,27 @@ class UpdateData{
       print('SIN CONEXION PARA ACTUALIZAR USUARIOS');
     }
 
-    if(entre){
+    bool entre2 = false;
+    try{
+      var response = await conexionHispanos.httpMyUser();
+      var value = jsonDecode(response.body);
+      Usuario usuario = Usuario.fromMap(value);
+      //EXTRAER VARIABLE DE USUARIO FIJO
+      Usuario userVery = await  UserDatabaseProvider.db.getCodeId('${usuario.id}');
+      if(userVery != null){usuario.fijo = userVery.fijo;}
+      if(userVery == null || usuario != userVery ){
+        entre2 = true;
+        if(userVery == null){
+          await UserDatabaseProvider.db.saveUser(usuario);
+        }else{
+          await UserDatabaseProvider.db.updateUser(usuario);
+        }
+      }
+    }catch(e){
+      print(e.toString());
+    }
+
+    if(entre || entre2){
       blocUser.inList.add(true);
     }
   }
