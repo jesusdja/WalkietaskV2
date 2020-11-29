@@ -371,11 +371,9 @@ class _MyHomePageState extends State<EnviarTarea> {
 
                   Usuario usuario = listUser[index];
 
-                  if(usuario != null && widget.myUserRes != null && usuario.id == widget.myUserRes.id){
-                    return Container();
-                  }
-
-                  if(usuario != null && controlleBuscador.text.length != 0 && !usuario.name.toLowerCase().contains(controlleBuscador.text.toLowerCase())){
+                  if((usuario != null && widget.myUserRes != null && usuario.id == widget.myUserRes.id) ||
+                     (usuario.contact == 0) ||
+                     (usuario != null && controlleBuscador.text.length != 0 && !usuario.name.toLowerCase().contains(controlleBuscador.text.toLowerCase()))){
                     return Container();
                   }
 

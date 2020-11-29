@@ -46,7 +46,8 @@ Future<Database> getDatabaseInstanace() async {
                 "createdAt TEXT, "
                 "updatedAt TEXT, "
                 "deletedAt TEXT, "
-                "fijo INT"
+                "fijo INT,"
+                "contact INT"
                 ")");
         await db.execute(
             "CREATE TABLE Tareas("

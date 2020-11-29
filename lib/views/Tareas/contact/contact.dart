@@ -78,8 +78,10 @@ class _ContactsState extends State<Contacts> {
 
   Widget _myContacts(){
     List<Widget> listCardContacts = [];
-    mapIdUsers.forEach((key, value) {
-      listCardContacts.add(_cardMyContacts(value));
+    mapIdUsers.forEach((key, user) {
+      if(widget.myUserRes != null && user.id != widget.myUserRes.id && user.contact == 1){
+        listCardContacts.add(_cardMyContacts(user));
+      }
     });
 
     return Container(

@@ -28,12 +28,15 @@ class UpdateData{
     try{
       var response = await conexionHispanos.httpListUsuarios();
       var value = jsonDecode(response.body);
-      List<dynamic> usuarios = value["contacts"];
+      List<dynamic> usuarios = value["users"];
       for(int x = 0; x < usuarios.length; x++){
         Usuario usuario = Usuario.fromJson(usuarios[x]);
         //EXTRAER VARIABLE DE USUARIO FIJO
         Usuario userVery = await  UserDatabaseProvider.db.getCodeId('${usuario.id}');
-        if(userVery != null){usuario.fijo = userVery.fijo;}
+        if(userVery != null){
+          usuario.fijo = userVery.fijo;
+          usuario.contact = userVery.contact;
+        }
         if(userVery == null || usuario != userVery ){
           entre = true;
           if(userVery == null){
@@ -47,27 +50,35 @@ class UpdateData{
       print('SIN CONEXION PARA ACTUALIZAR USUARIOS');
     }
 
-    bool entre2 = false;
+    if(entre){
+      blocUser.inList.add(true);
+    }
+
+    actualizarListaContact(blocUser);
+  }
+
+  actualizarListaContact(BlocUser blocUser) async {
+
+    bool entre = false;
+    //ACTUALIZAR TABLA LOCAL
     try{
-      var response = await conexionHispanos.httpMyUser();
+      var response = await conexionHispanos.httpListContacts();
       var value = jsonDecode(response.body);
-      Usuario usuario = Usuario.fromMap(value);
-      //EXTRAER VARIABLE DE USUARIO FIJO
-      Usuario userVery = await  UserDatabaseProvider.db.getCodeId('${usuario.id}');
-      if(userVery != null){usuario.fijo = userVery.fijo;}
-      if(userVery == null || usuario != userVery ){
-        entre2 = true;
-        if(userVery == null){
-          await UserDatabaseProvider.db.saveUser(usuario);
-        }else{
-          await UserDatabaseProvider.db.updateUser(usuario);
+      List<dynamic> contacts = value["contacts"];
+      for(int x = 0; x < contacts.length; x++){
+        Usuario contact = Usuario.fromJson(contacts[x]);
+        //EXTRAER VARIABLE DE USUARIO FIJO
+        Usuario userVery = await  UserDatabaseProvider.db.getCodeId('${contact.id}');
+        if(userVery != null){
+          userVery.contact = 1;
+          await UserDatabaseProvider.db.updateUser(userVery);
+          entre = true;
         }
       }
     }catch(e){
-      print(e.toString());
+      print('SIN CONEXION PARA ACTUALIZAR CONTACTOS');
     }
-
-    if(entre || entre2){
+    if(entre){
       blocUser.inList.add(true);
     }
   }

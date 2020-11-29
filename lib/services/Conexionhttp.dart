@@ -35,6 +35,21 @@ class conexionHttp{
     };
     var response;
     try{
+      response = http.get('$enlace/api/auth/users/getAllUsers',
+          headers: requestHeaders);
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
+
+  Future<http.Response> httpListContacts() async{
+    String token  = await obtenerToken();
+    Map<String, String> requestHeaders = {
+      'Authorization': 'Bearer $token'
+    };
+    var response;
+    try{
       response = http.get('$enlace/api/auth/contacts/all',
           headers: requestHeaders);
     }catch(ex){

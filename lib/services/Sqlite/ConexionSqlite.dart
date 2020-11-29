@@ -78,6 +78,21 @@ class UserDatabaseProvider{
     return listUser;
   }
 
+  Future<List<Usuario>> getContacts() async {
+    List<Usuario> listUser = new List<Usuario>();
+    final db = await database;
+    try{
+      List<Map> list = await db.rawQuery('SELECT * FROM Usuarios WHERE contact = 1 ORDER BY name');
+      list.forEach((mapa){
+        Usuario usuario = new Usuario.fromMap(mapa);
+        listUser.add(usuario);
+      });
+    }catch(e){
+      print(e.toString());
+    }
+    return listUser;
+  }
+
   //Insert
   Future<int> saveUser(Usuario user) async {
     int res = 0;

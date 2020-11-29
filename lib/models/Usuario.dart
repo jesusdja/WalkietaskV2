@@ -18,6 +18,7 @@ class Usuario extends Equatable {
   String updatedAt;
   String deletedAt;
   int fijo;
+  int contact;
 
   Usuario(
       {this.id = 0,
@@ -34,7 +35,8 @@ class Usuario extends Equatable {
         this.createdAt = '',
         this.updatedAt = '',
         this.deletedAt = '',
-        this.fijo = 0
+        this.fijo = 0,
+        this.contact = 0,
       });
 
   Usuario.fromJson(Map<String, dynamic> json) {
@@ -53,6 +55,7 @@ class Usuario extends Equatable {
     updatedAt = json['updatedAt']== null ? '' :json['updatedAt'];
     deletedAt = json['deletedAt']== null ? '' :json['deletedAt'];
     fijo = json['fijo']== null ? 0 : json['fijo'];
+    contact = json['contact']== null ? 0 : json['contact'];
   }
 
   Map<String, dynamic> toJson() {
@@ -72,6 +75,7 @@ class Usuario extends Equatable {
     data['updatedAt'] = this.updatedAt;
     data['deletedAt'] = this.deletedAt;
     data['fijo'] = this.fijo;
+    data['contact'] = this.contact;
     return data;
   }
   Usuario.fromMap(Map snapshot) :
@@ -89,7 +93,8 @@ class Usuario extends Equatable {
         createdAt = snapshot['createdAt']== null ? '' :snapshot['createdAt'],
         updatedAt = snapshot['updatedAt']== null ? '' :snapshot['updatedAt'],
         deletedAt = snapshot['deletedAt']== null ? '' :snapshot['deletedAt'],
-        fijo = snapshot['fijo']== null ? 0 :snapshot['fijo']
+        fijo = snapshot['fijo']== null ? 0 :snapshot['fijo'],
+        contact = snapshot['contact']== null ? 0 :snapshot['contact']
   ;
 
   Usuario.map(dynamic obj) {
@@ -108,6 +113,7 @@ class Usuario extends Equatable {
     this.updatedAt = obj['updatedAt'];
     this.deletedAt = obj['deletedAt'];
     this.fijo = obj['fijo'];
+    this.contact = obj['contact'];
   }
 
   Map<String, dynamic> toMap() => {
@@ -126,6 +132,7 @@ class Usuario extends Equatable {
     'updatedAt':     updatedAt== null ? '' :updatedAt,
     'deletedAt':     deletedAt== null ? '' :deletedAt,
     'fijo':           fijo== null ? 0 :fijo,
+    'contact':           contact== null ? 0 :contact,
   };
 
   @override
@@ -144,7 +151,8 @@ class Usuario extends Equatable {
     createdAt ,
     updatedAt ,
     deletedAt ,
-    fijo
+    fijo,
+    contact
   ];
 
   @override
