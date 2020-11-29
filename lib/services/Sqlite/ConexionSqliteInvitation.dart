@@ -1,0 +1,75 @@
+import 'dart:io';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:walkietaskv2/models/Tarea.dart';
+import 'package:walkietaskv2/models/invitation.dart';
+import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/shared_preferences.dart';
+
+class InvitationDatabaseProvider{
+  InvitationDatabaseProvider._();
+
+  static final  InvitationDatabaseProvider db = InvitationDatabaseProvider._();
+  Database _database;
+
+  Future<Database> get database async {
+    if(_database != null) return _database;
+    _database = await getDatabaseInstanace();
+    return _database;
+  }
+  //ELIMINAR INSTANCIA
+  Future deleteDatabaseInstance() async {
+    final db = await database;
+    db.delete('Invitation');
+  }
+  //OBTENER TAREA
+  Future<Tarea> getCodeId(String codigo) async {
+      try{
+        final db = await database;
+        var response = await db.query("Invitation", where: "id = ?", whereArgs: [codigo]);
+        return response.isNotEmpty ? Tarea.fromMap(response.first) : null;
+      }catch(e){
+        return null;
+      }
+  }
+  //OBTENER TODAS LAS TAREAS
+  Future<List<Tarea>> getAll() async {
+    List<Tarea> listTarea = new List<Tarea>();
+    final db = await database;
+    try{
+      List<Map> list = await db.rawQuery('SELECT * FROM Invitation');
+      list.forEach((mapa){
+        Tarea usuario = new Tarea.fromMap(mapa);
+        listTarea.add(usuario);
+      });
+    }catch(e){
+      print(e.toString());
+    }
+    return listTarea;
+  }
+
+  //INSERTAR TAREA
+  Future<int> saveInvitation(InvitationModel invitation) async {
+    int res = 0;
+    try{
+      var dbClient = await database;
+      res = await dbClient.insert("Invitation", invitation.toMap());
+    }catch(e){
+      print(e.toString());
+    }
+
+    return res;
+  }
+  //MODIFICAR TAREA
+  Future<int> updateInvitation(InvitationModel invitation) async {
+    var dbClient = await  database;
+    int res = 0;
+    try{
+      res = await dbClient.update('Invitation', invitation.toMap(),where: 'id = ?', whereArgs: [invitation.id]);
+    }catch(e){
+      print(e.toString());
+    }
+    return res;
+  }
+}

@@ -96,6 +96,18 @@ Future<Database> getDatabaseInstanace() async {
                 "deleted_at TEXT, "
                 "nameCompany TEXT"
                 ")");
+        await db.execute(
+            "CREATE TABLE Invitation("
+                "id INTEGER primary key, "
+                "user_id INT, "
+                "user_id_invited INT, "
+                "sent INT, "
+                "resent INT, "
+                "accepted INT, "
+                "created_at TEXT, "
+                "update_at TEXT, "
+                "inv INT"
+                ")");
       });
 }
 
