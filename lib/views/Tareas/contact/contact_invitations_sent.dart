@@ -1,15 +1,23 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/models/invitation.dart';
+import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/services/Sqlite/ConexionSqliteInvitation.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
 class InvitationsSent extends StatefulWidget {
-  InvitationsSent({this.listInvitationRes, this.mapIdUsersRes});
+  InvitationsSent({this.listInvitationRes, this.mapIdUsersRes, this.blocInvitation});
   final Map<int,Usuario> mapIdUsersRes;
   final List<InvitationModel> listInvitationRes;
+  final BlocCasos blocInvitation;
 
   @override
   _InvitationsSentState createState() => _InvitationsSentState();
@@ -21,11 +29,22 @@ class _InvitationsSentState extends State<InvitationsSent> {
   double alto = 0;
   double ancho = 0;
 
+  conexionHttp connectionHttp = new conexionHttp();
+
+  StreamSubscription streamSubscriptionInvitation;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    listInvitation = widget.listInvitationRes;
+    _inicializarPatronBlocInvitation();
+    _inicializarInvitation();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    streamSubscriptionInvitation.cancel();
   }
 
   @override
@@ -33,7 +52,7 @@ class _InvitationsSentState extends State<InvitationsSent> {
     alto = MediaQuery.of(context).size.height;
     ancho = MediaQuery.of(context).size.width;
 
-    List<Widget> widgets = cardInvitation();
+    List<Widget> widgets = listInvitation != null ?cardInvitation() : [];
 
     return Container(
       width: ancho,
@@ -97,11 +116,28 @@ class _InvitationsSentState extends State<InvitationsSent> {
                           RoundedButton(
                             backgroundColor: WalkieTaskColors.primary,
                             title: 'Reenviar',
-                            onPressed: (){},
                             radius: 5.0,
                             textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 1.5),
                             height: alto * 0.035,
                             width: ancho * 0.2,
+                            onPressed: () async {
+                              try{
+                                var response = await connectionHttp.httpResetInvitationSent(invitation.userIdInvited);
+                                var value = jsonDecode(response.body);
+                                if(value['status_code'] == 200){
+                                  showAlert('Enviada con exito.',WalkieTaskColors.color_89BD7D);
+                                }else{
+                                  if(value['message'] != null){
+                                    showAlert(value['message'],WalkieTaskColors.color_E07676);
+                                  }else{
+                                    showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                                  }
+                                }
+                              }catch(e){
+                                print(e.toString());
+                                showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                              }
+                            },
                           )
                         ],
                       ),
@@ -113,11 +149,33 @@ class _InvitationsSentState extends State<InvitationsSent> {
                           RoundedButton(
                             backgroundColor: WalkieTaskColors.color_DD7777,
                             title: 'Eliminar',
-                            onPressed: (){},
                             radius: 5.0,
                             textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 1.5),
                             height: alto * 0.035,
                             width: ancho * 0.2,
+                            onPressed: () async {
+                              try{
+                                var response = await connectionHttp.httpDeleteInvitationSent(invitation.userIdInvited);
+                                var value = jsonDecode(response.body);
+                                if(value['status_code'] == 200){
+                                  int res = await InvitationDatabaseProvider.db.deleteInvitation(invitation.id);
+                                  if(res != 0){
+                                    widget.blocInvitation.inList.add(true);
+                                    showAlert('Eliminada con exito.',WalkieTaskColors.color_89BD7D);
+                                    setState(() {});
+                                  }
+                                }else{
+                                  if(value['message'] != null){
+                                    showAlert(value['message'],WalkieTaskColors.color_E07676);
+                                  }else{
+                                    showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                                  }
+                                }
+                              }catch(e){
+                                print(e.toString());
+                                showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                              }
+                            },
                           )
                         ],
                       ),
@@ -128,9 +186,23 @@ class _InvitationsSentState extends State<InvitationsSent> {
           );
         }
       }catch(_){}
-
-
     });
     return result;
+  }
+
+  _inicializarPatronBlocInvitation(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionInvitation = widget.blocInvitation.outList.listen((newVal) {
+        if(newVal){
+          _inicializarInvitation();
+        }
+      });
+    } catch (e) {}
+  }
+
+  _inicializarInvitation() async {
+    listInvitation = await  InvitationDatabaseProvider.db.getAll();
+    setState(() {});
   }
 }

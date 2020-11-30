@@ -61,6 +61,19 @@ class InvitationDatabaseProvider{
 
     return res;
   }
+
+  //ELIMINAR INVITACION
+  Future<int> deleteInvitation(int id) async {
+    int res = 0;
+    try{
+      var dbClient = await database;
+      res = await dbClient.delete("Invitation", where: "id = ?", whereArgs: [id]);
+    }catch(e){
+      print(e.toString());
+    }
+
+    return res;
+  }
   //MODIFICAR TAREA
   Future<int> updateInvitation(InvitationModel invitation) async {
     var dbClient = await  database;
