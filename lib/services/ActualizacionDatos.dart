@@ -5,8 +5,10 @@ import 'package:walkietaskv2/bloc/blocUser.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/models/invitation.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqliteCasos.dart';
+import 'package:walkietaskv2/services/Sqlite/ConexionSqliteInvitation.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 
@@ -15,9 +17,10 @@ class UpdateData{
   conexionHttp conexionHispanos = new conexionHttp();
 
   resetDB() async {
-    await  UserDatabaseProvider.db.deleteDatabaseInstance();
-    await  TaskDatabaseProvider.db.deleteDatabaseInstance();
-    await  CasosDatabaseProvider.db.deleteDatabaseInstance();
+    await UserDatabaseProvider.db.deleteDatabaseInstance();
+    await TaskDatabaseProvider.db.deleteDatabaseInstance();
+    await CasosDatabaseProvider.db.deleteDatabaseInstance();
+    await InvitationDatabaseProvider.db.deleteDatabaseInstance();
     print('BASE DE DATOS LIMPIAS');
   }
 
@@ -207,6 +210,65 @@ class UpdateData{
       print(e.toString());
     }
     return user;
+  }
+
+  actualizarListaInvitationSent(BlocCasos blocInvitation) async {
+
+    bool entre = false;
+    //ACTUALIZAR TABLA LOCAL
+    try{
+      var response = await conexionHispanos.httpListInvitationSent();
+      var value = jsonDecode(response.body);
+      List<dynamic> invitations = value["contacts"];
+      for(int x = 0; x < invitations.length; x++){
+        InvitationModel invitation = InvitationModel.fromJson(invitations[x]);
+        //EXTRAER VARIABLE DE USUARIO FIJO
+        InvitationModel invitationVery = await  InvitationDatabaseProvider.db.getCodeId('${invitation.id}');
+        invitation.inv = 0;
+        if(invitationVery == null || invitation != invitationVery ){
+          entre = true;
+          if(invitationVery == null){
+            await InvitationDatabaseProvider.db.saveInvitation(invitation);
+          }else{
+            await InvitationDatabaseProvider.db.updateInvitation(invitation);
+          }
+        }
+      }
+    }catch(e){
+      print('SIN CONEXION PARA ACTUALIZAR INVITACIONES ENVIADAS');
+    }
+    if(entre){
+      blocInvitation.inList.add(true);
+    }
+  }
+  actualizarListaInvitationReceived(BlocCasos blocInvitation) async {
+
+    bool entre = false;
+    //ACTUALIZAR TABLA LOCAL
+    try{
+      var response = await conexionHispanos.httpListInvitationReceived();
+      var value = jsonDecode(response.body);
+      List<dynamic> invitations = value["contacts"];
+      for(int x = 0; x < invitations.length; x++){
+        InvitationModel invitation = InvitationModel.fromJson(invitations[x]);
+        //EXTRAER VARIABLE DE USUARIO FIJO
+        InvitationModel invitationVery = await  InvitationDatabaseProvider.db.getCodeId('${invitation.id}');
+        invitation.inv = 1;
+        if(invitationVery == null || invitation != invitationVery ){
+          entre = true;
+          if(invitationVery == null){
+            await InvitationDatabaseProvider.db.saveInvitation(invitation);
+          }else{
+            await InvitationDatabaseProvider.db.updateInvitation(invitation);
+          }
+        }
+      }
+    }catch(e){
+      print('SIN CONEXION PARA ACTUALIZAR INVITACIONES RECIBIDAS');
+    }
+    if(entre){
+      blocInvitation.inList.add(true);
+    }
   }
 }
 

@@ -293,4 +293,34 @@ class conexionHttp{
     }
     return response;
   }
+
+  Future<http.Response> httpListInvitationSent() async{
+    String token  = await obtenerToken();
+    Map<String, String> requestHeaders = {
+      'Authorization': 'Bearer $token'
+    };
+    var response;
+    try{
+      response = http.get('$enlace/api/auth/contacts/invited',
+          headers: requestHeaders);
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
+
+  Future<http.Response> httpListInvitationReceived() async{
+    String token  = await obtenerToken();
+    Map<String, String> requestHeaders = {
+      'Authorization': 'Bearer $token'
+    };
+    var response;
+    try{
+      response = http.get('$enlace/api/auth/contacts/received',
+          headers: requestHeaders);
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
 }

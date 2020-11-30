@@ -8,9 +8,11 @@ import 'package:walkietaskv2/bloc/blocUser.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/models/invitation.dart';
 import 'package:walkietaskv2/services/Permisos.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqliteCasos.dart';
+import 'package:walkietaskv2/services/Sqlite/ConexionSqliteInvitation.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
@@ -54,12 +56,14 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   Map<int,Usuario> mapIdUser;
   List<Usuario> listaUser;
   List<Caso> listaCasos;
+  List<InvitationModel> listInvitation;
 
   BlocUser blocUser;
   BlocTask blocTaskSend;
   BlocTask blocTaskReceived;
   BlocCasos blocCasos;
   BlocCasos blocEmpresa;
+  BlocCasos blocInvitation;
   BlocProgress blocIndicatorProgress;
 
   UpdateData updateData = new UpdateData();
@@ -68,6 +72,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   StreamSubscription streamSubscriptionTaskSend;
   StreamSubscription streamSubscriptionTaskRecived;
   StreamSubscription streamSubscriptionCasos;
+  StreamSubscription streamSubscriptionInvitation;
   StreamSubscription streamSubscriptionProgress;
 
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
@@ -89,6 +94,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     blocTaskReceived = new BlocTask();
     blocCasos = new BlocCasos();
     blocEmpresa = new BlocCasos();
+    blocInvitation = new BlocCasos();
     blocIndicatorProgress = new BlocProgress();
 
     listRecibidos = new List<Tarea>();
@@ -96,10 +102,12 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     mapIdUser = new Map();
     listaUser = new List<Usuario>();
     listaCasos = new List<Caso>();
+    listInvitation = new List<InvitationModel>();
 
     _inicializarPatronBlocUser();
     _inicializarPatronBlocTaskRecived();
     _inicializarPatronBlocTaskSend();
+    _inicializarPatronBlocInvitation();
     _inicializarPatronBlocCasos();
     _inicializarPatronBlocProgress();
 
@@ -107,11 +115,14 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     _inicializarTaskRecived();
     _inicializarTaskSend();
     _inicializarCasos();
+    _inicializarInvitation();
 
     updateData.actualizarListaUsuarios(blocUser);
     updateData.actualizarListaRecibidos(blocTaskReceived);
     updateData.actualizarListaEnviados(blocTaskSend);
     updateData.actualizarCasos(blocCasos);
+    updateData.actualizarListaInvitationSent(blocInvitation);
+    updateData.actualizarListaInvitationReceived(blocInvitation);
 
     mapNavigatorBotton[bottonSelect.opcion1] = true;
     mapNavigatorBotton[bottonSelect.opcion2] = false;
@@ -130,11 +141,13 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     streamSubscriptionTaskSend.cancel();
     streamSubscriptionTaskRecived.cancel();
     streamSubscriptionCasos.cancel();
+    streamSubscriptionInvitation.cancel();
     streamSubscriptionProgress.cancel();
     blocUser.dispose();
     blocTaskSend.dispose();
     blocTaskReceived.dispose();
     blocCasos.dispose();
+    blocInvitation.dispose();
     blocEmpresa.dispose();
     blocIndicatorProgress.dispose();
   }
@@ -233,6 +246,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     }
     if(page == bottonSelect.opcion5){
       updateData.actualizarListaUsuarios(blocUser);
+      updateData.actualizarListaInvitationSent(blocInvitation);
+      updateData.actualizarListaInvitationReceived(blocInvitation);
     }
 
     switch(page){
@@ -395,9 +410,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                 await prefs.remove('unityIdMyUser');
                 await prefs.remove('WalListDocument');
                 await prefs.remove('unityEmail');
-                TaskDatabaseProvider.db.deleteDatabaseInstance();
-                UserDatabaseProvider.db.deleteDatabaseInstance();
-                CasosDatabaseProvider.db.deleteDatabaseInstance();
+                updateData.resetDB();
                 Navigator.push(context, new MaterialPageRoute(
                     builder: (BuildContext context) => new App()));
               }
@@ -525,6 +538,10 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     listaCasos = await  CasosDatabaseProvider.db.getAll();
     setState(() {});
   }
+  _inicializarInvitation() async {
+    listInvitation = await  InvitationDatabaseProvider.db.getAll();
+    setState(() {});
+  }
   //*******************************************
   //*******************************************
   //*************ESCUCHAR APIS*****************
@@ -536,7 +553,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       streamSubscriptionUser = blocUser.outList.listen((newVal) {
         if(newVal){
           _inicializarUser();
-          setState(() {});
         }
       });
     } catch (e) {}
@@ -547,7 +563,16 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       streamSubscriptionCasos = blocCasos.outList.listen((newVal) {
         if(newVal){
           _inicializarCasos();
-          setState(() {});
+        }
+      });
+    } catch (e) {}
+  }
+  _inicializarPatronBlocInvitation(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionInvitation = blocInvitation.outList.listen((newVal) {
+        if(newVal){
+          _inicializarInvitation();
         }
       });
     } catch (e) {}
@@ -558,7 +583,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       streamSubscriptionTaskSend = blocTaskSend.outList.listen((newVal) {
         if(newVal){
           _inicializarTaskSend();
-          setState(() {});
         }
       });
     } catch (e) {}
@@ -569,7 +593,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       streamSubscriptionTaskRecived = blocTaskReceived.outList.listen((newVal) {
         if(newVal){
           _inicializarTaskRecived();
-          setState(() {});
         }
       });
     } catch (e) {}

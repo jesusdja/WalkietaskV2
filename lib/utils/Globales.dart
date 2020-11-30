@@ -105,7 +105,7 @@ Future<Database> getDatabaseInstanace() async {
                 "resent INT, "
                 "accepted INT, "
                 "created_at TEXT, "
-                "update_at TEXT, "
+                "updated_at TEXT, "
                 "inv INT"
                 ")");
       });

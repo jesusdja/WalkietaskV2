@@ -24,29 +24,29 @@ class InvitationDatabaseProvider{
     db.delete('Invitation');
   }
   //OBTENER TAREA
-  Future<Tarea> getCodeId(String codigo) async {
+  Future<InvitationModel> getCodeId(String codigo) async {
       try{
         final db = await database;
         var response = await db.query("Invitation", where: "id = ?", whereArgs: [codigo]);
-        return response.isNotEmpty ? Tarea.fromMap(response.first) : null;
+        return response.isNotEmpty ? InvitationModel.fromMap(response.first) : null;
       }catch(e){
         return null;
       }
   }
   //OBTENER TODAS LAS TAREAS
-  Future<List<Tarea>> getAll() async {
-    List<Tarea> listTarea = new List<Tarea>();
+  Future<List<InvitationModel>> getAll() async {
+    List<InvitationModel> listinvitation = new List<InvitationModel>();
     final db = await database;
     try{
       List<Map> list = await db.rawQuery('SELECT * FROM Invitation');
       list.forEach((mapa){
-        Tarea usuario = new Tarea.fromMap(mapa);
-        listTarea.add(usuario);
+        InvitationModel invitation = new InvitationModel.fromMap(mapa);
+        listinvitation.add(invitation);
       });
     }catch(e){
       print(e.toString());
     }
-    return listTarea;
+    return listinvitation;
   }
 
   //INSERTAR TAREA
