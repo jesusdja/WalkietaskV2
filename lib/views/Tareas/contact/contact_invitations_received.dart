@@ -6,16 +6,16 @@ import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
-class InvitationsSent extends StatefulWidget {
-  InvitationsSent({this.listInvitationRes, this.mapIdUsersRes});
+class InvitationsReceived extends StatefulWidget {
+  InvitationsReceived({this.listInvitationRes, this.mapIdUsersRes});
   final Map<int,Usuario> mapIdUsersRes;
   final List<InvitationModel> listInvitationRes;
 
   @override
-  _InvitationsSentState createState() => _InvitationsSentState();
+  _InvitationsReceivedState createState() => _InvitationsReceivedState();
 }
 
-class _InvitationsSentState extends State<InvitationsSent> {
+class _InvitationsReceivedState extends State<InvitationsReceived> {
 
   List<InvitationModel> listInvitation;
   double alto = 0;
@@ -46,12 +46,14 @@ class _InvitationsSentState extends State<InvitationsSent> {
   }
 
   List<Widget> cardInvitation(){
-    List<Widget> result = [];
+    List<Widget> result = [
+      SizedBox(height: alto * 0.04,),
+    ];
     listInvitation.forEach((invitation) {
       Usuario userInvited;
       try{
-        userInvited = widget.mapIdUsersRes[invitation.userIdInvited];
-        if(invitation.inv == 0 && userInvited != null){
+        userInvited = widget.mapIdUsersRes[invitation.userId];
+        if(invitation.inv == 1 && userInvited != null){
           Image avatarUser = Image.network(avatarImage);
           if(userInvited.avatar.isNotEmpty){
             avatarUser = Image.network('$directorioImage${userInvited.avatar}');
@@ -96,7 +98,7 @@ class _InvitationsSentState extends State<InvitationsSent> {
                         children: <Widget>[
                           RoundedButton(
                             backgroundColor: WalkieTaskColors.primary,
-                            title: 'Reenviar',
+                            title: 'Aceptar',
                             onPressed: (){},
                             radius: 5.0,
                             textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 1.5),
@@ -112,7 +114,7 @@ class _InvitationsSentState extends State<InvitationsSent> {
                         children: <Widget>[
                           RoundedButton(
                             backgroundColor: WalkieTaskColors.color_DD7777,
-                            title: 'Eliminar',
+                            title: 'Rechazar',
                             onPressed: (){},
                             radius: 5.0,
                             textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 1.5),

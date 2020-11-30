@@ -1,21 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:walkietaskv2/App.dart';
+import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
-import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/models/invitation.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
-import 'package:walkietaskv2/utils/DialogAlert.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
-import 'package:walkietaskv2/views/Login/LoginHome.dart';
+import 'package:walkietaskv2/views/Tareas/contact/contact_invitations_received.dart';
+import 'package:walkietaskv2/views/Tareas/contact/contact_invitations_sent.dart';
 import 'package:walkietaskv2/views/Tareas/contact/contact_send_invitation.dart';
 
 class Contacts extends StatefulWidget {
-  Contacts({this.myUserRes, this.mapIdUsersRes});
+  Contacts({this.myUserRes, this.mapIdUsersRes, this.listInvitation, this.blocInvitation});
   final Usuario myUserRes;
   final Map<int,Usuario> mapIdUsersRes;
+  final List<InvitationModel> listInvitation;
+  final BlocCasos blocInvitation;
   @override
   _ContactsState createState() => _ContactsState();
 }
@@ -56,21 +57,26 @@ class _ContactsState extends State<Contacts> {
             color: Colors.grey[100],
             child: _appBArMenu(),
           ),
-          !mapAppBar[0] ? Container() : Container(
+          mapAppBar[2] ? Container() : Container(
             width: ancho,
             padding: EdgeInsets.all(alto * 0.015),
             child: Align(
               alignment: Alignment.centerRight,
               child: InkWell(
-                onTap: (){
-                  Navigator.push(context, new MaterialPageRoute(
+                onTap: () async {
+                  var result = await Navigator.push(context, new MaterialPageRoute(
                       builder: (BuildContext context) => new SendInvitation(myUserRes: myUser, mapIdUsersRes: mapIdUsers,)));
+                  if(result as bool == true){
+                    widget.blocInvitation.inList.add(true);
+                  }
                 },
                 child: Icon(Icons.add_circle_outline, color: WalkieTaskColors.primary,size: alto * 0.04,),
               ),
             ),
           ),
           mapAppBar[0] ? _myContacts() : Container(),
+          mapAppBar[1] ? InvitationsSent(listInvitationRes: widget.listInvitation, mapIdUsersRes: widget.mapIdUsersRes,) : Container(),
+          mapAppBar[2] ? InvitationsReceived(listInvitationRes: widget.listInvitation, mapIdUsersRes: widget.mapIdUsersRes) : Container(),
         ],
       ),
     );

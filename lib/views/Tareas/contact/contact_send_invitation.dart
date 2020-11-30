@@ -39,6 +39,7 @@ class _SendInvitationState extends State<SendInvitation> {
   TextStyle _textStylehiden = TextStyle();
 
   bool loadData = false;
+  bool result = false;
 
   TextEditingController _controllerUser = TextEditingController();
   TextEditingController _controllerNewUser = TextEditingController();
@@ -75,7 +76,7 @@ class _SendInvitationState extends State<SendInvitation> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios,color: Colors.grey,size: alto * 0.04,),
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(result);
           },
         ),
       ),
@@ -263,6 +264,7 @@ class _SendInvitationState extends State<SendInvitation> {
         if(value['status_code'] == 201){
           showAlert('Enviada con exito.',WalkieTaskColors.color_89BD7D);
           setState(() {
+            result = true;
             _controllerUser.text = '';
           });
         }else{
@@ -303,6 +305,7 @@ class _SendInvitationState extends State<SendInvitation> {
         if(value['status_code'] == 201){
           showAlert('Enviada con exito.',WalkieTaskColors.color_89BD7D);
           setState(() {
+            result = true;
             _controllerNewUser.text = '';
             _controllerNewUserSms.text = '';
           });

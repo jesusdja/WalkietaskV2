@@ -268,7 +268,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       case bottonSelect.opcion4:
         return MyProyects(myUser, listaUser);
       case bottonSelect.opcion5:
-        return Contacts(myUserRes: myUser,mapIdUsersRes: mapIdUser,);
+        return Contacts(myUserRes: myUser,mapIdUsersRes: mapIdUser,listInvitation: listInvitation,blocInvitation: blocInvitation,);
     }
   }
   Widget navigatorBotton(){
