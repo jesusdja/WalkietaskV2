@@ -14,9 +14,8 @@ import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
 class InvitationsSent extends StatefulWidget {
-  InvitationsSent({this.listInvitationRes, this.mapIdUsersRes, this.blocInvitation});
+  InvitationsSent({this.mapIdUsersRes, this.blocInvitation});
   final Map<int,Usuario> mapIdUsersRes;
-  final List<InvitationModel> listInvitationRes;
   final BlocCasos blocInvitation;
 
   @override
@@ -30,8 +29,10 @@ class _InvitationsSentState extends State<InvitationsSent> {
   double ancho = 0;
 
   conexionHttp connectionHttp = new conexionHttp();
-
   StreamSubscription streamSubscriptionInvitation;
+
+  Map<int,bool> mapInvitationReset = {};
+  Map<int,bool> mapInvitationDelete = {};
 
   @override
   void initState() {
@@ -111,73 +112,97 @@ class _InvitationsSentState extends State<InvitationsSent> {
                     ),
                     Container(
                       margin: EdgeInsets.only(bottom: alto * 0.02, right: ancho * 0.02),
-                      child: Column(
-                        children: <Widget>[
-                          RoundedButton(
-                            backgroundColor: WalkieTaskColors.primary,
-                            title: 'Reenviar',
-                            radius: 5.0,
-                            textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 1.5),
-                            height: alto * 0.035,
-                            width: ancho * 0.2,
-                            onPressed: () async {
-                              try{
-                                var response = await connectionHttp.httpResetInvitationSent(invitation.userIdInvited);
-                                var value = jsonDecode(response.body);
-                                if(value['status_code'] == 200){
-                                  showAlert('Enviada con exito.',WalkieTaskColors.color_89BD7D);
-                                }else{
-                                  if(value['message'] != null){
-                                    showAlert(value['message'],WalkieTaskColors.color_E07676);
-                                  }else{
-                                    showAlert('Error de conexión',WalkieTaskColors.color_E07676);
-                                  }
-                                }
-                              }catch(e){
-                                print(e.toString());
+                      child: mapInvitationReset[invitation.id] ?
+                      Container(
+                        width: ancho * 0.2,
+                        child: Center(
+                          child: Container(
+                            width: alto * 0.03,
+                            height: alto * 0.03,
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      )
+                          :
+                      RoundedButton(
+                        backgroundColor: WalkieTaskColors.primary,
+                        title: 'Reenviar',
+                        radius: 5.0,
+                        textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 1.5),
+                        height: alto * 0.035,
+                        width: ancho * 0.2,
+                        onPressed: () async {
+                          mapInvitationReset[invitation.id] = true;
+                          setState(() {});
+                          try{
+                            var response = await connectionHttp.httpResetInvitationSent(invitation.userIdInvited);
+                            var value = jsonDecode(response.body);
+                            if(value['status_code'] == 200){
+                              showAlert('Enviada con exito.',WalkieTaskColors.color_89BD7D);
+                            }else{
+                              if(value['message'] != null){
+                                showAlert(value['message'],WalkieTaskColors.color_E07676);
+                              }else{
                                 showAlert('Error de conexión',WalkieTaskColors.color_E07676);
                               }
-                            },
-                          )
-                        ],
+                            }
+                          }catch(e){
+                            print(e.toString());
+                            showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                          }
+                          mapInvitationReset[invitation.id] = false;
+                          setState(() {});
+                        },
                       ),
                     ),
                     Container(
                       margin: EdgeInsets.only(bottom: alto * 0.02, right: ancho * 0.04),
-                      child: Column(
-                        children: <Widget>[
-                          RoundedButton(
-                            backgroundColor: WalkieTaskColors.color_DD7777,
-                            title: 'Eliminar',
-                            radius: 5.0,
-                            textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 1.5),
-                            height: alto * 0.035,
-                            width: ancho * 0.2,
-                            onPressed: () async {
-                              try{
-                                var response = await connectionHttp.httpDeleteInvitationSent(invitation.userIdInvited);
-                                var value = jsonDecode(response.body);
-                                if(value['status_code'] == 200){
-                                  int res = await InvitationDatabaseProvider.db.deleteInvitation(invitation.id);
-                                  if(res != 0){
-                                    widget.blocInvitation.inList.add(true);
-                                    showAlert('Eliminada con exito.',WalkieTaskColors.color_89BD7D);
-                                    setState(() {});
-                                  }
-                                }else{
-                                  if(value['message'] != null){
-                                    showAlert(value['message'],WalkieTaskColors.color_E07676);
-                                  }else{
-                                    showAlert('Error de conexión',WalkieTaskColors.color_E07676);
-                                  }
-                                }
-                              }catch(e){
-                                print(e.toString());
+                      child: mapInvitationDelete[invitation.id] ?
+                      Container(
+                        width: ancho * 0.2,
+                        child: Center(
+                          child: Container(
+                            width: alto * 0.03,
+                            height: alto * 0.03,
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      )
+                          :
+                      RoundedButton(
+                        backgroundColor: WalkieTaskColors.color_DD7777,
+                        title: 'Eliminar',
+                        radius: 5.0,
+                        textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 1.5),
+                        height: alto * 0.035,
+                        width: ancho * 0.2,
+                        onPressed: () async {
+                          mapInvitationDelete[invitation.id] = true;
+                          setState(() {});
+                          try{
+                            var response = await connectionHttp.httpDeleteInvitationSent(invitation.userIdInvited);
+                            var value = jsonDecode(response.body);
+                            if(value['status_code'] == 200){
+                              int res = await InvitationDatabaseProvider.db.deleteInvitation(invitation.id);
+                              if(res != 0){
+                                widget.blocInvitation.inList.add(true);
+                                showAlert('Eliminada con exito.',WalkieTaskColors.color_89BD7D);
+                                setState(() {});
+                              }
+                            }else{
+                              if(value['message'] != null){
+                                showAlert(value['message'],WalkieTaskColors.color_E07676);
+                              }else{
                                 showAlert('Error de conexión',WalkieTaskColors.color_E07676);
                               }
-                            },
-                          )
-                        ],
+                            }
+                          }catch(e){
+                            print(e.toString());
+                            showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                          }
+                          mapInvitationDelete[invitation.id] = false;
+                          setState(() {});
+                        },
                       ),
                     )
                   ],
@@ -203,6 +228,10 @@ class _InvitationsSentState extends State<InvitationsSent> {
 
   _inicializarInvitation() async {
     listInvitation = await  InvitationDatabaseProvider.db.getAll();
+    listInvitation.forEach((element) {
+      mapInvitationReset[element.id] = false;
+      mapInvitationDelete[element.id] = false;
+    });
     setState(() {});
   }
 }
