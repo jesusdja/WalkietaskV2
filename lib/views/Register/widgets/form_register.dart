@@ -486,8 +486,20 @@ class _FormRegisterState extends State<FormRegister> {
                     }
                   }
                 }else{
-                  if(value['errors'] != null && value['errors']['email'][0] != null){
-                    showAlert(value['errors']['email'][0],Colors.red[400]);
+                  if(value['errors'] != null){
+                    try{
+                      Map mapValue = value['errors'] as Map;
+                      mapValue.forEach((key, value) {
+                        List listValue = value as List;
+                        listValue.forEach((element) {
+                          String errorElement = element as String;
+                          errorElement = errorElement.replaceAll('username', 'Usuario');
+                          showAlert(errorElement,Colors.red[400]);
+                        });
+                      });
+                    }catch(e){
+                      showAlert('Error al enviar datos.',Colors.red[400]);
+                    }
                   }else{
                     showAlert('Error al enviar datos.',Colors.red[400]);
                   }

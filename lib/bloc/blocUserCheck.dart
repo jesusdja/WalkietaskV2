@@ -1,8 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:walkietaskv2/models/Tarea.dart';
-import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 
 class BlocUserCheck {
@@ -13,8 +10,18 @@ class BlocUserCheck {
 
   Future<void> check(String userName) async{
     inList.add(3);
-    await Future.delayed(Duration(seconds: 2));
-    inList.add(1);
+    conexionHttp connectionHttp = new conexionHttp();
+    try{
+      var response = await connectionHttp.httpCheckUserRegister(userName);
+      var value = jsonDecode(response.body);
+      if(value['status_code'] == 200){
+        inList.add(1);
+      }else{
+        inList.add(2);
+      }
+    }catch(e){
+      inList.add(2);
+    }
   }
 
   @override

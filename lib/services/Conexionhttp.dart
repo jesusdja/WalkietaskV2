@@ -133,6 +133,26 @@ class conexionHttp{
     return response;
   }
 
+  Future<http.Response> httpCheckUserRegister(String userName) async{
+    var response;
+    try{
+      Map<String,String> headers = {
+        'Content-Type':'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      };
+      final msg = jsonEncode({
+        'username': userName,
+      });
+      response = await http.post('http://www.unitydbm.com/api/auth/checkusername',
+        headers: headers,
+        body: msg,
+      );
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
+
   Future<http.Response> httpModificarTarea(Tarea tarea) async {
 
     String token  = await obtenerToken();
