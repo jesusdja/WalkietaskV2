@@ -365,4 +365,46 @@ class conexionHttp{
     }
     return response;
   }
+
+  Future<http.Response> httpAcceptedInvitationReceived(int idInvited) async {
+
+    String token  = await obtenerToken();
+    Map<String,String> headers = {
+      'Content-Type':'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Authorization': 'Bearer $token'
+    };
+
+    var response;
+
+    try{
+      response = await http.put('$enlace/api/auth/contacts/acceptInvitation/$idInvited',
+        headers: headers,
+      );
+    }catch(e){
+      print(e.toString());
+    }
+    return response;
+  }
+
+  Future<http.Response> httpDeniedInvitationReceived(int idInvited) async {
+
+    String token  = await obtenerToken();
+    Map<String,String> headers = {
+      'Content-Type':'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Authorization': 'Bearer $token'
+    };
+
+    var response;
+
+    try{
+      response = await http.delete('$enlace/api/auth/contacts/received/delete/$idInvited',
+        headers: headers,
+      );
+    }catch(e){
+      print(e.toString());
+    }
+    return response;
+  }
 }

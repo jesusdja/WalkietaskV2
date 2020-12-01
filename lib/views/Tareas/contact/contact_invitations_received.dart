@@ -1,15 +1,22 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/models/invitation.dart';
+import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/services/Sqlite/ConexionSqliteInvitation.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
 class InvitationsReceived extends StatefulWidget {
-  InvitationsReceived({this.listInvitationRes, this.mapIdUsersRes});
+  InvitationsReceived({this.mapIdUsersRes, this.blocInvitation});
   final Map<int,Usuario> mapIdUsersRes;
-  final List<InvitationModel> listInvitationRes;
+  final BlocCasos blocInvitation;
 
   @override
   _InvitationsReceivedState createState() => _InvitationsReceivedState();
@@ -21,11 +28,24 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
   double alto = 0;
   double ancho = 0;
 
+  Map<int,bool> mapInvitationAccepted = {};
+  Map<int,bool> mapInvitationDenied = {};
+
+  conexionHttp connectionHttp = new conexionHttp();
+  StreamSubscription streamSubscriptionInvitation;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    listInvitation = widget.listInvitationRes;
+    _inicializarPatronBlocInvitation();
+    _inicializarInvitation();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    streamSubscriptionInvitation.cancel();
   }
 
   @override
@@ -33,7 +53,7 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
     alto = MediaQuery.of(context).size.height;
     ancho = MediaQuery.of(context).size.width;
 
-    List<Widget> widgets = cardInvitation();
+    List<Widget> widgets = listInvitation != null ?cardInvitation() : [];
 
     return Container(
       width: ancho,
@@ -94,34 +114,97 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
                     ),
                     Container(
                       margin: EdgeInsets.only(bottom: alto * 0.02, right: ancho * 0.02),
-                      child: Column(
-                        children: <Widget>[
-                          RoundedButton(
-                            backgroundColor: WalkieTaskColors.primary,
-                            title: 'Aceptar',
-                            onPressed: (){},
-                            radius: 5.0,
-                            textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 1.5),
-                            height: alto * 0.035,
-                            width: ancho * 0.2,
-                          )
-                        ],
+                      child: mapInvitationAccepted[invitation.id] ?
+                      Container(
+                        width: ancho * 0.2,
+                        child: Center(
+                          child: Container(
+                            width: alto * 0.03,
+                            height: alto * 0.03,
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      )
+                          :
+                      RoundedButton(
+                        backgroundColor: WalkieTaskColors.primary,
+                        title: 'Aceptar',
+                        radius: 5.0,
+                        textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 1.5),
+                        height: alto * 0.035,
+                        width: ancho * 0.2,
+                        onPressed: () async {
+                          mapInvitationAccepted[invitation.id] = true;
+                          setState(() {});
+                          try{
+                            var response = await connectionHttp.httpAcceptedInvitationReceived(invitation.userId);
+                            var value = jsonDecode(response.body);
+                            if(value['status_code'] == 200){
+                              showAlert('Invitación aceptada.',WalkieTaskColors.color_89BD7D);
+                            }else{
+                              if(value['message'] != null){
+                                showAlert(value['message'],WalkieTaskColors.color_E07676);
+                              }else{
+                                showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                              }
+                            }
+                          }catch(e){
+                            print(e.toString());
+                            showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                          }
+                          mapInvitationAccepted[invitation.id] = false;
+                          setState(() {});
+                        },
                       ),
                     ),
                     Container(
                       margin: EdgeInsets.only(bottom: alto * 0.02, right: ancho * 0.04),
-                      child: Column(
-                        children: <Widget>[
-                          RoundedButton(
-                            backgroundColor: WalkieTaskColors.color_DD7777,
-                            title: 'Rechazar',
-                            onPressed: (){},
-                            radius: 5.0,
-                            textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 1.5),
-                            height: alto * 0.035,
-                            width: ancho * 0.2,
-                          )
-                        ],
+                      child: mapInvitationDenied[invitation.id] ?
+                      Container(
+                        width: ancho * 0.2,
+                        child: Center(
+                          child: Container(
+                            width: alto * 0.03,
+                            height: alto * 0.03,
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      )
+                          :
+                      RoundedButton(
+                        backgroundColor: WalkieTaskColors.color_DD7777,
+                        title: 'Rechazar',
+                        radius: 5.0,
+                        textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 1.5),
+                        height: alto * 0.035,
+                        width: ancho * 0.2,
+                        onPressed: () async {
+                          mapInvitationDenied[invitation.id] = true;
+                          setState(() {});
+                          try{
+                            var response = await connectionHttp.httpDeniedInvitationReceived(invitation.userId);
+                            var value = jsonDecode(response.body);
+                            if(value['status_code'] == 200){
+                              int res = await InvitationDatabaseProvider.db.deleteInvitation(invitation.id);
+                              if(res != 0){
+                                widget.blocInvitation.inList.add(true);
+                                showAlert('Invitación rechazada.',WalkieTaskColors.color_89BD7D);
+                                setState(() {});
+                              }
+                            }else{
+                              if(value['message'] != null){
+                                showAlert(value['message'],WalkieTaskColors.color_E07676);
+                              }else{
+                                showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                              }
+                            }
+                          }catch(e){
+                            print(e.toString());
+                            showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                          }
+                          mapInvitationDenied[invitation.id] = false;
+                          setState(() {});
+                        },
                       ),
                     )
                   ],
@@ -134,5 +217,25 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
 
     });
     return result;
+  }
+
+  _inicializarPatronBlocInvitation(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionInvitation = widget.blocInvitation.outList.listen((newVal) {
+        if(newVal){
+          _inicializarInvitation();
+        }
+      });
+    } catch (e) {}
+  }
+
+  _inicializarInvitation() async {
+    listInvitation = await  InvitationDatabaseProvider.db.getAll();
+    listInvitation.forEach((element) {
+      mapInvitationAccepted[element.id] = false;
+      mapInvitationDenied[element.id] = false;
+    });
+    setState(() {});
   }
 }

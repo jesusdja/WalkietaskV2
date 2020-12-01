@@ -76,7 +76,7 @@ class _ContactsState extends State<Contacts> {
           ),
           mapAppBar[0] ? _myContacts() : Container(),
           mapAppBar[1] ? InvitationsSent(mapIdUsersRes: widget.mapIdUsersRes,blocInvitation: widget.blocInvitation,) : Container(),
-          mapAppBar[2] ? InvitationsReceived(listInvitationRes: widget.listInvitation, mapIdUsersRes: widget.mapIdUsersRes) : Container(),
+          mapAppBar[2] ? InvitationsReceived(blocInvitation: widget.blocInvitation, mapIdUsersRes: widget.mapIdUsersRes) : Container(),
         ],
       ),
     );
