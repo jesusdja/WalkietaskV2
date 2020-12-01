@@ -1,14 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as path;
-import 'package:async/async.dart';
-import 'package:http/http.dart' as http;
-import 'package:amazon_cognito_identity_dart/sig_v4.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:walkietaskv2/models/Policy.dart';
+import 'package:walkietaskv2/bloc/blocPage.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
@@ -17,16 +10,17 @@ import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
-import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
+import 'package:walkietaskv2/views/Tareas/proyects/add_proyects_sumit.dart';
 
 
 class AddProyects extends StatefulWidget {
 
-  AddProyects(this.myUserRes, this.listUserRes);
+  AddProyects(this.myUserRes, this.listUserRes, this.blocPage);
 
   final Usuario myUserRes;
   final List<Usuario> listUserRes;
+  final BlocPage blocPage;
 
   @override
   _AddProyectsState createState() => _AddProyectsState();
@@ -261,6 +255,7 @@ class _AddProyectsState extends State<AddProyects> {
   }
 
   Future<void> _sumit() async{
+
     setState(() {
       cargando = true;
     });
@@ -284,10 +279,11 @@ class _AddProyectsState extends State<AddProyects> {
           var response = await connectionHttp.httpCreateProyect(jsonBody);
           var value = jsonDecode(response.body);
           if(value['status_code'] == 201){
-            showAlert('Creado con exito.',WalkieTaskColors.color_89BD7D);
             controlleNewName.text = '';
             checkUser = {};
             setState(() {});
+            Navigator.push(context, new MaterialPageRoute(
+                builder: (BuildContext context) => new AddProyectsSumit(widget.blocPage)));
           }else{
             showAlert('Error de conexión',WalkieTaskColors.color_E07676);
           }

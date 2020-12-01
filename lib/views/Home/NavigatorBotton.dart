@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
+import 'package:walkietaskv2/bloc/blocPage.dart';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/bloc/blocUser.dart';
@@ -65,6 +66,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   BlocCasos blocEmpresa;
   BlocCasos blocInvitation;
   BlocProgress blocIndicatorProgress;
+  BlocPage blocPage;
 
   UpdateData updateData = new UpdateData();
 
@@ -74,6 +76,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   StreamSubscription streamSubscriptionCasos;
   StreamSubscription streamSubscriptionInvitation;
   StreamSubscription streamSubscriptionProgress;
+  StreamSubscription streamSubscriptionPage;
 
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
 
@@ -96,6 +99,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     blocEmpresa = new BlocCasos();
     blocInvitation = new BlocCasos();
     blocIndicatorProgress = new BlocProgress();
+    blocPage = BlocPage();
 
     listRecibidos = new List<Tarea>();
     listEnviados = new List<Tarea>();
@@ -110,6 +114,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     _inicializarPatronBlocInvitation();
     _inicializarPatronBlocCasos();
     _inicializarPatronBlocProgress();
+    _inicializarPatronBlocPage();
 
     _inicializarUser();
     _inicializarTaskRecived();
@@ -143,6 +148,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     streamSubscriptionCasos.cancel();
     streamSubscriptionInvitation.cancel();
     streamSubscriptionProgress.cancel();
+    streamSubscriptionPage.cancel();
     blocUser.dispose();
     blocTaskSend.dispose();
     blocTaskReceived.dispose();
@@ -150,6 +156,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     blocInvitation.dispose();
     blocEmpresa.dispose();
     blocIndicatorProgress.dispose();
+    blocPage.dispose();
   }
 
   List<dynamic> listDocuments= [];
@@ -266,7 +273,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         Center(child: Text('No existen tareas enviadas',style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
         Container(child: Cargando('Buscando tareas enviadas',context),);
       case bottonSelect.opcion4:
-        return MyProyects(myUser, listaUser);
+        return MyProyects(myUser, listaUser, blocPage);
       case bottonSelect.opcion5:
         return Contacts(myUserRes: myUser,mapIdUsersRes: mapIdUser,listInvitation: listInvitation,blocInvitation: blocInvitation,);
     }
@@ -604,6 +611,28 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         progressIndicator = double.parse('${newVal['progressIndicator']}');
         cant = int.parse('${newVal['cant']}');
         viewIndicatorProgress = newVal['viewIndicatorProgress'];
+        setState(() {});
+      });
+    } catch (e) {}
+  }
+  _inicializarPatronBlocPage(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionPage = blocPage.outList.listen((newVal) {
+        Map<int,bottonSelect> mapNewValue = {
+          1 : bottonSelect.opcion1,
+          2 : bottonSelect.opcion2,
+          3 : bottonSelect.opcion3,
+          4 : bottonSelect.opcion4,
+          5 : bottonSelect.opcion5
+        };
+        mapNavigatorBotton[bottonSelect.opcion1] = false;
+        mapNavigatorBotton[bottonSelect.opcion2] = false;
+        mapNavigatorBotton[bottonSelect.opcion3] = false;
+        mapNavigatorBotton[bottonSelect.opcion4] = false;
+        mapNavigatorBotton[bottonSelect.opcion5] = false;
+        mapNavigatorBotton[mapNewValue[newVal]] = true;
+        page = mapNewValue[newVal];
         setState(() {});
       });
     } catch (e) {}
