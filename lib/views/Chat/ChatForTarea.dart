@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Chat/ChatMessenger.dart';
 import 'package:walkietaskv2/models/Chat/ChatTareas.dart';
@@ -12,16 +13,18 @@ import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Firebase/chatTareasFirebase.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
+import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ChatForTarea extends StatefulWidget {
 
-  ChatForTarea({this.tareaRes,this.listaCasosRes});
+  ChatForTarea({this.tareaRes,this.listaCasosRes, this.blocTaskSend});
 
   final Tarea tareaRes;
   final List<Caso> listaCasosRes;
+  final BlocTask blocTaskSend;
 
   @override
   _ChatForTareaState createState() => _ChatForTareaState();
@@ -65,15 +68,20 @@ class _ChatForTareaState extends State<ChatForTarea> {
   double alto = 0;
   double ancho = 0;
 
+  BlocTask blocTaskSend;
+
+  StreamSubscription streamSubscriptionTaskSend;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
+    blocTaskSend = widget.blocTaskSend;
+
     audioPlayer = new AudioPlayer();
     _durationSubscription = audioPlayer.onDurationChanged.listen((duration) {
       setState(() => _duration = duration);
-      print('$_duration');
     });
 
     controllerSend = new TextEditingController();
@@ -82,6 +90,15 @@ class _ChatForTareaState extends State<ChatForTarea> {
     imagenUser = Image.network('$avatarImage');
     inicializarUser();
     inicializar();
+    _inicializarPatronBlocTaskSend();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    audioPlayer.stop();
+    _durationSubscription?.cancel();
+    streamSubscriptionTaskSend.cancel();
   }
 
   SharedPreferences prefs;
@@ -97,7 +114,6 @@ class _ChatForTareaState extends State<ChatForTarea> {
   }
 
   inicializar() async {
-    print(tarea.id.toString());
     ChatTareas chatTareaVery = await chatTareasdb.verificarExistencia(tarea.id.toString());
     if(chatTareaVery != null){
       chatTarea = chatTareaVery;
@@ -118,17 +134,13 @@ class _ChatForTareaState extends State<ChatForTarea> {
     }
   }
 
-  void dispose() {
-    audioPlayer.stop();
-    _durationSubscription?.cancel();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
 
     ancho = MediaQuery.of(context).size.width;
     alto = MediaQuery.of(context).size.height;
+
+
 
     return Scaffold(
       backgroundColor: colorChat,
@@ -179,10 +191,17 @@ class _ChatForTareaState extends State<ChatForTarea> {
           children: <Widget>[
             Expanded(
               flex: 2,
-              child: imagenUser!= null ? Container(
+              child: imagenUser!= null ?
+              Container(
+                padding: const EdgeInsets.all(3.0), // borde width
+                decoration: new BoxDecoration(
+                  color: bordeCirculeAvatar, // border color
+                  shape: BoxShape.circle,
+                ),
                 child: CircleAvatar(
-                  radius: alto * 0.035,
+                  radius: alto * 0.03,
                   backgroundImage: imagenUser.image,
+                  //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
                 ),
               ) : Container(),
             ),
@@ -202,11 +221,17 @@ class _ChatForTareaState extends State<ChatForTarea> {
       ),
       elevation: 0,
       backgroundColor: colorFondoChat,
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back,color: Colors.grey[500],size: 35,),
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
+      leading: InkWell(
+        onTap: () => Navigator.of(context).pop(),
+        child: Container(
+          child: Center(
+            child: Container(
+              width: ancho * 0.1,
+              height: alto * 0.06,
+              child: Image.asset('assets/image/icon_close_option.png',fit: BoxFit.fill,color: Colors.grey,),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -375,10 +400,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
     }
     if(tarea != null && tarea.url_attachment != null){
       adjunto = tarea.url_attachment.replaceAll('https://appunity.s3-us-east-2.amazonaws.com/attached%', '');
-      print(adjunto);
     }
-
-
     return Container(
       margin: EdgeInsets.only(left: ancho * 0.02,right: ancho * 0.02,top: alto * 0.01),
       padding: EdgeInsets.only(left: ancho * 0.07,right: ancho * 0.07),
@@ -496,6 +518,21 @@ class _ChatForTareaState extends State<ChatForTarea> {
         ],
       ),
     );
+  }
+
+  _inicializarPatronBlocTaskSend(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionTaskSend = blocTaskSend.outList.listen((newVal) {
+        if(newVal){
+          _inicializarTaskSend();
+        }
+      });
+    } catch (e) {}
+  }
+  _inicializarTaskSend() async {
+    tarea = await TaskDatabaseProvider.db.getCodeId(tarea.id.toString());
+    setState(() {});
   }
 
 }

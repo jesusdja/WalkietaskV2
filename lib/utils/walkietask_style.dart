@@ -2,6 +2,24 @@ import 'package:flutter/material.dart';
 
 class WalkieTaskStyles {
 
+  TextStyle stylePrimary({
+    double size,
+    Color color,
+    double h,
+    TextDecoration textDecoration,
+    FontWeight fontWeight: FontWeight.normal,
+    double spacing: 0,
+  }) {
+    return TextStyle(
+      color: color,
+      fontSize: size,
+      height: h,
+      decoration: textDecoration,
+      fontWeight: fontWeight,
+      letterSpacing: spacing,
+    );
+  }
+
   TextStyle styleAvenirBook({
     double size,
     Color color,

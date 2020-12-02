@@ -427,4 +427,24 @@ class conexionHttp{
     }
     return response;
   }
+
+  Future<http.Response> httpUpdateNameTask(int id, String name) async {
+
+    String token  = await obtenerToken();
+    Map<String,String> headers = {
+      'X-Requested-With': 'XMLHttpRequest',
+      'Content-Type':'application/x-www-form-urlencoded',
+      'Authorization': 'Bearer $token'
+    };
+    final body = {'name' : name};
+    var response;
+    try{
+      response = await http.put('$enlace/api/auth/tasks/updatenametask/$id',
+        headers: headers, body: body
+      );
+    }catch(e){
+      print(e.toString());
+    }
+    return response;
+  }
 }

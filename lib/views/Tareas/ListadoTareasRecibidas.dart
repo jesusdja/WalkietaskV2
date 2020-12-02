@@ -11,6 +11,7 @@ import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/switch_button.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
+import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
 
 import '../Chat/ChatForTarea.dart';
 
@@ -685,9 +686,22 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     return listTaskRes;
   }
 
-  Widget clickTarea(Tarea tarea){
-    Navigator.push(context, new MaterialPageRoute(
-        builder: (BuildContext context) => new ChatForTarea(tareaRes: tarea,listaCasosRes: widget.listaCasosRes,)));
+  clickTarea(Tarea tarea) async {
+    bool res = true;
+    if(tarea.name.isEmpty){
+    var result  = await Navigator.push(context, new MaterialPageRoute(
+        builder: (BuildContext context) => new AddNameTask(tareaRes: tarea,)));
+    res = result as bool;
+    }
+    if(res){
+      Navigator.push(context, new MaterialPageRoute(
+          builder: (BuildContext context) =>
+          new ChatForTarea(
+            tareaRes: tarea,
+            listaCasosRes: widget.listaCasosRes,
+            blocTaskSend: blocTaskReceived,
+          )));
+    }
   }
 
   Widget _ButtonSliderAction(String titulo,Icon icono,Color color,Color colorText,int accion,Tarea tarea){

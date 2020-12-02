@@ -525,11 +525,15 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   _inicializarTaskRecived() async {
     listRecibidos = await TaskDatabaseProvider.db.getAllRecevid();
     loadTaskRecived = true;
+    listEnviados = await TaskDatabaseProvider.db.getAllSend();
+    loadTaskSend = true;
     setState(() {});
   }
   _inicializarTaskSend() async {
     listEnviados = await TaskDatabaseProvider.db.getAllSend();
     loadTaskSend = true;
+    listRecibidos = await TaskDatabaseProvider.db.getAllRecevid();
+    loadTaskRecived = true;
     setState(() {});
   }
   _inicializarUser() async {
