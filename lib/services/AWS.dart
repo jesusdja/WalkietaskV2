@@ -10,7 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkietaskv2/models/Policy.dart';
 
-Future<Map<String,String>> subirAudio(String ruta,String nombre) async{
+Future<Map<String,String>> subirAudio(String ruta) async{
 
   Map<String,String> mapRes = new Map<String,String>();
   mapRes['subir'] = 'false';
@@ -21,10 +21,10 @@ Future<Map<String,String>> subirAudio(String ruta,String nombre) async{
 
   try {
 
-    const _accessKeyId = 'AKIAIJXHDXG6EPRM57EQ';
-    const _secretKeyId = '9pfo1EqVd4aPxogj+01ozcSIF5NcYfN5Tr/9nR5P';
+    const _accessKeyId = 'AKIAIPC6TH34P6BZXFZA';
+    const _secretKeyId = 'HxTaIwcioqnfYFhUp/bsQM67dPt0ITtF7XObaaIB';
     const _region = 'us-east-2';
-    const _s3Endpoint ='https://appunity.s3-us-east-2.amazonaws.com';
+    const _s3Endpoint ='https://awswalkietask.s3-us-east-2.amazonaws.com';
 
     final file = File(ruta);
     final stream = http.ByteStream(DelegatingStream.typed(file.openRead()));
@@ -35,7 +35,7 @@ Future<Map<String,String>> subirAudio(String ruta,String nombre) async{
     final multipartFile = http.MultipartFile('file', stream, length,filename: path.basename(file.path));
 
     final policy = Policy.fromS3PresignedPost('audios/$nombreSubido.mp4',
-        'appunity', _accessKeyId, 15, length,
+        'awswalkietask', _accessKeyId, 15, length,
         region: _region);
     final key = SigV4.calculateSigningKey(_secretKeyId, policy.datetime, _region, 's3');
     final signature = SigV4.calculateSignature(key, policy.encode());
@@ -61,7 +61,7 @@ Future<Map<String,String>> subirAudio(String ruta,String nombre) async{
   return mapRes;
 }
 
-Future<Map<String,String>> subirArchivo(String ruta,String nombre) async{
+Future<Map<String,String>> subirArchivo(String ruta) async{
 
   Map<String,String> mapRes = new Map<String,String>();
   mapRes['subir'] = 'false';
@@ -69,14 +69,15 @@ Future<Map<String,String>> subirArchivo(String ruta,String nombre) async{
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String idMyUser = prefs.getString('unityIdMyUser');
   DateTime f = DateTime.now();
-  String nombreSubido = '${f.day}${f.month}${f.year}${f.hour}${f.minute}${f.second}U$idMyUser';
+  String nombre = ruta.split('/').last;
+  String nombreSubido = '${f.day}${f.month}${f.year}${f.hour}${f.minute}${f.second}U$idMyUser$nombre';
 
   try {
 
-    const _accessKeyId = 'AKIAIJXHDXG6EPRM57EQ';
-    const _secretKeyId = '9pfo1EqVd4aPxogj+01ozcSIF5NcYfN5Tr/9nR5P';
+    const _accessKeyId = 'AKIAIPC6TH34P6BZXFZA';
+    const _secretKeyId = 'HxTaIwcioqnfYFhUp/bsQM67dPt0ITtF7XObaaIB';
     const _region = 'us-east-2';
-    const _s3Endpoint ='https://appunity.s3-us-east-2.amazonaws.com';
+    const _s3Endpoint ='https://awswalkietask.s3-us-east-2.amazonaws.com';
 
     final file = File(ruta);
     final stream = http.ByteStream(DelegatingStream.typed(file.openRead()));
@@ -86,8 +87,8 @@ Future<Map<String,String>> subirArchivo(String ruta,String nombre) async{
     final req = http.MultipartRequest("POST", uri);
     final multipartFile = http.MultipartFile('file', stream, length,filename: path.basename(file.path));
 
-    final policy = Policy.fromS3PresignedPost('attached/$nombre',
-        'appunity', _accessKeyId, 15, length,
+    final policy = Policy.fromS3PresignedPost('attached/$nombreSubido',
+        'awswalkietask', _accessKeyId, 15, length,
         region: _region);
     final key = SigV4.calculateSigningKey(_secretKeyId, policy.datetime, _region, 's3');
     final signature = SigV4.calculateSignature(key, policy.encode());

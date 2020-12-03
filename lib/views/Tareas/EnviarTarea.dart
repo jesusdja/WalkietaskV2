@@ -1435,6 +1435,7 @@ class _MyHomePageState extends State<EnviarTarea> {
         await SharedPrefe().setStringListValue('WalListDocument',listShared);
         uploadBackDocuments(blocIndicatorProgress);
         _reiniciarVariables();
+        _reiniciarSonido();
         showAlert('Tarea enviada',WalkieTaskColors.color_89BD7D);
       }else{
         showAlert('Seleccionar integrante.',WalkieTaskColors.color_E07676);

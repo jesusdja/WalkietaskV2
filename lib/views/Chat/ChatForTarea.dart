@@ -17,6 +17,8 @@ import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:walkietaskv2/utils/view_image.dart';
+import 'package:walkietaskv2/utils/walkietask_style.dart';
 
 class ChatForTarea extends StatefulWidget {
 
@@ -30,26 +32,10 @@ class ChatForTarea extends StatefulWidget {
   _ChatForTareaState createState() => _ChatForTareaState();
 }
 
-class Painter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawLine(Offset.zero, size.bottomRight(Offset.zero), Paint());
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    // bad, but okay for example
-    return true;
-  }
-}
-
-enum StatusChat { Creando , Creado , Error }
-
 class _ChatForTareaState extends State<ChatForTarea> {
 
   Tarea tarea;
   ChatTareas chatTarea;
-  StatusChat statusChat = StatusChat.Creando;
   ChatTareaFirebase chatTareasdb;
   Usuario usuarioResponsable;
   Image imagenUser;
@@ -140,8 +126,6 @@ class _ChatForTareaState extends State<ChatForTarea> {
     ancho = MediaQuery.of(context).size.width;
     alto = MediaQuery.of(context).size.height;
 
-
-
     return Scaffold(
       backgroundColor: colorChat,
       appBar: _appBarH(),
@@ -172,6 +156,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
     String correoUSer = '';
     String nombreUser = '';
+
     if(usuarioResponsable != null){
       if(usuarioResponsable.avatar != null && usuarioResponsable.avatar != ''){
         imagenUser = Image.network('$directorioImage${usuarioResponsable.avatar}');
@@ -185,40 +170,41 @@ class _ChatForTareaState extends State<ChatForTarea> {
     }
 
     return AppBar(
-      title: Container(
-        width: ancho,
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              flex: 2,
-              child: imagenUser!= null ?
-              Container(
-                padding: const EdgeInsets.all(3.0), // borde width
-                decoration: new BoxDecoration(
-                  color: bordeCirculeAvatar, // border color
-                  shape: BoxShape.circle,
+      actions: <Widget>[
+        Container(
+          width: ancho,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Text('$nombreUser',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018, color: WalkieTaskColors.color_3C3C3C)),
+                      Text('$correoUSer',style: WalkieTaskStyles().stylePrimary(size: alto * 0.017, color: WalkieTaskColors.color_969696))
+                    ],
+                  )
+              ),
+              imagenUser!= null ?
+              Center(
+                child: Container(
+                  margin: EdgeInsets.only(left: ancho * 0.02, right: ancho * 0.02),
+                  decoration: new BoxDecoration(
+                    color: WalkieTaskColors.white, // border color
+                    shape: BoxShape.circle,
+                  ),
+                  child: CircleAvatar(
+                    radius: alto * 0.025,
+                    backgroundColor: Colors.white,
+                    backgroundImage: imagenUser.image,
+                  ),
                 ),
-                child: CircleAvatar(
-                  radius: alto * 0.03,
-                  backgroundImage: imagenUser.image,
-                  //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
-                ),
-              ) : Container(),
-            ),
-            Expanded(
-                flex: 9,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text('$nombreUser',style: TextStyle(fontFamily: 'helveticaneue2',fontSize: 16,color: colortitulo1),textAlign: TextAlign.center,),
-                    Text('$correoUSer',style: estiloLetras(14,colortitulo2),textAlign: TextAlign.left,)
-                  ],
-                )
-            )
-          ],
-        ),
-      ),
+              ) : Container()
+            ],
+          ),
+        )
+      ],
       elevation: 0,
       backgroundColor: colorFondoChat,
       leading: InkWell(
@@ -465,7 +451,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
           Container(
             margin: EdgeInsets.only(bottom: alto * 0.02),
             width: ancho,
-            child: Text('Caso: $caso',style: TextStyle(
+            child: Text('Proyecto: $caso',style: TextStyle(
                 color: coloraudioDetwalle,fontSize: alto * 0.022,fontWeight: FontWeight.bold
             ),textAlign: TextAlign.right,),
           ) : Container(),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
+import 'package:walkietaskv2/services/AWS.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 
@@ -15,6 +16,7 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
   //await SharedPrefe().setStringListValue('WalListDocument',[]);
 
   for(int x = 0; x < listDocuments.length; x++){
+
     //id integrante | titulo | path audio | id caso | descripcion | fecha | path adjunto
     List data = listDocuments[x].split('|');
     blocIndicatorProgress.inList.add({'progressIndicator' : 0.1, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
@@ -28,7 +30,22 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
 
     if(data.length > 0 && data[0] != ''){  jsonBody['user_responsability_id'] = data[0] == '0' ? myUser : data[0]; }
     if(data.length > 1 && data[1] != ''){  jsonBody['name'] = data[1]; }
-    if(data.length > 2 && data[2] != ''){  /*jsonBody['url_audio'] = data[2];*/ }
+    if(data.length > 2 && data[2] != ''){
+      try{
+        List data = listDocuments[x].split('|');
+        String urlAudio = '';
+        if(data.length > 2 && data[2] != ''){ urlAudio = data[2]; }
+        Map<String,String> result = await subirAudio(urlAudio);
+        if(result['subir'] == 'true'){
+          String pathUrlAudio = result['location'];
+          //pathUrlAudio = pathUrlAudio.replaceAll('%', '/');
+          jsonBody['url_audio'] = pathUrlAudio;
+        }
+      }catch(e){
+        print(e.toString());
+      }
+      /*jsonBody['url_audio'] = data[2];*/
+    }
 
     //await Future.delayed(Duration(seconds: 3));
     blocIndicatorProgress.inList.add({'progressIndicator' : 0.3, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
@@ -40,7 +57,22 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
     blocIndicatorProgress.inList.add({'progressIndicator' : 0.4, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
 
     if(data.length > 5 && data[5] != ''){  jsonBody['deadline'] = data[5]; }
-    if(data.length > 6 && data[6] != ''){  /*jsonBody['url_attachment'] = data[6];*/ }
+    if(data.length > 6 && data[6] != ''){
+      try{
+        List data = listDocuments[x].split('|');
+        String urlAdjunto = '';
+        if(data.length > 2 && data[2] != ''){ urlAdjunto = data[6]; }
+        Map<String,String> result = await subirArchivo(urlAdjunto);
+        if(result['subir'] == 'true'){
+          String pathUrlAttachment = result['location'];
+          //pathUrlAttachment = pathUrlAttachment.replaceAll('%', '/');
+          jsonBody['url_attachment'] = pathUrlAttachment;
+        }
+      }catch(e){
+        print(e.toString());
+      }
+      /*jsonBody['url_attachment'] = data[6];*/
+    }
 
     //await Future.delayed(Duration(seconds: 3));
     blocIndicatorProgress.inList.add({'progressIndicator' : 0.5, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
@@ -75,5 +107,6 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
     }
     await Future.delayed(Duration(seconds: 2));
     blocIndicatorProgress.inList.add({'progressIndicator' : 0, 'viewIndicatorProgress' : false, 'cant' : (listDocuments.length - x)});
+
   }
 }

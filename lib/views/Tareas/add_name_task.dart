@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
@@ -22,9 +24,31 @@ class _AddNameTaskState extends State<AddNameTask> {
 
   double alto = 0;
   double ancho = 0;
-
   bool reproduciendo = false;
   bool load = false;
+
+  AudioPlayer audioPlayer;
+  StreamSubscription _durationSubscription;
+  Duration _duration;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    audioPlayer = new AudioPlayer();
+    _durationSubscription = audioPlayer.onDurationChanged.listen((duration) {
+      setState(() => _duration = duration);
+      print('$_duration');
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    audioPlayer.stop();
+    _durationSubscription?.cancel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +200,12 @@ class _AddNameTaskState extends State<AddNameTask> {
         children: <Widget>[
           InkWell(
             child: imagen,
-            onTap: (){
+            onTap: () async {
+              if(!reproduciendo){
+                audioPlayer.play(widget.tareaRes.url_audio);
+              }else{
+                await audioPlayer.pause();
+              }
               setState(() {
                 reproduciendo = !reproduciendo;
               });

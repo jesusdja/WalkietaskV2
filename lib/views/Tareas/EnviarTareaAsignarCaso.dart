@@ -678,7 +678,7 @@ class _AsignarCasoState extends State<AsignarCaso> {
           }
 
           if(_pathAdjunto != null){
-            Map<String,String> mapArchivo = await subirArchivo(_pathAdjunto,_fileNameAdjunto);
+            Map<String,String> mapArchivo = await subirArchivo(_pathAdjunto);
             if(mapArchivo['subir'] == 'true'){
               tareaCreada.url_attachment = mapArchivo['location'];
             }
