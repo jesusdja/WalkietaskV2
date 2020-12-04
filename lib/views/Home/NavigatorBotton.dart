@@ -232,31 +232,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   }
 
   Widget contenido(){
-
-    if(page == bottonSelect.opcion1){
-      updateData.actualizarListaUsuarios(blocUser);
-      updateData.actualizarCasos(blocCasos);
-    }
-    if(page == bottonSelect.opcion2){
-      updateData.actualizarListaUsuarios(blocUser);
-      updateData.actualizarListaRecibidos(blocTaskReceived);
-      updateData.actualizarCasos(blocCasos);
-    }
-    if(page == bottonSelect.opcion3){
-      updateData.actualizarListaUsuarios(blocUser);
-      updateData.actualizarListaEnviados(blocTaskSend);
-      updateData.actualizarCasos(blocCasos);
-    }
-    if(page == bottonSelect.opcion4){
-      updateData.actualizarListaUsuarios(blocUser);
-      updateData.actualizarCasos(blocCasos);
-    }
-    if(page == bottonSelect.opcion5){
-      updateData.actualizarListaUsuarios(blocUser);
-      updateData.actualizarListaInvitationSent(blocInvitation);
-      updateData.actualizarListaInvitationReceived(blocInvitation);
-    }
-
     switch(page){
       case bottonSelect.opcion1:
         return EnviarTarea(blocUserRes: blocUser,listUserRes: listaUser,
@@ -338,6 +313,31 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         }
         titulo = tit;
         page = index;
+
+        if(page == bottonSelect.opcion1){
+          updateData.actualizarListaUsuarios(blocUser);
+          updateData.actualizarCasos(blocCasos);
+        }
+        if(page == bottonSelect.opcion2){
+          updateData.actualizarListaUsuarios(blocUser);
+          updateData.actualizarListaRecibidos(blocTaskReceived);
+          updateData.actualizarCasos(blocCasos);
+        }
+        if(page == bottonSelect.opcion3){
+          updateData.actualizarListaUsuarios(blocUser);
+          updateData.actualizarListaEnviados(blocTaskSend);
+          updateData.actualizarCasos(blocCasos);
+        }
+        if(page == bottonSelect.opcion4){
+          updateData.actualizarListaUsuarios(blocUser);
+          updateData.actualizarCasos(blocCasos);
+        }
+        if(page == bottonSelect.opcion5){
+          updateData.actualizarListaUsuarios(blocUser);
+          updateData.actualizarListaInvitationSent(blocInvitation);
+          updateData.actualizarListaInvitationReceived(blocInvitation);
+        }
+
         setState(() {});
       },
     );

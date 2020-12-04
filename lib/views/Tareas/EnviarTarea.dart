@@ -113,14 +113,13 @@ class _MyHomePageState extends State<EnviarTarea> {
     blocIndicatorProgress = widget.blocIndicatorProgress;
 
     listenerAudio();
-    _inicializarPatronBlocUser();
+    //_inicializarPatronBlocUser();
   }
 
   void dispose() {
     audioPlayer.stop();
     _durationSubscription?.cancel();
     streamSubscriptionUser?.cancel();
-    blocUser.dispose();
     super.dispose();
   }
 
@@ -1478,19 +1477,19 @@ class _MyHomePageState extends State<EnviarTarea> {
   }
 
 
-  _inicializarPatronBlocUser(){
-    try {
-      // ignore: cancel_subscriptions
-      streamSubscriptionUser = blocUser.outList.listen((newVal) {
-        if(newVal){
-          _inicializarUser();
-        }
-      });
-    } catch (e) {}
-  }
-
-  _inicializarUser() async {
-    listUser = await  UserDatabaseProvider.db.getAll();
-    setState(() {});
-  }
+  // _inicializarPatronBlocUser(){
+  //   try {
+  //     // ignore: cancel_subscriptions
+  //     streamSubscriptionUser = blocUser.outList.listen((newVal) {
+  //       if(newVal){
+  //         _inicializarUser();
+  //       }
+  //     });
+  //   } catch (e) {}
+  // }
+  //
+  // _inicializarUser() async {
+  //   listUser = await  UserDatabaseProvider.db.getAll();
+  //   setState(() {});
+  // }
 }

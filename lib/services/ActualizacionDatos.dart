@@ -25,7 +25,7 @@ class UpdateData{
   }
 
   actualizarListaUsuarios(BlocUser blocUser) async {
-
+    print('actualizarListaUsuarios');
     bool entre = false;
     //ACTUALIZAR TABLA LOCAL
     try{
@@ -61,26 +61,41 @@ class UpdateData{
   }
 
   actualizarListaContact(BlocUser blocUser) async {
-
+    print('actualizarListaContact');
     bool entre = false;
     //ACTUALIZAR TABLA LOCAL
+    Map<int,Usuario> mapContactsLocal = {};
     try{
+      List<Usuario> contactsLocal = await await  UserDatabaseProvider.db.getContacts();
+      contactsLocal.forEach((element) {
+        element.contact = 0;
+        mapContactsLocal[element.id] = element;
+      });
+
       var response = await conexionHispanos.httpListContacts();
       var value = jsonDecode(response.body);
       List<dynamic> contacts = value["contacts"];
       for(int x = 0; x < contacts.length; x++){
         Usuario contact = Usuario.fromJson(contacts[x]);
+        contact.contact = 1;
+        mapContactsLocal[contact.id] = contact;
         //EXTRAER VARIABLE DE USUARIO FIJO
-        Usuario userVery = await  UserDatabaseProvider.db.getCodeId('${contact.id}');
-        if(userVery != null && userVery.contact == 0){
-        //if(userVery != null){
-          userVery.contact = 1;
-          await UserDatabaseProvider.db.updateUser(userVery);
-          entre = true;
-        }
+        // Usuario userVery = await  UserDatabaseProvider.db.getCodeId('${contact.id}');
+        // if(userVery != null && userVery.contact == 0){
+        //   userVery.contact = 1;
+        //   await UserDatabaseProvider.db.updateUser(userVery);
+        //   entre = true;
+        // }
       }
     }catch(e){
       print('SIN CONEXION PARA ACTUALIZAR CONTACTOS');
+    }
+    for(int x = 0; x < mapContactsLocal.length; x++){
+      Usuario user = mapContactsLocal[mapContactsLocal.keys.elementAt(x)];
+      if(user.contact == 1){
+        entre = true;
+        await UserDatabaseProvider.db.updateUser(user);
+      }
     }
     if(entre){
       blocUser.inList.add(true);
@@ -88,7 +103,7 @@ class UpdateData{
   }
 
   organizarTareas(List<Tarea> lista,BlocTask blocTaskReceived) async {
-
+    print('organizarTareas');
     try{
       bool entre = false;
       for(int x = 0; x < lista.length; x++){
@@ -114,6 +129,7 @@ class UpdateData{
   }
 
   actualizarListaRecibidos(BlocTask blocTaskReceived) async {
+    print('actualizarListaRecibidos');
     try{
       var response = await conexionHispanos.httpListTareasRecibidas();
       var value = jsonDecode(response.body);
@@ -143,7 +159,7 @@ class UpdateData{
   }
 
   actualizarListaEnviados(BlocTask blocTaskSend) async {
-
+    print('actualizarListaEnviados');
     try{
       var response = await conexionHispanos.httpListTareasEnviadas();
       var value = jsonDecode(response.body);
@@ -172,6 +188,7 @@ class UpdateData{
   }
 
   actualizarCasos(BlocCasos blocCasos) async {
+    print('actualizarCasos');
     bool entre = false;
     try{
 
@@ -202,6 +219,7 @@ class UpdateData{
   }
 
   Future<Usuario> getMyUser() async {
+    print('getMyUser');
     Usuario user;
     try{
       var response = await conexionHispanos.httpMyUser();
@@ -214,7 +232,7 @@ class UpdateData{
   }
 
   actualizarListaInvitationSent(BlocCasos blocInvitation) async {
-
+    print('actualizarListaInvitationSent');
     bool entre = false;
     //ACTUALIZAR TABLA LOCAL
     try{
@@ -243,7 +261,7 @@ class UpdateData{
     }
   }
   actualizarListaInvitationReceived(BlocCasos blocInvitation) async {
-
+    print('actualizarListaInvitationReceived');
     bool entre = false;
     //ACTUALIZAR TABLA LOCAL
     try{

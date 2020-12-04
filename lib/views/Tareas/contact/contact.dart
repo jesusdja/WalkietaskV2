@@ -42,12 +42,15 @@ class _ContactsState extends State<Contacts> {
 
   Map<int,bool> mapUserDelete = {};
 
+  BlocUser blocUser;
+
   conexionHttp connectionHttp = new conexionHttp();
   @override
   void initState() {
     super.initState();
     myUser = widget.myUserRes;
     mapIdUsers = widget.mapIdUsersRes;
+    blocUser = widget.blocUser;
     _inicializar();
     _inicializarPatronBlocUser();
   }
@@ -106,7 +109,7 @@ class _ContactsState extends State<Contacts> {
           ),
           mapAppBar[0] ? _myContacts() : Container(),
           mapAppBar[1] ? InvitationsSent(mapIdUsersRes: widget.mapIdUsersRes,blocInvitation: widget.blocInvitation,) : Container(),
-          mapAppBar[2] ? InvitationsReceived(blocInvitation: widget.blocInvitation, mapIdUsersRes: widget.mapIdUsersRes, blocUser: widget.blocUser,) : Container(),
+          mapAppBar[2] ? InvitationsReceived(blocInvitation: widget.blocInvitation, mapIdUsersRes: widget.mapIdUsersRes, blocUser: blocUser,) : Container(),
         ],
       ),
     );
@@ -191,24 +194,24 @@ class _ContactsState extends State<Contacts> {
                     mapUserDelete[user.id] = true;
                     setState(() {});
                     try{
-                      // var response = await connectionHttp.httpAcceptedInvitationReceived(invitation.userId);
-                      // var value = jsonDecode(response.body);
-                      // if(value['status_code'] == 200){
-                      //   int res = await InvitationDatabaseProvider.db.deleteInvitation(invitation.id);
-                      //   if(res != 0){
-                      //     widget.blocInvitation.inList.add(true);
-                      //     UpdateData updateData = new UpdateData();
-                      //     updateData.actualizarListaContact(widget.blocUser);
-                      //     showAlert('Invitación aceptada.',WalkieTaskColors.color_89BD7D);
-                      //     setState(() {});
-                      //   }
-                      // }else{
-                      //   if(value['message'] != null){
-                      //     showAlert(value['message'],WalkieTaskColors.color_E07676);
-                      //   }else{
-                      //     showAlert('Error de conexión',WalkieTaskColors.color_E07676);
-                      //   }
-                      // }
+                      var response = await connectionHttp.httpDeleteContact(user.id);
+                      var value = jsonDecode(response.body);
+                      if(value['status_code'] == 200){
+                        user.contact = 0;
+                        int res = await UserDatabaseProvider.db.updateUser(user);
+                        if(res != 0){
+                          UpdateData updateData = new UpdateData();
+                          await updateData.actualizarListaContact(blocUser);
+                          showAlert('Contacto eliminado.',WalkieTaskColors.color_89BD7D);
+                          setState(() {});
+                        }
+                      }else{
+                        if(value['message'] != null){
+                          showAlert(value['message'],WalkieTaskColors.color_E07676);
+                        }else{
+                          showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                        }
+                      }
                     }catch(e){
                       print(e.toString());
                       showAlert('Error de conexión',WalkieTaskColors.color_E07676);
@@ -274,7 +277,7 @@ class _ContactsState extends State<Contacts> {
   _inicializarPatronBlocUser(){
     try {
       // ignore: cancel_subscriptions
-      streamSubscriptionUser = widget.blocUser.outList.listen((newVal) {
+      streamSubscriptionUser = blocUser.outList.listen((newVal) {
         if(newVal){
           _inicializarUser();
         }

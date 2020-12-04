@@ -448,19 +448,19 @@ class conexionHttp{
     return response;
   }
 
-  Future<http.Response> httpDeleteContact(int idInvited) async {
+  Future<http.Response> httpDeleteContact(int idContact) async {
 
     String token  = await obtenerToken();
     Map<String,String> headers = {
-      'Content-Type':'application/x-www-form-urlencoded',
-      'X-Requested-With': 'XMLHttpRequest',
-      'Authorization': 'Bearer $token'
+      'Authorization': 'Bearer $token',
+      'Content-Type':'application/json',
+      'Accept': 'application/json',
     };
 
     var response;
 
     try{
-      response = await http.delete('$enlace/api/auth/contacts/invited/delete/$idInvited',
+      response = await http.delete('$enlace/api/auth/contacts/delete/$idContact',
         headers: headers,
       );
     }catch(e){
