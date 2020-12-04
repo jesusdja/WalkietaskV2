@@ -50,6 +50,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
   AudioPlayer audioPlayer;
   StreamSubscription _durationSubscription;
   Duration _duration;
+  bool reproduciendo = false;
 
   double alto = 0;
   double ancho = 0;
@@ -69,6 +70,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
     _durationSubscription = audioPlayer.onDurationChanged.listen((duration) {
       setState(() => _duration = duration);
     });
+    listenerAudio();
 
     controllerSend = new TextEditingController();
     tarea = widget.tareaRes;
@@ -84,7 +86,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
     super.dispose();
     audioPlayer.stop();
     _durationSubscription?.cancel();
-    streamSubscriptionTaskSend.cancel();
+    streamSubscriptionTaskSend?.cancel();
   }
 
   SharedPreferences prefs;
@@ -384,7 +386,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
         caso = widget.listaCasosRes[x].name;
       }
     }
-    if(tarea != null && tarea.url_attachment != null){
+    if(tarea != null && tarea.url_attachment != null && tarea.url_attachment.isNotEmpty){
       adjunto = tarea.url_attachment.replaceAll('%', '/');
       adjunto = adjunto.split('/').last;
       int pos = adjunto.indexOf('U$idMyUser');
@@ -411,16 +413,17 @@ class _ChatForTareaState extends State<ChatForTarea> {
               children: <Widget>[
                 Expanded(
                   child: Text(tarea.name,
-                    style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.03, color: WalkieTaskColors.color_3C3C3C),
+                    style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.027, color: WalkieTaskColors.color_3C3C3C),
                   ),
                 ),
+                SizedBox(width: ancho * 0.02,),
                 tarea.url_audio != '' ?
                 InkWell(
                   child: Container(
                       child: Center(
                         child: CircleAvatar(
                           child: Icon(Icons.volume_up,size: alto * 0.03,),
-                          foregroundColor: WalkieTaskColors.color_969696,
+                          foregroundColor: reproduciendo ? Colors.green : WalkieTaskColors.color_969696,
                           backgroundColor: Colors.white,
                         ),
                       ),
@@ -428,7 +431,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                       height: ancho * 0.08,
                       padding: const EdgeInsets.all(2.0), // borde width
                       decoration: new BoxDecoration(
-                        color: WalkieTaskColors.color_969696, // border color
+                        color: reproduciendo ? Colors.green : WalkieTaskColors.color_969696, // border color
                         shape: BoxShape.circle,
                       )
                   ),
@@ -441,23 +444,22 @@ class _ChatForTareaState extends State<ChatForTarea> {
                 InkWell(
                   child: Container(
                       child: Center(
-                        child: CircleAvatar(
-                          child: Icon(Icons.edit,size: alto * 0.03,),
-                          foregroundColor: WalkieTaskColors.color_969696,
-                          backgroundColor: Colors.white,
+                        child: Image.asset(
+                          'assets/image/icon_edit.png',
+                          //color: WalkieTaskColors.color_969696,
+                          fit: BoxFit.fill,
                         ),
                       ),
                       width: ancho * 0.08,
                       height: ancho * 0.08,
-                      padding: const EdgeInsets.all(2.0), // borde width
+                      padding: const EdgeInsets.all(5.0), // borde width
                       decoration: new BoxDecoration(
-                        color: WalkieTaskColors.color_969696, // border color
+                        //color: WalkieTaskColors.color_969696, // border color
+                        border: Border.all(width: 2,color: WalkieTaskColors.color_969696),
                         shape: BoxShape.circle,
-                      )
+                      ),
                   ),
-                  onTap: (){
-                    audioPlayer.play(tarea.url_audio);
-                  },
+                  onTap: (){},
                 ),
               ],
             ),
@@ -542,6 +544,83 @@ class _ChatForTareaState extends State<ChatForTarea> {
   _inicializarTaskSend() async {
     tarea = await TaskDatabaseProvider.db.getCodeId(tarea.id.toString());
     setState(() {});
+  }
+
+  Duration _durationPause = Duration(seconds: 0);
+  Future<void> listenerAudio() async {
+    audioPlayer.onAudioPositionChanged.listen((Duration  p){
+      print('Current position: $p');
+      _durationPause = p;
+      // int s = _durationPause.inSeconds;
+      // segundos = s.toString();
+      // minutos = _durationPause.inMinutes.toString();
+      // setState(() {});
+    });
+    AudioPlayerState oldState = AudioPlayerState.COMPLETED;
+    audioPlayer.onPlayerStateChanged.listen((AudioPlayerState s){
+      print('Current player state: $s');
+      if(AudioPlayerState.COMPLETED == s){
+        setState(() {
+          //pause = true;
+          reproduciendo = false;
+          _durationPause = Duration(seconds: 0);
+        });
+      }
+      if(AudioPlayerState.PAUSED == s){
+        //pause = true;
+        reproduciendo = false;
+        setState(() {});
+      }
+      if(AudioPlayerState.PLAYING == s){
+        if(oldState == AudioPlayerState.COMPLETED){
+          _resetSoundPause();
+        }
+        //pause = false;
+        reproduciendo = true;
+        setState(() {});
+        _contMinutePause();
+      }
+      oldState = s;
+      if(AudioPlayerState.STOPPED == s){
+        oldState = AudioPlayerState.COMPLETED;
+      }
+    });
+  }
+
+  void _resetSoundPause(){
+    minutos = '00';
+    segundos = '00';
+    mostrarMinutosEspera = 0;
+    segundoEspera = 0;
+    reproduciendo = false;
+    setState(() {});
+  }
+
+  int mostrarMinutosEspera = 0;
+  int segundoEspera = 0;
+  String minutos = '00';
+  String segundos = '00';
+
+  Future<void> _contMinutePause() async {
+    if(reproduciendo){
+      segundoEspera++;
+      if(segundoEspera > 59){
+        mostrarMinutosEspera++;
+      }
+
+      minutos = mostrarMinutosEspera.toString();
+      segundos = segundoEspera.toString();
+
+      if(mostrarMinutosEspera < 10){
+        minutos = '0$minutos';
+      }
+      if(segundoEspera < 10){
+        segundos = '0$segundos';
+      }
+      setState((){});
+      await Future.delayed(Duration(seconds: 1));
+      _contMinutePause();
+    }
   }
 
 }
