@@ -212,6 +212,7 @@ class _RegisterCodeState extends State<RegisterCode> {
         focusNode: focusNode,
         initialValue: null,
         textEditingController: controller,
+        textInputType: TextInputType.number,
         onTap: () => onTapCode(index),
         onChanged: (String value) => onChange(index, value),
         sizeW: sizeW,

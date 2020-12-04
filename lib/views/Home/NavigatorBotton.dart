@@ -142,13 +142,13 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   @override
   void dispose() {
     super.dispose();
-    streamSubscriptionUser.cancel();
-    streamSubscriptionTaskSend.cancel();
-    streamSubscriptionTaskRecived.cancel();
-    streamSubscriptionCasos.cancel();
-    streamSubscriptionInvitation.cancel();
-    streamSubscriptionProgress.cancel();
-    streamSubscriptionPage.cancel();
+    streamSubscriptionUser?.cancel();
+    streamSubscriptionTaskSend?.cancel();
+    streamSubscriptionTaskRecived?.cancel();
+    streamSubscriptionCasos?.cancel();
+    streamSubscriptionInvitation?.cancel();
+    streamSubscriptionProgress?.cancel();
+    streamSubscriptionPage?.cancel();
     blocUser.dispose();
     blocTaskSend.dispose();
     blocTaskReceived.dispose();
@@ -260,7 +260,9 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     switch(page){
       case bottonSelect.opcion1:
         return EnviarTarea(blocUserRes: blocUser,listUserRes: listaUser,
-          myUserRes: myUser,listaCasosRes: listaCasos,blocTaskReceived: blocTaskReceived,blocTaskSend: blocTaskSend,blocIndicatorProgress: blocIndicatorProgress,);
+          myUserRes: myUser,listaCasosRes: listaCasos,
+          blocTaskReceived: blocTaskReceived,blocTaskSend: blocTaskSend,
+          blocIndicatorProgress: blocIndicatorProgress,);
       case bottonSelect.opcion2:
         return loadTaskSend ? listRecibidos.length != 0 ?
         ListadoTareasRecibidas(mapIdUserRes: mapIdUser,listRecibidos: listRecibidos,blocTaskReceivedRes: blocTaskReceived,listaCasosRes: listaCasos,myUserRes: myUser,) :
@@ -269,13 +271,15 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       case bottonSelect.opcion3:
         return loadTaskRecived ?
         listEnviados.length != 0 ?
-        ListadoTareasEnviadas(listEnviadosRes: listEnviados,mapIdUserRes: mapIdUser,blocTaskSendRes: blocTaskSend,listaCasosRes: listaCasos,myUserRes: myUser,) :
+        ListadoTareasEnviadas(listEnviadosRes: listEnviados,mapIdUserRes: mapIdUser,
+          blocTaskSendRes: blocTaskSend,listaCasosRes: listaCasos,myUserRes: myUser,) :
         Center(child: Text('No existen tareas enviadas',style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
         Container(child: Cargando('Buscando tareas enviadas',context),);
       case bottonSelect.opcion4:
         return MyProyects(myUser, listaUser, blocPage);
       case bottonSelect.opcion5:
-        return Contacts(myUserRes: myUser,mapIdUsersRes: mapIdUser,listInvitation: listInvitation,blocInvitation: blocInvitation,);
+        return Contacts(myUserRes: myUser,mapIdUsersRes: mapIdUser,
+          listInvitation: listInvitation,blocInvitation: blocInvitation,blocUser: blocUser,);
     }
   }
   Widget navigatorBotton(){

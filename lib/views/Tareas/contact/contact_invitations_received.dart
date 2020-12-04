@@ -3,8 +3,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
+import 'package:walkietaskv2/bloc/blocUser.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/models/invitation.dart';
+import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqliteInvitation.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
@@ -14,9 +16,10 @@ import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
 class InvitationsReceived extends StatefulWidget {
-  InvitationsReceived({this.mapIdUsersRes, this.blocInvitation});
+  InvitationsReceived({this.mapIdUsersRes, this.blocInvitation, this.blocUser});
   final Map<int,Usuario> mapIdUsersRes;
   final BlocCasos blocInvitation;
+  final BlocUser blocUser;
 
   @override
   _InvitationsReceivedState createState() => _InvitationsReceivedState();
@@ -140,7 +143,14 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
                             var response = await connectionHttp.httpAcceptedInvitationReceived(invitation.userId);
                             var value = jsonDecode(response.body);
                             if(value['status_code'] == 200){
-                              showAlert('Invitación aceptada.',WalkieTaskColors.color_89BD7D);
+                              int res = await InvitationDatabaseProvider.db.deleteInvitation(invitation.id);
+                              if(res != 0){
+                                widget.blocInvitation.inList.add(true);
+                                UpdateData updateData = new UpdateData();
+                                updateData.actualizarListaContact(widget.blocUser);
+                                showAlert('Invitación aceptada.',WalkieTaskColors.color_89BD7D);
+                                setState(() {});
+                              }
                             }else{
                               if(value['message'] != null){
                                 showAlert(value['message'],WalkieTaskColors.color_E07676);

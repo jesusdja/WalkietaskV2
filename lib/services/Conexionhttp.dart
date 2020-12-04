@@ -398,7 +398,7 @@ class conexionHttp{
     var response;
 
     try{
-      response = await http.put('$enlace/api/auth/contacts/acceptInvitation/$idInvited',
+      response = await http.put('$enlace/api/auth/contacts/acceptinvitation/$idInvited',
         headers: headers,
       );
     }catch(e){
@@ -441,6 +441,27 @@ class conexionHttp{
     try{
       response = await http.put('$enlace/api/auth/tasks/updatenametask/$id',
         headers: headers, body: body
+      );
+    }catch(e){
+      print(e.toString());
+    }
+    return response;
+  }
+
+  Future<http.Response> httpDeleteContact(int idInvited) async {
+
+    String token  = await obtenerToken();
+    Map<String,String> headers = {
+      'Content-Type':'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Authorization': 'Bearer $token'
+    };
+
+    var response;
+
+    try{
+      response = await http.delete('$enlace/api/auth/contacts/invited/delete/$idInvited',
+        headers: headers,
       );
     }catch(e){
       print(e.toString());

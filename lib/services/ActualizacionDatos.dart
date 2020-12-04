@@ -72,7 +72,8 @@ class UpdateData{
         Usuario contact = Usuario.fromJson(contacts[x]);
         //EXTRAER VARIABLE DE USUARIO FIJO
         Usuario userVery = await  UserDatabaseProvider.db.getCodeId('${contact.id}');
-        if(userVery != null){
+        if(userVery != null && userVery.contact == 0){
+        //if(userVery != null){
           userVery.contact = 1;
           await UserDatabaseProvider.db.updateUser(userVery);
           entre = true;

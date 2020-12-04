@@ -113,6 +113,7 @@ class _MyHomePageState extends State<EnviarTarea> {
     blocIndicatorProgress = widget.blocIndicatorProgress;
 
     listenerAudio();
+    _inicializarPatronBlocUser();
   }
 
   void dispose() {
@@ -1473,6 +1474,23 @@ class _MyHomePageState extends State<EnviarTarea> {
     // }
 
     enviandoTarea = false;
+    setState(() {});
+  }
+
+
+  _inicializarPatronBlocUser(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionUser = blocUser.outList.listen((newVal) {
+        if(newVal){
+          _inicializarUser();
+        }
+      });
+    } catch (e) {}
+  }
+
+  _inicializarUser() async {
+    listUser = await  UserDatabaseProvider.db.getAll();
     setState(() {});
   }
 }

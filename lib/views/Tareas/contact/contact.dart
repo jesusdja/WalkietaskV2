@@ -1,10 +1,18 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
+import 'package:walkietaskv2/bloc/blocUser.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/models/invitation.dart';
+import 'package:walkietaskv2/services/ActualizacionDatos.dart';
+import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Tareas/contact/contact_invitations_received.dart';
@@ -12,11 +20,12 @@ import 'package:walkietaskv2/views/Tareas/contact/contact_invitations_sent.dart'
 import 'package:walkietaskv2/views/Tareas/contact/contact_send_invitation.dart';
 
 class Contacts extends StatefulWidget {
-  Contacts({this.myUserRes, this.mapIdUsersRes, this.listInvitation, this.blocInvitation});
+  Contacts({this.myUserRes, this.mapIdUsersRes, this.listInvitation, this.blocInvitation, this.blocUser});
   final Usuario myUserRes;
   final Map<int,Usuario> mapIdUsersRes;
   final List<InvitationModel> listInvitation;
   final BlocCasos blocInvitation;
+  final BlocUser blocUser;
   @override
   _ContactsState createState() => _ContactsState();
 }
@@ -29,12 +38,33 @@ class _ContactsState extends State<Contacts> {
   double ancho = 0;
   Map<int,bool> mapAppBar = {0:true,1:false,2:false};
 
+  StreamSubscription streamSubscriptionUser;
+
+  Map<int,bool> mapUserDelete = {};
+
+  conexionHttp connectionHttp = new conexionHttp();
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     myUser = widget.myUserRes;
     mapIdUsers = widget.mapIdUsersRes;
+    _inicializar();
+    _inicializarPatronBlocUser();
+  }
+
+  _inicializar() async {
+    mapIdUsers.forEach((key, user) {
+      if(widget.myUserRes != null && user.id != widget.myUserRes.id && user.contact == 1){
+        mapUserDelete[user.id] = false;
+      }
+    });
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    streamSubscriptionUser?.cancel();
   }
 
   @override
@@ -76,7 +106,7 @@ class _ContactsState extends State<Contacts> {
           ),
           mapAppBar[0] ? _myContacts() : Container(),
           mapAppBar[1] ? InvitationsSent(mapIdUsersRes: widget.mapIdUsersRes,blocInvitation: widget.blocInvitation,) : Container(),
-          mapAppBar[2] ? InvitationsReceived(blocInvitation: widget.blocInvitation, mapIdUsersRes: widget.mapIdUsersRes) : Container(),
+          mapAppBar[2] ? InvitationsReceived(blocInvitation: widget.blocInvitation, mapIdUsersRes: widget.mapIdUsersRes, blocUser: widget.blocUser,) : Container(),
         ],
       ),
     );
@@ -138,14 +168,54 @@ class _ContactsState extends State<Contacts> {
             margin: EdgeInsets.only(bottom: alto * 0.02, right: ancho * 0.04),
             child: Column(
               children: <Widget>[
+                mapUserDelete[user.id] ?
+                Container(
+                  width: ancho * 0.2,
+                  child: Center(
+                    child: Container(
+                      width: alto * 0.03,
+                      height: alto * 0.03,
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                )
+                    :
                 RoundedButton(
                   backgroundColor: WalkieTaskColors.color_DD7777,
                   title: 'Eliminar',
-                  onPressed: (){},
                   radius: 5.0,
                   textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022,color: WalkieTaskColors.white,fontWeight: FontWeight.bold),
                   height: alto * 0.04,
                   width: ancho * 0.2,
+                  onPressed: () async {
+                    mapUserDelete[user.id] = true;
+                    setState(() {});
+                    try{
+                      // var response = await connectionHttp.httpAcceptedInvitationReceived(invitation.userId);
+                      // var value = jsonDecode(response.body);
+                      // if(value['status_code'] == 200){
+                      //   int res = await InvitationDatabaseProvider.db.deleteInvitation(invitation.id);
+                      //   if(res != 0){
+                      //     widget.blocInvitation.inList.add(true);
+                      //     UpdateData updateData = new UpdateData();
+                      //     updateData.actualizarListaContact(widget.blocUser);
+                      //     showAlert('Invitación aceptada.',WalkieTaskColors.color_89BD7D);
+                      //     setState(() {});
+                      //   }
+                      // }else{
+                      //   if(value['message'] != null){
+                      //     showAlert(value['message'],WalkieTaskColors.color_E07676);
+                      //   }else{
+                      //     showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                      //   }
+                      // }
+                    }catch(e){
+                      print(e.toString());
+                      showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                    }
+                    mapUserDelete[user.id] = false;
+                    setState(() {});
+                  },
                 )
               ],
             ),
@@ -199,5 +269,25 @@ class _ContactsState extends State<Contacts> {
         ],
       ),
     );
+  }
+
+  _inicializarPatronBlocUser(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionUser = widget.blocUser.outList.listen((newVal) {
+        if(newVal){
+          _inicializarUser();
+        }
+      });
+    } catch (e) {}
+  }
+  _inicializarUser() async {
+    List<Usuario> listaUser = await  UserDatabaseProvider.db.getAll();
+    setState(() {});
+    mapIdUsers = new Map();
+    for(int x = 0; x < listaUser.length; x++){
+      mapIdUsers[listaUser[x].id] = listaUser[x];
+    }
+    setState(() {});
   }
 }
