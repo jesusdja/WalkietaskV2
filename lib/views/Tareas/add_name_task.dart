@@ -33,18 +33,17 @@ class _AddNameTaskState extends State<AddNameTask> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     audioPlayer = new AudioPlayer();
     _durationSubscription = audioPlayer.onDurationChanged.listen((duration) {
       setState(() => _duration = duration);
       print('$_duration');
     });
+    listenerAudio();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     audioPlayer.stop();
     _durationSubscription?.cancel();
@@ -96,7 +95,7 @@ class _AddNameTaskState extends State<AddNameTask> {
             SizedBox(height: alto * 0.01,),
             Text('Así podrás reconocerla entre las demás',style:WalkieTaskStyles().stylePrimary(size: alto * 0.02,spacing: 1.25,color: WalkieTaskColors.color_4D4D4D, fontWeight: FontWeight.bold), ),
             SizedBox(height: alto * 0.03,),
-            !isAudio ? _sound() : Container(),
+            isAudio ? _sound() : Container(),
             SizedBox(height: alto * 0.03,),
             _tituloTarea()
           ],
@@ -197,6 +196,7 @@ class _AddNameTaskState extends State<AddNameTask> {
       width: ancho,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
           InkWell(
             child: imagen,
@@ -211,8 +211,88 @@ class _AddNameTaskState extends State<AddNameTask> {
               });
             },
           ),
+          Container(
+            child: Text('$minutos:$segundos',style: WalkieTaskStyles().stylePrimary(size:  alto * 0.026, color: WalkieTaskColors.color_969696),),
+          ),
         ],
       ),
     );
+  }
+
+  Duration _durationPause = Duration(seconds: 0);
+  Future<void> listenerAudio() async {
+    audioPlayer.onAudioPositionChanged.listen((Duration  p){
+      print('Current position: $p');
+      _durationPause = p;
+      // int s = _durationPause.inSeconds;
+      // segundos = s.toString();
+      // minutos = _durationPause.inMinutes.toString();
+      // setState(() {});
+    });
+    AudioPlayerState oldState = AudioPlayerState.COMPLETED;
+    audioPlayer.onPlayerStateChanged.listen((AudioPlayerState s){
+      print('Current player state: $s');
+      if(AudioPlayerState.COMPLETED == s){
+        setState(() {
+          //pause = true;
+          reproduciendo = false;
+          _durationPause = Duration(seconds: 0);
+        });
+      }
+      if(AudioPlayerState.PAUSED == s){
+        //pause = true;
+        reproduciendo = false;
+        setState(() {});
+      }
+      if(AudioPlayerState.PLAYING == s){
+        if(oldState == AudioPlayerState.COMPLETED){
+          _resetSoundPause();
+        }
+        //pause = false;
+        reproduciendo = true;
+        setState(() {});
+        _contMinutePause();
+      }
+      oldState = s;
+      if(AudioPlayerState.STOPPED == s){
+        oldState = AudioPlayerState.COMPLETED;
+      }
+    });
+  }
+
+  void _resetSoundPause(){
+    minutos = '00';
+    segundos = '00';
+    mostrarMinutosEspera = 0;
+    segundoEspera = 0;
+    reproduciendo = false;
+    setState(() {});
+  }
+
+  int mostrarMinutosEspera = 0;
+  int segundoEspera = 0;
+  String minutos = '00';
+  String segundos = '00';
+
+  Future<void> _contMinutePause() async {
+    if(reproduciendo){
+      segundoEspera++;
+      if(segundoEspera > 59){
+        mostrarMinutosEspera++;
+      }
+
+      minutos = mostrarMinutosEspera.toString();
+      segundos = segundoEspera.toString();
+
+      if(mostrarMinutosEspera < 10){
+        minutos = '0$minutos';
+      }
+      if(segundoEspera < 10){
+        segundos = '0$segundos';
+      }
+      setState((){});
+      await Future.delayed(Duration(seconds: 1));
+      _contMinutePause();
+    }
   }
 }

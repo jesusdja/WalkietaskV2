@@ -17,11 +17,13 @@ import '../Chat/ChatForTarea.dart';
 
 class ListadoTareasRecibidas extends StatefulWidget {
 
-  ListadoTareasRecibidas({this.mapIdUserRes,this.listRecibidos,this.blocTaskReceivedRes,this.listaCasosRes});
+  ListadoTareasRecibidas({
+    this.mapIdUserRes,this.listRecibidos,this.blocTaskReceivedRes,this.listaCasosRes,this.myUserRes});
   final Map<int,Usuario> mapIdUserRes;
   final List<Tarea> listRecibidos;
   final BlocTask blocTaskReceivedRes;
   final List<Caso> listaCasosRes;
+  final Usuario myUserRes;
 
   @override
   _ListadoTareasState createState() => _ListadoTareasState();
@@ -263,6 +265,14 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
       proyectName = mapCasos[tarea.project_id].name;
     }
 
+    String nameUser = '';
+    if(mapIdUser[tarea.user_responsability_id] != null){
+      nameUser = mapIdUser[tarea.user_responsability_id].name;
+      if(widget.myUserRes.id == mapIdUser[tarea.user_responsability_id].id){
+        nameUser = 'Recordatorio personal';
+      }
+    }
+
     return InkWell(
       onTap: () =>clickTarea(tarea),
       child: Container(
@@ -304,7 +314,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                   children: <Widget>[
                     Flexible(
                       flex: 1,
-                      child: Text(mapIdUser[tarea.user_id] == null ? '' : mapIdUser[tarea.user_id].name,
+                      child: Text(nameUser,
                           maxLines: 1,
                           style: favorite ?
                           WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.black) :
@@ -386,6 +396,11 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
 
     List<Widget> listTaskWidget = listTaskGet(user, listTask);
 
+    String nameUser = user.name;
+    if(widget.myUserRes.id == user.id){
+      nameUser = 'Recordatorio personal';
+    }
+
     return Container(
       width: ancho,
       child: Column(
@@ -409,7 +424,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.only(left: ancho * 0.03,right: ancho * 0.03,),
-                    child: Text('${user.name}',
+                    child: Text(nameUser,
                         style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.025, color: WalkieTaskColors.color_76ADE3)),
                   ),
                 ),
