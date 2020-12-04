@@ -385,11 +385,14 @@ class _ChatForTareaState extends State<ChatForTarea> {
       }
     }
     if(tarea != null && tarea.url_attachment != null){
-      adjunto = tarea.url_attachment.replaceAll('https://appunity.s3-us-east-2.amazonaws.com/attached%', '');
+      adjunto = tarea.url_attachment.replaceAll('%', '/');
+      adjunto = adjunto.split('/').last;
+      int pos = adjunto.indexOf('U$idMyUser');
+      adjunto = adjunto.substring(pos + 3, adjunto.length);
     }
     return Container(
       margin: EdgeInsets.only(left: ancho * 0.02,right: ancho * 0.02,top: alto * 0.01),
-      padding: EdgeInsets.only(left: ancho * 0.07,right: ancho * 0.07),
+      padding: EdgeInsets.all(alto * 0.015),
       width: ancho,
       decoration: new BoxDecoration(
         color: colorfondoDetalle,
@@ -402,105 +405,125 @@ class _ChatForTareaState extends State<ChatForTarea> {
         children: <Widget>[
           //Titulo
           Container(
-            margin: EdgeInsets.only(top: alto * 0.02,bottom: alto * 0.01),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Expanded(
-                  flex: 10,
-                  child: Text(tarea.name,style: TextStyle(
-                    color: coloraudioDetwalle,fontSize: alto * 0.03,fontWeight: FontWeight.bold
-                  ),textAlign: TextAlign.left,),
+                  child: Text(tarea.name,
+                    style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.03, color: WalkieTaskColors.color_3C3C3C),
+                  ),
                 ),
-                tarea.url_audio != '' ? Expanded(
-                  flex: 3,
-                  child:  InkWell(
-                    child: Container(
-                        child: new CircleAvatar(
-                          child: Icon(Icons.volume_up,size: alto * 0.05,),
-                          foregroundColor: colorfuenteDetwalle,
+                tarea.url_audio != '' ?
+                InkWell(
+                  child: Container(
+                      child: Center(
+                        child: CircleAvatar(
+                          child: Icon(Icons.volume_up,size: alto * 0.03,),
+                          foregroundColor: WalkieTaskColors.color_969696,
                           backgroundColor: Colors.white,
                         ),
-                        width: ancho * 0.12,
-                        height: ancho * 0.12,
-                        padding: const EdgeInsets.all(2.0), // borde width
-                        decoration: new BoxDecoration(
-                          color: colorfuenteDetwalle, // border color
-                          shape: BoxShape.circle,
-                        )
-                    ),
-                    onTap: (){
-                      audioPlayer.play(tarea.url_audio);
-                    },
+                      ),
+                      width: ancho * 0.08,
+                      height: ancho * 0.08,
+                      padding: const EdgeInsets.all(2.0), // borde width
+                      decoration: new BoxDecoration(
+                        color: WalkieTaskColors.color_969696, // border color
+                        shape: BoxShape.circle,
+                      )
                   ),
+                  onTap: (){
+                    audioPlayer.play(tarea.url_audio);
+                  },
                 ) : Container(),
+                verDetalle ? Container() : SizedBox(width: ancho * 0.02,),
+                verDetalle ? Container() :
+                InkWell(
+                  child: Container(
+                      child: Center(
+                        child: CircleAvatar(
+                          child: Icon(Icons.edit,size: alto * 0.03,),
+                          foregroundColor: WalkieTaskColors.color_969696,
+                          backgroundColor: Colors.white,
+                        ),
+                      ),
+                      width: ancho * 0.08,
+                      height: ancho * 0.08,
+                      padding: const EdgeInsets.all(2.0), // borde width
+                      decoration: new BoxDecoration(
+                        color: WalkieTaskColors.color_969696, // border color
+                        shape: BoxShape.circle,
+                      )
+                  ),
+                  onTap: (){
+                    audioPlayer.play(tarea.url_audio);
+                  },
+                ),
               ],
             ),
           ),
           //descripcion
           !verDetalle && descripcion != '' ?
           Container(
-            margin: EdgeInsets.only(top:alto * 0.01,bottom: alto * 0.02),
-            child: Text(descripcion,style: TextStyle(
-                color: coloraudioDetwalle,fontSize: alto * 0.022,fontWeight: FontWeight.bold
-            ),textAlign: TextAlign.left,),
+            margin: EdgeInsets.only(top:alto * 0.03,bottom: alto * 0.02),
+            child: Text(descripcion,style: WalkieTaskStyles().stylePrimary(
+              size: alto * 0.022, color: WalkieTaskColors.color_3C3C3C,spacing: 0.5
+            )),
           ) : Container(),
           //caso
           !verDetalle && caso != '' ?
           Container(
             margin: EdgeInsets.only(bottom: alto * 0.02),
             width: ancho,
-            child: Text('Proyecto: $caso',style: TextStyle(
-                color: coloraudioDetwalle,fontSize: alto * 0.022,fontWeight: FontWeight.bold
-            ),textAlign: TextAlign.right,),
+            child: Text('Proyecto: $caso',style: WalkieTaskStyles().styleHelveticaNeueBold(
+                size: alto * 0.022, color: WalkieTaskColors.color_3C3C3C,spacing: 0.5
+            )),
           ) : Container(),
           //Adjunto
-          !verDetalle && adjunto != '' ?
-              InkWell(
-                child: Container(
-                  width: ancho,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Icon(Icons.attach_file,size: alto * 0.02,),
-                      Text(adjunto,style: TextStyle(
-                          color: coloraudioDetwalle,fontSize: alto * 0.015,fontWeight: FontWeight.bold
-                      ),textAlign: TextAlign.right,),
-                    ],
+          !verDetalle ? Container() : SizedBox(height: alto * 0.02,),
+          Container(
+            width: ancho,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                (!verDetalle && adjunto != '') ? Icon(Icons.attach_file,size: alto * 0.02,) : Container(),
+                Expanded(
+                  child: (!verDetalle && adjunto != '') ? InkWell(
+                    child: Text(adjunto,style: WalkieTaskStyles().stylePrimary(
+                        size: alto * 0.02, color: WalkieTaskColors.color_969696, spacing: 0.5,
+                        fontWeight: FontWeight.bold
+                    )),
+                    onTap: () async {
+                      try{
+                        if (await canLaunch(tarea.url_attachment)) {
+                          await launch(tarea.url_attachment);
+                        } else {
+                          throw 'Could not launch ${tarea.url_attachment}';
+                        }
+                      }catch(e){
+                        print(e.toString());
+                      }
+                    },
+                  ) : Container(),
+                ),
+                Container(
+                  width: ancho * 0.1,
+                  height: alto * 0.02,
+                  child: FittedBox(
+                      fit: BoxFit.fill,
+                      child: InkWell(
+                        child: verDetalle ? Image.asset('assets/image/tri1.png') : Image.asset('assets/image/tri1.1.png'),
+                        onTap: (){
+                          verDetalle = !verDetalle;
+                          setState(() {});
+                        },
+                      )
                   ),
                 ),
-                onTap: () async {
-                  try{
-                    if (await canLaunch(tarea.url_attachment)) {
-                      await launch(tarea.url_attachment);
-                    } else {
-                      throw 'Could not launch ${tarea.url_attachment}';
-                    }
-                  }catch(e){
-                    print(e.toString());
-                  }
-                },
-              )
-           : Container(),
-          //botton cerrar/abrir
-          Container(
-            width: ancho * 0.1,
-            height: alto * 0.02,
-            child: FittedBox(
-                fit: BoxFit.fill,
-                child: InkWell(
-                  child: verDetalle ? Image.asset('assets/image/tri1.png') : Image.asset('assets/image/tri1.1.png'),
-                  onTap: (){
-                    verDetalle = !verDetalle;
-                    setState(() {});
-                  },
-
-                )
+              ],
             ),
           ),
-          SizedBox(height: alto * 0.01,),
         ],
       ),
     );
