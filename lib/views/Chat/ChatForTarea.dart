@@ -59,6 +59,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
   StreamSubscription streamSubscriptionTaskSend;
 
+  bool edit = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -144,6 +146,9 @@ class _ChatForTareaState extends State<ChatForTarea> {
                 height: alto * 0.8,
                 child: _mensajes(),
               ),
+              edit ? Container(
+                child: _editTarea(),
+              ) :
               Container(
                 child: _detallesTarea(),
               ),
@@ -459,7 +464,11 @@ class _ChatForTareaState extends State<ChatForTarea> {
                         shape: BoxShape.circle,
                       ),
                   ),
-                  onTap: (){},
+                  onTap: (){
+                    setState(() {
+                      edit = true;
+                    });
+                  },
                 ),
               ],
             ),
@@ -523,6 +532,55 @@ class _ChatForTareaState extends State<ChatForTarea> {
                       )
                   ),
                 ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _editTarea(){
+
+    String descripcion = '',caso = '', adjunto = '';
+    if(tarea != null && tarea.description != null){
+      descripcion = tarea.description;
+    }
+    if(tarea != null && tarea.project_id != null && widget.listaCasosRes != null){
+      for(int x = 0; x < widget.listaCasosRes.length; x++){
+        caso = widget.listaCasosRes[x].name;
+      }
+    }
+    if(tarea != null && tarea.url_attachment != null && tarea.url_attachment.isNotEmpty){
+      adjunto = tarea.url_attachment.replaceAll('%', '/');
+      adjunto = adjunto.split('/').last;
+      int pos = adjunto.indexOf('U$idMyUser');
+      adjunto = adjunto.substring(pos + 3, adjunto.length);
+    }
+    return Container(
+      margin: EdgeInsets.only(left: ancho * 0.02,right: ancho * 0.02,top: alto * 0.01),
+      padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01,left: ancho * 0.05, right: ancho * 0.05),
+      width: ancho,
+      decoration: new BoxDecoration(
+        color: colorfondoDetalle,
+        border: Border.all(width: 1,color: colorBordeOpc),
+        borderRadius: BorderRadius.all(Radius.circular(10),),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          //Titulo
+          Container(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  child: Text('Editar tarea',
+                    style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.027, color: WalkieTaskColors.color_3C3C3C),
+                  ),
+                ),
+                SizedBox(width: ancho * 0.02,),
               ],
             ),
           ),
