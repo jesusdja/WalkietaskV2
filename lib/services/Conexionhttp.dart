@@ -487,4 +487,19 @@ class conexionHttp{
     }
     return response;
   }
+
+  Future<http.Response> httpGetListGuestsForProjects() async{
+    String token  = await obtenerToken();
+    Map<String, String> requestHeaders = {
+      'Authorization': 'Bearer $token'
+    };
+    var response;
+    try{
+      response = http.get('$enlace/api/auth/projects/myProjects',
+          headers: requestHeaders);
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
 }

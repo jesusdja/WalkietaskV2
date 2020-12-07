@@ -251,7 +251,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         Center(child: Text('No existen tareas enviadas',style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
         Container(child: Cargando('Buscando tareas enviadas',context),);
       case bottonSelect.opcion4:
-        return MyProyects(myUser, listaUser, blocPage);
+        return MyProyects(myUser, listaUser, blocPage, listaCasos);
       case bottonSelect.opcion5:
         return Contacts(myUserRes: myUser,mapIdUsersRes: mapIdUser,
           listInvitation: listInvitation,blocInvitation: blocInvitation,blocUser: blocUser,);

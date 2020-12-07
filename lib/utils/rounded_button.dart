@@ -17,6 +17,7 @@ class RoundedButton extends StatelessWidget {
   final IconData icon;
   final double radius;
   final TextStyle textStyle;
+  final int maxLines;
 
   RoundedButton({
     @required this.title,
@@ -33,6 +34,7 @@ class RoundedButton extends StatelessWidget {
     this.titlePadding = const EdgeInsets.all(0.0),
     @required this.radius,
     this.textStyle,
+    this.maxLines
   });
 
   @override
@@ -69,6 +71,7 @@ class RoundedButton extends StatelessWidget {
                     )
                   : Text(
                       title,
+                      maxLines: maxLines,
                       style: textStyleLocal,
                     ),
             ),
