@@ -430,14 +430,6 @@ class _FormRegisterState extends State<FormRegister> {
             setState(() {
               isLoad = true;
             });
-            // try{
-            //   await SharedPrefe().setIntValue('unityLogin',2);
-            //   AuthService auth = Provider.of<AuthService>(widget.contextLogin);
-            //   auth.init();
-            //   Navigator.of(context).pop();
-            // }catch(e){
-            //   print(e.toString());
-            // }
 
             if(name.isNotEmpty && !showErrorCheck && surname.isNotEmpty &&
                 validateEmailAddress(email)['valid'] &&
@@ -451,8 +443,6 @@ class _FormRegisterState extends State<FormRegister> {
                   'password' : pass,
                   'password_confirmation' : pass,
                 };
-
-
                 var response = await connectionHttp.httpRegisterUser(body);
                 var value = jsonDecode(response.body);
                 print(value);

@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rounded_date_picker/rounded_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
@@ -11,12 +13,17 @@ import 'package:walkietaskv2/models/Chat/ChatMessenger.dart';
 import 'package:walkietaskv2/models/Chat/ChatTareas.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/services/ActualizacionDatos.dart';
+import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Firebase/chatTareasFirebase.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:walkietaskv2/utils/WidgetsUtils.dart';
+import 'package:walkietaskv2/utils/rounded_button.dart';
+import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
@@ -60,12 +67,18 @@ class _ChatForTareaState extends State<ChatForTarea> {
   StreamSubscription streamSubscriptionTaskSend;
 
   bool edit = false;
+  DateTime fechaTask;
+  DateTime fechaTaskOld;
+
+  TextEditingController _controllerTitle;
+  TextEditingController _controllerDescription;
+
+  UpdateData updateData = new UpdateData();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
     blocTaskSend = widget.blocTaskSend;
 
     audioPlayer = new AudioPlayer();
@@ -76,6 +89,12 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
     controllerSend = new TextEditingController();
     tarea = widget.tareaRes;
+    fechaTask = DateTime.parse(widget.tareaRes.created_at);
+    fechaTaskOld = DateTime.parse(widget.tareaRes.created_at);
+
+    _controllerTitle = TextEditingController(text: tarea.name);
+    _controllerDescription = TextEditingController(text: tarea.description);
+
     chatTareasdb = new ChatTareaFirebase();
     imagenUser = Image.network('$avatarImage');
     inicializarUser();
@@ -542,21 +561,6 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
   Widget _editTarea(){
 
-    String descripcion = '',caso = '', adjunto = '';
-    if(tarea != null && tarea.description != null){
-      descripcion = tarea.description;
-    }
-    if(tarea != null && tarea.project_id != null && widget.listaCasosRes != null){
-      for(int x = 0; x < widget.listaCasosRes.length; x++){
-        caso = widget.listaCasosRes[x].name;
-      }
-    }
-    if(tarea != null && tarea.url_attachment != null && tarea.url_attachment.isNotEmpty){
-      adjunto = tarea.url_attachment.replaceAll('%', '/');
-      adjunto = adjunto.split('/').last;
-      int pos = adjunto.indexOf('U$idMyUser');
-      adjunto = adjunto.substring(pos + 3, adjunto.length);
-    }
     return Container(
       margin: EdgeInsets.only(left: ancho * 0.02,right: ancho * 0.02,top: alto * 0.01),
       padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01,left: ancho * 0.05, right: ancho * 0.05),
@@ -569,24 +573,180 @@ class _ChatForTareaState extends State<ChatForTarea> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          //Titulo
           Container(
+            width: ancho,
+            child: Text('Editar tarea',
+              style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.027, color: WalkieTaskColors.color_3C3C3C),
+            ),
+          ),
+          SizedBox(height: alto * 0.035,),
+          Container(
+            width: ancho,
+            child: Text('Titulo:',
+              style: WalkieTaskStyles().stylePrimary(size: alto * 0.025, color: WalkieTaskColors.color_3C3C3C, spacing: 1),
+            ),
+          ),
+          SizedBox(height: alto * 0.008,),
+          Container(
+            width: ancho,
+            child: TextFildGeneric(
+              labelStyle: WalkieTaskStyles().stylePrimary(size: alto * 0.025, color: WalkieTaskColors.color_3C3C3C, spacing: 1),
+              initialValue: null,
+              onChanged: (String value) {},
+              sizeW: ancho,
+              sizeH: alto,
+              sizeHeight: alto * 0.045,
+              textEditingController: _controllerTitle,
+              borderColor: WalkieTaskColors.color_E2E2E2,
+              sizeBorder: 1.8,
+            ),
+          ),
+          SizedBox(height: alto * 0.02,),
+          Container(
+            width: ancho,
+            child: Text('Descripción',
+              style: WalkieTaskStyles().stylePrimary(size: alto * 0.025, color: WalkieTaskColors.color_3C3C3C, spacing: 1),
+            ),
+          ),
+          SizedBox(height: alto * 0.008,),
+          Container(
+            width: ancho,
+            child: TextFildGeneric(
+              labelStyle: WalkieTaskStyles().stylePrimary(size: alto * 0.025, color: WalkieTaskColors.color_3C3C3C, spacing: 1),
+              sizeH: alto,
+              sizeW: ancho,
+              borderColor: WalkieTaskColors.color_E2E2E2,
+              sizeBorder: 1.8,
+              textAlign: TextAlign.left,
+              initialValue: null,
+              sizeHeight: alto * 0.15,
+              maxLines: 5,
+              textEditingController: _controllerDescription,
+              onChanged: (text) {},
+            ),
+          ),
+          SizedBox(height: alto * 0.03,),
+          Container(
+            width: ancho,
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Expanded(
-                  child: Text('Editar tarea',
-                    style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.027, color: WalkieTaskColors.color_3C3C3C),
+                Container(
+                  margin: EdgeInsets.only(right: ancho * 0.03),
+                  child: Text('Fecha',textAlign: TextAlign.right,
+                    style: WalkieTaskStyles().stylePrimary(size: alto * 0.025, color: WalkieTaskColors.color_3C3C3C, spacing: 1),),
+                ),
+                Container(
+                  width: ancho * 0.5,
+                  child: InkWell(
+                    onTap: () async {
+                      DateTime newDateTime = await showRoundedDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(DateTime.now().year - 1),
+                        lastDate: DateTime(DateTime.now().year + 1),
+                        borderRadius: 20,
+                        height: MediaQuery.of(context).size.height * 0.6,
+                      );
+                      if (newDateTime != null) {
+                        setState(() => fechaTask = newDateTime);
+                      }
+                    },
+                    child: Container(
+                      decoration: new BoxDecoration(
+                        border: Border.all(width: 1.8,color: WalkieTaskColors.color_E2E2E2),
+                        borderRadius: BorderRadius.all(Radius.circular(5.0),),
+                      ),
+                      child: fechaTask != null ?
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Text('${fechaTask.day}-${fechaTask.month}-${fechaTask.year}',
+                              style: WalkieTaskStyles().stylePrimary(size: alto * 0.025, color: WalkieTaskColors.color_3C3C3C, spacing: 1)),
+                          InkWell(
+                            child: Icon(Icons.clear),
+                            onTap: (){
+                              setState(() {
+                                fechaTask = null;
+                              });
+                            },
+                          ),
+                        ],
+                      ) : Container(),
+                    ),
                   ),
                 ),
-                SizedBox(width: ancho * 0.02,),
               ],
             ),
           ),
+          SizedBox(height: alto * 0.04,),
+          Container(
+            width: ancho,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                RoundedButton(
+                  borderColor: WalkieTaskColors.primary,
+                  width: ancho * 0.2,
+                  height: alto * 0.04,
+                  radius: 5.0,
+                  title: 'Aceptar',
+                  textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.04, color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 2),
+                  backgroundColor: WalkieTaskColors.primary,
+                  onPressed: () => _saveEditTask(),
+                ),
+                SizedBox(width: ancho * 0.08,),
+                RoundedButton(
+                  borderColor: WalkieTaskColors.white,
+                  width: ancho * 0.2,
+                  height: alto * 0.04,
+                  radius: 5.0,
+                  title: 'Cancelar',
+                  textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.04, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 2),
+                  backgroundColor: WalkieTaskColors.white,
+                  onPressed: () async{
+                    setState(() {
+                      edit = false;
+                    });
+                  },
+                )
+              ],
+            ),
+          ),
+          SizedBox(height: alto * 0.01,),
         ],
       ),
     );
+  }
+
+  Future<void> _saveEditTask() async {
+    try{
+      conexionHttp connectionHttp = new conexionHttp();
+      Map<String,dynamic> body = {
+        'name' : '${_controllerTitle.text}',
+        'deadline' : fechaTask.toString(),
+        //'description' : '${_controllerDescription.text}'
+      };
+      var response = await connectionHttp.httpUpdateTask(body, tarea.id);
+      var value = jsonDecode(response.body);
+      if(response.statusCode == 200){
+        showAlert('Tarea modificada con exito!',WalkieTaskColors.color_89BD7D);
+        updateData.actualizarListaRecibidos(blocTaskSend);
+        updateData.actualizarListaEnviados(blocTaskSend);
+        setState(() {
+          edit = false;
+        });
+      }else{
+        if(value['message'] != null && (value['message'] as String).isNotEmpty){
+          showAlert(value['message'],Colors.red[400]);
+        }else{
+          showAlert('Error al enviar datos.',Colors.red[400]);
+        }
+      }
+    }catch(e){
+      print(e.toString());
+      showAlert('Error al enviar datos.',Colors.red[400]);
+    }
   }
 
   _inicializarPatronBlocTaskSend(){

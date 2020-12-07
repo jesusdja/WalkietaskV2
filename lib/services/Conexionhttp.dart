@@ -468,4 +468,23 @@ class conexionHttp{
     }
     return response;
   }
+
+  Future<http.Response> httpUpdateTask(Map<String,dynamic> body, int id) async {
+
+    String token  = await obtenerToken();
+    Map<String,String> headers = {
+      'X-Requested-With': 'XMLHttpRequest',
+      'Content-Type':'application/x-www-form-urlencoded',
+      'Authorization': 'Bearer $token'
+    };
+    var response;
+    try{
+      response = await http.put('$enlace/api/auth/tasks/updateTasks/$id',
+          headers: headers, body: body
+      );
+    }catch(e){
+      print(e.toString());
+    }
+    return response;
+  }
 }
