@@ -685,6 +685,12 @@ class _ChatForTareaState extends State<ChatForTarea> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                loadSaveEdit ?
+                Container(
+                  width: ancho * 0.2,
+                  height: alto * 0.04,
+                  child: Center(child: CircularProgressIndicator(),),
+                ) :
                 RoundedButton(
                   borderColor: WalkieTaskColors.primary,
                   width: ancho * 0.2,
@@ -719,11 +725,16 @@ class _ChatForTareaState extends State<ChatForTarea> {
     );
   }
 
+  bool loadSaveEdit = false;
   Future<void> _saveEditTask() async {
+    setState(() {
+      loadSaveEdit = true;
+    });
     try{
       conexionHttp connectionHttp = new conexionHttp();
       Map<String,dynamic> body = {
         'name' : '${_controllerTitle.text}',
+        'description' : '${_controllerDescription.text}',
         'deadline' : fechaTask.toString(),
         //'description' : '${_controllerDescription.text}'
       };
@@ -747,6 +758,9 @@ class _ChatForTareaState extends State<ChatForTarea> {
       print(e.toString());
       showAlert('Error al enviar datos.',Colors.red[400]);
     }
+    setState(() {
+      loadSaveEdit = false;
+    });
   }
 
   _inicializarPatronBlocTaskSend(){

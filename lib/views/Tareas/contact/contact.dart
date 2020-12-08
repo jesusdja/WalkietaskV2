@@ -286,10 +286,10 @@ class _ContactsState extends State<Contacts> {
   }
   _inicializarUser() async {
     List<Usuario> listaUser = await  UserDatabaseProvider.db.getAll();
-    setState(() {});
     mapIdUsers = new Map();
     for(int x = 0; x < listaUser.length; x++){
       mapIdUsers[listaUser[x].id] = listaUser[x];
+      mapUserDelete[listaUser[x].id] = false;
     }
     setState(() {});
   }
