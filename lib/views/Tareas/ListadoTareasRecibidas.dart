@@ -39,7 +39,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
   Map<int,Usuario> mapIdUser;
   BlocTask blocTaskReceived;
 
-  bool valueSwitch = true;
+  bool valueSwitch = false;
   Map<int,bool> mapAppBar = {0:true,1:false,2:false};
   UpdateData updateData = new UpdateData();
   conexionHttp conexionHispanos = new conexionHttp();
@@ -61,7 +61,11 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
 
   _inicializar(){
     mapIdUser = widget.mapIdUserRes;
-    listRecibidos = widget.listRecibidos;
+    if(valueSwitch){
+      orderListTaskDeadLine();
+    }else{
+      listRecibidos = widget.listRecibidos;
+    }
     setState(() {});
   }
 
@@ -244,21 +248,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
       }
     }
 
-    String daysLeft = 'Ahora';
-    DateTime dateCreate = DateTime.parse(tarea.created_at);
-    Duration difDays = DateTime.now().difference(dateCreate);
-    if(difDays.inMinutes > 5){
-      if(difDays.inMinutes < 60){
-        daysLeft = 'Hace ${difDays.inMinutes} min';
-      }else{
-        if(difDays.inHours < 24){
-          daysLeft = 'Hace ${difDays.inHours} horas';
-        }else{
-          double days = difDays.inHours / 24;
-          daysLeft = 'Hace ${days.toStringAsFixed(0)} días';
-        }
-      }
-    }
+    String daysLeft = getDayDiff(tarea.deadline);
 
     String proyectName = '(Sin proyecto asignado)';
     if(tarea.project_id != null && tarea.project_id != 0){
@@ -475,26 +465,11 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     List<Widget> listTaskRes = [];
     listTask.forEach((task) {
 
-      String daysLeft = 'Ahora';
-      DateTime dateCreate = DateTime.parse(task.created_at);
-      Duration difDays = DateTime.now().difference(dateCreate);
+      String daysLeft = getDayDiff(task.deadline);
 
       String proyectName = '(Sin proyecto asignado)';
       if(task.project_id != null && task.project_id != 0){
         proyectName = mapCasos[task.project_id].name;
-      }
-
-      if(difDays.inMinutes > 5){
-        if(difDays.inMinutes < 60){
-          daysLeft = 'Hace ${difDays.inMinutes} min';
-        }else{
-          if(difDays.inHours < 24){
-            daysLeft = 'Hace ${difDays.inHours} horas';
-          }else{
-            double days = difDays.inHours / 24;
-            daysLeft = 'Hace ${days.toStringAsFixed(0)} días';
-          }
-        }
       }
 
       listTaskRes.add(
@@ -794,5 +769,62 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     }
     setState(() {});
     updateData.organizarTareas(AuxList,blocTaskReceived);
+  }
+
+  void orderListTaskDeadLine(){
+    List<Tarea> listAux = widget.listRecibidos;
+    Map<int,Tarea> mapTaskAll = {};
+    listAux.forEach((task) { mapTaskAll[task.id] = task;});
+    listRecibidos = [];
+
+    Map<String,List<int>> mapDiffDay = {};
+    int pos = 0;
+    listAux.forEach((task) {
+      if(task.deadline.isNotEmpty){
+        Duration diff = DateTime.now().difference(DateTime.parse(task.deadline));
+        if(mapDiffDay['${diff.inDays}'] == null){ mapDiffDay['${diff.inDays}'] = [];}
+        mapDiffDay['${diff.inDays}'].add(task.id);
+        if(diff.inDays > pos){ pos = diff.inDays;}
+      }else{
+        if(mapDiffDay['vacio'] == null){ mapDiffDay['vacio'] = [];}
+        mapDiffDay['vacio'].add(task.id);
+      }
+    });
+
+    for(int x = 0; x <= pos ; x++){
+      if(mapDiffDay['$x'] != null){
+        mapDiffDay['$x'].forEach((idTask) {
+          listRecibidos.add(mapTaskAll[idTask]);
+        });
+      }
+    }
+    if(mapDiffDay['vacio'] != null){
+      mapDiffDay['vacio'].forEach((idTask) {
+        listRecibidos.add(mapTaskAll[idTask]);
+      });
+    }
+    setState(() {});
+  }
+
+  String getDayDiff(String deadLine){
+    String daysLeft = '';
+    if(deadLine.isNotEmpty){
+      daysLeft = 'Hoy';
+      DateTime dateCreate = DateTime.parse(deadLine);
+      Duration difDays = DateTime.now().difference(dateCreate);
+      if(difDays.inMinutes > 5){
+        if(difDays.inMinutes < 60){
+          daysLeft = 'Faltan ${difDays.inMinutes} min';
+        }else{
+          if(difDays.inHours < 24){
+            daysLeft = 'Faltan ${difDays.inHours} horas';
+          }else{
+            double days = difDays.inHours / 24;
+            daysLeft = 'Faltan ${days.toStringAsFixed(0)} días';
+          }
+        }
+      }
+    }
+    return daysLeft;
   }
 }

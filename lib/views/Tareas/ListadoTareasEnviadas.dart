@@ -30,7 +30,7 @@ class ListadoTareasEnviadas extends StatefulWidget {
 class _ListadoTareasState extends State<ListadoTareasEnviadas> {
 
   Map<int,bool> mapAppBar = {0:true,1:false,2:false};
-  bool valueSwitch = true;
+  bool valueSwitch = false;
 
   List<Tarea> listEnviados;
   Map<int,Usuario> mapIdUser;
@@ -58,8 +58,12 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
   }
 
   void _inicializar(){
-    listEnviados = widget.listEnviadosRes;
     mapIdUser = widget.mapIdUserRes;
+    if(valueSwitch){
+      orderListTaskDeadLine();
+    }else{
+      listEnviados = widget.listEnviadosRes;
+    }
   }
 
   void _inicializar2(){
@@ -240,21 +244,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
       }
     }
 
-    String daysLeft = 'Ahora';
-    DateTime dateCreate = DateTime.parse(tarea.created_at);
-    Duration difDays = DateTime.now().difference(dateCreate);
-    if(difDays.inMinutes > 5){
-      if(difDays.inMinutes < 60){
-        daysLeft = 'Hace ${difDays.inMinutes} min';
-      }else{
-        if(difDays.inHours < 24){
-          daysLeft = 'Hace ${difDays.inHours} horas';
-        }else{
-          double days = difDays.inHours / 24;
-          daysLeft = 'Hace ${days.toStringAsFixed(0)} días';
-        }
-      }
-    }
+    String daysLeft = getDayDiff(tarea.deadline);
 
     String proyectName = '(Sin proyecto asignado)';
     if(tarea.project_id != null && tarea.project_id != 0){
@@ -544,27 +534,13 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     List<Widget> listTaskRes = [];
     listTask.forEach((task) {
 
-      String daysLeft = 'Ahora';
-      DateTime dateCreate = DateTime.parse(task.created_at);
-      Duration difDays = DateTime.now().difference(dateCreate);
 
       String proyectName = '(Sin proyecto asignado)';
       if(task.project_id != null && task.project_id != 0){
         proyectName = mapCasos[task.project_id].name;
       }
 
-      if(difDays.inMinutes > 5){
-        if(difDays.inMinutes < 60){
-          daysLeft = 'Hace ${difDays.inMinutes} min';
-        }else{
-          if(difDays.inHours < 24){
-            daysLeft = 'Hace ${difDays.inHours} horas';
-          }else{
-            double days = difDays.inHours / 24;
-            daysLeft = 'Hace ${days.toStringAsFixed(0)} días';
-          }
-        }
-      }
+      String daysLeft = getDayDiff(task.deadline);
 
       listTaskRes.add(
           InkWell(
@@ -720,27 +696,6 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     List<Widget> listTaskRes = [];
     for(int index = 0; index < listTask.length; index++) {
       Tarea task = listTask[index];
-      String daysLeft = 'Ahora';
-      DateTime dateCreate = DateTime.parse(task.created_at);
-      Duration difDays = DateTime.now().difference(dateCreate);
-
-      String proyectName = '(Sin proyecto asignado)';
-      if(task.project_id != null && task.project_id != 0){
-        proyectName = mapCasos[task.project_id].name;
-      }
-
-      if(difDays.inMinutes > 5){
-        if(difDays.inMinutes < 60){
-          daysLeft = 'Hace ${difDays.inMinutes} min';
-        }else{
-          if(difDays.inHours < 24){
-            daysLeft = 'Hace ${difDays.inHours} horas';
-          }else{
-            double days = difDays.inHours / 24;
-            daysLeft = 'Hace ${days.toStringAsFixed(0)} días';
-          }
-        }
-      }
 
       listTaskRes.add(
           InkWell(
@@ -819,5 +774,62 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
         }
       },
     );
+  }
+
+  void orderListTaskDeadLine(){
+    List<Tarea> listAux = widget.listEnviadosRes;
+    Map<int,Tarea> mapTaskAll = {};
+    listAux.forEach((task) { mapTaskAll[task.id] = task;});
+    listEnviados = [];
+
+    Map<String,List<int>> mapDiffDay = {};
+    int pos = 0;
+    listAux.forEach((task) {
+      if(task.deadline.isNotEmpty){
+        Duration diff = DateTime.now().difference(DateTime.parse(task.deadline));
+        if(mapDiffDay['${diff.inDays}'] == null){ mapDiffDay['${diff.inDays}'] = [];}
+        mapDiffDay['${diff.inDays}'].add(task.id);
+        if(diff.inDays > pos){ pos = diff.inDays;}
+      }else{
+        if(mapDiffDay['vacio'] == null){ mapDiffDay['vacio'] = [];}
+        mapDiffDay['vacio'].add(task.id);
+      }
+    });
+
+    for(int x = 0; x <= pos ; x++){
+      if(mapDiffDay['$x'] != null){
+        mapDiffDay['$x'].forEach((idTask) {
+          listEnviados.add(mapTaskAll[idTask]);
+        });
+      }
+    }
+    if(mapDiffDay['vacio'] != null){
+      mapDiffDay['vacio'].forEach((idTask) {
+        listEnviados.add(mapTaskAll[idTask]);
+      });
+    }
+    setState(() {});
+  }
+
+  String getDayDiff(String deadLine){
+    String daysLeft = '';
+    if(deadLine.isNotEmpty){
+      daysLeft = 'Ahora';
+      DateTime dateCreate = DateTime.parse(deadLine);
+      Duration difDays = DateTime.now().difference(dateCreate);
+      if(difDays.inMinutes > 5){
+        if(difDays.inMinutes < 60){
+          daysLeft = 'Faltan ${difDays.inMinutes} min';
+        }else{
+          if(difDays.inHours < 24){
+            daysLeft = 'Faltan ${difDays.inHours} horas';
+          }else{
+            double days = difDays.inHours / 24;
+            daysLeft = 'Faltan ${days.toStringAsFixed(0)} días';
+          }
+        }
+      }
+    }
+    return daysLeft;
   }
 }

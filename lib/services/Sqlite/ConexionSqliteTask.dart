@@ -88,12 +88,12 @@ class TaskDatabaseProvider{
     String idUser = await SharedPrefe().getValue('unityIdMyUser');
     final db = await database;
     try{
-      List<Map> list = await db.rawQuery('SELECT * FROM Tareas WHERE user_responsability_id = $idUser AND is_priority = 1 ORDER BY ord');
+      List<Map> list = await db.rawQuery('SELECT * FROM Tareas WHERE user_responsability_id = $idUser AND is_priority = 1 ORDER BY ord DESC');
       list.forEach((mapa){
         Tarea tarea = new Tarea.fromMap(mapa);
         listTarea.add(tarea);
       });
-      list = await db.rawQuery('SELECT * FROM Tareas WHERE user_responsability_id = $idUser AND is_priority = 0 ORDER BY ord');
+      list = await db.rawQuery('SELECT * FROM Tareas WHERE user_responsability_id = $idUser AND is_priority = 0 ORDER BY ord DESC');
       list.forEach((mapa){
         Tarea tarea = new Tarea.fromMap(mapa);
         listTarea.add(tarea);
@@ -109,12 +109,12 @@ class TaskDatabaseProvider{
     List<Tarea> mapTarea = new List<Tarea>();
     final db = await database;
     try{
-      List<Map> list = await db.rawQuery('SELECT * FROM Tareas WHERE user_id = $myId AND user_responsability_id != 0 AND is_priority = 1 ORDER BY ord');
+      List<Map> list = await db.rawQuery('SELECT * FROM Tareas WHERE user_id = $myId AND user_responsability_id != 0 AND is_priority = 1 ORDER BY ord DESC');
       list.forEach((mapa){
         Tarea tarea = new Tarea.fromMap(mapa);
         mapTarea.add(tarea);
       });
-      list = await db.rawQuery('SELECT * FROM Tareas WHERE user_id = $myId AND user_responsability_id != 0 AND is_priority = 0 ORDER BY ord');
+      list = await db.rawQuery('SELECT * FROM Tareas WHERE user_id = $myId AND user_responsability_id != 0 AND is_priority = 0 ORDER BY ord DESC');
       list.forEach((mapa){
         Tarea tarea = new Tarea.fromMap(mapa);
         mapTarea.add(tarea);
