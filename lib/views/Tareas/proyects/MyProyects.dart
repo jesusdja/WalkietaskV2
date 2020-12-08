@@ -9,6 +9,7 @@ import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Tareas/proyects/add_proyects.dart';
@@ -40,6 +41,8 @@ class _MyProyectsState extends State<MyProyects> {
 
   Map<int,bool> openProjectView = {};
   Map<int,List> projectsUser = {};
+  Map<int,bool> deleteProject = {};
+  Map<String,bool> deleteProjectUser = {};
 
   TextStyle textStylePrimary;
   TextEditingController controlleBuscador;
@@ -57,6 +60,7 @@ class _MyProyectsState extends State<MyProyects> {
 
     listaCasos.forEach((element) {
       openProjectView[element.id] = false;
+      deleteProject[element.id] = false;
     });
 
     _getGuests();
@@ -188,6 +192,17 @@ class _MyProyectsState extends State<MyProyects> {
                         onPressed: (){},
                       ),
                       SizedBox(width: ancho * 0.1,),
+                      deleteProject[project.id] ?
+                      Container(
+                        width: ancho * 0.4,
+                        child: Center(
+                          child: Container(
+                            width: ancho * 0.06,
+                            height: alto * 0.03,
+                            child: Center(child: CircularProgressIndicator(),),
+                          ),
+                        ),
+                      ) :
                       Expanded(
                         child: RoundedButton(
                           borderColor: WalkieTaskColors.white,
@@ -198,7 +213,15 @@ class _MyProyectsState extends State<MyProyects> {
                           textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.03, color: WalkieTaskColors.color_E07676,fontWeight: FontWeight.bold,spacing: 2),
                           backgroundColor: WalkieTaskColors.white,
                           maxLines: 1,
-                          onPressed: (){},
+                          onPressed: () async {
+                            deleteProject[project.id] = true;
+                            setState(() {});
+
+                            await Future.delayed(Duration(seconds: 3));
+
+                            deleteProject[project.id] = false;
+                            setState(() {});
+                          },
                         ),
                       ),
                       SizedBox(width: ancho * 0.05,),
@@ -260,6 +283,12 @@ class _MyProyectsState extends State<MyProyects> {
                     ),
                   ),
                 ),
+                deleteProjectUser['$idProjects-${mapUserProject['users']['id']}'] ?
+                Container(
+                  width: ancho * 0.06,
+                  height: alto * 0.03,
+                  child: Center(child: CircularProgressIndicator(),),
+                ) :
                 RoundedButton(
                   borderColor: WalkieTaskColors.color_E07676,
                   width: ancho * 0.18,
@@ -268,7 +297,27 @@ class _MyProyectsState extends State<MyProyects> {
                   title: 'Eliminar',
                   textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.035, color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 2),
                   backgroundColor: WalkieTaskColors.color_E07676,
-                  onPressed: (){},
+                  onPressed: () async {
+                    deleteProjectUser['$idProjects-${mapUserProject['users']['id']}'] = true;
+                    setState(() {});
+
+                    try{
+                      var response = await connectionHttp.httpDeleteUserForProject(idProjects,mapUserProject['users']['id']);
+                      var value = jsonDecode(response.body);
+                      if(value['status_code'] == 200){
+                        await _getGuests();
+                        showAlert('Usuario eliminado del proyecto con exito.!',WalkieTaskColors.color_89BD7D);
+                      }else{
+                        showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                      }
+                    }catch(e){
+                      print(e.toString());
+                      showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                    }
+
+                    deleteProjectUser['$idProjects-${mapUserProject['users']['id']}'] = false;
+                    setState(() {});
+                  },
                 ),
               ],
             ),
@@ -280,6 +329,9 @@ class _MyProyectsState extends State<MyProyects> {
   }
 
   Future<void> _getGuests() async {
+    // setState(() {
+    //   loadGuests = true;
+    // });
     try{
       var response = await connectionHttp.httpGetListGuestsForProjects();
       var value = jsonDecode(response.body);
@@ -288,6 +340,12 @@ class _MyProyectsState extends State<MyProyects> {
           List listHttp = value['projects'];
           listHttp.forEach((element) {
             projectsUser[element['id']] = element['userprojects'];
+            List users = element['userprojects'];
+            users.forEach((user) {
+              if(user['users']['id'] != myUser.id){
+                deleteProjectUser['${element['id']}-${user['users']['id']}'] = false;
+              }
+            });
           });
         }
       }

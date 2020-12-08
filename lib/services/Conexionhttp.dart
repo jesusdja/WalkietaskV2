@@ -502,4 +502,46 @@ class conexionHttp{
     }
     return response;
   }
+
+  Future<http.Response> httpDeleteProject(int id) async {
+
+    String token  = await obtenerToken();
+    Map<String,String> headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type':'application/json',
+      'Accept': 'application/json',
+    };
+
+    var response;
+
+    try{
+      response = await http.delete('$enlace/api/auth/projects/$id/delete',
+        headers: headers,
+      );
+    }catch(e){
+      print(e.toString());
+    }
+    return response;
+  }
+
+  Future<http.Response> httpDeleteUserForProject(int idProject, int idUser) async {
+
+    String token  = await obtenerToken();
+    Map<String,String> headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type':'application/json',
+      'Accept': 'application/json',
+    };
+
+    var response;
+
+    try{
+      response = await http.delete('$enlace/api/auth/projects/$idProject/user/$idUser',
+        headers: headers,
+      );
+    }catch(e){
+      print(e.toString());
+    }
+    return response;
+  }
 }
