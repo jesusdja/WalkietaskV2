@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/bloc/blocPage.dart';
+import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
@@ -16,11 +17,13 @@ import 'package:walkietaskv2/views/Tareas/proyects/add_proyects_sumit.dart';
 
 class AddProyects extends StatefulWidget {
 
-  AddProyects(this.myUserRes, this.listUserRes, this.blocPage);
+  AddProyects({this.myUserRes, this.listUserRes, this.blocPage, this.proyect, this.listUsersExist});
 
   final Usuario myUserRes;
   final List<Usuario> listUserRes;
   final BlocPage blocPage;
+  final Caso proyect;
+  final List listUsersExist;
 
   @override
   _AddProyectsState createState() => _AddProyectsState();
@@ -53,6 +56,9 @@ class _AddProyectsState extends State<AddProyects> {
     super.initState();
     controlleBuscador = TextEditingController();
     controlleNewName = TextEditingController();
+    if(widget.proyect != null){
+      controlleNewName.text = widget.proyect.name;
+    }
     myUser = widget.myUserRes;
     listUser = widget.listUserRes;
   }
@@ -61,7 +67,7 @@ class _AddProyectsState extends State<AddProyects> {
   Widget build(BuildContext context) {
     ancho = MediaQuery.of(context).size.width;
     alto = MediaQuery.of(context).size.height;
-    textStylePrimary = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.024, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold);
+    textStylePrimary = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.024, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 1);
     textStylePrimaryBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.024, color: WalkieTaskColors.color_969696);
     return Scaffold(
       appBar: AppBar(
@@ -110,7 +116,13 @@ class _AddProyectsState extends State<AddProyects> {
             SizedBox(height: alto * 0.005,),
             Container(
               height: alto * 0.04,
-              child: TextFildGeneric(
+              child: widget.proyect != null ?
+              Container(
+                width: ancho,
+                child: Text(widget.proyect.name,style: textStylePrimary,maxLines: 1,),
+              )
+              :
+              TextFildGeneric(
                 labelStyle: textStylePrimary,
                 sizeH: alto,
                 sizeW: ancho,
@@ -221,6 +233,21 @@ class _AddProyectsState extends State<AddProyects> {
   }
 
   Widget _cardInvitation(Usuario user){
+
+    if(user.contact == 0){ return Container();}
+    if(widget.listUsersExist != null && widget.listUsersExist.isNotEmpty){
+      bool exist = false;
+      widget.listUsersExist.forEach((userListExist) {
+        if(userListExist['users']['id'] == user.id){
+          exist = true;
+          checkUser[userListExist['users']['id']] = true;
+        }
+      });
+      if(exist){
+        return Container();
+      }
+    }
+
     Image avatarUser = Image.network(avatarImage);
     if(user.avatar != ''){
       avatarUser = Image.network('$directorioImage${user.avatar}');
@@ -267,26 +294,46 @@ class _AddProyectsState extends State<AddProyects> {
         members.add(key);}
     });
 
-    if(controlleNewName.text.isNotEmpty){
+    if(controlleNewName.text.isNotEmpty || widget.proyect != null){
       if(members.isNotEmpty){
-        Map jsonBody = {
-          'name': controlleNewName.text,
-        };
+        Map jsonBody = {};
+        if(widget.proyect == null){
+          jsonBody['name'] = controlleNewName.text;
+        }
         for(int x = 0; x < members.length; x++){
           jsonBody['users[$x]'] = '${members[x]}';
         }
         try{
-          var response = await connectionHttp.httpCreateProyect(jsonBody);
-          var value = jsonDecode(response.body);
-          if(value['status_code'] == 201){
-            controlleNewName.text = '';
-            checkUser = {};
-            setState(() {});
-            Navigator.of(context).pop(true);
-            Navigator.push(context, new MaterialPageRoute(
-                builder: (BuildContext context) => new AddProyectsSumit(widget.blocPage)));
+          if(widget.proyect == null){
+            //******************************
+            //*************NUEVO************
+            //******************************
+            var response = await connectionHttp.httpCreateProyect(jsonBody);
+            var value = jsonDecode(response.body);
+            if(value['status_code'] == 201){
+              controlleNewName.text = '';
+              checkUser = {};
+              setState(() {});
+              Navigator.of(context).pop(true);
+              Navigator.push(context, new MaterialPageRoute(
+                  builder: (BuildContext context) => new AddProyectsSumit(widget.blocPage)));
+            }else{
+              showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+            }
           }else{
-            showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+            //******************************
+            //**********AGREGAR*************
+            //******************************
+            var response = await connectionHttp.httpAddUserToProject(jsonBody,widget.proyect.id);
+            var value = jsonDecode(response.body);
+            if(value['status_code'] == 200){
+              controlleNewName.text = '';
+              checkUser = {};
+              setState(() {});
+              Navigator.of(context).pop(true);
+            }else{
+              showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+            }
           }
         }catch(e){
           print(e.toString());

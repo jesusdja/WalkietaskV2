@@ -544,4 +544,23 @@ class conexionHttp{
     }
     return response;
   }
+
+  Future<http.Response> httpAddUserToProject(Map body, int id) async {
+
+    String token  = await obtenerToken();
+    Map<String,String> headers = {
+      'X-Requested-With': 'XMLHttpRequest',
+      'Content-Type':'application/x-www-form-urlencoded',
+      'Authorization': 'Bearer $token'
+    };
+    var response;
+    try{
+      response = await http.put('$enlace/api/auth/projects/$id/addUsers',
+          headers: headers, body: body
+      );
+    }catch(e){
+      print(e.toString());
+    }
+    return response;
+  }
 }

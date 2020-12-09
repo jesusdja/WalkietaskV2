@@ -25,6 +25,7 @@ class TextFildGeneric extends StatelessWidget {
   final List<BoxShadow> boxShadow;
   final double sizeBorder;
   final Widget suffixIcon;
+  final bool enable;
 
   TextFildGeneric({
     this.initialValue = '',
@@ -50,6 +51,7 @@ class TextFildGeneric extends StatelessWidget {
     this.boxShadow,
     this.sizeBorder = 2.0,
     this.suffixIcon,
+    this.enable = true,
   });
 
   @override
@@ -76,7 +78,7 @@ class TextFildGeneric extends StatelessWidget {
         initialValue: initialValue,
         maxLines: maxLines,
         obscureText: obscure,
-        enabled: true,
+        enabled: enable,
         controller: textEditingController,
         onChanged: onChanged,
         autocorrect: autoCorrect,

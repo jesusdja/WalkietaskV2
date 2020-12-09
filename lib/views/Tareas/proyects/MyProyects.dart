@@ -113,9 +113,10 @@ class _MyProyectsState extends State<MyProyects> {
                 child: InkWell(
                   onTap: () async {
                     bool res = await Navigator.push(context, new MaterialPageRoute(
-                        builder: (BuildContext context) => new AddProyects(myUser, listUser, widget.blocPage)));
+                        builder: (BuildContext context) => new AddProyects(myUserRes: myUser, listUserRes: listUser,blocPage: widget.blocPage,proyect: null,listUsersExist: null,)));
                     if(res){
                       await updateData.actualizarCasos(blocCasos);
+                      await _getGuests();
                     }
                   },
                   child: Icon(Icons.add_circle_outline, color: WalkieTaskColors.primary,size: alto * 0.04,),
@@ -209,7 +210,13 @@ class _MyProyectsState extends State<MyProyects> {
                         title: 'Agregar',
                         textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.04, color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 2),
                         backgroundColor: WalkieTaskColors.primary,
-                        onPressed: (){},
+                        onPressed: () async {
+                          bool res = await Navigator.push(context, new MaterialPageRoute(
+                              builder: (BuildContext context) => new AddProyects(myUserRes: myUser, listUserRes: listUser,blocPage: widget.blocPage,proyect: project,listUsersExist: projectsUser[project.id] ?? [],)));
+                          if(res){
+                            await _getGuests();
+                          }
+                        },
                       ),
                       SizedBox(width: ancho * 0.1,),
                       deleteProject[project.id] ?
