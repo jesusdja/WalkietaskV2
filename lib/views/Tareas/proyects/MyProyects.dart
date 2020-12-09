@@ -1,11 +1,15 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/bloc/blocPage.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/services/Sqlite/ConexionSqliteCasos.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
@@ -17,12 +21,13 @@ import 'package:walkietaskv2/views/Tareas/proyects/add_proyects.dart';
 
 class MyProyects extends StatefulWidget {
 
-  MyProyects(this.myUserRes, this.listUserRes, this.blocPage, this.listaCasosRes);
+  MyProyects({this.myUserRes, this.listUserRes, this.blocPage, this.listaCasosRes, this.blocCasos});
 
   final Usuario myUserRes;
   final List<Usuario> listUserRes;
   final List<Caso> listaCasosRes;
   final BlocPage blocPage;
+  final BlocCasos blocCasos;
 
   @override
   _MyProyectsState createState() => _MyProyectsState();
@@ -49,9 +54,12 @@ class _MyProyectsState extends State<MyProyects> {
 
   conexionHttp connectionHttp = new conexionHttp();
 
+  BlocCasos blocCasos;
+  StreamSubscription streamSubscriptionCasos;
+  UpdateData updateData = new UpdateData();
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     controlleBuscador = TextEditingController();
     myUser = widget.myUserRes;
@@ -64,6 +72,15 @@ class _MyProyectsState extends State<MyProyects> {
     });
 
     _getGuests();
+
+    blocCasos = widget.blocCasos;
+    _inicializarPatronBlocCasos();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    streamSubscriptionCasos?.cancel();
   }
 
   @override
@@ -94,9 +111,12 @@ class _MyProyectsState extends State<MyProyects> {
               child: Align(
                 alignment: Alignment.centerRight,
                 child: InkWell(
-                  onTap: (){
-                    Navigator.push(context, new MaterialPageRoute(
+                  onTap: () async {
+                    bool res = await Navigator.push(context, new MaterialPageRoute(
                         builder: (BuildContext context) => new AddProyects(myUser, listUser, widget.blocPage)));
+                    if(res){
+                      await updateData.actualizarCasos(blocCasos);
+                    }
                   },
                   child: Icon(Icons.add_circle_outline, color: WalkieTaskColors.primary,size: alto * 0.04,),
                 ),
@@ -217,7 +237,22 @@ class _MyProyectsState extends State<MyProyects> {
                             deleteProject[project.id] = true;
                             setState(() {});
 
-                            await Future.delayed(Duration(seconds: 3));
+                            try{
+                              var response = await connectionHttp.httpDeleteProject(project.id);
+                              var value = jsonDecode(response.body);
+                              if(value['status_code'] == 200){
+                                int res = await CasosDatabaseProvider.db.deleteProject(project.id);
+                                if(res != 0){
+                                  await _inicializarCasos();
+                                  showAlert('Proyecto eliminado con exito.!',WalkieTaskColors.color_89BD7D);
+                                }
+                              }else{
+                                showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                              }
+                            }catch(e){
+                              print(e.toString());
+                              showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                            }
 
                             deleteProject[project.id] = false;
                             setState(() {});
@@ -240,7 +275,7 @@ class _MyProyectsState extends State<MyProyects> {
 
   List<Widget> _cardUsers(int idProjects){
     List<Widget> users = [];
-    List listUsers = projectsUser[idProjects];
+    List listUsers = projectsUser[idProjects] ?? [];
     listUsers.forEach((mapUserProject) {
       if(mapUserProject['users']['id'] != myUser.id){
         String avatar = mapUserProject['users']['avatar'];
@@ -300,7 +335,6 @@ class _MyProyectsState extends State<MyProyects> {
                   onPressed: () async {
                     deleteProjectUser['$idProjects-${mapUserProject['users']['id']}'] = true;
                     setState(() {});
-
                     try{
                       var response = await connectionHttp.httpDeleteUserForProject(idProjects,mapUserProject['users']['id']);
                       var value = jsonDecode(response.body);
@@ -355,5 +389,25 @@ class _MyProyectsState extends State<MyProyects> {
     setState(() {
       loadGuests = false;
     });
+  }
+
+  _inicializarPatronBlocCasos(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionCasos = blocCasos.outList.listen((newVal) {
+        if(newVal){
+          _inicializarCasos();
+        }
+      });
+    } catch (e) {}
+  }
+
+  _inicializarCasos() async {
+    listaCasos = await  CasosDatabaseProvider.db.getAll() ?? [];
+    listaCasos.forEach((element) {
+      openProjectView[element.id] = false;
+      deleteProject[element.id] = false;
+    });
+    setState(() {});
   }
 }

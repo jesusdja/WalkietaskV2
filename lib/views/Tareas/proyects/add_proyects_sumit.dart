@@ -95,7 +95,6 @@ class AddProyectsSumitState extends State<AddProyectsSumit> {
               onPressed: (){
                 widget.blocPage.inList.add(1);
                 Navigator.of(context).pop();
-                Navigator.of(context).pop();
               },
             ),
             SizedBox(height: alto * 0.03,),
@@ -107,7 +106,6 @@ class AddProyectsSumitState extends State<AddProyectsSumit> {
               width: ancho * 0.35,
               height: alto * 0.035,
               onPressed: (){
-                Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
             ),

@@ -73,7 +73,7 @@ class _AddProyectsState extends State<AddProyects> {
         elevation: 0,
         backgroundColor: Colors.grey[100],
         leading: InkWell(
-          onTap: () => Navigator.of(context).pop(),
+          onTap: () => Navigator.of(context).pop(false),
           child: Container(
             child: Center(
               child: Container(
@@ -282,6 +282,7 @@ class _AddProyectsState extends State<AddProyects> {
             controlleNewName.text = '';
             checkUser = {};
             setState(() {});
+            Navigator.of(context).pop(true);
             Navigator.push(context, new MaterialPageRoute(
                 builder: (BuildContext context) => new AddProyectsSumit(widget.blocPage)));
           }else{

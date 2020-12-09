@@ -71,4 +71,17 @@ class CasosDatabaseProvider{
     }
     return res;
   }
+
+  //ELIMINAR PROYECTO
+  Future<int> deleteProject(int id) async {
+    int res = 0;
+    try{
+      var dbClient = await database;
+      res = await dbClient.delete("Casos", where: "id = ?", whereArgs: [id]);
+    }catch(e){
+      print(e.toString());
+    }
+
+    return res;
+  }
 }
