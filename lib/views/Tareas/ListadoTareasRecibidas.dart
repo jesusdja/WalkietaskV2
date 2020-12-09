@@ -251,7 +251,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     String daysLeft = getDayDiff(tarea.deadline);
 
     String proyectName = '(Sin proyecto asignado)';
-    if(tarea.project_id != null && tarea.project_id != 0){
+    if(tarea.project_id != null && tarea.project_id != 0 && mapCasos[tarea.project_id] != null){
       proyectName = mapCasos[tarea.project_id].name;
     }
 
@@ -547,7 +547,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
         itemBuilder: (context, index){
           List<Tarea> listTask = mapTask[mapTask.keys.elementAt(index)];
           Caso proyect;
-          if(listTask[0].project_id != null){
+          if(listTask[0].project_id != null && mapCasos[listTask[0].project_id] != null){
             proyect = mapCasos[listTask[0].project_id];
           }
           return _tareasProyect(proyect, listTask);
