@@ -468,7 +468,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
       String daysLeft = getDayDiff(task.deadline);
 
       String proyectName = '(Sin proyecto asignado)';
-      if(task.project_id != null && task.project_id != 0){
+      if(task.project_id != null && task.project_id != 0 && mapCasos[task.project_id] != null){
         proyectName = mapCasos[task.project_id].name;
       }
 
@@ -536,6 +536,9 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     Map<int,List<Tarea>> mapTask = {};
     listRecibidos.forEach((element) {
       int idProyect = element.project_id ?? 0;
+      if(mapCasos[idProyect] == null){
+        idProyect = 0;
+      }
       if(mapTask[idProyect] == null){ mapTask[idProyect] = [];}
       mapTask[idProyect].add(element);
     });
@@ -626,27 +629,6 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     List<Widget> listTaskRes = [];
     for(int index = 0; index < listTask.length; index++) {
       Tarea task = listTask[index];
-      String daysLeft = 'Ahora';
-      DateTime dateCreate = DateTime.parse(task.created_at);
-      Duration difDays = DateTime.now().difference(dateCreate);
-
-      String proyectName = '(Sin proyecto asignado)';
-      if(task.project_id != null && task.project_id != 0){
-        proyectName = mapCasos[task.project_id].name;
-      }
-
-      if(difDays.inMinutes > 5){
-        if(difDays.inMinutes < 60){
-          daysLeft = 'Hace ${difDays.inMinutes} min';
-        }else{
-          if(difDays.inHours < 24){
-            daysLeft = 'Hace ${difDays.inHours} horas';
-          }else{
-            double days = difDays.inHours / 24;
-            daysLeft = 'Hace ${days.toStringAsFixed(0)} días';
-          }
-        }
-      }
 
       listTaskRes.add(
           InkWell(

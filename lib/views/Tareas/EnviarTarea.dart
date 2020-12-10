@@ -75,6 +75,7 @@ class _MyHomePageState extends State<EnviarTarea> {
   Map<int,bool> tareaText = Map<int,bool>();
   List<String> listIntegrantes = new List<String>();
   List<Usuario> listUser;
+  List<Caso> listaCasos;
   BlocUser blocUser;
   Map<int,bool> mapUserSelect = Map();
 
@@ -88,6 +89,7 @@ class _MyHomePageState extends State<EnviarTarea> {
 
     listUser = widget.listUserRes;
     blocUser = widget.blocUserRes;
+    listaCasos = widget.listaCasosRes;
 
     controlleBuscador = new TextEditingController();
     controlleBuscadorCasos = new TextEditingController();
@@ -137,8 +139,9 @@ class _MyHomePageState extends State<EnviarTarea> {
     alto = MediaQuery.of(context).size.height;
     ancho = MediaQuery.of(context).size.width;
     listUser = widget.listUserRes;
+    listaCasos = widget.listaCasosRes;
 
-    textStylePrimary = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.024, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold);
+    textStylePrimary = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.024, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold, spacing: 0.5);
     textStylePrimaryBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.024, color: WalkieTaskColors.color_969696);
 
     return GestureDetector(
@@ -153,6 +156,7 @@ class _MyHomePageState extends State<EnviarTarea> {
   }
 
   Widget contenido(){
+    print(alto);
     return SingleChildScrollView(
       child: Container(
         color: Colors.white,
@@ -167,7 +171,7 @@ class _MyHomePageState extends State<EnviarTarea> {
               child: buscador(),
             ),
             Container(
-              height: alto * 0.33,
+              height: alto > 600 ? alto * 0.34 : alto * 0.3,
               child: integrantes(),
             ),
             Container(
@@ -239,9 +243,8 @@ class _MyHomePageState extends State<EnviarTarea> {
   }
 
   textAT(String texto,bool status){
-    return Text('$texto',
-        style: estiloLetras(17,status ? Colors.white : colorletrasbuttonAT)
-    );
+    return Text('$texto',style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.024,color: status ? Colors.white : colorletrasbuttonAT ,spacing: 1,fontWeight: FontWeight.bold),);
+        //style: estiloLetras(17,status ? Colors.white : colorletrasbuttonAT) );
   }
 
   bool iconBuscador = false;
@@ -484,55 +487,6 @@ class _MyHomePageState extends State<EnviarTarea> {
           blocUser.inList.add(true);
         }
       },
-    );
-  }
-
-  //*******************************************************
-  //*******************************************************
-  //*******************************************************
-  //*********************TAREA SONIDO**********************
-  //*******************************************************
-  //*******************************************************
-  //*******************************************************
-
-  Widget grabador(){
-    return Container(
-      child: Row(
-        children: <Widget>[
-          Container(
-            width: ancho * 0.12,
-            height: alto * 0.18,
-            margin: EdgeInsets.only(left: ancho * 0.05),
-            child: botonPlay(),
-          ),
-          Container(
-            width: ancho * 0.12,
-            height: alto * 0.18,
-            margin: EdgeInsets.only(left: ancho * 0.05),
-            child: botonBorrar(),
-          ),
-          Container(
-            width: ancho* 0.15,
-            height: alto * 0.18,
-            margin: EdgeInsets.only(left: ancho * 0.1),
-            child: Center(child: Text('$minutos:$segundos',
-              style: estiloLetras(alto * 0.026,Colors.grey[600]),textAlign: TextAlign.left,)),
-          ),
-          !enviar ? Container(
-            width: ancho * 0.28,
-            height: alto * 0.14,
-            margin: EdgeInsets.only(left: ancho * 0.08),
-            child: _buttonRed(),
-          ) :
-          Container(
-            width: ancho * 0.28,
-            height: alto * 0.14,
-            margin: EdgeInsets.only(left: ancho * 0.08),
-            child: enviandoTarea ?
-            Center(child: CircularProgressIndicator(),) : botonEnviar(),
-          ),
-        ],
-      ),
     );
   }
 
@@ -875,11 +829,11 @@ class _MyHomePageState extends State<EnviarTarea> {
           SizedBox(height: alto * 0.01,),
           Container(
             height: tareaText[1] ? alto * 0.35 : alto * 0.23,
-            child: widget.listaCasosRes == null ? Container() : ListView.builder(
-              itemCount: widget.listaCasosRes.length,
+            child: listaCasos == null ? Container() : ListView.builder(
+              itemCount: listaCasos.length,
               itemBuilder: (context,index){
 
-                Caso caso = widget.listaCasosRes[index];
+                Caso caso = listaCasos[index];
                 if(controlleBuscador.text.length != 0 && !caso.name.toLowerCase().contains(controlleBuscador.text.toLowerCase())){
                   return Container();
                 }
@@ -952,133 +906,7 @@ class _MyHomePageState extends State<EnviarTarea> {
           ),
         ),
       );
-    /*Container(
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 5,
-            child: InkWell(
-              child: Container(
-                width: ancho,
-                height: alto * 0.045,
-                decoration: new BoxDecoration(
-                  color: colorButtonBlueAT,
-                  borderRadius: BorderRadius.all(Radius.circular(10),),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text("Enviar ",
-                        style: estiloLetras(alto * 0.022,Colors.white)),
-                    Container(
-                      height: alto * 0.025,
-                      child: Image.asset('assets/image/SendTask2.png',color: Colors.white,),
-                    )
-                  ],
-                ),
-              ),
-              onTap: () async {
-
-                enviandoTarea = true;
-                setState(() {});
-
-                Tarea tarea = await _crearTarea();
-
-                bool res = await sendTask(tarea);
-                if(res){
-                  updateData.actualizarListaRecibidos(widget.blocTaskReceived);
-                  updateData.actualizarListaEnviados(widget.blocTaskSend);
-                  _reiniciarVariables();
-                  showAlert('SE ENVIO',Colors.green[600]);
-                }else{
-                  showAlert('NO SE ENVIO',Colors.red[400]);
-                }
-
-                enviandoTarea = false;
-                setState(() {});
-
-              },
-            ),
-          ),
-          Expanded(flex: 1,child: Container(),),
-          Expanded(
-            flex: 5,
-            child: InkWell(
-              child: Container(
-                height: alto * 0.045,
-                //width: ancho,
-                decoration: new BoxDecoration(
-                  color: colorButtonBlueAT,
-                  borderRadius: BorderRadius.all(Radius.circular(10),),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Text("Asignar a caso",
-                        style: estiloLetras(alto * 0.02,Colors.white)),
-                    Icon(Icons.arrow_forward_ios,color: Colors.white,size: alto * 0.03,)
-                  ],
-                ),
-              ),
-              onTap: () async {
-
-                enviandoTarea = true;
-                setState(() {});
-
-                Tarea tarea = await _crearTarea();
-
-                enviandoTarea = false;
-                setState(() {});
-
-                final result = await Navigator.push(context, new MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                    new AsignarCaso(myUserRes: widget.myUserRes,pathAudioRes: '$appDocPath/$audioName.mp4',listaCasosRes: widget.listaCasosRes,isTextoRes: true,tareaRes: tarea,blocTaskSend: widget.blocTaskSend,blocTaskReceived: widget.blocTaskReceived,)));
-
-                if(result['enviado']){
-                  _reiniciarVariables();
-                }
-              },
-            ),
-          ),
-
-        ],
-      ),
-    );*/
   }
-
-  // Future<Tarea> _crearTarea() async {
-  //   Tarea tareaRes;
-  //
-  //   String fecha = fechaTask != null ? '${fechaTask.year}-${fechaTask.month}-${fechaTask.day}' : '';
-  //
-  //   int id_user_responsability;
-  //   if(userSeleccionado != null){
-  //     id_user_responsability = userSeleccionado.id == 0 ? widget.myUserRes.id : userSeleccionado.id;
-  //   }
-  //
-  //   String phat = '';
-  //   if(_pathAdjunto != null){
-  //     Map<String,String> mapArchivo = await subirArchivo(_pathAdjunto,_fileNameAdjunto);
-  //     if(mapArchivo['subir'] == 'true'){
-  //       phat = mapArchivo['location'];
-  //     }
-  //   }
-  //
-  //   tareaRes = new Tarea(
-  //       name: controlletituloTarea.text,
-  //       deadline: fecha,
-  //       reminder_type_id: 1,
-  //       user_id: widget.myUserRes.id,
-  //       user_responsability_id: id_user_responsability,
-  //       status_id: 1,
-  //       description: controlleExplicacion.text,
-  //       url_attachment: phat
-  //   );
-  //
-  //   return tareaRes;
-  // }
 
   _reiniciarVariables(){
     mapUserSelect.clear();
@@ -1117,6 +945,51 @@ class _MyHomePageState extends State<EnviarTarea> {
   //*******************************************************
   //*******************************************************
   //*******************************************************
+  //*********************TAREA SONIDO**********************
+  //*******************************************************
+  //*******************************************************
+  //*******************************************************
+
+  Widget grabador(){
+    return Container(
+      child: Row(
+        children: <Widget>[
+          Container(
+            width: ancho * 0.12,
+            height: alto * 0.18,
+            margin: EdgeInsets.only(left: ancho * 0.05),
+            child: botonPlay(),
+          ),
+          Container(
+            width: ancho * 0.12,
+            height: alto * 0.18,
+            margin: EdgeInsets.only(left: ancho * 0.05),
+            child: botonBorrar(),
+          ),
+          Container(
+            width: ancho* 0.15,
+            height: alto * 0.18,
+            margin: EdgeInsets.only(left: ancho * 0.1),
+            child: Center(child: Text('$minutos:$segundos',
+              style: estiloLetras(alto * 0.026,Colors.grey[600]),textAlign: TextAlign.left,)),
+          ),
+          !enviar ? Container(
+            margin: EdgeInsets.only(left: ancho * 0.08),
+            child: _buttonRed(),
+          ) :
+          Container(
+            margin: EdgeInsets.only(left: ancho * 0.08),
+            child: enviandoTarea ?
+            Center(child: CircularProgressIndicator(),) : botonEnviar(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  //*******************************************************
+  //*******************************************************
+  //*******************************************************
   //*********************GRABAR****************************
   //*******************************************************
   //*******************************************************
@@ -1146,7 +1019,7 @@ class _MyHomePageState extends State<EnviarTarea> {
         decoration: BoxDecoration(
           image: DecorationImage(
             image: ViewImage().assetsImage("assets/image/micOn.png").image,
-            fit: BoxFit.fill,
+            fit: BoxFit.contain,
           ),
         ),
       ) :
@@ -1444,52 +1317,7 @@ class _MyHomePageState extends State<EnviarTarea> {
       print(e.toString());
       showAlert('Error al enviar datos.',WalkieTaskColors.color_E07676);
     }
-
-
-
-
-
-
-    // Tarea tarea = await _crearTarea();
-    //
-    // String phat = '';
-    // if(_pathAdjunto != null){
-    //   Map<String,String> mapArchivo = await subirAudio('$appDocPath/$audioName.mp4','$audioName.mp4');
-    //   if(mapArchivo['subir'] == 'true'){
-    //     phat = mapArchivo['location'];
-    //     tarea.url_audio = phat;
-    //   }
-    // }
-
-    // final result = await Navigator.push(context, new MaterialPageRoute(
-    //     builder: (BuildContext context) =>
-    //     new AsignarCaso(myUserRes: widget.myUserRes,pathAudioRes: '$appDocPath/$audioName.mp4',listaCasosRes: widget.listaCasosRes,isTextoRes: false,tareaRes: tarea,blocTaskSend: widget.blocTaskSend,blocTaskReceived: widget.blocTaskReceived,)));
-    //
-    // if(!result['sonido']){
-    //   _reiniciarSonido();
-    // }
-    // if(result['enviado']){
-    //   _reiniciarVariables();
-    // }
-
     enviandoTarea = false;
     setState(() {});
   }
-
-
-  // _inicializarPatronBlocUser(){
-  //   try {
-  //     // ignore: cancel_subscriptions
-  //     streamSubscriptionUser = blocUser.outList.listen((newVal) {
-  //       if(newVal){
-  //         _inicializarUser();
-  //       }
-  //     });
-  //   } catch (e) {}
-  // }
-  //
-  // _inicializarUser() async {
-  //   listUser = await  UserDatabaseProvider.db.getAll();
-  //   setState(() {});
-  // }
 }

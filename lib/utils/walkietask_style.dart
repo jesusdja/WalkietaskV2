@@ -106,7 +106,7 @@ class WalkieTaskStyles {
   }) {
     return TextStyle(
       color: color,
-      fontFamily: 'helveticaneue-Regular',
+      //fontFamily: 'helveticaneue-Regular',
       fontSize: size,
       height: h,
       decoration: textDecoration,

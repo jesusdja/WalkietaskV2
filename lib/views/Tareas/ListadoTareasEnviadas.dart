@@ -536,7 +536,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
 
 
       String proyectName = '(Sin proyecto asignado)';
-      if(task.project_id != null && task.project_id != 0){
+      if(task.project_id != null && task.project_id != 0 && mapCasos[task.project_id] != null){
         proyectName = mapCasos[task.project_id].name;
       }
 
