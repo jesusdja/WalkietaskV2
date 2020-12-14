@@ -341,7 +341,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(daysLeft,style: estiloLetras(alto * 0.018,Colors.grey[600]),),
+                  Text(daysLeft,style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: daysLeft.contains('-') ? WalkieTaskColors.color_E07676 : Colors.grey[600]),),
                   SizedBox(height: alto * 0.006,),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -527,7 +527,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Text(daysLeft,style: estiloLetras(alto * 0.018,Colors.grey[600]),),
+                          Text(daysLeft,style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: daysLeft.contains('-') ? WalkieTaskColors.color_E07676 : Colors.grey[600]),),
                           SizedBox(height: alto * 0.006,),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -823,18 +823,29 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
   String getDayDiff(String deadLine){
     String daysLeft = '';
     if(deadLine.isNotEmpty){
-      daysLeft = 'Hoy';
+      daysLeft = 'Ahora';
       DateTime dateCreate = DateTime.parse(deadLine);
-      Duration difDays = DateTime.now().difference(dateCreate);
-      if(difDays.inMinutes > 5){
+      Duration difDays = dateCreate.difference(DateTime.now());
+      if(difDays.inMinutes > 0){
         if(difDays.inMinutes < 60){
-          daysLeft = 'Faltan ${difDays.inMinutes} min';
+          daysLeft = '${difDays.inMinutes} min';
         }else{
           if(difDays.inHours < 24){
-            daysLeft = 'Faltan ${difDays.inHours} horas';
+            daysLeft = '${difDays.inHours} horas';
           }else{
             double days = difDays.inHours / 24;
-            daysLeft = 'Faltan ${days.toStringAsFixed(0)} días';
+            daysLeft = '${days.toStringAsFixed(0)} días';
+          }
+        }
+      }else{
+        if((difDays.inMinutes * -1) < 60){
+          daysLeft = '${difDays.inMinutes} min';
+        }else{
+          if((difDays.inHours * -1) < 24){
+            daysLeft = '${difDays.inHours} horas';
+          }else{
+            double days = (difDays.inHours * -1) / 24;
+            daysLeft = '-${days.toStringAsFixed(0)} días';
           }
         }
       }
