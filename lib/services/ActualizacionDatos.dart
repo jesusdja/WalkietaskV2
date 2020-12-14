@@ -66,7 +66,7 @@ class UpdateData{
     //ACTUALIZAR TABLA LOCAL
     Map<int,Usuario> mapContactsLocal = {};
     try{
-      List<Usuario> contactsLocal = await await  UserDatabaseProvider.db.getContacts();
+      List<Usuario> contactsLocal = await  UserDatabaseProvider.db.getContacts();
       contactsLocal.forEach((element) {
         element.contact = 0;
         mapContactsLocal[element.id] = element;
@@ -219,7 +219,6 @@ class UpdateData{
   }
 
   Future<Usuario> getMyUser() async {
-    print('getMyUser');
     Usuario user;
     try{
       var response = await conexionHispanos.httpMyUser();

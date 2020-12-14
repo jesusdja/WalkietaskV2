@@ -15,9 +15,8 @@ import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
 
 class ListadoTareasEnviadas extends StatefulWidget {
 
-  ListadoTareasEnviadas({
-    this.listEnviadosRes,this.mapIdUserRes,this.blocTaskSendRes,this.listaCasosRes, this.myUserRes});
-  List<Tarea> listEnviadosRes;
+  ListadoTareasEnviadas({this.listEnviadosRes,this.mapIdUserRes,this.blocTaskSendRes,this.listaCasosRes, this.myUserRes});
+  final List<Tarea> listEnviadosRes;
   final Map<int,Usuario> mapIdUserRes;
   final BlocTask blocTaskSendRes;
   final List<Caso> listaCasosRes;
@@ -219,12 +218,12 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                 actionExtentRatio: 0.25,
                 child: _tareas(tarea, tarea.is_priority != 0),
                 actions: <Widget>[
-                  _ButtonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: Colors.white,size: 30,),Colors.yellow[600],Colors.white,1,tarea),
-                  _ButtonSliderAction('COMENTAR',Icon(Icons.message,color: Colors.white,size: 30,),Colors.deepPurple[200],Colors.white,2,tarea),
+                  _buttonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: Colors.white,size: 30,),Colors.yellow[600],Colors.white,1,tarea),
+                  _buttonSliderAction('COMENTAR',Icon(Icons.message,color: Colors.white,size: 30,),Colors.deepPurple[200],Colors.white,2,tarea),
                 ],
                 secondaryActions: <Widget>[
-                  _ButtonSliderAction('TRABAJANDO',Icon(Icons.build,color: Colors.white,size: 30,),colorSliderTrabajando,Colors.white,3,tarea),
-                  _ButtonSliderAction('LISTO',Icon(Icons.check,color: Colors.white,size: 30,),colorSliderListo,Colors.white,4,tarea),
+                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: Colors.white,size: 30,),colorSliderTrabajando,Colors.white,3,tarea),
+                  _buttonSliderAction('LISTO',Icon(Icons.check,color: Colors.white,size: 30,),colorSliderListo,Colors.white,4,tarea),
                 ],
               ),
             );
@@ -710,12 +709,12 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                 actionExtentRatio: 0.25,
                 child: _tareas(task, task.is_priority != 0),
                 actions: <Widget>[
-                  _ButtonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: Colors.white,size: 30,),Colors.yellow[600],Colors.white,1,task),
-                  _ButtonSliderAction('COMENTAR',Icon(Icons.message,color: Colors.white,size: 30,),Colors.deepPurple[200],Colors.white,2,task),
+                  _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: Colors.white,size: 30,),Colors.yellow[600],Colors.white,1,task),
+                  _buttonSliderAction('COMENTAR',Icon(Icons.message,color: Colors.white,size: 30,),Colors.deepPurple[200],Colors.white,2,task),
                 ],
                 secondaryActions: <Widget>[
-                  _ButtonSliderAction('TRABAJANDO',Icon(Icons.build,color: Colors.white,size: 30,),colorSliderTrabajando,Colors.white,3,task),
-                  _ButtonSliderAction('LISTO',Icon(Icons.check,color: Colors.white,size: 30,),colorSliderListo,Colors.white,4,task),
+                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: Colors.white,size: 30,),colorSliderTrabajando,Colors.white,3,task),
+                  _buttonSliderAction('LISTO',Icon(Icons.check,color: Colors.white,size: 30,),colorSliderListo,Colors.white,4,task),
                 ],
               ),
             ),
@@ -743,7 +742,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     }
   }
 
-  Widget _ButtonSliderAction(String titulo,Icon icono,Color color,Color colorText,int accion,Tarea tarea){
+  Widget _buttonSliderAction(String titulo,Icon icono,Color color,Color colorText,int accion,Tarea tarea){
     return IconSlideAction(
       color: color,
       iconWidget: Column(

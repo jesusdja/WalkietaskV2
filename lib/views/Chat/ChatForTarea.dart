@@ -24,7 +24,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
-import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
 class ChatForTarea extends StatefulWidget {
@@ -56,7 +55,6 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
   AudioPlayer audioPlayer;
   StreamSubscription _durationSubscription;
-  Duration _duration;
   bool reproduciendo = false;
 
   double alto = 0;
@@ -82,9 +80,6 @@ class _ChatForTareaState extends State<ChatForTarea> {
     blocTaskSend = widget.blocTaskSend;
 
     audioPlayer = new AudioPlayer();
-    _durationSubscription = audioPlayer.onDurationChanged.listen((duration) {
-      setState(() => _duration = duration);
-    });
     listenerAudio();
 
     controllerSend = new TextEditingController();
@@ -371,17 +366,17 @@ class _ChatForTareaState extends State<ChatForTarea> {
                       from: idMyUser
                     );
 
-                    Map<dynamic,dynamic> Maplista = Map<String,dynamic>();
-                    Maplista['0'] = mensaje.toJson();
+                    Map<dynamic,dynamic> maplista = Map<String,dynamic>();
+                    maplista['0'] = mensaje.toJson();
                     int pos = 1;
                     if(chatTarea.mensajes != null){
                       chatTarea.mensajes.forEach((key,value){
-                        Maplista[pos.toString()] = value;
+                        maplista[pos.toString()] = value;
                         pos++;
                       });
                     }
 
-                    await tareaFB.agregarMensaje(chatTarea.id,Maplista);
+                    await tareaFB.agregarMensaje(chatTarea.id,maplista);
 
                     listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);
                     controllerSend.text = '';
@@ -778,24 +773,16 @@ class _ChatForTareaState extends State<ChatForTarea> {
     setState(() {});
   }
 
-  Duration _durationPause = Duration(seconds: 0);
   Future<void> listenerAudio() async {
     audioPlayer.onAudioPositionChanged.listen((Duration  p){
       print('Current position: $p');
-      _durationPause = p;
-      // int s = _durationPause.inSeconds;
-      // segundos = s.toString();
-      // minutos = _durationPause.inMinutes.toString();
-      // setState(() {});
     });
     AudioPlayerState oldState = AudioPlayerState.COMPLETED;
     audioPlayer.onPlayerStateChanged.listen((AudioPlayerState s){
       print('Current player state: $s');
       if(AudioPlayerState.COMPLETED == s){
         setState(() {
-          //pause = true;
           reproduciendo = false;
-          _durationPause = Duration(seconds: 0);
         });
       }
       if(AudioPlayerState.PAUSED == s){

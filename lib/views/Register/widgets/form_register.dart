@@ -16,7 +16,6 @@ import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/textfield_generic_verific.dart';
 import 'package:walkietaskv2/utils/value_validators.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
-import 'package:walkietaskv2/views/Register/widgets/register_code.dart';
 
 class FormRegister extends StatefulWidget {
   FormRegister({this.contextLogin});

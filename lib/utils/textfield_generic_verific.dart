@@ -85,7 +85,6 @@ class TextFildGenericVerific extends StatelessWidget {
               onChanged: onChanged,
               autocorrect: autoCorrect,
               validator: validator,
-              autovalidate: autoValidate,
               keyboardType: textInputType,
               decoration: InputDecoration(
                 filled: true,

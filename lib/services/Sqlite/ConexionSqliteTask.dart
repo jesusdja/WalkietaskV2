@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/utils/Globales.dart';

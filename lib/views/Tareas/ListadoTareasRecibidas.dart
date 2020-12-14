@@ -223,12 +223,12 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                 actionExtentRatio: 0.25,
                 child: _tareas(tarea, tarea.is_priority != 0),
                 actions: <Widget>[
-                  _ButtonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: Colors.white,size: 30,),Colors.yellow[600],Colors.white,1,tarea),
-                  _ButtonSliderAction('COMENTAR',Icon(Icons.message,color: Colors.white,size: 30,),Colors.deepPurple[200],Colors.white,2,tarea),
+                  _buttonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: Colors.white,size: 30,),Colors.yellow[600],Colors.white,1,tarea),
+                  _buttonSliderAction('COMENTAR',Icon(Icons.message,color: Colors.white,size: 30,),Colors.deepPurple[200],Colors.white,2,tarea),
                 ],
                 secondaryActions: <Widget>[
-                  _ButtonSliderAction('TRABAJANDO',Icon(Icons.build,color: Colors.white,size: 30,),colorSliderTrabajando,Colors.white,3,tarea),
-                  _ButtonSliderAction('LISTO',Icon(Icons.check,color: Colors.white,size: 30,),colorSliderListo,Colors.white,4,tarea),
+                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: Colors.white,size: 30,),colorSliderTrabajando,Colors.white,3,tarea),
+                  _buttonSliderAction('LISTO',Icon(Icons.check,color: Colors.white,size: 30,),colorSliderListo,Colors.white,4,tarea),
                 ],
               ),
             );
@@ -643,12 +643,12 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                 actionExtentRatio: 0.25,
                 child: _tareas(task, task.is_priority != 0),
                 actions: <Widget>[
-                  _ButtonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: Colors.white,size: 30,),Colors.yellow[600],Colors.white,1,task),
-                  _ButtonSliderAction('COMENTAR',Icon(Icons.message,color: Colors.white,size: 30,),Colors.deepPurple[200],Colors.white,2,task),
+                  _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: Colors.white,size: 30,),Colors.yellow[600],Colors.white,1,task),
+                  _buttonSliderAction('COMENTAR',Icon(Icons.message,color: Colors.white,size: 30,),Colors.deepPurple[200],Colors.white,2,task),
                 ],
                 secondaryActions: <Widget>[
-                  _ButtonSliderAction('TRABAJANDO',Icon(Icons.build,color: Colors.white,size: 30,),colorSliderTrabajando,Colors.white,3,task),
-                  _ButtonSliderAction('LISTO',Icon(Icons.check,color: Colors.white,size: 30,),colorSliderListo,Colors.white,4,task),
+                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: Colors.white,size: 30,),colorSliderTrabajando,Colors.white,3,task),
+                  _buttonSliderAction('LISTO',Icon(Icons.check,color: Colors.white,size: 30,),colorSliderListo,Colors.white,4,task),
                 ],
               ),
             ),
@@ -676,7 +676,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     }
   }
 
-  Widget _ButtonSliderAction(String titulo,Icon icono,Color color,Color colorText,int accion,Tarea tarea){
+  Widget _buttonSliderAction(String titulo,Icon icono,Color color,Color colorText,int accion,Tarea tarea){
     return IconSlideAction(
       color: color,
       iconWidget: Column(
@@ -697,7 +697,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
             blocTaskReceived.inList.add(true);
             //ENVIAR A API
             try{
-              var result = await conexionHispanos.httpModificarTarea(tarea);
+              await conexionHispanos.httpModificarTarea(tarea);
             }catch(e){
             //SI NO HAY CONEXION GUARDAR EN TABLA LOCAL
 
@@ -710,14 +710,14 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
 
   void _updateMyItems(int oldIndex, int newIndex) {
 
-    List<Tarea> AuxList = new List<Tarea>();
+    List<Tarea> auxList = new List<Tarea>();
     List<Tarea> listRecibidosRecorrer = listRecibidos;
     Tarea tareaOrder = listRecibidosRecorrer[oldIndex];
     listRecibidosRecorrer.removeAt(oldIndex);
     int y = 0;
     if(newIndex == 0){
       tareaOrder.order = 0;
-      AuxList.add(tareaOrder);
+      auxList.add(tareaOrder);
       y++;
     }
 
@@ -729,28 +729,28 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     for(int x = 0; x < listRecibidosRecorrer.length; x++){
       if(x == newIndex && newIndex != 0){
         tareaOrder.order = y;
-        AuxList.add(tareaOrder);
+        auxList.add(tareaOrder);
         y++;
       }
       if((x+1) == newIndex && entrar){
         tareaOrder.order = y;
-        AuxList.add(tareaOrder);
+        auxList.add(tareaOrder);
         y++;
       }
       listRecibidosRecorrer[x].order = y;
-      AuxList.add(listRecibidosRecorrer[x]);
+      auxList.add(listRecibidosRecorrer[x]);
       y++;
     }
     if(newIndex > listRecibidosRecorrer.length){
       tareaOrder.order = y;
-      AuxList.add(tareaOrder);
+      auxList.add(tareaOrder);
     }
     listRecibidos.clear();
-    for(int x = 0; x < AuxList.length; x++){
-      listRecibidos.add(AuxList[x]);
+    for(int x = 0; x < auxList.length; x++){
+      listRecibidos.add(auxList[x]);
     }
     setState(() {});
-    updateData.organizarTareas(AuxList,blocTaskReceived);
+    updateData.organizarTareas(auxList,blocTaskReceived);
   }
 
   void orderListTaskDeadLine(){

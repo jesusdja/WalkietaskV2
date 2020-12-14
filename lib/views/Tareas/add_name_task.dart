@@ -219,24 +219,16 @@ class _AddNameTaskState extends State<AddNameTask> {
     );
   }
 
-  Duration _durationPause = Duration(seconds: 0);
   Future<void> listenerAudio() async {
     audioPlayer.onAudioPositionChanged.listen((Duration  p){
       print('Current position: $p');
-      _durationPause = p;
-      // int s = _durationPause.inSeconds;
-      // segundos = s.toString();
-      // minutos = _durationPause.inMinutes.toString();
-      // setState(() {});
     });
     AudioPlayerState oldState = AudioPlayerState.COMPLETED;
     audioPlayer.onPlayerStateChanged.listen((AudioPlayerState s){
       print('Current player state: $s');
       if(AudioPlayerState.COMPLETED == s){
         setState(() {
-          //pause = true;
           reproduciendo = false;
-          _durationPause = Duration(seconds: 0);
         });
       }
       if(AudioPlayerState.PAUSED == s){

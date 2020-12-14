@@ -83,7 +83,6 @@ class TextFildGeneric extends StatelessWidget {
         onChanged: onChanged,
         autocorrect: autoCorrect,
         validator: validator,
-        autovalidate: autoValidate,
         keyboardType: textInputType,
         focusNode: focusNode,
         decoration: InputDecoration(

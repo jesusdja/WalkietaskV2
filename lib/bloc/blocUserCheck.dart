@@ -24,7 +24,6 @@ class BlocUserCheck {
     }
   }
 
-  @override
   void dispose() {
     _controller.close();
   }

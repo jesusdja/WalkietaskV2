@@ -3,7 +3,6 @@ import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
-import 'package:walkietaskv2/views/Register/widgets/form_register.dart';
 
 class RecoverPassword extends StatefulWidget {
   @override

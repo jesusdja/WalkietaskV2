@@ -47,7 +47,6 @@ class _RegisterCodeState extends State<RegisterCode> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     controller_1 = TextEditingController(text: '');
     controller_2 = TextEditingController(text: '');
@@ -152,26 +151,31 @@ class _RegisterCodeState extends State<RegisterCode> {
             if(mapCode[1] && mapCode[2] && mapCode[3] && mapCode[4]){
               conexionHttp conexionHispanos = new conexionHttp();
               String code = '${controller_1.text}${controller_2.text}${controller_3.text}${controller_4.text}';
-              var response = await conexionHispanos.httpConfirmUser(code);
-              var value3 = jsonDecode(response.body);
-              if(value3['status_code'] == 404){
-                showAlert('Código de activación inválido.',Colors.red[400]);
-              }else{
-                int statusCode = 0;
-                if(value3['status_code'] == 200){
-                  statusCode = 1;
+              try{
+                var response = await conexionHispanos.httpConfirmUser(code);
+                var value3 = jsonDecode(response.body);
+                if(value3['status_code'] == 404){
+                  showAlert('Código de activación inválido.',Colors.red[400]);
                 }else{
-                  showAlert('Codigo vencido. Registrar nuevamente.',Colors.red[400]);
-                  await Future.delayed(Duration(seconds: 3));
+                  int statusCode = 0;
+                  if(value3['status_code'] == 200){
+                    statusCode = 1;
+                  }else{
+                    showAlert('Codigo vencido. Registrar nuevamente.',Colors.red[400]);
+                    await Future.delayed(Duration(seconds: 3));
+                  }
+                  try{
+                    await SharedPrefe().setIntValue('unityLogin',statusCode);
+                    AuthService auth = Provider.of<AuthService>(widget.contextLogin);
+                    auth.init();
+                  }catch(ex){
+                    print(ex);
+                    showAlert('Error al enviar datos.',Colors.red[400]);
+                  }
                 }
-                try{
-                  await SharedPrefe().setIntValue('unityLogin',statusCode);
-                  AuthService auth = Provider.of<AuthService>(widget.contextLogin);
-                  auth.init();
-                }catch(ex){
-                  print(ex);
-                  showAlert('Error al enviar datos.',Colors.red[400]);
-                }
+              }catch(e){
+                print(e.toString());
+                showAlert('Parece que no hay señal de internet, por favor intentar de nuevo cuando lo haya.',Colors.red[400]);
               }
             }else{
               showAlert('Se debe agregar todos los campos.',Colors.red[400]);

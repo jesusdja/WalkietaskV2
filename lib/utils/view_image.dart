@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
-
 import 'package:walkietaskv2/utils/Colores.dart';
 
 class ViewImage {

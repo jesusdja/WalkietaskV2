@@ -1,15 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/bloc/blocPage.dart';
-import 'package:walkietaskv2/models/Usuario.dart';
-import 'package:walkietaskv2/services/Conexionhttp.dart';
-import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
-import 'package:walkietaskv2/utils/Globales.dart';
-import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
-import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
 
