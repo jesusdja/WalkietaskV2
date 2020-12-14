@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,6 +34,7 @@ class _LoginHomeState extends State<LoginHome> {
   bool cargando = false;
   final formKey = GlobalKey<FormState>();
   SharedPreferences prefs;
+  TextEditingController _email = new TextEditingController();
 
   @override
   void initState() {
@@ -65,9 +67,9 @@ class _LoginHomeState extends State<LoginHome> {
         SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              SizedBox(height: alto * 0.1,),
+              SizedBox(height: alto * 0.15,),
               _logo(),
-              SizedBox(height: alto * 0.2,),
+              SizedBox(height: alto * 0.15,),
               _form(),
               SizedBox(height: alto * 0.15,),
               _viewRegistre(context),
@@ -87,11 +89,11 @@ class _LoginHomeState extends State<LoginHome> {
         children: <Widget>[
           Text(
             '¿No tenés cuenta?',
-            style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.022),
+            style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02,spacing: 0.5),
           ),
           InkWell(
-            child: Text('creala aquí. Es gratis.',
-              style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.022),
+            child: Text('créala aquí. Es gratis.',
+              style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02,spacing: 0.5),
             ),
             onTap: () {
               Navigator.push(context, new MaterialPageRoute(
@@ -103,11 +105,9 @@ class _LoginHomeState extends State<LoginHome> {
     );
   }
 
-  TextEditingController _email = new TextEditingController();
-
   Widget _form(){
     return Container(
-      margin: EdgeInsets.only(left: ancho * 0.05,right: alto * 0.05),
+      margin: EdgeInsets.only(left: ancho * 0.12,right: alto * 0.08),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -124,13 +124,13 @@ class _LoginHomeState extends State<LoginHome> {
                   children: <Widget>[
                     Container(
                         child: Text('Correo:',
-                          style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.027),
+                          style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.022),
                         )
                     ),
                     SizedBox(height: alto * 0.04,),
                     Container(
                       child: Text('Contraseña:',
-                        style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.027),
+                        style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.022),
                       ),
                     ),
                   ],
@@ -149,21 +149,22 @@ class _LoginHomeState extends State<LoginHome> {
                             nombre = text;
                             setState(() {});
                           },
-                          labelStyle: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.025),
+                          labelStyle: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.022),
                           textInputType: TextInputType.emailAddress,
                           sizeH: alto,
                           sizeW: ancho,
                           borderColor: WalkieTaskColors.color_B7B7B7,
-                          sizeHeight: alto * 0.045,
+                          sizeHeight: alto * 0.04,
                           textAlign: TextAlign.left,
                           textEditingController: _email,
                           initialValue: null,
+                          sizeBorder: 1.2,
                         ),
                       ),
                       SizedBox(height: alto * 0.025,),
                       Container(
                         child: TextFildGeneric(
-                          labelStyle: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.025),
+                          labelStyle: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.022),
                           onChanged: (text) {
                             pasw = text;
                             setState(() {});
@@ -172,7 +173,8 @@ class _LoginHomeState extends State<LoginHome> {
                           sizeH: alto,
                           sizeW: ancho,
                           borderColor: WalkieTaskColors.color_B7B7B7,
-                          sizeHeight: alto * 0.045,
+                          sizeBorder: 1.2,
+                          sizeHeight: alto * 0.04,
                           textAlign: TextAlign.left,
                         ),
                       ),
@@ -186,8 +188,8 @@ class _LoginHomeState extends State<LoginHome> {
           Align(
             alignment: Alignment.centerRight,
             child: Container(
-              height: ancho * 0.08,
-              width: ancho * 0.3,
+              height: alto * 0.038,
+              width: ancho * 0.16,
               alignment: Alignment.centerRight,
               child: cargando
                   ? Center(
@@ -199,17 +201,17 @@ class _LoginHomeState extends State<LoginHome> {
                 title: 'Entrar',
                 onPressed: () => _save(),
                 radius: 5.0,
-                textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022,color: WalkieTaskColors.white,fontWeight: FontWeight.bold),
+                textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018,color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 1),
               ),
             ),
           ),
-          SizedBox(height: alto * 0.01,),
+          SizedBox(height: alto * 0.02,),
           Container(
             width: ancho,
             child: InkWell(
               child: Text(
                 '¿Olvidaste tu clave?',
-                style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.022),
+                style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02),
                 textAlign: TextAlign.right,
               ),
               onTap: () async {
@@ -225,12 +227,11 @@ class _LoginHomeState extends State<LoginHome> {
 
   Widget _logo(){
     return Container(
-      width: ancho * 0.7,
-      height: alto * 0.25,
+      height: alto * 0.23,
       decoration: BoxDecoration(
         image: DecorationImage(
           image: ViewImage().assetsImage("assets/image/LogoWN.png").image,
-          fit: BoxFit.fill,
+          fit: BoxFit.contain,
         ),
       ),
     );
