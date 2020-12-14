@@ -32,7 +32,7 @@ class _CustomSwitchState extends State<CustomSwitchLocal>
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _animationController = AnimationController(duration: Duration(milliseconds: 300), vsync: this);
     _circleAnimation = AlignmentTween(
         begin: widget.value ? Alignment.centerRight : Alignment.centerLeft,
         end: widget.value ? Alignment.centerLeft :Alignment.centerRight).animate(CurvedAnimation(

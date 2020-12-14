@@ -156,7 +156,6 @@ class _MyHomePageState extends State<EnviarTarea> {
   }
 
   Widget contenido(){
-    print(alto);
     return SingleChildScrollView(
       child: Container(
         color: Colors.white,
