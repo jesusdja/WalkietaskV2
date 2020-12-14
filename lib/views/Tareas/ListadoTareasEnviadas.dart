@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
@@ -44,6 +45,8 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
 
   conexionHttp conexionHispanos = new conexionHttp();
 
+  AudioPlayer audioPlayer;
+  int taskReproduciendo = 0;
 
   @override
   void initState() {
@@ -51,6 +54,8 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     super.initState();
     blocTaskSend = widget.blocTaskSendRes;
     widget.listaCasosRes.forEach((element) { mapCasos[element.id] = element;});
+    audioPlayer = new AudioPlayer();
+    listenerAudio();
     _inicializar();
     _inicializar2();
     _inicializar3();
@@ -86,6 +91,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
   @override
   void dispose() {
     super.dispose();
+    audioPlayer.stop();
   }
 
   @override
@@ -218,12 +224,12 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                 actionExtentRatio: 0.25,
                 child: _tareas(tarea, tarea.is_priority != 0),
                 actions: <Widget>[
-                  _buttonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: Colors.white,size: 30,),Colors.yellow[600],Colors.white,1,tarea),
-                  _buttonSliderAction('COMENTAR',Icon(Icons.message,color: Colors.white,size: 30,),Colors.deepPurple[200],Colors.white,2,tarea),
+                  _buttonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: 30,),Colors.yellow[600],WalkieTaskColors.white,1,tarea),
+                  _buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
                 ],
                 secondaryActions: <Widget>[
-                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: Colors.white,size: 30,),colorSliderTrabajando,Colors.white,3,tarea),
-                  _buttonSliderAction('LISTO',Icon(Icons.check,color: Colors.white,size: 30,),colorSliderListo,Colors.white,4,tarea),
+                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,tarea),
+                  _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,tarea),
                 ],
               ),
             );
@@ -256,6 +262,11 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
       if(widget.myUserRes.id == mapIdUser[tarea.user_responsability_id].id){
         nameUser = 'Recordatorio personal';
       }
+    }
+
+    bool reproTask = false;
+    if(taskReproduciendo == tarea.id){
+      reproTask = true;
     }
 
     return InkWell(
@@ -332,13 +343,21 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       //Icon(Icons.message,color: Colors.grey[600],size: alto * 0.03),
-                      favorite ? CircleAvatar(
-                        backgroundColor: WalkieTaskColors.primary,
-                        radius: alto * 0.012,
-                        child: Text('2',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
-                      ) : Container(),
-                      favorite ? SizedBox(width: ancho * 0.01,) : Container(),
-                      tarea.url_audio != '' ? Icon(Icons.volume_up,color:  Colors.grey[600],size: alto * 0.03,) : Container()
+                      // favorite ? CircleAvatar(
+                      //   backgroundColor: WalkieTaskColors.primary,
+                      //   radius: alto * 0.012,
+                      //   child: Text('2',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
+                      // ) : Container(),
+                      //favorite ? SizedBox(width: ancho * 0.01,) : Container(),
+                      InkWell(
+                        child: tarea.url_audio != '' ? Icon(Icons.volume_up,color: reproTask ? WalkieTaskColors.color_89BD7D : Colors.grey[600],size: alto * 0.03,) : Container(),
+                        onTap: (){
+                          audioPlayer.play(tarea.url_audio);
+                          setState(() {
+                            taskReproduciendo = tarea.id;
+                          });
+                        },
+                      ),
                     ],
                   )
                 ],
@@ -349,75 +368,6 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
       ),
     );
   }
-/*
-  _listado2(){
-    return Container(
-      height: alto * 0.74,
-      child: ListView.builder(
-        itemCount: listEnviados.length,
-        itemBuilder: (context,index){
-          int keyMap = listEnviados.keys.elementAt(index);
-
-          Image avatarUser = Image.network(avatarImage);
-          if(mapIdUser != null){
-            if(mapIdUser[keyMap] != null && mapIdUser[keyMap].avatar != ''){
-              avatarUser = Image.network('$directorioImage${mapIdUser[keyMap].avatar}');
-            }
-          }
-
-          return Container(
-            child: Column(
-              children: <Widget>[
-                keyMap == 0 ? Container() : Container(
-                  padding: EdgeInsets.only(top: alto * 0.02,bottom: alto * 0.02),
-                  margin: EdgeInsets.only(bottom: alto * 0.004),
-                  color: colorTareasEnviadas,
-                  child: InkWell(
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                          width: ancho * 0.3,
-                          padding: EdgeInsets.only(right: ancho * 0.06,left: ancho * 0.06),
-                          child: CircleAvatar(
-                            backgroundColor: Colors.grey[500],
-                            radius: ancho * 0.08,
-                            backgroundImage: avatarUser.image,
-                          ),
-                        ),
-                        Container(
-                          width: ancho * 0.5,
-                          child: Center(
-                            child: Container(
-                              width: ancho * 0.5,
-                              child: Text(mapIdUser[keyMap] == null ? '' : mapIdUser[keyMap].name,
-                                style: estiloLetras(alto * 0.028,Colors.white),),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: ancho * 0.2,
-                          child: Center(
-                            child: Icon(abrirMenu[keyMap] ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_left,size: alto * 0.04,color: Colors.white,),
-                          ),
-                        )
-                      ],
-                    ),
-                    onTap: (){
-                      setState(() {
-                        abrirMenu[keyMap] = !abrirMenu[keyMap];
-                      });
-                    },
-                  ),
-                ),
-                (abrirMenu[keyMap] || keyMap == 0) ? _tareasPorUser(listEnviados[keyMap]) : Container(),
-              ],
-            ),
-          );
-        },
-      )
-    );
-  }
-*/
 
   Widget _listadoUser(){
     Map<int,List<Tarea>> mapTask = {};
@@ -541,6 +491,11 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
 
       String daysLeft = getDayDiff(task.deadline);
 
+      bool reproTask = false;
+      if(taskReproduciendo == task.id){
+        reproTask = true;
+      }
+
       listTaskRes.add(
           InkWell(
             onTap: () =>clickTarea(task),
@@ -585,7 +540,15 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                             //   child: Text('2',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
                             // ) : Container(),
                             // smsRecived ? SizedBox(width: ancho * 0.01,) : Container(),
-                            task.url_audio != '' ? Icon(Icons.volume_up,color:  Colors.grey[600],size: alto * 0.03,) : Container()
+                            InkWell(
+                              child: task.url_audio != '' ? Icon(Icons.volume_up,color: reproTask ? WalkieTaskColors.color_89BD7D : Colors.grey[600],size: alto * 0.03,) : Container(),
+                              onTap: (){
+                                audioPlayer.play(task.url_audio);
+                                setState(() {
+                                  taskReproduciendo = task.id;
+                                });
+                              },
+                            ),
                           ],
                         )
                       ],
@@ -605,6 +568,9 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     Map<int,List<Tarea>> mapTask = {};
     listEnviados.forEach((element) {
       int idProyect = element.project_id ?? 0;
+      if(mapCasos[idProyect] == null){
+        idProyect = 0;
+      }
       if(mapTask[idProyect] == null){ mapTask[idProyect] = [];}
       mapTask[idProyect].add(element);
     });
@@ -709,12 +675,12 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                 actionExtentRatio: 0.25,
                 child: _tareas(task, task.is_priority != 0),
                 actions: <Widget>[
-                  _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: Colors.white,size: 30,),Colors.yellow[600],Colors.white,1,task),
-                  _buttonSliderAction('COMENTAR',Icon(Icons.message,color: Colors.white,size: 30,),Colors.deepPurple[200],Colors.white,2,task),
+                  _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: 30,),Colors.yellow[600],WalkieTaskColors.white,1,task),
+                  _buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,task),
                 ],
                 secondaryActions: <Widget>[
-                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: Colors.white,size: 30,),colorSliderTrabajando,Colors.white,3,task),
-                  _buttonSliderAction('LISTO',Icon(Icons.check,color: Colors.white,size: 30,),colorSliderListo,Colors.white,4,task),
+                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
+                  _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,task),
                 ],
               ),
             ),
@@ -830,5 +796,15 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
       }
     }
     return daysLeft;
+  }
+
+  Future<void> listenerAudio() async {
+    audioPlayer.onPlayerStateChanged.listen((AudioPlayerState s){
+      print('Current player state: $s');
+      if(AudioPlayerState.COMPLETED == s){
+        taskReproduciendo = 0;
+        setState(() {});
+      }
+    });
   }
 }
