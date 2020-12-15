@@ -141,8 +141,8 @@ class _MyHomePageState extends State<EnviarTarea> {
     listUser = widget.listUserRes;
     listaCasos = widget.listaCasosRes;
 
-    textStylePrimary = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.024, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold, spacing: 0.5);
-    textStylePrimaryBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.024, color: WalkieTaskColors.color_969696);
+    textStylePrimary = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold, spacing: 0.8);
+    textStylePrimaryBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.022, color: WalkieTaskColors.color_969696);
 
     return GestureDetector(
       onTap: () {
@@ -217,17 +217,20 @@ class _MyHomePageState extends State<EnviarTarea> {
   Widget buttonAT(String texto, bool value,int tipo){
     return InkWell(
       child: Container(
-        height: alto * 0.04,
+        height: alto * 0.032,
         width: ancho * 0.22,
         decoration: new BoxDecoration(
-            color: value ? colorButtonBlueAT : Colors.white,
-            boxShadow: [ BoxShadow(color: colorBordeOpc,spreadRadius: 1)],
-            borderRadius: BorderRadius.only(
-                bottomRight: tipo == 1 ? const Radius.circular(0) : const Radius.circular(40.0),
-                topRight: tipo == 1 ? const Radius.circular(0) : const Radius.circular(40.0),
-                bottomLeft: tipo == 1 ? const Radius.circular(40.0) : const Radius.circular(0),
-                topLeft: tipo == 1 ? const Radius.circular(40.0) : const Radius.circular(0)
-            )
+          border: new Border.all(
+            width: 1.2,
+            color: WalkieTaskColors.color_E2E2E2,
+          ),
+          color: value ? colorButtonBlueAT : Colors.white,
+          borderRadius: BorderRadius.only(
+              bottomRight: tipo == 1 ? const Radius.circular(0) : const Radius.circular(40.0),
+              topRight: tipo == 1 ? const Radius.circular(0) : const Radius.circular(40.0),
+              bottomLeft: tipo == 1 ? const Radius.circular(40.0) : const Radius.circular(0),
+              topLeft: tipo == 1 ? const Radius.circular(40.0) : const Radius.circular(0)
+          ),
         ),
         child: Center(child: textAT(texto,value),),
       ),
@@ -242,8 +245,14 @@ class _MyHomePageState extends State<EnviarTarea> {
   }
 
   textAT(String texto,bool status){
-    return Text('$texto',style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.024,color: status ? Colors.white : colorletrasbuttonAT ,spacing: 1,fontWeight: FontWeight.bold),);
-        //style: estiloLetras(17,status ? Colors.white : colorletrasbuttonAT) );
+    return Text('$texto',
+      style: WalkieTaskStyles().styleHelveticaneueRegular(
+        size: alto * 0.02,
+        color: status ? Colors.white : colorletrasbuttonAT ,
+        spacing: 1,
+        fontWeight: FontWeight.bold,
+      ),
+    );
   }
 
   bool iconBuscador = false;
@@ -273,7 +282,7 @@ class _MyHomePageState extends State<EnviarTarea> {
                 sizeH: alto,
                 sizeW: ancho,
                 borderColor: WalkieTaskColors.color_E2E2E2,
-                sizeBorder: 1.8,
+                sizeBorder: 1.2,
                 sizeHeight: alto * 0.045,
                 textAlign: TextAlign.left,
                 suffixIcon: InkWell(
@@ -314,13 +323,13 @@ class _MyHomePageState extends State<EnviarTarea> {
 
     return Container(
       margin: EdgeInsets.only(left: ancho * 0.05,right: ancho * 0.05),
-      padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0),
+      padding: EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0),
       decoration: new BoxDecoration(
         shape: BoxShape.rectangle,
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(5.0)),
         border: new Border.all(
-          width: 2,
+          width: 1.2,
           color: WalkieTaskColors.color_E2E2E2,
         ),
       ),
@@ -340,10 +349,13 @@ class _MyHomePageState extends State<EnviarTarea> {
                         ),
                       ),
                     ),
-                    avatarCirculeImage(
-                        WalkieTaskColors.grey,
-                        avatarUser,
-                        ancho * 0.05
+                    Container(
+                      padding: EdgeInsets.only(right: ancho * 0.02),
+                      child: avatarCirculeImage(
+                          WalkieTaskColors.grey,
+                          avatarUser,
+                          ancho * 0.04
+                      ),
                     ),
                   ],
                 ),
@@ -417,19 +429,19 @@ class _MyHomePageState extends State<EnviarTarea> {
                           children: <Widget>[
                             Container(
                               margin: EdgeInsets.only(top: alto * 0.006,bottom: alto * 0.006),
+                              padding: EdgeInsets.only(left: ancho * 0.02),
                               child: CircleAvatar(
-                                radius: ancho * 0.05,
+                                radius: ancho * 0.04,
                                 backgroundColor: colorButtonBlueAT,
                                 child: usuario.avatar == '' ?
-                                Text('${usuario.name.toUpperCase().substring(0,1)}',style: TextStyle(fontSize: alto * 0.028,fontWeight: FontWeight.bold,color: Colors.white),) :  Container(),
+                                Text('${usuario.name.toUpperCase().substring(0,1)}',style: TextStyle(fontSize: alto * 0.023,fontWeight: FontWeight.bold,color: Colors.white),) :  Container(),
                                 backgroundImage: usuario.avatar == '' ? null : imagenAvatar.image,
                               ),
                             ),
                             Expanded(
                               child: Container(
-                                width: ancho * 0.65,
-                                margin: EdgeInsets.only(left: ancho * 0.05),
-                                child: Text('${usuario.name}',
+                                margin: EdgeInsets.only(left: ancho * 0.02),
+                                child: Text('${usuario.name.substring(0,1).toUpperCase()}${usuario.name.substring(1,usuario.name.length).toLowerCase()}',
                                   style: userSelect ? textStylePrimaryBold : textStylePrimary,
                                 ),
                               ),
@@ -595,7 +607,7 @@ class _MyHomePageState extends State<EnviarTarea> {
               sizeH: alto,
               sizeW: ancho,
               borderColor: WalkieTaskColors.color_E2E2E2,
-              sizeBorder: 1.8,
+              sizeBorder: 1.2,
               textAlign: TextAlign.left,
               textEditingController: controlleExplicacion,
               initialValue: null,
@@ -625,7 +637,7 @@ class _MyHomePageState extends State<EnviarTarea> {
                     child: Container(
                       height: alto * 0.045,
                       decoration: new BoxDecoration(
-                        border: Border.all(width: 1,color: colorBordeOpc),
+                        border: Border.all(width: 1.2,color: colorBordeOpc),
                         borderRadius: BorderRadius.all(Radius.circular(5.0),),
                       ),
                       child: fechaTask != null ?
@@ -685,7 +697,7 @@ class _MyHomePageState extends State<EnviarTarea> {
                     child: Container(
                       height: alto * 0.045,
                       decoration: new BoxDecoration(
-                        border: Border.all(width: 1,color: colorBordeOpc),
+                        border: Border.all(width: 1.2,color: colorBordeOpc),
                         borderRadius: BorderRadius.all(Radius.circular(5.0),),
                       ),
                       child:_pathAdjunto != null ?
@@ -752,7 +764,7 @@ class _MyHomePageState extends State<EnviarTarea> {
                 sizeH: alto,
                 sizeW: ancho,
                 borderColor: WalkieTaskColors.color_E2E2E2,
-                sizeBorder: 1.8,
+                sizeBorder: 1.2,
                 sizeHeight: alto * 0.045,
                 textAlign: TextAlign.left,
                 suffixIcon: InkWell(
@@ -790,7 +802,7 @@ class _MyHomePageState extends State<EnviarTarea> {
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(5.0)),
         border: new Border.all(
-          width: 2,
+          width: 1.2,
           color: WalkieTaskColors.color_E2E2E2,
         ),
       ),
@@ -970,7 +982,7 @@ class _MyHomePageState extends State<EnviarTarea> {
             height: alto * 0.18,
             margin: EdgeInsets.only(left: ancho * 0.1),
             child: Center(child: Text('$minutos:$segundos',
-              style: estiloLetras(alto * 0.026,Colors.grey[600]),textAlign: TextAlign.left,)),
+              style: textStylePrimary,textAlign: TextAlign.left,)),
           ),
           !enviar ? Container(
             margin: EdgeInsets.only(left: ancho * 0.08),
@@ -1013,8 +1025,8 @@ class _MyHomePageState extends State<EnviarTarea> {
         grabarSound();
       },
       child: grabando ? Container(
-        width: alto * 0.15,
-        height: alto * 0.15,
+        width: alto * 0.13,
+        height: alto * 0.13,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: ViewImage().assetsImage("assets/image/micOn.png").image,
@@ -1023,8 +1035,8 @@ class _MyHomePageState extends State<EnviarTarea> {
         ),
       ) :
       Container(
-        width: alto * 0.15,
-        height: alto * 0.15,
+        width: alto * 0.13,
+        height: alto * 0.13,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: ViewImage().assetsImage("assets/image/micOff.png").image,
@@ -1082,8 +1094,8 @@ class _MyHomePageState extends State<EnviarTarea> {
     return GestureDetector(
       onTap: () => _sendTask(),
       child: Container(
-        width: alto * 0.15,
-        height: alto * 0.15,
+        width: alto * 0.13,
+        height: alto * 0.13,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: ViewImage().assetsImage("assets/image/SendTask.png").image,
