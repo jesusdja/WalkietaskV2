@@ -24,6 +24,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
+import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
 class ChatForTarea extends StatefulWidget {
@@ -45,7 +46,6 @@ class _ChatForTareaState extends State<ChatForTarea> {
   ChatTareaFirebase chatTareasdb;
   Usuario usuarioResponsable;
   Image imagenUser;
-  TextEditingController controllerSend;
 
   List<Usuario> listUser = new List<Usuario>();
 
@@ -67,7 +67,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
   bool edit = false;
   DateTime fechaTask;
   DateTime fechaTaskOld;
-
+  TextEditingController _controllerChatSms;
   TextEditingController _controllerTitle;
   TextEditingController _controllerDescription;
 
@@ -82,13 +82,13 @@ class _ChatForTareaState extends State<ChatForTarea> {
     audioPlayer = new AudioPlayer();
     listenerAudio();
 
-    controllerSend = new TextEditingController();
     tarea = widget.tareaRes;
     fechaTask = DateTime.parse(widget.tareaRes.created_at);
     fechaTaskOld = DateTime.parse(widget.tareaRes.created_at);
 
     _controllerTitle = TextEditingController(text: tarea.name);
     _controllerDescription = TextEditingController(text: tarea.description);
+    _controllerChatSms = TextEditingController();
 
     chatTareasdb = new ChatTareaFirebase();
     imagenUser = Image.network('$avatarImage');
@@ -146,20 +146,25 @@ class _ChatForTareaState extends State<ChatForTarea> {
     ancho = MediaQuery.of(context).size.width;
     alto = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      backgroundColor: colorChat,
-      appBar: _appBarH(),
-      bottomNavigationBar: Container(
-        color: colorFondoSend,
-        height: alto * 0.08,
-        child: _textFieldSend(),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(new FocusNode());
+        buttonSend = textChatSend.isNotEmpty;
+        setState(() {});
+      },
+      child: Scaffold(
+        backgroundColor: colorChat,
+        appBar: _appBarH(),
+        /*bottomNavigationBar: Container(
+          color: colorFondoSend,
+          height: alto * 0.08,
+          child: _textFieldSend(),
+        ),*/
+        body: SafeArea(
           child: Stack(
             children: <Widget>[
               Container(
-                height: alto * 0.8,
+                padding: EdgeInsets.only(bottom: alto * 0.08),
                 child: _mensajes(),
               ),
               edit ? Container(
@@ -167,6 +172,16 @@ class _ChatForTareaState extends State<ChatForTarea> {
               ) :
               Container(
                 child: _detallesTarea(),
+              ),
+              Positioned.fill(
+                child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      color: colorFondoSend,
+                      height: alto * 0.08,
+                      child: _textFieldSend(),
+                    )
+                ),
               ),
             ],
           ),
@@ -319,10 +334,12 @@ class _ChatForTareaState extends State<ChatForTarea> {
     );
   }
 
+  String textChatSend = '';
+  bool buttonSend = false;
   Widget _textFieldSend(){
 
     var styleBorder = const OutlineInputBorder(
-      borderSide: const BorderSide(color: Colors.grey, width: 0.6),
+      borderSide: const BorderSide(color: Colors.grey, width: 1),
       borderRadius: const BorderRadius.all(const Radius.circular(15.0),),
     );
 
@@ -330,66 +347,105 @@ class _ChatForTareaState extends State<ChatForTarea> {
       child: Row(
         children: <Widget>[
           Expanded(
-            flex: 10,
-            child: Center(
-              child: Container(
-                margin: EdgeInsets.only(left: ancho * 0.08,right: ancho * 0.02),
-                child: TextField(
-                  controller: controllerSend,
-                  style:estiloLetras(alto * 0.025,colortitulo),
-                  decoration: new InputDecoration(
-                      focusedBorder: styleBorder,
-                      enabledBorder: styleBorder,
-                      border: styleBorder,
-                      filled: true,
-                      fillColor: Colors.white,
-                      contentPadding:EdgeInsets.symmetric(horizontal: ancho * 0.05, vertical: alto * 0.01)
-                  ),
+            child: Container(
+              margin: EdgeInsets.only(left: ancho * 0.02,right: ancho * 0.02,top: alto * 0.01, bottom: alto * 0.01),
+              child: TextField(
+                controller: _controllerChatSms,
+                onTap: (){
+                  setState(() {
+                    buttonSend = true;
+                  });
+                },
+                onChanged: (text){
+                  buttonSend = textChatSend.isNotEmpty;
+                  textChatSend = text;
+                  setState(() {});
+                },
+                onSubmitted: (text){
+                  buttonSend = textChatSend.isNotEmpty;
+                  setState(() {});
+                },
+                style:estiloLetras(alto * 0.025,colortitulo),
+                decoration: new InputDecoration(
+                    focusedBorder: styleBorder,
+                    enabledBorder: styleBorder,
+                    border: styleBorder,
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding:EdgeInsets.symmetric(horizontal: ancho * 0.05, vertical: alto * 0.01)
                 ),
               ),
             ),
           ),
-          Expanded(
-            flex: 2,
-            child: Container(
-              child: IconButton(
-                icon: Icon(Icons.send),
-                onPressed: () async {
-                  if(controllerSend.text != ''){
+          buttonSend ? Container(
+            child: IconButton(
+              icon: Icon(Icons.send,color: WalkieTaskColors.color_4D9DFA,),
+              onPressed: () async {
+                if(textChatSend.isNotEmpty){
 
-                    DateTime now = DateTime.now();
-                    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
-                    String formattedHours = DateFormat('kk:mm').format(now);
+                  DateTime now = DateTime.now();
+                  String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+                  String formattedHours = DateFormat('kk:mm').format(now);
 
-                    ChatMessenger mensaje = new ChatMessenger(
+                  ChatMessenger mensaje = new ChatMessenger(
                       fecha: formattedDate,
                       hora: formattedHours,
-                      texto: controllerSend.text,
+                      texto: textChatSend,
                       from: idMyUser
-                    );
+                  );
 
-                    Map<dynamic,dynamic> maplista = Map<String,dynamic>();
-                    maplista['0'] = mensaje.toJson();
-                    int pos = 1;
-                    if(chatTarea.mensajes != null){
-                      chatTarea.mensajes.forEach((key,value){
-                        maplista[pos.toString()] = value;
-                        pos++;
-                      });
-                    }
-
-                    await tareaFB.agregarMensaje(chatTarea.id,maplista);
-
-                    listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);
-                    controllerSend.text = '';
-                    setState(() {});
+                  Map<dynamic,dynamic> maplista = Map<String,dynamic>();
+                  maplista['0'] = mensaje.toJson();
+                  int pos = 1;
+                  if(chatTarea.mensajes != null){
+                    chatTarea.mensajes.forEach((key,value){
+                      maplista[pos.toString()] = value;
+                      pos++;
+                    });
                   }
 
-                },
-              ),
+                  await tareaFB.agregarMensaje(chatTarea.id,maplista);
+
+                  listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+                  textChatSend = '';
+                  _controllerChatSms.text = '';
+                  buttonSend = false;
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                  setState(() {});
+                }
+              },
+            ),
+          )  :
+          Container(
+            child: Row(
+              children: [
+                Container(
+                  height: alto * 0.03,
+                  width: alto * 0.035,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: ViewImage().assetsImage("assets/image/Attachment.png").image,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                //IconButton(icon: Icon(Icons.mic,color: Colors.grey,), onPressed: (){}),
+                SizedBox(width: ancho * 0.01,),
+                //IconButton(icon: Icon(Icons.camera_alt,color: Colors.grey,), onPressed: (){}),
+                Container(
+                  height: alto * 0.03,
+                  width: alto * 0.035,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: ViewImage().assetsImage("assets/image/chat_cam.png",color: Colors.black).image,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                SizedBox(width: ancho * 0.03,),
+              ],
             ),
           )
-
         ],
       ),
     );
@@ -422,136 +478,138 @@ class _ChatForTareaState extends State<ChatForTarea> {
         border: Border.all(width: 1,color: colorBordeOpc),
         borderRadius: BorderRadius.all(Radius.circular(10),),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          //Titulo
-          Container(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Expanded(
-                  child: Text(tarea.name,
-                    style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.027, color: WalkieTaskColors.color_3C3C3C),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            //Titulo
+            Container(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: Text(tarea.name,
+                      style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.027, color: WalkieTaskColors.color_3C3C3C),
+                    ),
                   ),
-                ),
-                SizedBox(width: ancho * 0.02,),
-                tarea.url_audio != '' ?
-                InkWell(
-                  child: Container(
-                      child: Center(
-                        child: CircleAvatar(
-                          child: Icon(Icons.volume_up,size: alto * 0.03,),
-                          foregroundColor: reproduciendo ? Colors.green : WalkieTaskColors.color_969696,
-                          backgroundColor: Colors.white,
+                  SizedBox(width: ancho * 0.02,),
+                  tarea.url_audio != '' ?
+                  InkWell(
+                    child: Container(
+                        child: Center(
+                          child: CircleAvatar(
+                            child: Icon(Icons.volume_up,size: alto * 0.03,),
+                            foregroundColor: reproduciendo ? Colors.green : WalkieTaskColors.color_969696,
+                            backgroundColor: Colors.white,
+                          ),
                         ),
-                      ),
-                      width: ancho * 0.08,
-                      height: ancho * 0.08,
-                      padding: const EdgeInsets.all(2.0), // borde width
-                      decoration: new BoxDecoration(
-                        color: reproduciendo ? Colors.green : WalkieTaskColors.color_969696, // border color
-                        shape: BoxShape.circle,
-                      )
-                  ),
-                  onTap: (){
-                    audioPlayer.play(tarea.url_audio);
-                  },
-                ) : Container(),
-                verDetalle ? Container() : SizedBox(width: ancho * 0.02,),
-                verDetalle ? Container() :
-                InkWell(
-                  child: Container(
-                      child: Center(
-                        child: Image.asset(
-                          'assets/image/icon_edit.png',
-                          //color: WalkieTaskColors.color_969696,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      width: ancho * 0.08,
-                      height: ancho * 0.08,
-                      padding: const EdgeInsets.all(5.0), // borde width
-                      decoration: new BoxDecoration(
-                        //color: WalkieTaskColors.color_969696, // border color
-                        border: Border.all(width: 2,color: WalkieTaskColors.color_969696),
-                        shape: BoxShape.circle,
-                      ),
-                  ),
-                  onTap: (){
-                    setState(() {
-                      edit = true;
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-          //descripcion
-          !verDetalle && descripcion != '' ?
-          Container(
-            margin: EdgeInsets.only(top:alto * 0.03,bottom: alto * 0.02),
-            child: Text(descripcion,style: WalkieTaskStyles().stylePrimary(
-              size: alto * 0.022, color: WalkieTaskColors.color_3C3C3C,spacing: 0.5
-            )),
-          ) : Container(),
-          //caso
-          !verDetalle && caso != '' ?
-          Container(
-            margin: EdgeInsets.only(bottom: alto * 0.02),
-            width: ancho,
-            child: Text('Proyecto: $caso',style: WalkieTaskStyles().styleHelveticaNeueBold(
-                size: alto * 0.022, color: WalkieTaskColors.color_3C3C3C,spacing: 0.5
-            )),
-          ) : Container(),
-          //Adjunto
-          !verDetalle ? Container() : SizedBox(height: alto * 0.02,),
-          Container(
-            width: ancho,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                (!verDetalle && adjunto != '') ? Icon(Icons.attach_file,size: alto * 0.02,) : Container(),
-                Expanded(
-                  child: (!verDetalle && adjunto != '') ? InkWell(
-                    child: Text(adjunto,style: WalkieTaskStyles().stylePrimary(
-                        size: alto * 0.02, color: WalkieTaskColors.color_969696, spacing: 0.5,
-                        fontWeight: FontWeight.bold
-                    )),
-                    onTap: () async {
-                      try{
-                        if (await canLaunch(tarea.url_attachment)) {
-                          await launch(tarea.url_attachment);
-                        } else {
-                          throw 'Could not launch ${tarea.url_attachment}';
-                        }
-                      }catch(e){
-                        print(e.toString());
-                      }
+                        width: ancho * 0.08,
+                        height: ancho * 0.08,
+                        padding: const EdgeInsets.all(2.0), // borde width
+                        decoration: new BoxDecoration(
+                          color: reproduciendo ? Colors.green : WalkieTaskColors.color_969696, // border color
+                          shape: BoxShape.circle,
+                        )
+                    ),
+                    onTap: (){
+                      audioPlayer.play(tarea.url_audio);
                     },
                   ) : Container(),
-                ),
-                Container(
-                  width: ancho * 0.1,
-                  height: alto * 0.02,
-                  child: FittedBox(
-                      fit: BoxFit.fill,
-                      child: InkWell(
-                        child: verDetalle ? Image.asset('assets/image/tri1.png') : Image.asset('assets/image/tri1.1.png'),
-                        onTap: (){
-                          verDetalle = !verDetalle;
-                          setState(() {});
-                        },
-                      )
+                  verDetalle ? Container() : SizedBox(width: ancho * 0.02,),
+                  verDetalle ? Container() :
+                  InkWell(
+                    child: Container(
+                        child: Center(
+                          child: Image.asset(
+                            'assets/image/icon_edit.png',
+                            //color: WalkieTaskColors.color_969696,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                        width: ancho * 0.08,
+                        height: ancho * 0.08,
+                        padding: const EdgeInsets.all(5.0), // borde width
+                        decoration: new BoxDecoration(
+                          //color: WalkieTaskColors.color_969696, // border color
+                          border: Border.all(width: 2,color: WalkieTaskColors.color_969696),
+                          shape: BoxShape.circle,
+                        ),
+                    ),
+                    onTap: (){
+                      setState(() {
+                        edit = true;
+                      });
+                    },
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+            //descripcion
+            !verDetalle && descripcion != '' ?
+            Container(
+              margin: EdgeInsets.only(top:alto * 0.03,bottom: alto * 0.02),
+              child: Text(descripcion,style: WalkieTaskStyles().stylePrimary(
+                size: alto * 0.022, color: WalkieTaskColors.color_3C3C3C,spacing: 0.5
+              )),
+            ) : Container(),
+            //caso
+            !verDetalle && caso != '' ?
+            Container(
+              margin: EdgeInsets.only(bottom: alto * 0.02),
+              width: ancho,
+              child: Text('Proyecto: $caso',style: WalkieTaskStyles().styleHelveticaNeueBold(
+                  size: alto * 0.022, color: WalkieTaskColors.color_3C3C3C,spacing: 0.5
+              )),
+            ) : Container(),
+            //Adjunto
+            !verDetalle ? Container() : SizedBox(height: alto * 0.02,),
+            Container(
+              width: ancho,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  (!verDetalle && adjunto != '') ? Icon(Icons.attach_file,size: alto * 0.02,) : Container(),
+                  Expanded(
+                    child: (!verDetalle && adjunto != '') ? InkWell(
+                      child: Text(adjunto,style: WalkieTaskStyles().stylePrimary(
+                          size: alto * 0.02, color: WalkieTaskColors.color_969696, spacing: 0.5,
+                          fontWeight: FontWeight.bold
+                      )),
+                      onTap: () async {
+                        try{
+                          if (await canLaunch(tarea.url_attachment)) {
+                            await launch(tarea.url_attachment);
+                          } else {
+                            throw 'Could not launch ${tarea.url_attachment}';
+                          }
+                        }catch(e){
+                          print(e.toString());
+                        }
+                      },
+                    ) : Container(),
+                  ),
+                  Container(
+                    width: ancho * 0.1,
+                    height: alto * 0.02,
+                    child: FittedBox(
+                        fit: BoxFit.fill,
+                        child: InkWell(
+                          child: verDetalle ? Image.asset('assets/image/tri1.png') : Image.asset('assets/image/tri1.1.png'),
+                          onTap: (){
+                            verDetalle = !verDetalle;
+                            setState(() {});
+                          },
+                        )
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
