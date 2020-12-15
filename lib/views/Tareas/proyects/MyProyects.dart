@@ -80,7 +80,9 @@ class _MyProyectsState extends State<MyProyects> {
   @override
   void dispose() {
     super.dispose();
-    streamSubscriptionCasos?.cancel();
+    try{
+      streamSubscriptionCasos?.cancel();
+    }catch(_){}
   }
 
   @override
@@ -393,9 +395,11 @@ class _MyProyectsState extends State<MyProyects> {
     }catch(e){
       print(e.toString());
     }
-    setState(() {
-      loadGuests = false;
-    });
+    if (this.mounted) {
+      setState(() {
+        loadGuests = false;
+      });
+    }
   }
 
   _inicializarPatronBlocCasos(){

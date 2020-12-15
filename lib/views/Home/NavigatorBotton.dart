@@ -221,11 +221,39 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           ),
           bottom: _indicatorProgress(),
         ),
-        body: SafeArea(
-          child: Container(
-            child: contenido(),
-          ),
-        ),
+        // body: SafeArea(
+        //   child: Container(
+        //     width: ancho,
+        //     height: double.infinity,
+        //     color: Colors.white,
+        //     child: SingleChildScrollView(
+        //       child: Column(
+        //         children: [
+        //           _indicatorProgress(),
+        //           Container(
+        //             width: ancho,
+        //             height: alto > 600 ? alto * 0.08 : alto * 0.09,
+        //             child: Row(
+        //               children: [
+        //                 InkWell(
+        //                   child: Icon(Icons.menu,color: Colors.grey,size: 35,),
+        //                   onTap: (){
+        //                     _scaffoldKey.currentState.openDrawer();
+        //                   },
+        //                 ),
+        //                 Expanded(
+        //
+        //                 ),
+        //               ],
+        //             ),
+        //           ),
+        //           contenido(),
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        // ),
+        body: Container(child: contenido(),),
         bottomNavigationBar: navigatorBotton(),
       ),
     );
@@ -257,6 +285,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         return Contacts(myUserRes: myUser,mapIdUsersRes: mapIdUser,
           listInvitation: listInvitation,blocInvitation: blocInvitation,blocUser: blocUser,);
     }
+    return Container();
   }
   Widget navigatorBotton(){
     return Container(
@@ -458,6 +487,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       ),
     );
   }
+
   Widget _textDrawer(String text, Function onTap){
     return InkWell(
       onTap: (){

@@ -67,7 +67,10 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
   @override
   void dispose() {
     super.dispose();
-    audioPlayer.stop();
+    try{
+      audioPlayer?.stop();
+    }catch(_){}
+
   }
 
   _inicializar(){

@@ -91,7 +91,9 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
   @override
   void dispose() {
     super.dispose();
-    audioPlayer.stop();
+    try{
+      audioPlayer?.stop();
+    }catch(_){}
   }
 
   @override

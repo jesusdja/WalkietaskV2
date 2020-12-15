@@ -1028,7 +1028,7 @@ class _MyHomePageState extends State<EnviarTarea> {
         decoration: BoxDecoration(
           image: DecorationImage(
             image: ViewImage().assetsImage("assets/image/micOff.png").image,
-            fit: BoxFit.fill,
+            fit: BoxFit.contain,
           ),
         ),
       ),
@@ -1087,7 +1087,7 @@ class _MyHomePageState extends State<EnviarTarea> {
         decoration: BoxDecoration(
           image: DecorationImage(
             image: ViewImage().assetsImage("assets/image/SendTask.png").image,
-            fit: BoxFit.fill,
+            fit: BoxFit.contain,
           ),
         ),
       ),
