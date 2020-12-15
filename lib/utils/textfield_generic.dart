@@ -26,6 +26,7 @@ class TextFildGeneric extends StatelessWidget {
   final double sizeBorder;
   final Widget suffixIcon;
   final bool enable;
+  final EdgeInsetsGeometry padding;
 
   TextFildGeneric({
     this.initialValue = '',
@@ -52,6 +53,7 @@ class TextFildGeneric extends StatelessWidget {
     this.sizeBorder = 2.0,
     this.suffixIcon,
     this.enable = true,
+    this.padding = const EdgeInsets.only(left: 5),
   });
 
   @override
@@ -59,7 +61,7 @@ class TextFildGeneric extends StatelessWidget {
     double radius = 5.0;
     return Container(
       height: sizeHeight == 0 ? sizeH * 0.06 : sizeHeight,
-      padding: EdgeInsets.only(left: 5),
+      padding: padding,
       decoration: new BoxDecoration(
         shape: BoxShape.rectangle,
         color: Colors.white,
