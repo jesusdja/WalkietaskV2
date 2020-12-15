@@ -755,21 +755,23 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
 
     Map<String,List<int>> mapDiffDay = {};
     int pos = 0;
+    double pos2 = 0;
     listAux.forEach((task) {
       if(task.deadline.isNotEmpty){
-        Duration diff = DateTime.now().difference(DateTime.parse(task.deadline));
+        Duration diff = DateTime.parse(task.deadline).difference(DateTime.now());
         if(mapDiffDay['${diff.inDays}'] == null){ mapDiffDay['${diff.inDays}'] = [];}
         mapDiffDay['${diff.inDays}'].add(task.id);
         if(diff.inDays > pos){ pos = diff.inDays;}
+        if(diff.inDays < pos2){ pos2 = double.parse(diff.inDays.toString());}
       }else{
         if(mapDiffDay['vacio'] == null){ mapDiffDay['vacio'] = [];}
         mapDiffDay['vacio'].add(task.id);
       }
     });
 
-    for(int x = 0; x <= pos ; x++){
-      if(mapDiffDay['$x'] != null){
-        mapDiffDay['$x'].forEach((idTask) {
+    for(double x = pos2; x <= pos ; x++){
+      if(mapDiffDay[x.toStringAsFixed(0)] != null){
+        mapDiffDay[x.toStringAsFixed(0)].forEach((idTask) {
           listEnviados.add(mapTaskAll[idTask]);
         });
       }
