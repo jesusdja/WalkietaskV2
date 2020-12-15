@@ -12,15 +12,16 @@ class WalkieTaskColors {
   static const Color grey = Color(0xFFD1D1D1);
   static const Color color_B7B7B7 = Color(0xFFB7B7B7);
   static const Color color_ACACAC = Color(0xFFACACAC);
-  static const Color color_969696 = Color(0xFF969696);
   static const Color color_BABABA = Color(0xFFBABABA);
+  static const Color color_969696 = Color(0xFF969696);
   static const Color color_FAE438 = Color(0xFFFAE438);
   static const Color color_E07676 = Color(0xFFE07676);
   static const Color color_DD7777 = Color(0xFFDD7777);
   static const Color color_76ADE3 = Color(0xFF76ADE3);
   static const Color color_4EA0F0 = Color(0xFF4EA0F0);
-  static const Color color_4D4D4D = Color(0xFF4D4D4D);
   static const Color color_4D9DFA = Color(0xFF4D9DFA);
+  static const Color color_555555 = Color(0xFF555555);
+  static const Color color_4D4D4D = Color(0xFF4D4D4D);
   static const Color color_3C3C3C = Color(0xFF3C3C3C);
   static const Color color_89BD7D = Color(0xFF89BD7D);
 }

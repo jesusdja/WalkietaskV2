@@ -164,7 +164,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
           child: Stack(
             children: <Widget>[
               Container(
-                padding: EdgeInsets.only(bottom: alto * 0.08),
+                padding: EdgeInsets.only(bottom: alto * 0.07),
                 child: _mensajes(),
               ),
               edit ? Container(
@@ -178,7 +178,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                     alignment: Alignment.bottomCenter,
                     child: Container(
                       color: colorFondoSend,
-                      height: alto * 0.08,
+                      height: alto * 0.07,
                       child: _textFieldSend(),
                     )
                 ),
@@ -220,7 +220,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Text('$nombreUser',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018, color: WalkieTaskColors.color_3C3C3C)),
-                      Text('$correoUSer',style: WalkieTaskStyles().stylePrimary(size: alto * 0.017, color: WalkieTaskColors.color_969696))
+                      Text('$correoUSer',style: WalkieTaskStyles().stylePrimary(size: alto * 0.017, color: WalkieTaskColors.color_969696,spacing: 1.2,fontWeight: FontWeight.bold))
                     ],
                   )
               ),
@@ -297,7 +297,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
     );
   }
 
-  Widget _cardSMS(Color colorCard, String texto,bool lateralIzq,Usuario userFrom){
+  Widget _cardSMS(Color colorCard, String texto,bool lateralDer,Usuario userFrom){
 
     Image imagenAvatar = Image.network('$avatarImage');
     if(userFrom != null && userFrom.avatar != null && userFrom.avatar != ''){
@@ -305,28 +305,36 @@ class _ChatForTareaState extends State<ChatForTarea> {
     }
 
     return Container(
-      margin: lateralIzq ? EdgeInsets.only(right: ancho * 0.2) : EdgeInsets.only(left: ancho * 0.2),
+      margin: lateralDer ? EdgeInsets.only(right: ancho * 0.2) : EdgeInsets.only(left: ancho * 0.2),
       //height: MediaQuery.of(context).size.height * 0.05,
       child: Card(
-        color: lateralIzq ? Colors.white : colorfondotext,
+        color: lateralDer ? Colors.white : colorfondotext,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Container(
+              lateralDer ? Container(
                 child: CircleAvatar(
-                  radius: alto * 0.03,
+                  radius: alto * 0.025,
                   backgroundImage: imagenAvatar.image,
                 ),
+              ) : Container(),
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                  child: Text(texto,
+                    style: WalkieTaskStyles().stylePrimary(size: alto * 0.018,color: WalkieTaskColors.color_555555,fontWeight: FontWeight.bold, spacing: 1)
+                    ,textAlign: TextAlign.left,),
+                ),
               ),
-              Container(
-                margin: EdgeInsets.only(left: ancho * 0.04,top: alto * 0.005,bottom: alto * 0.005),
-                child: Text(texto,
-                  style:TextStyle(color: colorLetrastext,fontWeight: FontWeight.bold)
-                  ,textAlign: TextAlign.left,),
-              ),
+              !lateralDer ? Container(
+                child: CircleAvatar(
+                  radius: alto * 0.025,
+                  backgroundImage: imagenAvatar.image,
+                ),
+              ) : Container(),
             ],
           ),
         ),
@@ -365,7 +373,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
                   buttonSend = textChatSend.isNotEmpty;
                   setState(() {});
                 },
-                style:estiloLetras(alto * 0.025,colortitulo),
+                style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.color_4D4D4D,spacing: 1,fontWeight: FontWeight.bold),
+                //style:estiloLetras(alto * 0.025,colortitulo),
                 decoration: new InputDecoration(
                     focusedBorder: styleBorder,
                     enabledBorder: styleBorder,
@@ -491,7 +500,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                 children: <Widget>[
                   Expanded(
                     child: Text(tarea.name,
-                      style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.027, color: WalkieTaskColors.color_3C3C3C),
+                      style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.022, color: WalkieTaskColors.color_3C3C3C),
                     ),
                   ),
                   SizedBox(width: ancho * 0.02,),
@@ -505,8 +514,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
                             backgroundColor: Colors.white,
                           ),
                         ),
-                        width: ancho * 0.08,
-                        height: ancho * 0.08,
+                        width: ancho * 0.07,
+                        height: ancho * 0.07,
                         padding: const EdgeInsets.all(2.0), // borde width
                         decoration: new BoxDecoration(
                           color: reproduciendo ? Colors.green : WalkieTaskColors.color_969696, // border color
@@ -528,8 +537,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
                             fit: BoxFit.fill,
                           ),
                         ),
-                        width: ancho * 0.08,
-                        height: ancho * 0.08,
+                        width: ancho * 0.07,
+                        height: ancho * 0.07,
                         padding: const EdgeInsets.all(5.0), // borde width
                         decoration: new BoxDecoration(
                           //color: WalkieTaskColors.color_969696, // border color
@@ -549,7 +558,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
             //descripcion
             !verDetalle && descripcion != '' ?
             Container(
-              margin: EdgeInsets.only(top:alto * 0.03,bottom: alto * 0.02),
+              margin: EdgeInsets.only(top:alto * 0.015,bottom: alto * 0.01),
               child: Text(descripcion,style: WalkieTaskStyles().stylePrimary(
                 size: alto * 0.022, color: WalkieTaskColors.color_3C3C3C,spacing: 0.5
               )),
@@ -575,7 +584,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                   Expanded(
                     child: (!verDetalle && adjunto != '') ? InkWell(
                       child: Text(adjunto,style: WalkieTaskStyles().stylePrimary(
-                          size: alto * 0.02, color: WalkieTaskColors.color_969696, spacing: 0.5,
+                          size: alto * 0.018, color: WalkieTaskColors.color_969696, spacing: 0.5,
                           fontWeight: FontWeight.bold
                       )),
                       onTap: () async {
@@ -625,157 +634,164 @@ class _ChatForTareaState extends State<ChatForTarea> {
         border: Border.all(width: 1,color: colorBordeOpc),
         borderRadius: BorderRadius.all(Radius.circular(10),),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            width: ancho,
-            child: Text('Editar tarea',
-              style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.027, color: WalkieTaskColors.color_3C3C3C),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              width: ancho,
+              child: Text('Editar tarea',
+                style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.025, color: WalkieTaskColors.color_3C3C3C),
+              ),
             ),
-          ),
-          SizedBox(height: alto * 0.035,),
-          Container(
-            width: ancho,
-            child: Text('Titulo:',
-              style: WalkieTaskStyles().stylePrimary(size: alto * 0.025, color: WalkieTaskColors.color_3C3C3C, spacing: 1),
+            SizedBox(height: alto * 0.025,),
+            Container(
+              width: ancho,
+              child: Text('Titulo:',
+                style: WalkieTaskStyles().stylePrimary(size: alto * 0.022, color: WalkieTaskColors.color_3C3C3C, spacing: 1),
+              ),
             ),
-          ),
-          SizedBox(height: alto * 0.008,),
-          Container(
-            width: ancho,
-            child: TextFildGeneric(
-              labelStyle: WalkieTaskStyles().stylePrimary(size: alto * 0.025, color: WalkieTaskColors.color_3C3C3C, spacing: 1),
-              initialValue: null,
-              onChanged: (String value) {},
-              sizeW: ancho,
-              sizeH: alto,
-              sizeHeight: alto * 0.045,
-              textEditingController: _controllerTitle,
-              borderColor: WalkieTaskColors.color_E2E2E2,
-              sizeBorder: 1.8,
+            SizedBox(height: alto * 0.008,),
+            Container(
+              width: ancho,
+              child: TextFildGeneric(
+                labelStyle: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.color_3C3C3C, spacing: 1),
+                initialValue: null,
+                onChanged: (String value) {},
+                sizeW: ancho,
+                sizeH: alto,
+                sizeHeight: alto * 0.04,
+                textEditingController: _controllerTitle,
+                borderColor: WalkieTaskColors.color_E2E2E2,
+                sizeBorder: 1.8,
+              ),
             ),
-          ),
-          SizedBox(height: alto * 0.02,),
-          Container(
-            width: ancho,
-            child: Text('Descripción',
-              style: WalkieTaskStyles().stylePrimary(size: alto * 0.025, color: WalkieTaskColors.color_3C3C3C, spacing: 1),
+            SizedBox(height: alto * 0.02,),
+            Container(
+              width: ancho,
+              child: Text('Descripción',
+                style: WalkieTaskStyles().stylePrimary(size: alto * 0.022, color: WalkieTaskColors.color_3C3C3C, spacing: 1),
+              ),
             ),
-          ),
-          SizedBox(height: alto * 0.008,),
-          Container(
-            width: ancho,
-            child: TextFildGeneric(
-              labelStyle: WalkieTaskStyles().stylePrimary(size: alto * 0.025, color: WalkieTaskColors.color_3C3C3C, spacing: 1),
-              sizeH: alto,
-              sizeW: ancho,
-              borderColor: WalkieTaskColors.color_E2E2E2,
-              sizeBorder: 1.8,
-              textAlign: TextAlign.left,
-              initialValue: null,
-              sizeHeight: alto * 0.15,
-              maxLines: 5,
-              textEditingController: _controllerDescription,
-              onChanged: (text) {},
+            SizedBox(height: alto * 0.008,),
+            Container(
+              width: ancho,
+              child: TextFildGeneric(
+                labelStyle: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.color_3C3C3C, spacing: 1),
+                sizeH: alto,
+                sizeW: ancho,
+                borderColor: WalkieTaskColors.color_E2E2E2,
+                sizeBorder: 1.8,
+                textAlign: TextAlign.left,
+                initialValue: null,
+                sizeHeight: alto * 0.15,
+                maxLines: 5,
+                textEditingController: _controllerDescription,
+                onChanged: (text) {},
+                padding: EdgeInsets.only(left: 5, top: alto * 0.01, right: 5, bottom: alto * 0.01),
+              ),
             ),
-          ),
-          SizedBox(height: alto * 0.03,),
-          Container(
-            width: ancho,
-            child: Row(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(right: ancho * 0.03),
-                  child: Text('Fecha',textAlign: TextAlign.right,
-                    style: WalkieTaskStyles().stylePrimary(size: alto * 0.025, color: WalkieTaskColors.color_3C3C3C, spacing: 1),),
-                ),
-                Container(
-                  width: ancho * 0.5,
-                  child: InkWell(
-                    onTap: () async {
-                      DateTime newDateTime = await showRoundedDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(DateTime.now().year - 1),
-                        lastDate: DateTime(DateTime.now().year + 1),
-                        borderRadius: 20,
-                        height: MediaQuery.of(context).size.height * 0.6,
-                      );
-                      if (newDateTime != null) {
-                        setState(() => fechaTask = newDateTime);
-                      }
-                    },
-                    child: Container(
-                      decoration: new BoxDecoration(
-                        border: Border.all(width: 1.8,color: WalkieTaskColors.color_E2E2E2),
-                        borderRadius: BorderRadius.all(Radius.circular(5.0),),
+            SizedBox(height: alto * 0.03,),
+            Container(
+              width: ancho,
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(right: ancho * 0.03),
+                    child: Text('Fecha',textAlign: TextAlign.right,
+                      style: WalkieTaskStyles().stylePrimary(size: alto * 0.022, color: WalkieTaskColors.color_3C3C3C, spacing: 1),),
+                  ),
+                  Container(
+                    width: ancho * 0.5,
+                    child: InkWell(
+                      onTap: () async {
+                        DateTime newDateTime = await showRoundedDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(DateTime.now().year - 1),
+                          lastDate: DateTime(DateTime.now().year + 1),
+                          borderRadius: 20,
+                          height: MediaQuery.of(context).size.height * 0.6,
+                        );
+                        if (newDateTime != null) {
+                          setState(() => fechaTask = newDateTime);
+                        }
+                      },
+                      child: Container(
+                        decoration: new BoxDecoration(
+                          border: Border.all(width: 1.2,color: WalkieTaskColors.color_E2E2E2),
+                          borderRadius: BorderRadius.all(Radius.circular(5.0),),
+                        ),
+                        child: fechaTask != null ?
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Expanded(
+                                child: Text('${fechaTask.day}-${fechaTask.month}-${fechaTask.year}',
+                                  style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.color_3C3C3C, spacing: 1),
+                                  textAlign: TextAlign.center,
+                                ),
+                            ),
+                            InkWell(
+                              child: Icon(Icons.clear,size: alto * 0.03,),
+                              onTap: (){
+                                setState(() {
+                                  fechaTask = null;
+                                });
+                              },
+                            ),
+                          ],
+                        ) : Container(),
                       ),
-                      child: fechaTask != null ?
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text('${fechaTask.day}-${fechaTask.month}-${fechaTask.year}',
-                              style: WalkieTaskStyles().stylePrimary(size: alto * 0.025, color: WalkieTaskColors.color_3C3C3C, spacing: 1)),
-                          InkWell(
-                            child: Icon(Icons.clear),
-                            onTap: (){
-                              setState(() {
-                                fechaTask = null;
-                              });
-                            },
-                          ),
-                        ],
-                      ) : Container(),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: alto * 0.04,),
-          Container(
-            width: ancho,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                loadSaveEdit ?
-                Container(
-                  width: ancho * 0.2,
-                  height: alto * 0.04,
-                  child: Center(child: CircularProgressIndicator(),),
-                ) :
-                RoundedButton(
-                  borderColor: WalkieTaskColors.primary,
-                  width: ancho * 0.2,
-                  height: alto * 0.04,
-                  radius: 5.0,
-                  title: 'Aceptar',
-                  textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.04, color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 2),
-                  backgroundColor: WalkieTaskColors.primary,
-                  onPressed: () => _saveEditTask(),
-                ),
-                SizedBox(width: ancho * 0.08,),
-                RoundedButton(
-                  borderColor: WalkieTaskColors.white,
-                  width: ancho * 0.2,
-                  height: alto * 0.04,
-                  radius: 5.0,
-                  title: 'Cancelar',
-                  textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.04, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 2),
-                  backgroundColor: WalkieTaskColors.white,
-                  onPressed: () async{
-                    setState(() {
-                      edit = false;
-                    });
-                  },
-                )
-              ],
+            SizedBox(height: alto * 0.04,),
+            Container(
+              width: ancho,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  loadSaveEdit ?
+                  Container(
+                    width: ancho * 0.2,
+                    height: alto * 0.04,
+                    child: Center(child: CircularProgressIndicator(),),
+                  ) :
+                  RoundedButton(
+                    borderColor: WalkieTaskColors.primary,
+                    width: ancho * 0.2,
+                    height: alto * 0.04,
+                    radius: 5.0,
+                    title: 'Aceptar',
+                    textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.035, color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 1.5),
+                    backgroundColor: WalkieTaskColors.primary,
+                    onPressed: () => _saveEditTask(),
+                  ),
+                  SizedBox(width: ancho * 0.07,),
+                  RoundedButton(
+                    borderColor: WalkieTaskColors.white,
+                    width: ancho * 0.2,
+                    height: alto * 0.04,
+                    radius: 5.0,
+                    title: 'Cancelar',
+                    textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.04, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 1.5),
+                    backgroundColor: WalkieTaskColors.white,
+                    onPressed: () async{
+                      setState(() {
+                        edit = false;
+                      });
+                    },
+                  )
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: alto * 0.01,),
-        ],
+            SizedBox(height: alto * 0.01,),
+          ],
+        ),
       ),
     );
   }
