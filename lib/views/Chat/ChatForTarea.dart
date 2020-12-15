@@ -118,24 +118,26 @@ class _ChatForTareaState extends State<ChatForTarea> {
   }
 
   inicializar() async {
-    ChatTareas chatTareaVery = await chatTareasdb.verificarExistencia(tarea.id.toString());
-    if(chatTareaVery != null){
-      chatTarea = chatTareaVery;
-      setState(() {});
-    }else{
-      ChatTareas chatTarea2 = new ChatTareas(
-        id: '',
-        idTarea: tarea.id.toString(),
-        mensajes: new Map<String,dynamic>()
-      );
-      ChatTareas chatTareaNew = await chatTareasdb.crearTareaChat(chatTarea2);
-      if(chatTareaNew != null){
-        chatTarea = chatTareaNew;
+    try{
+      ChatTareas chatTareaVery = await chatTareasdb.verificarExistencia(tarea.id.toString());
+      if(chatTareaVery != null){
+        chatTarea = chatTareaVery;
         setState(() {});
       }else{
-        print('NO CREADO');
+        ChatTareas chatTarea2 = new ChatTareas(
+            id: '',
+            idTarea: tarea.id.toString(),
+            mensajes: new Map<String,dynamic>()
+        );
+        ChatTareas chatTareaNew = await chatTareasdb.crearTareaChat(chatTarea2);
+        if(chatTareaNew != null){
+          chatTarea = chatTareaNew;
+          setState(() {});
+        }else{
+          print('NO CREADO');
+        }
       }
-    }
+    }catch(_){}
   }
 
   @override

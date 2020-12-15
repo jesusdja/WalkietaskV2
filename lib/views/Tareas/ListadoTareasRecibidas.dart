@@ -694,20 +694,24 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
   }
 
   clickTarea(Tarea tarea) async {
-    bool res = true;
-    if(tarea.name.isEmpty){
-    var result  = await Navigator.push(context, new MaterialPageRoute(
-        builder: (BuildContext context) => new AddNameTask(tareaRes: tarea,)));
-    res = result as bool;
-    }
-    if(res){
-      Navigator.push(context, new MaterialPageRoute(
-          builder: (BuildContext context) =>
-          new ChatForTarea(
-            tareaRes: tarea,
-            listaCasosRes: widget.listaCasosRes,
-            blocTaskSend: blocTaskReceived,
-          )));
+    try{
+      if(tarea.name.isEmpty){
+        var result  = await Navigator.push(context, new MaterialPageRoute(
+            builder: (BuildContext context) => new AddNameTask(tareaRes: tarea,)));
+        if(result){
+          blocTaskReceived.inList.add(true);
+        }
+      }else{
+        Navigator.push(context, new MaterialPageRoute(
+            builder: (BuildContext context) =>
+            new ChatForTarea(
+              tareaRes: tarea,
+              listaCasosRes: widget.listaCasosRes,
+              blocTaskSend: blocTaskReceived,
+            )));
+      }
+    }catch(e){
+      print(e.toString());
     }
   }
 

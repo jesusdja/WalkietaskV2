@@ -169,4 +169,16 @@ class TaskDatabaseProvider{
     }
     return res;
   }
+  //MODIFICAR NOMBRE DE TAREA
+  Future<int> updateTaskName(int id, String name) async {
+    var dbClient = await  database;
+    int res = 0;
+    try{
+      res = await dbClient.update('Tareas', {'name' : name,},where: 'id = ?', whereArgs: [id]);
+    }catch(e){
+      print(e.toString());
+    }
+    return res;
+  }
+
 }
