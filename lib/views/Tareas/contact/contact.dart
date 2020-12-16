@@ -43,6 +43,7 @@ class _ContactsState extends State<Contacts> {
   Map<int,bool> mapUserDelete = {};
 
   BlocUser blocUser;
+  BlocCasos blocInvitation;
 
   conexionHttp connectionHttp = new conexionHttp();
   @override
@@ -51,6 +52,7 @@ class _ContactsState extends State<Contacts> {
     myUser = widget.myUserRes;
     mapIdUsers = widget.mapIdUsersRes;
     blocUser = widget.blocUser;
+    blocInvitation = widget.blocInvitation;
     _inicializar();
     _inicializarPatronBlocUser();
   }
@@ -97,10 +99,14 @@ class _ContactsState extends State<Contacts> {
               alignment: Alignment.centerRight,
               child: InkWell(
                 onTap: () async {
-                  var result = await Navigator.push(context, new MaterialPageRoute(
-                      builder: (BuildContext context) => new SendInvitation(myUserRes: myUser, mapIdUsersRes: mapIdUsers,)));
-                  if(result as bool == true){
-                    widget.blocInvitation.inList.add(true);
+                  try{
+                    var result = await Navigator.push(context, new MaterialPageRoute(
+                        builder: (BuildContext context) => new SendInvitation(myUserRes: myUser, mapIdUsersRes: mapIdUsers,)));
+                    if(result){
+                      blocInvitation.inList.add(true);
+                    }
+                  }catch(e){
+                    print(e.toString());
                   }
                 },
                 child: Icon(Icons.add_circle_outline, color: WalkieTaskColors.primary,size: alto * 0.04,),

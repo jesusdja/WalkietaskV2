@@ -90,6 +90,7 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
           result.add(
               Container(
                 width: ancho,
+                margin: EdgeInsets.only(bottom: alto * 0.03),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
