@@ -67,8 +67,8 @@ class _AddProyectsState extends State<AddProyects> {
   Widget build(BuildContext context) {
     ancho = MediaQuery.of(context).size.width;
     alto = MediaQuery.of(context).size.height;
-    textStylePrimary = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.024, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 1);
-    textStylePrimaryBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.024, color: WalkieTaskColors.color_969696);
+    textStylePrimary = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 0.5);
+    textStylePrimaryBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.022, color: WalkieTaskColors.color_969696);
     return Scaffold(
       appBar: AppBar(
         title: Container(
@@ -191,9 +191,8 @@ class _AddProyectsState extends State<AddProyects> {
                   child: iconBuscador ? Icon(Icons.clear) : Icon(Icons.search),
                   onTap: (){
                     if(iconBuscador){
-                      //controlleBuscador.text = '';
+                      controlleBuscador.text = '';
                       iconBuscador = false;
-                      //controlleBuscador.clear();
                       WidgetsBinding.instance.addPostFrameCallback((_) => controlleBuscador.clear());
                       setState(() {});
                     }
@@ -214,7 +213,7 @@ class _AddProyectsState extends State<AddProyects> {
     return Container(
       width: ancho,
       height: alto * 0.3,
-      padding: EdgeInsets.only(top: alto * 0.005),
+      padding: EdgeInsets.only(top: alto * 0.01),
       decoration: new BoxDecoration(
         shape: BoxShape.rectangle,
         color: Colors.white,
@@ -234,7 +233,10 @@ class _AddProyectsState extends State<AddProyects> {
 
   Widget _cardInvitation(Usuario user){
 
-    if(user.contact == 0){ return Container();}
+    if(user.contact == 0 ){ return Container();}
+
+    if(!user.name.toLowerCase().contains(controlleBuscador.text.toLowerCase()) && controlleBuscador.text.isNotEmpty){ return Container();}
+
     if(widget.listUsersExist != null && widget.listUsersExist.isNotEmpty){
       bool exist = false;
       widget.listUsersExist.forEach((userListExist) {
@@ -266,7 +268,7 @@ class _AddProyectsState extends State<AddProyects> {
             ),
           ),
           Expanded(
-            child: Text(user.name, style: textStylePrimary,),
+            child: Text('${user.name.substring(0,1).toUpperCase()}${user.name.substring(1,user.name.length).toLowerCase()}', style: textStylePrimary,),
           ),
           Checkbox(
               value: checkUser[user.id] ?? false,

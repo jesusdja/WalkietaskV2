@@ -12,6 +12,7 @@ import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqliteCasos.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/DialogAlert.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
@@ -163,23 +164,24 @@ class _MyProyectsState extends State<MyProyects> {
               children: <Widget>[
                 Container(
                   width: ancho,
-                  padding: EdgeInsets.only(left: ancho * 0.05),
+                  padding: EdgeInsets.only(left: ancho * 0.05, right: ancho * 0.05),
                   child: Row(
                     children: <Widget>[
                       Expanded(
-                        child: Text(project.name, style: WalkieTaskStyles().stylePrimary(size: alto * 0.025),),
+                        child: Text(project.name,
+                          style: WalkieTaskStyles().stylePrimary(size: alto * 0.023),),
                       ),
                       InkWell(
                         child: Container(
                           child: !openProjectView[project.id] ?
                           Container(
-                            width: ancho * 0.12,
-                            height: alto * 0.06,
+                            width: ancho * 0.10,
+                            height: alto * 0.05,
                             child: Image.asset('assets/image/icon_close_option.png',fit: BoxFit.fill,color: Colors.grey,),
                           ) :
                           Container(
-                            width: ancho * 0.12,
-                            height: alto * 0.06,
+                            width: ancho * 0.10,
+                            height: alto * 0.05,
                             child: Image.asset('assets/image/icon_open_option.png',fit: BoxFit.fill,color: Colors.grey,),
                           ),
                         ),
@@ -210,7 +212,7 @@ class _MyProyectsState extends State<MyProyects> {
                         height: alto * 0.04,
                         radius: 5.0,
                         title: 'Agregar',
-                        textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.04, color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 2),
+                        textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.04, color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 1.5),
                         backgroundColor: WalkieTaskColors.primary,
                         onPressed: () async {
                           bool res = await Navigator.push(context, new MaterialPageRoute(
@@ -246,23 +248,26 @@ class _MyProyectsState extends State<MyProyects> {
                             deleteProject[project.id] = true;
                             setState(() {});
 
-                            try{
-                              var response = await connectionHttp.httpDeleteProject(project.id);
-                              var value = jsonDecode(response.body);
-                              if(value['status_code'] == 200){
-                                int res = await CasosDatabaseProvider.db.deleteProject(project.id);
-                                if(res != 0){
-                                  await _inicializarCasos();
-                                  showAlert('Proyecto eliminado con exito.!',WalkieTaskColors.color_89BD7D);
+                            bool res = false;
+                            res = await alertDeleteProject(context, project.name);
+                            if(res != null && res){
+                              try{
+                                var response = await connectionHttp.httpDeleteProject(project.id);
+                                var value = jsonDecode(response.body);
+                                if(value['status_code'] == 200){
+                                  int res = await CasosDatabaseProvider.db.deleteProject(project.id);
+                                  if(res != 0){
+                                    await _inicializarCasos();
+                                    showAlert('Proyecto eliminado con exito.!',WalkieTaskColors.color_89BD7D);
+                                  }
+                                }else{
+                                  showAlert('Error de conexión',WalkieTaskColors.color_E07676);
                                 }
-                              }else{
+                              }catch(e){
+                                print(e.toString());
                                 showAlert('Error de conexión',WalkieTaskColors.color_E07676);
                               }
-                            }catch(e){
-                              print(e.toString());
-                              showAlert('Error de conexión',WalkieTaskColors.color_E07676);
                             }
-
                             deleteProject[project.id] = false;
                             setState(() {});
                           },
@@ -276,7 +281,8 @@ class _MyProyectsState extends State<MyProyects> {
             ),
           )
         );
-        result.add(Divider());
+        result.add(SizedBox(height: alto * 0.01,));
+        result.add(Divider(thickness: 0.8,));
       }
     });
     return result;
@@ -321,8 +327,8 @@ class _MyProyectsState extends State<MyProyects> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(name,style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),maxLines: 1,),
-                        Text(email,style: WalkieTaskStyles().stylePrimary(size: alto * 0.016, spacing: 1),maxLines: 1,)
+                        Text('${name.substring(0,1).toUpperCase()}${name.substring(1,name.length).toLowerCase()}',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02),maxLines: 1,),
+                        Text(email,style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, spacing: 1),maxLines: 1,)
                       ],
                     ),
                   ),
@@ -339,7 +345,7 @@ class _MyProyectsState extends State<MyProyects> {
                   height: alto * 0.03,
                   radius: 5.0,
                   title: 'Eliminar',
-                  textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.035, color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 2),
+                  textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.035, color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 1.5),
                   backgroundColor: WalkieTaskColors.color_E07676,
                   onPressed: () async {
                     deleteProjectUser['$idProjects-${mapUserProject['users']['id']}'] = true;

@@ -70,14 +70,14 @@ class AddProyectsSumitState extends State<AddProyectsSumit> {
         margin: EdgeInsets.only(left: ancho * 0.05, right: ancho * 0.05),
         child: Column(
           children: <Widget>[
-            SizedBox(height: alto * 0.08,),
+            SizedBox(height: alto * 0.1,),
             Container(
               width: ancho,
               child: Text('Genial.\nYa notificamos a los usuarios.\nAhora a trabajar :)'
               ,textAlign: TextAlign.center,
-              style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.023, color: WalkieTaskColors.color_4D4D4D, fontWeight: FontWeight.bold, spacing: 1.5),),
+              style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022, color: WalkieTaskColors.color_4D4D4D, fontWeight: FontWeight.bold, spacing: 1),),
             ),
-            SizedBox(height: alto * 0.1,),
+            SizedBox(height: alto * 0.08,),
             RoundedButton(
               backgroundColor: WalkieTaskColors.primary,
               title: 'Enviar una tarea',

@@ -443,7 +443,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
             _textDrawer('Salir', () async {
               bool res = false;
               res = await alert(context);
-              if(res){
+              if(res != null && res){
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 await prefs.remove('unityToken');
                 await prefs.remove('unityTokenExp');
