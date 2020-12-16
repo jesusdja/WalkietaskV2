@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/models/invitation.dart';
+import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqliteInvitation.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
@@ -220,6 +221,7 @@ class _InvitationsSentState extends State<InvitationsSent> {
     try {
       // ignore: cancel_subscriptions
       streamSubscriptionInvitation = widget.blocInvitation.outList.listen((newVal) {
+        print('');
         if(newVal){
           _inicializarInvitation();
         }

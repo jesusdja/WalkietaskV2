@@ -617,6 +617,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     try {
       // ignore: cancel_subscriptions
       streamSubscriptionInvitation = blocInvitation.outList.listen((newVal) {
+        print('');
         if(newVal){
           _inicializarInvitation();
         }

@@ -45,6 +45,8 @@ class _ContactsState extends State<Contacts> {
   BlocUser blocUser;
   BlocCasos blocInvitation;
 
+  UpdateData updateData = new UpdateData();
+
   conexionHttp connectionHttp = new conexionHttp();
   @override
   void initState() {
@@ -103,7 +105,7 @@ class _ContactsState extends State<Contacts> {
                     var result = await Navigator.push(context, new MaterialPageRoute(
                         builder: (BuildContext context) => new SendInvitation(myUserRes: myUser, mapIdUsersRes: mapIdUsers,)));
                     if(result){
-                      blocInvitation.inList.add(true);
+                      await updateData.actualizarListaInvitationSent(blocInvitation);
                     }
                   }catch(e){
                     print(e.toString());
@@ -206,7 +208,6 @@ class _ContactsState extends State<Contacts> {
                     user.contact = 0;
                     int res = await UserDatabaseProvider.db.updateUser(user);
                     if(res != 0){
-                      UpdateData updateData = new UpdateData();
                       await updateData.actualizarListaContact(blocUser);
                       showAlert('Contacto eliminado.',WalkieTaskColors.color_89BD7D);
                       setState(() {});
@@ -259,6 +260,15 @@ class _ContactsState extends State<Contacts> {
         mapAppBar[1] = false;
         mapAppBar[2] = false;
         mapAppBar[index] = true;
+        if(index == 0){
+          updateData.actualizarListaUsuarios(blocUser);
+        }
+        if(index == 1){
+          updateData.actualizarListaInvitationSent(blocInvitation);
+        }
+        if(index == 2){
+          updateData.actualizarListaInvitationReceived(blocInvitation);
+        }
         setState(() {});
       },
       child: Column(
