@@ -52,10 +52,10 @@ class _SendInvitationState extends State<SendInvitation> {
     alto = MediaQuery.of(context).size.height;
     ancho = MediaQuery.of(context).size.width;
 
-    _textStyleTitle = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.03,color: WalkieTaskColors.primary);
-    _textStyleSubTitle = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.025, color: WalkieTaskColors.color_4D4D4D);
-    _textStyleDescription = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.021, color: WalkieTaskColors.color_ACACAC, fontWeight: FontWeight.bold,spacing: 1.5);
-    _textStylehiden = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.026, color: WalkieTaskColors.color_4D4D4D, fontWeight: FontWeight.bold,spacing: 1.3);
+    _textStyleTitle = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.025,color: WalkieTaskColors.primary);
+    _textStyleSubTitle = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.022, color: WalkieTaskColors.color_4D4D4D);
+    _textStyleDescription = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_ACACAC, fontWeight: FontWeight.bold,spacing: 1.5);
+    _textStylehiden = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_4D4D4D, fontWeight: FontWeight.bold,spacing: 1.3);
 
     return Scaffold(
       backgroundColor: WalkieTaskColors.white,
@@ -83,9 +83,11 @@ class _SendInvitationState extends State<SendInvitation> {
 
   Widget _contenido() {
     return Container(
-      margin: EdgeInsets.all(alto * 0.04),
+      height: alto,
+      margin: EdgeInsets.only(left: ancho * 0.1, right: ancho * 0.1, top: alto * 0.03),
       child: SingleChildScrollView(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
               width: ancho,
@@ -120,7 +122,7 @@ class _SendInvitationState extends State<SendInvitation> {
                         sizeH: alto,
                         sizeW: ancho,
                         borderColor: WalkieTaskColors.color_BABABA,
-                        sizeHeight: alto * 0.041,
+                        sizeHeight: alto * 0.035,
                         textAlign: TextAlign.left,
                         sizeBorder: 1.2,
                         textEditingController: _controllerUser,
@@ -187,7 +189,7 @@ class _SendInvitationState extends State<SendInvitation> {
                         sizeH: alto,
                         sizeW: ancho,
                         borderColor: WalkieTaskColors.color_BABABA,
-                        sizeHeight: alto * 0.041,
+                        sizeHeight: alto * 0.035,
                         textAlign: TextAlign.left,
                         sizeBorder: 1.2,
                         textEditingController: _controllerNewUser,
@@ -218,6 +220,7 @@ class _SendInvitationState extends State<SendInvitation> {
                 sizeBorder: 1.2,
                 textEditingController: _controllerNewUserSms,
                 initialValue: null,
+                padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01, top: alto * 0.005, bottom: alto * 0.005),
               ),
             ),
             SizedBox(height: alto * 0.01,),

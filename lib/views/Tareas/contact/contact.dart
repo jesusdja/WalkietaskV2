@@ -140,19 +140,20 @@ class _ContactsState extends State<Contacts> {
     }
     return Container(
       width: ancho,
+      margin: EdgeInsets.only(bottom: alto * 0.04),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
-            margin: EdgeInsets.only(bottom: alto * 0.02, left: ancho * 0.04, right: ancho * 0.04),
+            margin: EdgeInsets.only(left: ancho * 0.04, right: ancho * 0.04),
             padding: const EdgeInsets.all(2.0), // borde width
             decoration: new BoxDecoration(
               color: bordeCirculeAvatar, // border color
               shape: BoxShape.circle,
             ),
             child: CircleAvatar(
-              radius: alto * 0.03,
+              radius: alto * 0.025,
               backgroundImage: avatarUser.image,
             ),
           ),
@@ -160,67 +161,64 @@ class _ContactsState extends State<Contacts> {
             child: Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text('${user.name}',style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022, color: WalkieTaskColors.color_4D4D4D, fontWeight: FontWeight.bold,spacing: 1.5),),
-                  Text('${user.email}',style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_ACACAC, fontWeight: FontWeight.bold,spacing: 1.5),),
+                  Text('${user.name.substring(0,1).toUpperCase()}${user.name.substring(1,user.name.length).toLowerCase()}',style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_4D4D4D, fontWeight: FontWeight.bold,spacing: 1),),
+                  Text('${user.email}',style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: WalkieTaskColors.color_ACACAC, fontWeight: FontWeight.bold,spacing: 1.5),maxLines: 1,),
                 ],
               ),
             ),
           ),
           Container(
-            margin: EdgeInsets.only(bottom: alto * 0.02, right: ancho * 0.04),
-            child: Column(
-              children: <Widget>[
-                mapUserDelete[user.id] ?
-                Container(
-                  width: ancho * 0.2,
-                  child: Center(
-                    child: Container(
-                      width: alto * 0.03,
-                      height: alto * 0.03,
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
-                )
-                    :
-                RoundedButton(
-                  backgroundColor: WalkieTaskColors.color_DD7777,
-                  title: 'Eliminar',
-                  radius: 5.0,
-                  textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022,color: WalkieTaskColors.white,fontWeight: FontWeight.bold),
-                  height: alto * 0.04,
-                  width: ancho * 0.2,
-                  onPressed: () async {
-                    mapUserDelete[user.id] = true;
-                    setState(() {});
-                    try{
-                      var response = await connectionHttp.httpDeleteContact(user.id);
-                      var value = jsonDecode(response.body);
-                      if(value['status_code'] == 200){
-                        user.contact = 0;
-                        int res = await UserDatabaseProvider.db.updateUser(user);
-                        if(res != 0){
-                          UpdateData updateData = new UpdateData();
-                          await updateData.actualizarListaContact(blocUser);
-                          showAlert('Contacto eliminado.',WalkieTaskColors.color_89BD7D);
-                          setState(() {});
-                        }
-                      }else{
-                        if(value['message'] != null){
-                          showAlert(value['message'],WalkieTaskColors.color_E07676);
-                        }else{
-                          showAlert('Error de conexión',WalkieTaskColors.color_E07676);
-                        }
-                      }
-                    }catch(e){
-                      print(e.toString());
+            margin: EdgeInsets.only(right: ancho * 0.04, left: ancho * 0.02),
+            child: mapUserDelete[user.id] ?
+            Container(
+              width: ancho * 0.2,
+              child: Center(
+                child: Container(
+                  width: alto * 0.03,
+                  height: alto * 0.03,
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            )
+                :
+            RoundedButton(
+              backgroundColor: WalkieTaskColors.color_DD7777,
+              title: 'Eliminar',
+              radius: 5.0,
+              textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 0.5),
+              height: alto * 0.035,
+              width: ancho * 0.18,
+              onPressed: () async {
+                mapUserDelete[user.id] = true;
+                setState(() {});
+                try{
+                  var response = await connectionHttp.httpDeleteContact(user.id);
+                  var value = jsonDecode(response.body);
+                  if(value['status_code'] == 200){
+                    user.contact = 0;
+                    int res = await UserDatabaseProvider.db.updateUser(user);
+                    if(res != 0){
+                      UpdateData updateData = new UpdateData();
+                      await updateData.actualizarListaContact(blocUser);
+                      showAlert('Contacto eliminado.',WalkieTaskColors.color_89BD7D);
+                      setState(() {});
+                    }
+                  }else{
+                    if(value['message'] != null){
+                      showAlert(value['message'],WalkieTaskColors.color_E07676);
+                    }else{
                       showAlert('Error de conexión',WalkieTaskColors.color_E07676);
                     }
-                    mapUserDelete[user.id] = false;
-                    setState(() {});
-                  },
-                )
-              ],
+                  }
+                }catch(e){
+                  print(e.toString());
+                  showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                }
+                mapUserDelete[user.id] = false;
+                setState(() {});
+              },
             ),
           )
         ],

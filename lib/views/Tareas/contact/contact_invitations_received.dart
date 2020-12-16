@@ -91,16 +91,18 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
               Container(
                 width: ancho,
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                      margin: EdgeInsets.only(bottom: alto * 0.02, left: ancho * 0.04, right: ancho * 0.02),
+                      margin: EdgeInsets.only(left: ancho * 0.04, right: ancho * 0.02),
                       padding: const EdgeInsets.all(2.0), // borde width
                       decoration: new BoxDecoration(
                         color: bordeCirculeAvatar, // border color
                         shape: BoxShape.circle,
                       ),
                       child: CircleAvatar(
-                        radius: alto * 0.03,
+                        radius: alto * 0.025,
                         backgroundImage: avatarUser.image,
                       ),
                     ),
@@ -108,18 +110,16 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text('${userInvited.name}',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018, color: WalkieTaskColors.color_4D4D4D),),
-                          SizedBox(height: alto * 0.006,),
-                          Text('$dateInvited', style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.016, color: WalkieTaskColors.color_ACACAC, fontWeight: FontWeight.bold,spacing: 0.5,),),
-                          SizedBox(height: alto * 0.008,),
+                          Text('${userInvited.name.substring(0,1).toUpperCase()}${userInvited.name.substring(1,userInvited.name.length).toLowerCase()}',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.color_4D4D4D),),
+                          Text('$dateInvited', style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: WalkieTaskColors.color_ACACAC, fontWeight: FontWeight.bold,spacing: 0.5,),),
                         ],
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(bottom: alto * 0.02, right: ancho * 0.02),
+                      margin: EdgeInsets.only(right: ancho * 0.02, left: ancho * 0.02),
                       child: mapInvitationAccepted[invitation.id] ?
                       Container(
-                        width: ancho * 0.2,
+                        width: ancho * 0.18,
                         child: Center(
                           child: Container(
                             width: alto * 0.03,
@@ -133,9 +133,9 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
                         backgroundColor: WalkieTaskColors.primary,
                         title: 'Aceptar',
                         radius: 5.0,
-                        textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 1.5),
+                        textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 0.5),
                         height: alto * 0.035,
-                        width: ancho * 0.2,
+                        width: ancho * 0.18,
                         onPressed: () async {
                           mapInvitationAccepted[invitation.id] = true;
                           setState(() {});
@@ -168,10 +168,10 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(bottom: alto * 0.02, right: ancho * 0.04),
+                      margin: EdgeInsets.only(right: ancho * 0.04),
                       child: mapInvitationDenied[invitation.id] ?
                       Container(
-                        width: ancho * 0.2,
+                        width: ancho * 0.18,
                         child: Center(
                           child: Container(
                             width: alto * 0.03,
@@ -185,9 +185,9 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
                         backgroundColor: WalkieTaskColors.color_DD7777,
                         title: 'Rechazar',
                         radius: 5.0,
-                        textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 1.5),
+                        textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 0.5),
                         height: alto * 0.035,
-                        width: ancho * 0.2,
+                        width: ancho * 0.18,
                         onPressed: () async {
                           mapInvitationDenied[invitation.id] = true;
                           setState(() {});
