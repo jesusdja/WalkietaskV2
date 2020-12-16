@@ -5,7 +5,6 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rounded_date_picker/rounded_picker.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
@@ -190,7 +189,7 @@ class _MyHomePageState extends State<EnviarTarea> {
             ) : Container(),
             tareaText[1] ? Container(height: alto * 0.015,) : Container(),
             tareaText[1] ? Container(
-              margin: EdgeInsets.only(left: ancho * 0.1,right: ancho * 0.05),
+              margin: EdgeInsets.only(left: ancho * 0.1,right: ancho * 0.1),
               width: ancho,
               child: _sumitTexto(),
             ) : Container(),
@@ -663,13 +662,12 @@ class _MyHomePageState extends State<EnviarTarea> {
               ),
             ),
             onTap: () async {
-              DateTime newDateTime = await showRoundedDatePicker(
+              DateTime newDateTime = await showDatePicker(
                   context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(DateTime.now().year - 1),
-                  lastDate: DateTime(DateTime.now().year + 1),
-                  borderRadius: 20,
-                  height: MediaQuery.of(context).size.height * 0.6,
+                  initialDate: new DateTime.now(),
+                  firstDate: new DateTime(2018),
+                  lastDate: new DateTime(2025),
+                  locale: Locale('es', 'ES')
               );
               if (newDateTime != null) {
                 setState(() => fechaTask = newDateTime);
@@ -896,17 +894,17 @@ class _MyHomePageState extends State<EnviarTarea> {
       InkWell(
         onTap: () async => _sendTask(),
         child: Container(
-          height: alto * 0.14,
+          height: alto * 0.15,
           width: ancho,
           child: Align(
             alignment: Alignment.centerRight,
             child: Container(
-              width: alto * 0.15,
-              height: alto * 0.15,
+              width: alto * 0.13,
+              height: alto * 0.13,
               decoration: enviandoTarea ? null : BoxDecoration(
                 image: DecorationImage(
                   image: ViewImage().assetsImage("assets/image/SendTask.png").image,
-                  fit: BoxFit.fill,
+                  fit: BoxFit.contain,
                 ),
               ),
               child: enviandoTarea ?

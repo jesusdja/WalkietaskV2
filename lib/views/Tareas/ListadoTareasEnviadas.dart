@@ -48,6 +48,11 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
   AudioPlayer audioPlayer;
   int taskReproduciendo = 0;
 
+  TextStyle textStylePrimary = TextStyle();
+  TextStyle textStylePrimaryBold = TextStyle();
+  TextStyle textStyleProject = TextStyle();
+  TextStyle textStyleNotTitle = TextStyle();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -100,6 +105,12 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
   Widget build(BuildContext context) {
     alto = MediaQuery.of(context).size.height;
     ancho = MediaQuery.of(context).size.width;
+
+    textStylePrimary = WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.color_4D4D4D,spacing: 0.5);
+    textStylePrimaryBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.color_4D4D4D,spacing: 0.5);
+    textStyleProject = WalkieTaskStyles().stylePrimary(size: alto * 0.018, color: WalkieTaskColors.color_4D4D4D,spacing: 0.5);
+    textStyleNotTitle = WalkieTaskStyles().styleNunitoRegular(size: alto * 0.018, color: WalkieTaskColors.primary,spacing: 0.5);
+
     _inicializar();
     return Scaffold(
       body: _contenido(),
@@ -312,22 +323,15 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                   children: <Widget>[
                     Flexible(
                       flex: 1,
-                      child: Text(nameUser,
-                          maxLines: 1,
-                          style: favorite ?
-                          WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.black) :
-                          WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02, color: Colors.grey[600])), //estiloLetras(alto * 0.02,Colors.grey[600]),),
+                      child: Text('${nameUser.substring(0,1).toUpperCase()}${nameUser.substring(1,nameUser.length).toLowerCase()}', maxLines: 1, style: favorite ? textStylePrimaryBold : textStylePrimary),
                     ),
                     Flexible(
                         flex: 1,
                         child: Text(tarea.name.isNotEmpty ? tarea.name : 'Tarea sin título. Tap para nombrarla',
                           maxLines: 1,
-                          style: tarea.name.isNotEmpty ? favorite ?
-                          WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.black) :
-                          WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02, color: WalkieTaskColors.black) :
-                          WalkieTaskStyles().styleNunitoRegular(size: alto * 0.018, color: WalkieTaskColors.primary),)
+                          style: tarea.name.isNotEmpty ? (favorite ? textStylePrimaryBold : textStylePrimary) : textStyleNotTitle,)
                     ),
-                    Text(proyectName,style: estiloLetras(alto * 0.017,Colors.grey[600]),maxLines: 1,),
+                    Text(proyectName,style: textStyleProject,maxLines: 1,),
                   ],
                 ),
               ),
@@ -434,7 +438,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.only(left: ancho * 0.03,right: ancho * 0.03,),
-                    child: Text(nameUser,
+                    child: Text('${nameUser.substring(0,1).toUpperCase()}${nameUser.substring(1,nameUser.length).toLowerCase()}',
                         style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.025, color: WalkieTaskColors.color_76ADE3)),
                   ),
                 ),
@@ -503,7 +507,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
             onTap: () =>clickTarea(task),
             child: Container(
               width: ancho,
-              padding: EdgeInsets.only(left: ancho * 0.04, right: ancho * 0.04,top: alto * 0.005),
+              padding: EdgeInsets.only(left: ancho * 0.04, right: ancho * 0.04,top: alto * 0.02),
               child: Row(
                 children: <Widget>[
                   Expanded(
@@ -514,10 +518,10 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                         children: <Widget>[
                           Text(task.name.isEmpty ? 'Nombre no asignado' : task.name,
                               maxLines: 1,
-                              style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.022, color: Colors.grey[600])),
+                              style: textStylePrimaryBold),
                           Text(proyectName,
                             maxLines: 1,
-                            style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.018, color: WalkieTaskColors.color_969696),),
+                            style: textStylePrimary,),
                         ],
                       ),
                     ),

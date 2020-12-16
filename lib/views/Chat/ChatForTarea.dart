@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rounded_date_picker/rounded_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
@@ -168,7 +167,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                 child: _mensajes(),
               ),
               edit ? Container(
-                child: _editTarea(),
+                child: _editTarea(context),
               ) :
               Container(
                 child: _detallesTarea(),
@@ -623,7 +622,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
     );
   }
 
-  Widget _editTarea(){
+  Widget _editTarea(BuildContext context){
 
     return Container(
       margin: EdgeInsets.only(left: ancho * 0.02,right: ancho * 0.02,top: alto * 0.01),
@@ -703,15 +702,16 @@ class _ChatForTareaState extends State<ChatForTarea> {
                   ),
                   Container(
                     width: ancho * 0.5,
+                    height: alto * 0.04,
                     child: InkWell(
                       onTap: () async {
-                        DateTime newDateTime = await showRoundedDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(DateTime.now().year - 1),
-                          lastDate: DateTime(DateTime.now().year + 1),
-                          borderRadius: 20,
-                          height: MediaQuery.of(context).size.height * 0.6,
+                        DateTime newDateTime = await showDatePicker(
+                            context: context,
+                            initialDate: new DateTime.now(),
+                            firstDate: new DateTime(2018),
+                            lastDate: new DateTime(2025),
+                            locale: Locale('es', 'ES'),
+
                         );
                         if (newDateTime != null) {
                           setState(() => fechaTask = newDateTime);

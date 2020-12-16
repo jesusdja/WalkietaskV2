@@ -26,9 +26,6 @@ dependencies:
   #FIREBASE
   cloud_firestore: ^0.12.10+2
 
-  #DATE
-  flutter_rounded_date_picker: 1.0.5
-
   #UTILS
   flutter_slidable: ^0.5.4
   cupertino_icons: ^0.1.2
