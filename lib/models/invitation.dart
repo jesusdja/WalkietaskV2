@@ -11,6 +11,8 @@ class InvitationModel extends Equatable {
   String createdAt;
   String updatedAt;
   int inv;
+  int external;
+  String contact;
 
   InvitationModel(
       {
@@ -23,6 +25,8 @@ class InvitationModel extends Equatable {
         this.createdAt,
         this.updatedAt,
         this.inv,
+        this.external,
+        this.contact,
       });
 
   InvitationModel.fromJson(Map<String, dynamic> json) {
@@ -35,6 +39,8 @@ class InvitationModel extends Equatable {
     createdAt = json['created_at']== null ? '' : json['created_at'];
     updatedAt = json['updated_at']== null ? '' : json['updated_at'];
     inv = json['inv']== null ? 0 : json['inv'];
+    external = json['external']== null ? 0 : json['external'];
+    contact = (json['contact'] == null || json['contact']['email']== null) ? '' : json['contact']['email'];
   }
 
   Map<String, dynamic> toJson() {
@@ -48,6 +54,8 @@ class InvitationModel extends Equatable {
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['inv'] = this.inv;
+    data['external'] = this.external;
+    data['contact'] = this.contact;
     return data;
   }
   InvitationModel.fromMap(Map snapshot) :
@@ -59,7 +67,9 @@ class InvitationModel extends Equatable {
         accepted = snapshot['accepted']== null ? 0 :snapshot['accepted'],
         createdAt = snapshot['created_at']== null ? '' :snapshot['created_at'],
         updatedAt = snapshot['updated_at']== null ? '' :snapshot['updated_at'],
-        inv = snapshot['inv']== null ? 0 :snapshot['inv']
+        inv = snapshot['inv']== null ? 0 :snapshot['inv'],
+        external = snapshot['external']== null ? 0 :snapshot['external'],
+        contact = snapshot['contact']== null ? '' :snapshot['contact']
   ;
 
   Map<String, dynamic> toMap() => {
@@ -72,6 +82,8 @@ class InvitationModel extends Equatable {
     'created_at' : createdAt,
     'updated_at' : updatedAt,
     'inv' : inv,
+    'external' : external,
+    'contact' : contact
   };
 
   InvitationModel.map(dynamic obj) {
@@ -84,6 +96,8 @@ class InvitationModel extends Equatable {
     this.createdAt = obj['created_at'];
     this.updatedAt = obj['updated_at'];
     this.inv = obj['active'];
+    this.external = obj['external'];
+    this.contact = obj['contact'];
   }
 
   @override
@@ -96,7 +110,9 @@ class InvitationModel extends Equatable {
     accepted ,
     createdAt ,
     updatedAt ,
-    inv
+    inv,
+    external,
+    contact
   ];
 
   @override

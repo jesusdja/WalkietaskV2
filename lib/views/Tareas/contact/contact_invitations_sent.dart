@@ -83,6 +83,11 @@ class _InvitationsSentState extends State<InvitationsSent> {
           String dia = date.day.toString(); if(dia.length < 2){ dia = '0$mes'; }
           String dateInvited = 'Enviada el $dia-$mes-${date.year}';
 
+          String nameUser = '${userInvited.name.substring(0,1).toUpperCase()}${userInvited.name.substring(1,userInvited.name.length).toLowerCase()}';
+          if(invitation.external == 1){
+            nameUser = invitation.contact;
+          }
+
           result.add(
               Container(
                 width: ancho,
@@ -107,8 +112,8 @@ class _InvitationsSentState extends State<InvitationsSent> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text('${userInvited.name.substring(0,1).toUpperCase()}${userInvited.name.substring(1,userInvited.name.length).toLowerCase()}',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.color_4D4D4D),),
-                          Text('$dateInvited', style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: WalkieTaskColors.color_ACACAC, fontWeight: FontWeight.bold,spacing: 0.5,),),
+                          Text(nameUser,style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.color_4D4D4D),maxLines: 1,),
+                          Text('$dateInvited', style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: WalkieTaskColors.color_ACACAC, fontWeight: FontWeight.bold,spacing: 0.5,),maxLines: 1),
                         ],
                       ),
                     ),

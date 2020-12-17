@@ -103,7 +103,9 @@ Future<Database> getDatabaseInstanace() async {
                 "accepted INT, "
                 "created_at TEXT, "
                 "updated_at TEXT, "
-                "inv INT"
+                "inv INT, "
+                "external INT, "
+                "contact TEXT"
                 ")");
       });
 }

@@ -252,6 +252,24 @@ class UpdateData{
           }
         }
       }
+
+      try{
+        List<InvitationModel> invitationsLocal = await  InvitationDatabaseProvider.db.getAll();
+        for(int x =0; x < invitationsLocal.length; x++){
+          bool exist = false;
+          for(int y =0; y < invitations.length; y++){
+            if(invitationsLocal[x].id == invitations[y]['id']){
+              exist = true;
+            }
+          }
+          if(!exist){
+            await  InvitationDatabaseProvider.db.deleteInvitation(invitationsLocal[x].id);
+          }
+        }
+      }catch(e){
+        print('SIN CONEXION PARA ACTUALIZAR INVITACIONES ENVIADAS II');
+      }
+
     }catch(e){
       print('SIN CONEXION PARA ACTUALIZAR INVITACIONES ENVIADAS');
     }
@@ -281,6 +299,24 @@ class UpdateData{
           }
         }
       }
+
+      try{
+        List<InvitationModel> invitationsLocal = await  InvitationDatabaseProvider.db.getAll();
+        for(int x =0; x < invitationsLocal.length; x++){
+          bool exist = false;
+          for(int y =0; y < invitations.length; y++){
+            if(invitationsLocal[x].id == invitations[y]['id']){
+              exist = true;
+            }
+          }
+          if(!exist){
+            await  InvitationDatabaseProvider.db.deleteInvitation(invitationsLocal[x].id);
+          }
+        }
+      }catch(e){
+        print('SIN CONEXION PARA ACTUALIZAR INVITACIONES RECIBIDAS II');
+      }
+
     }catch(e){
       print('SIN CONEXION PARA ACTUALIZAR INVITACIONES RECIBIDAS');
     }
