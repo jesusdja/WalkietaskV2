@@ -67,10 +67,12 @@ class UpdateData{
     Map<int,Usuario> mapContactsLocal = {};
     try{
       List<Usuario> contactsLocal = await  UserDatabaseProvider.db.getContacts();
-      contactsLocal.forEach((element) {
-        element.contact = 0;
-        mapContactsLocal[element.id] = element;
-      });
+      for(int x =0; x < contactsLocal.length; x++){
+        Usuario contact = contactsLocal[x];
+        contact.contact = 0;
+        mapContactsLocal[contact.id] = contact;
+        await UserDatabaseProvider.db.updateUser(contact);
+      }
 
       var response = await conexionHispanos.httpListContacts();
       var value = jsonDecode(response.body);

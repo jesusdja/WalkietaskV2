@@ -40,7 +40,7 @@ class InvitationModel extends Equatable {
     updatedAt = json['updated_at']== null ? '' : json['updated_at'];
     inv = json['inv']== null ? 0 : json['inv'];
     external = json['external']== null ? 0 : json['external'];
-    contact = (json['contact'] == null || json['contact']['email']== null) ? '' : json['contact']['email'];
+    contact = (json['contact'] == null || json['contact']['email']== null) ? 'n/a' : json['contact']['email'];
   }
 
   Map<String, dynamic> toJson() {
@@ -69,7 +69,7 @@ class InvitationModel extends Equatable {
         updatedAt = snapshot['updated_at']== null ? '' :snapshot['updated_at'],
         inv = snapshot['inv']== null ? 0 :snapshot['inv'],
         external = snapshot['external']== null ? 0 :snapshot['external'],
-        contact = snapshot['contact']== null ? '' :snapshot['contact']
+        contact = snapshot['contact']== null ? 'n/a' :snapshot['contact']
   ;
 
   Map<String, dynamic> toMap() => {
