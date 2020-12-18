@@ -48,8 +48,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
   List<Usuario> listUser = new List<Usuario>();
 
-  CollectionReference tareasColeccion = Firestore.instance.collection('Tareas');
-  ChatTareaFirebase tareaFB = ChatTareaFirebase();
+  CollectionReference tareasColeccion;
+  ChatTareaFirebase tareaFB;
   final ScrollController listScrollController = new ScrollController();
 
   AudioPlayer audioPlayer;
@@ -80,6 +80,13 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
     audioPlayer = new AudioPlayer();
     listenerAudio();
+
+    try{
+      tareasColeccion = FirebaseFirestore.instance.collection('Tareas');
+      tareaFB = ChatTareaFirebase();
+    }catch(e){
+      print(e.toString());
+    }
 
     tarea = widget.tareaRes;
     fechaTask = DateTime.parse(widget.tareaRes.created_at);
@@ -268,7 +275,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
             return Container();
           }
           if(chatTarea != null){
-            chatTarea.mensajes = snapshot.data.documents[0].data['mensajes'];
+            chatTarea.mensajes = snapshot.data.docs[0].data()["mensajes"];
           }
           return chatTarea != null ? ListView.builder(
             padding: EdgeInsets.all(10.0),
