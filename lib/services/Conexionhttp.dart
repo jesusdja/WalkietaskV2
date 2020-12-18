@@ -73,6 +73,21 @@ class conexionHttp{
     return response;
   }
 
+  Future<http.Response> httpListMyProjects() async{
+    String token  = await obtenerToken();
+    Map<String, String> requestHeaders = {
+      'Authorization': 'Bearer $token'
+    };
+    var response;
+    try{
+      response = http.get('$enlace/api/auth/projects/myProjects',
+          headers: requestHeaders);
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
+
   Future<http.Response> httpListTareasEnviadas() async{
     String token  = await obtenerToken();
     var response;

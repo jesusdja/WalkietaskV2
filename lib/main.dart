@@ -49,7 +49,6 @@ class AppFR extends StatelessWidget {
 
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
-          print('ENTRE');
           return App();
           //return Scaffold(backgroundColor: Colors.white,body: Center(child: Text('done'),),);
         }

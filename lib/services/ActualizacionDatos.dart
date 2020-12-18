@@ -192,11 +192,13 @@ class UpdateData{
   actualizarCasos(BlocCasos blocCasos) async {
     print('actualizarCasos');
     bool entre = false;
-    try{
 
-      var response = await conexionHispanos.httpListCasos();
+
+    List<dynamic> listcasos = [];
+    try{
+      var response = await conexionHispanos.httpListMyProjects();
       var value = jsonDecode(response.body);
-      List<dynamic> listcasos = value["projects"];
+      listcasos = value["projects"];
 
       for(int x = 0; x < listcasos.length; x++){
         Caso caso = Caso.fromJson(listcasos[x]);
@@ -218,6 +220,25 @@ class UpdateData{
     }catch(e){
       print('SIN CONEXION PARA ACTUALIZAR CASOS');
     }
+
+    try{
+      List<Caso> projectLocal = await CasosDatabaseProvider.db.getAll();
+      for(int x = 0; x < projectLocal.length; x++){
+        bool exist = false;
+        for(int x2 = 0; x2 < listcasos.length; x2++){
+          if(projectLocal[x].id == listcasos[x2].id){
+            exist = true;
+          }
+        }
+        if(!exist){
+          await CasosDatabaseProvider.db.deleteProject(projectLocal[x].id);
+        }
+      }
+    }catch(e){
+      print('SIN CONEXION PARA ACTUALIZAR CASOS LOCAL');
+    }
+
+
   }
 
   Future<Usuario> getMyUser() async {
