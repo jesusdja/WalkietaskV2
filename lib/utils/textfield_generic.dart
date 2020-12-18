@@ -50,7 +50,7 @@ class TextFildGeneric extends StatelessWidget {
     this.textAlign = TextAlign.left,
     this.labelStyle = const TextStyle(fontSize: 15,fontWeight: FontWeight.bold),
     this.boxShadow,
-    this.sizeBorder = 2.0,
+    this.sizeBorder = 1.2,
     this.suffixIcon,
     this.enable = true,
     this.padding = const EdgeInsets.only(left: 5),

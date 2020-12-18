@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
+import 'package:walkietaskv2/utils/value_validators.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
 class RecoverPassword extends StatefulWidget {
@@ -16,6 +21,8 @@ class _RecoverPasswordState extends State<RecoverPassword> {
 
   bool isLoad = false;
   bool isAccepted = false;
+
+  TextEditingController _controllerEmail = TextEditingController();
 
   @override
   void initState() {
@@ -32,7 +39,6 @@ class _RecoverPasswordState extends State<RecoverPassword> {
   Widget build(BuildContext context) {
     sizeH = MediaQuery.of(context).size.height;
     sizeW = MediaQuery.of(context).size.width;
-
     TextStyle textStyle1 = WalkieTaskStyles().styleNunitoRegular(size: sizeH * 0.02);
 
     return Scaffold(
@@ -81,14 +87,14 @@ class _RecoverPasswordState extends State<RecoverPassword> {
                       child: Container(
                         width: sizeW * 0.5,
                         child: TextFildGeneric(
-                          onChanged: (text) {
-
-                          },
-                          labelStyle: WalkieTaskStyles().styleNunitoRegular(size: sizeH * 0.025),
+                          textEditingController: _controllerEmail,
+                          initialValue: null,
+                          labelStyle: textStyle1,
                           textInputType: TextInputType.emailAddress,
                           sizeH: sizeH,
                           sizeW: sizeW,
                           borderColor: WalkieTaskColors.color_B7B7B7,
+                          sizeBorder: 1.2,
                           sizeHeight: sizeH * 0.045,
                           textAlign: TextAlign.left,
                         ),
@@ -106,6 +112,7 @@ class _RecoverPasswordState extends State<RecoverPassword> {
     );
   }
 
+  conexionHttp conexionHispanos = new conexionHttp();
   Widget _buttonPressSaveUser(){
     return Container(
       width: sizeW,
@@ -125,11 +132,30 @@ class _RecoverPasswordState extends State<RecoverPassword> {
             setState(() {
               isAccepted = true;
             });
-            await Future.delayed(Duration(seconds: 3));
+            if(validateEmailAddress(_controllerEmail.text)['valid']){
+              try{
+                var response = await conexionHispanos.httpRecoverPass(_controllerEmail.text);
+                var value = jsonDecode(response.body);
+                if(value['status_code'] == 200){
+                  _controllerEmail.text = '';
+                  setState(() {});
+                  showAlert('Enviado.!',WalkieTaskColors.color_89BD7D);
+                }else{
+                  showAlert('Error en conexión',Colors.red[400]);
+                }
+              }catch(e){
+                print(e.toString());
+                showAlert('Error en conexión',Colors.red[400]);
+                setState(() {});
+              }
+            }else{
+              showAlert('Debe ingresar un correo válido.!',Colors.red[400]);
+            }
+
+
             setState(() {
               isAccepted = false;
             });
-            Navigator.of(context).pop();
             // Navigator.push(context, new MaterialPageRoute(
             //     builder: (BuildContext context) => new RegisterCode()));
           },

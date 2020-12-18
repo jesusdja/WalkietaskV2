@@ -67,7 +67,7 @@ class TextFildGenericVerific extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(radius)),
         border: new Border.all(
-          width: 2.0,
+          width: 1,
           color: WalkieTaskColors.grey,
         ),
       ),

@@ -113,6 +113,27 @@ class conexionHttp{
     return response;
   }
 
+  Future<http.Response> httpRecoverPass(String email) async{
+    var response;
+    try{
+
+      Map<String,String> headers = {'Content-Type':'application/json',
+        'X-Requested-With': 'XMLHttpRequest'};
+
+      final msg = jsonEncode({
+        'email': email,
+      });
+      response = await http.post('$enlace/api/auth/recoverypassword',
+        headers: headers,
+        body: msg,
+      );
+
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
+
   Future<http.Response> httpCheckUser(String correo) async{
     var response;
     try{

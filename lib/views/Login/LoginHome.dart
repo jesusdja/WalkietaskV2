@@ -60,23 +60,28 @@ class _LoginHomeState extends State<LoginHome> {
     alto = MediaQuery.of(context).size.height;
     ancho = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: WillPopScope(
-        child: cargando ? Cargando('Verificando datos',context) :
-        SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: alto * 0.15,),
-              _logo(),
-              SizedBox(height: alto * 0.15,),
-              _form(),
-              SizedBox(height: alto * 0.15,),
-              _viewRegistre(context),
-            ],
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(new FocusNode());
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: WillPopScope(
+          child: cargando ? Cargando('Verificando datos',context) :
+          SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: alto * 0.15,),
+                _logo(),
+                SizedBox(height: alto * 0.15,),
+                _form(),
+                SizedBox(height: alto * 0.15,),
+                _viewRegistre(context),
+              ],
+            ),
           ),
+          onWillPop: exit
         ),
-        onWillPop: exit
       ),
     );
   }
