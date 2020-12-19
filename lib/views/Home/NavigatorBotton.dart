@@ -10,6 +10,7 @@ import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/models/invitation.dart';
+import 'package:walkietaskv2/services/Firebase/Notification/push_notifications_provider.dart';
 import 'package:walkietaskv2/services/Permisos.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqliteCasos.dart';
@@ -137,6 +138,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
     verificarPermisos();
     uploadData();
+
+    _notificationListener();
   }
 
   @override
@@ -451,6 +454,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                 await prefs.remove('unityIdMyUser');
                 await prefs.remove('WalListDocument');
                 await prefs.remove('unityEmail');
+                await prefs.remove('walkietaskIdNoti');
                 updateData.resetDB();
                 Navigator.push(context, new MaterialPageRoute(
                     builder: (BuildContext context) => new App()));
@@ -676,5 +680,16 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         setState(() {});
       });
     } catch (e) {}
+  }
+
+
+  pushProvider push;
+  void _notificationListener(){
+    push = new pushProvider();
+    push.obtenerToken();
+    push.initNotificaciones();
+    push.mensajes.listen((argumento){
+      print('ESTE ES EL ARGUMENTO');
+    });
   }
 }
