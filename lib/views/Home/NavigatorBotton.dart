@@ -59,6 +59,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   List<Usuario> listaUser;
   List<Caso> listaCasos;
   List<InvitationModel> listInvitation;
+  List<dynamic> listDocuments= [];
 
   BlocUser blocUser;
   BlocTask blocTaskSend;
@@ -85,6 +86,9 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   double progressIndicator = 0;
   bool loadTaskSend = false;
   bool loadTaskRecived = false;
+
+  bool notiRecived = false;
+  bool notiContacts = false;
 
   @override
   void initState() {
@@ -145,24 +149,27 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   @override
   void dispose() {
     super.dispose();
-    streamSubscriptionUser?.cancel();
-    streamSubscriptionTaskSend?.cancel();
-    streamSubscriptionTaskRecived?.cancel();
-    streamSubscriptionCasos?.cancel();
-    streamSubscriptionInvitation?.cancel();
-    streamSubscriptionProgress?.cancel();
-    streamSubscriptionPage?.cancel();
-    blocUser.dispose();
-    blocTaskSend.dispose();
-    blocTaskReceived.dispose();
-    blocCasos.dispose();
-    blocInvitation.dispose();
-    blocEmpresa.dispose();
-    blocIndicatorProgress.dispose();
-    blocPage.dispose();
+    try{
+      streamSubscriptionUser?.cancel();
+      streamSubscriptionTaskSend?.cancel();
+      streamSubscriptionTaskRecived?.cancel();
+      streamSubscriptionCasos?.cancel();
+      streamSubscriptionInvitation?.cancel();
+      streamSubscriptionProgress?.cancel();
+      streamSubscriptionPage?.cancel();
+      blocUser.dispose();
+      blocTaskSend.dispose();
+      blocTaskReceived.dispose();
+      blocCasos.dispose();
+      blocInvitation.dispose();
+      blocEmpresa.dispose();
+      blocIndicatorProgress.dispose();
+      blocPage.dispose();
+    }catch(e){
+      print(e.toString());
+    }
   }
 
-  List<dynamic> listDocuments= [];
   void uploadData() async {
     uploadBackDocuments(blocIndicatorProgress);
   }
@@ -192,6 +199,14 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         await Future.delayed(Duration(seconds: 3));
       }
     }
+
+    try{
+      notiRecived = await prefs.get('notiRecived') ?? false;
+      notiContacts = await prefs.get('notiContacts') ?? false;
+    } catch (e) {
+      print(e.toString());
+    }
+
     setState(() {});
   }
 
@@ -296,83 +311,95 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       child: Row(
         children: <Widget>[
           Expanded(
-            child: navigatorBottonContenido(bottonSelect.opcion1,'','Enviar tarea','Tarea'),
+            child: navigatorBottonContenido(bottonSelect.opcion1,'','Enviar tarea','Tarea',false),
           ),
           Expanded(
-            child: navigatorBottonContenido(bottonSelect.opcion2,'-1','Tareas recibidas', 'Recibidas'),
+            child: navigatorBottonContenido(bottonSelect.opcion2,'-1','Tareas recibidas', 'Recibidas',notiRecived),
           ),
           Expanded(
-            child: navigatorBottonContenido(bottonSelect.opcion3,'-3','Tareas enviadas', 'Enviadas'),
+            child: navigatorBottonContenido(bottonSelect.opcion3,'-3','Tareas enviadas', 'Enviadas',false),
           ),
           Expanded(
-            child: navigatorBottonContenido(bottonSelect.opcion4,'-4','Proyectos', 'Proyectos'),
+            child: navigatorBottonContenido(bottonSelect.opcion4,'-4','Proyectos', 'Proyectos',false),
           ),
           Expanded(
-            child: navigatorBottonContenido(bottonSelect.opcion5,'-5','Contactos', 'Contactos'),
+            child: navigatorBottonContenido(bottonSelect.opcion5,'-5','Contactos', 'Contactos',notiContacts),
           ),
         ],
       ),
     );
   }
-  Widget navigatorBottonContenido(bottonSelect index,String num,String tit, subTitle){
-    return InkWell(
-      child: Container(
-        color: mapNavigatorBotton[index] ? Colors.white : Colors.grey[200],
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                width: ancho,
-                height: alto * 0.035,
-                child: Image.asset(
-                  'assets/image/Attachment$num.png',
-                  color: !mapNavigatorBotton[index] ? null : WalkieTaskColors.primary,
-                  fit: BoxFit.fitHeight,
+  Widget navigatorBottonContenido(bottonSelect index,String num,String tit, subTitle, bool noti){
+    return Stack(
+      children: [
+        InkWell(
+          child: Container(
+            color: mapNavigatorBotton[index] ? Colors.white : Colors.grey[200],
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  width: ancho,
+                  height: alto * 0.035,
+                  child: Image.asset(
+                    'assets/image/Attachment$num.png',
+                    color: !mapNavigatorBotton[index] ? null : WalkieTaskColors.primary,
+                    fit: BoxFit.fitHeight,
+                  ),
                 ),
-              ),
-              Text(subTitle, style: WalkieTaskStyles().styleNunitoBold(size: alto * 0.016,color: !mapNavigatorBotton[index] ? WalkieTaskColors.color_ACACAC : WalkieTaskColors.primary),)
-            ],
+                Text(subTitle, style: WalkieTaskStyles().styleNunitoBold(size: alto * 0.016,color: !mapNavigatorBotton[index] ? WalkieTaskColors.color_ACACAC : WalkieTaskColors.primary),)
+              ],
+            ),
           ),
+          onTap: () async {
+            if(!mapNavigatorBotton[index]){
+              mapNavigatorBotton[index] = true;
+              Map<bottonSelect,bool> auxMap = mapNavigatorBotton;
+              auxMap.forEach((key,value){
+                if(key != index){mapNavigatorBotton[key] = false;}
+              });
+            }
+            titulo = tit;
+            page = index;
+
+            if(page == bottonSelect.opcion1){
+              updateData.actualizarListaUsuarios(blocUser);
+              updateData.actualizarCasos(blocCasos);
+            }
+            if(page == bottonSelect.opcion2){
+              updateData.actualizarListaUsuarios(blocUser);
+              updateData.actualizarListaRecibidos(blocTaskReceived);
+              updateData.actualizarCasos(blocCasos);
+              notiRecived = false;
+              await prefs.setBool('notiRecived', false);
+            }
+            if(page == bottonSelect.opcion3){
+              updateData.actualizarListaUsuarios(blocUser);
+              updateData.actualizarListaEnviados(blocTaskSend);
+              updateData.actualizarCasos(blocCasos);
+            }
+            if(page == bottonSelect.opcion4){
+              updateData.actualizarListaUsuarios(blocUser);
+              updateData.actualizarCasos(blocCasos);
+            }
+            if(page == bottonSelect.opcion5){
+              updateData.actualizarListaUsuarios(blocUser);
+              updateData.actualizarListaInvitationSent(blocInvitation);
+              updateData.actualizarListaInvitationReceived(blocInvitation);
+              notiContacts = false;
+              await prefs.setBool('notiContacts', false);
+            }
+            setState(() {});
+          },
         ),
-      ),
-      onTap: (){
-        if(!mapNavigatorBotton[index]){
-          mapNavigatorBotton[index] = true;
-          Map<bottonSelect,bool> auxMap = mapNavigatorBotton;
-          auxMap.forEach((key,value){
-            if(key != index){mapNavigatorBotton[key] = false;}
-          });
-        }
-        titulo = tit;
-        page = index;
-
-        if(page == bottonSelect.opcion1){
-          updateData.actualizarListaUsuarios(blocUser);
-          updateData.actualizarCasos(blocCasos);
-        }
-        if(page == bottonSelect.opcion2){
-          updateData.actualizarListaUsuarios(blocUser);
-          updateData.actualizarListaRecibidos(blocTaskReceived);
-          updateData.actualizarCasos(blocCasos);
-        }
-        if(page == bottonSelect.opcion3){
-          updateData.actualizarListaUsuarios(blocUser);
-          updateData.actualizarListaEnviados(blocTaskSend);
-          updateData.actualizarCasos(blocCasos);
-        }
-        if(page == bottonSelect.opcion4){
-          updateData.actualizarListaUsuarios(blocUser);
-          updateData.actualizarCasos(blocCasos);
-        }
-        if(page == bottonSelect.opcion5){
-          updateData.actualizarListaUsuarios(blocUser);
-          updateData.actualizarListaInvitationSent(blocInvitation);
-          updateData.actualizarListaInvitationReceived(blocInvitation);
-        }
-
-        setState(() {});
-      },
+        noti ? Container(
+          margin: EdgeInsets.only(top: alto * 0.005, right: ancho * 0.01),
+          child: Align(
+            alignment: Alignment.topRight,
+            child: Icon(Icons.circle, color: Colors.red,size: alto * 0.015,),
+          ),
+        ) : Container(),
+      ],
     );
   }
 
@@ -457,6 +484,9 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                 await prefs.remove('walkietaskIdNoti');
                 await prefs.remove('walkietaskFilterDate');
                 await prefs.remove('walkietaskFilterDate2');
+                await prefs.remove('notiRecived');
+                await prefs.remove('notiSend');
+                await prefs.remove('notiContacts');
                 updateData.resetDB();
                 Navigator.push(context, new MaterialPageRoute(
                     builder: (BuildContext context) => new App()));
@@ -555,7 +585,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       child: Container()
     );
   }
-
 
   //*******************************************
   //*******************************************
@@ -691,7 +720,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     push.obtenerToken();
     push.initNotificaciones();
     push.mensajes.listen((argumento){
-      print('ESTE ES EL ARGUMENTO');
+
     });
   }
 }

@@ -226,7 +226,7 @@ class UpdateData{
       for(int x = 0; x < projectLocal.length; x++){
         bool exist = false;
         for(int x2 = 0; x2 < listcasos.length; x2++){
-          if(projectLocal[x].id == listcasos[x2].id){
+          if(projectLocal[x].id == listcasos[x2]["id"]){
             exist = true;
           }
         }
@@ -237,8 +237,6 @@ class UpdateData{
     }catch(e){
       print('SIN CONEXION PARA ACTUALIZAR CASOS LOCAL');
     }
-
-
   }
 
   Future<Usuario> getMyUser() async {
