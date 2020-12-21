@@ -455,6 +455,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                 await prefs.remove('WalListDocument');
                 await prefs.remove('unityEmail');
                 await prefs.remove('walkietaskIdNoti');
+                await prefs.remove('walkietaskFilterDate');
+                await prefs.remove('walkietaskFilterDate2');
                 updateData.resetDB();
                 Navigator.push(context, new MaterialPageRoute(
                     builder: (BuildContext context) => new App()));

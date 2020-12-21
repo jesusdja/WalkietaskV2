@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
@@ -53,6 +54,8 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
   TextStyle textStyleProject = TextStyle();
   TextStyle textStyleNotTitle = TextStyle();
 
+  SharedPreferences prefs;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -64,6 +67,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     _inicializar();
     _inicializar2();
     _inicializar3();
+    _inicializarShared();
   }
 
   void _inicializar(){
@@ -84,12 +88,18 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     setState(() {});
   }
 
-  void _inicializar3(){
+  void _inicializar3() {
     if(widget.listaCasosRes.isNotEmpty){
       mapCasos.forEach((key, value) {
         openForProyectTask[key] = false;
       });
     }
+    setState(() {});
+  }
+
+  Future<void> _inicializarShared() async {
+    prefs = await SharedPreferences.getInstance();
+    valueSwitch = prefs.get('walkietaskFilterDate') ?? false;
     setState(() {});
   }
 
@@ -144,6 +154,9 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
         mapAppBar[1] = false;
         mapAppBar[2] = false;
         mapAppBar[index] = true;
+        if(index == 0){ _inicializarShared(); }
+        if(index == 1){ valueSwitch = false; }
+        if(index == 2){ valueSwitch = false; }
         setState(() {});
       },
       child: Column(
@@ -205,7 +218,8 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
               value: valueSwitch,
               sizeH: alto * 0.022,
               sizeW: ancho * 0.11,
-              onChanged: (bool val){
+              onChanged: (bool val) async {
+                await prefs.setBool('walkietaskFilterDate',val);
                 setState(() {
                   valueSwitch = !valueSwitch;
                 });
