@@ -720,8 +720,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     push.getToken();
     push.initNotificaciones();
     push.mensajes.listen((argumento){
-      print('');
-      print(argumento);
+      String idDoc = argumento['idDoc'];
     });
   }
 }

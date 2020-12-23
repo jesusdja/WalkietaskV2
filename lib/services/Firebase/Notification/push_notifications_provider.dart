@@ -48,15 +48,11 @@ class pushProvider{
         print('============= onMessage ========== ');
         print(info);
         Map<String,String> argumento = Map();
-        // if(Platform.isAndroid){
-        //   argumento['grupo'] = info['data']['grupo'];
-        //   argumento['nuevo'] = info['data']['nuevo'];
-        //   argumento['to'] = 'onMessage';
-        // }else{
-        //   argumento['grupo'] = info['grupo'];
-        //   argumento['nuevo'] = info['nuevo'];
-        //   argumento['to'] = 'onMessage';
-        // }
+        if(Platform.isAndroid){
+          argumento['idDoc'] = info['data']['idDoc'];
+        }else{
+          argumento['idDoc'] = info['idDoc'];
+        }
         _mensajesStreamController.sink.add(argumento);
       },
       // ignore: missing_return
@@ -65,15 +61,11 @@ class pushProvider{
         print('============= onResume ========== ');
         print(info);
         Map<String,String> argumento = Map();
-        // if(Platform.isAndroid){
-        //   argumento['grupo'] = info['data']['grupo'];
-        //   argumento['nuevo'] = info['data']['nuevo'];
-        //   argumento['to'] = 'onResume';
-        // }else{
-        //   argumento['grupo'] = info['grupo'];
-        //   argumento['nuevo'] = info['nuevo'];
-        //   argumento['to'] = 'onResume';
-        // }
+        if(Platform.isAndroid){
+          argumento['idDoc'] = info['data']['idDoc'];
+        }else{
+          argumento['idDoc'] = info['idDoc'];
+        }
         _mensajesStreamController.sink.add(argumento);
       },
       // ignore: missing_return
@@ -82,15 +74,11 @@ class pushProvider{
         print('============= onLaunch ========== ');
         print(info);
         Map<String,String> argumento = Map();
-        // if(Platform.isAndroid){
-        //   argumento['grupo'] = info['data']['grupo'];
-        //   argumento['nuevo'] = info['data']['nuevo'];
-        //   argumento['to'] = 'onLaunch';
-        // }else{
-        //   argumento['grupo'] = info['grupo'];
-        //   argumento['nuevo'] = info['nuevo'];
-        //   argumento['to'] = 'onLaunch';
-        // }
+        if(Platform.isAndroid){
+          argumento['idDoc'] = info['data']['idDoc'];
+        }else{
+          argumento['idDoc'] = info['idDoc'];
+        }
         _mensajesStreamController.sink.add(argumento);
       },
     );
