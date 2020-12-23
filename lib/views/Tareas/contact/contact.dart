@@ -3,12 +3,14 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/bloc/blocUser.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/models/invitation.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/services/Firebase/Notification/push_notifications_provider.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
@@ -20,12 +22,14 @@ import 'package:walkietaskv2/views/Tareas/contact/contact_invitations_sent.dart'
 import 'package:walkietaskv2/views/Tareas/contact/contact_send_invitation.dart';
 
 class Contacts extends StatefulWidget {
-  Contacts({this.myUserRes, this.mapIdUsersRes, this.listInvitation, this.blocInvitation, this.blocUser});
+  Contacts({this.myUserRes, this.mapIdUsersRes, this.listInvitation,
+    this.blocInvitation, this.blocUser, this.push});
   final Usuario myUserRes;
   final Map<int,Usuario> mapIdUsersRes;
   final List<InvitationModel> listInvitation;
   final BlocCasos blocInvitation;
   final BlocUser blocUser;
+  final pushProvider push;
   @override
   _ContactsState createState() => _ContactsState();
 }
@@ -48,6 +52,10 @@ class _ContactsState extends State<Contacts> {
   UpdateData updateData = new UpdateData();
 
   conexionHttp connectionHttp = new conexionHttp();
+
+  bool activeRecived = false;
+  bool inInvitedRecived = false;
+
   @override
   void initState() {
     super.initState();
@@ -57,6 +65,7 @@ class _ContactsState extends State<Contacts> {
     blocInvitation = widget.blocInvitation;
     _inicializar();
     _inicializarPatronBlocUser();
+    _notificationListener();
   }
 
   _inicializar() async {
@@ -66,6 +75,12 @@ class _ContactsState extends State<Contacts> {
       }
     });
     setState(() {});
+  }
+
+  SharedPreferences prefs;
+  _initializarActive() async {
+    prefs = await SharedPreferences.getInstance();
+    activeRecived = await prefs.get('notiContacts_received');
   }
 
   @override
@@ -78,6 +93,7 @@ class _ContactsState extends State<Contacts> {
   Widget build(BuildContext context) {
     alto = MediaQuery.of(context).size.height;
     ancho = MediaQuery.of(context).size.width;
+    _initializarActive();
 
     return Scaffold(
       backgroundColor: WalkieTaskColors.white,
@@ -246,7 +262,18 @@ class _ContactsState extends State<Contacts> {
             child: _appBArMenuText('INV. ENVIADAS',1),
           ),
           Expanded(
-            child: _appBArMenuText('INV. RECIBIDAS',2),
+            child: Stack(
+              children: [
+                _appBArMenuText('INV. RECIBIDAS',2),
+                (!mapAppBar[2] && activeRecived) ? Container(
+                  margin: EdgeInsets.only(right: ancho * 0.003),
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Icon(Icons.circle, color: WalkieTaskColors.primary,size: alto * 0.015,),
+                  ),
+                ) : Container(),
+              ],
+            ),
           ),
         ],
       ),
@@ -254,20 +281,26 @@ class _ContactsState extends State<Contacts> {
   }
 
   Widget _appBArMenuText(String text, int index){
+
     return InkWell(
-      onTap: (){
+      onTap: () async {
         mapAppBar[0] = false;
         mapAppBar[1] = false;
         mapAppBar[2] = false;
         mapAppBar[index] = true;
         if(index == 0){
           updateData.actualizarListaUsuarios(blocUser);
+          inInvitedRecived = false;
         }
         if(index == 1){
           updateData.actualizarListaInvitationSent(blocInvitation);
+          inInvitedRecived = false;
         }
         if(index == 2){
           updateData.actualizarListaInvitationReceived(blocInvitation);
+          await prefs.setBool('notiContacts_received', false);
+          activeRecived = false;
+          inInvitedRecived = true;
         }
         setState(() {});
       },
@@ -306,5 +339,19 @@ class _ContactsState extends State<Contacts> {
       mapUserDelete[listaUser[x].id] = false;
     }
     setState(() {});
+  }
+
+  void _notificationListener(){
+    widget.push.mensajes.listen((argumento) async {
+      if(argumento['table'] != null && argumento['table'].contains('contacts')) {
+        String idDoc = argumento['idDoc'];
+        if(!inInvitedRecived){
+          activeRecived = true;
+          setState(() {});
+        }else{
+          updateData.actualizarListaInvitationReceived(blocInvitation);
+        }
+      }
+    });
   }
 }

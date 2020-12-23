@@ -301,7 +301,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           blocPage: blocPage,listaCasosRes: listaCasos,blocCasos: blocCasos,);
       case bottonSelect.opcion5:
         return Contacts(myUserRes: myUser,mapIdUsersRes: mapIdUser,
-          listInvitation: listInvitation,blocInvitation: blocInvitation,blocUser: blocUser,);
+          listInvitation: listInvitation,blocInvitation: blocInvitation,blocUser: blocUser,push: push,);
     }
     return Container();
   }
@@ -370,8 +370,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
               updateData.actualizarListaUsuarios(blocUser);
               updateData.actualizarListaRecibidos(blocTaskReceived);
               updateData.actualizarCasos(blocCasos);
-              notiRecived = false;
-              await prefs.setBool('notiRecived', false);
+              updateNoti(0, false);
             }
             if(page == bottonSelect.opcion3){
               updateData.actualizarListaUsuarios(blocUser);
@@ -386,8 +385,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
               updateData.actualizarListaUsuarios(blocUser);
               updateData.actualizarListaInvitationSent(blocInvitation);
               updateData.actualizarListaInvitationReceived(blocInvitation);
-              notiContacts = false;
-              await prefs.setBool('notiContacts', false);
+              updateNoti(1, false);
             }
             setState(() {});
           },
@@ -485,8 +483,10 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                 await prefs.remove('walkietaskFilterDate');
                 await prefs.remove('walkietaskFilterDate2');
                 await prefs.remove('notiRecived');
-                await prefs.remove('notiSend');
                 await prefs.remove('notiContacts');
+                await prefs.remove('notiContacts_received');
+                await prefs.remove('notiList');
+
                 updateData.resetDB();
                 Navigator.push(context, new MaterialPageRoute(
                     builder: (BuildContext context) => new App()));
@@ -719,8 +719,56 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     push = new pushProvider();
     push.getToken();
     push.initNotificaciones();
-    push.mensajes.listen((argumento){
-      String idDoc = argumento['idDoc'];
+    push.mensajes.listen((argumento) async {
+      if(argumento['table'] != null &&
+        (argumento['table'].contains('tasks') || argumento['table'].contains('contacts'))) {
+        String idDoc = argumento['idDoc'];
+        bool isTask = argumento['table'].contains('tasks');
+
+        if (isTask) {
+          List<String> listTaskNew = await prefs.get('notiList');
+          if (listTaskNew == null) {
+            listTaskNew = [];
+          }
+          listTaskNew.add(idDoc);
+          await prefs.setStringList('notiList', listTaskNew);
+        }
+
+        if (page == bottonSelect.opcion1 || page == bottonSelect.opcion3 ||
+            page == bottonSelect.opcion4) {
+          if (isTask) {
+            updateNoti(0, true);
+          } else {
+            updateNoti(1, true);
+            updateNoti(2, true);
+          }
+        }
+        if (page == bottonSelect.opcion2) {
+          if (!isTask) {
+            updateNoti(1, true);
+            updateNoti(2, true);
+          }
+        }
+        if (page == bottonSelect.opcion5) {
+          updateNoti(isTask ? 0 : 2, true);
+        }
+      }
     });
+  }
+
+  Future<void> updateNoti(int index, bool value) async {
+    if(index == 0){
+      notiRecived = value;
+      await prefs.setBool('notiRecived', value);
+      setState(() {});
+    }
+    if(index == 1){
+      notiContacts = value;
+      await prefs.setBool('notiContacts', value);
+    }
+    if(index == 2){
+      await prefs.setBool('notiContacts_received', value);
+    }
+    setState(() {});
   }
 }
