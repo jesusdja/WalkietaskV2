@@ -7,6 +7,7 @@ import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
+import 'package:walkietaskv2/services/Firebase/Notification/push_notifications_provider.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
@@ -19,14 +20,14 @@ import '../Chat/ChatForTarea.dart';
 
 class ListadoTareasRecibidas extends StatefulWidget {
 
-  ListadoTareasRecibidas({
+  ListadoTareasRecibidas({this.push,
     this.mapIdUserRes,this.listRecibidos,this.blocTaskReceivedRes,this.listaCasosRes,this.myUserRes});
   final Map<int,Usuario> mapIdUserRes;
   final List<Tarea> listRecibidos;
   final BlocTask blocTaskReceivedRes;
   final List<Caso> listaCasosRes;
   final Usuario myUserRes;
-
+  final pushProvider push;
   @override
   _ListadoTareasState createState() => _ListadoTareasState();
 }
@@ -71,6 +72,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     _inicializar2();
     _inicializar3();
     _inicializarShared();
+    _notificationListener();
   }
 
   @override
@@ -886,4 +888,24 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
       }
     });
   }
+
+  void _notificationListener(){
+    widget.push.mensajes.listen((argumento) async {
+      if(argumento['table'] != null && argumento['table'].contains('tasks')) {
+        String idDoc = argumento['idDoc'];
+        bool isTask = argumento['table'].contains('tasks');
+
+        if (isTask) {
+          List<String> listTaskNew = await prefs.get('notiListTask');
+          if (listTaskNew == null) {
+            listTaskNew = [];
+          }
+          listTaskNew.add(idDoc);
+          await prefs.setStringList('notiListTask', listTaskNew);
+        }
+      }
+    });
+  }
+
+  void _updateDataNewFirebase()
 }

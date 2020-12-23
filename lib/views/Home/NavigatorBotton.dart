@@ -485,7 +485,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                 await prefs.remove('notiRecived');
                 await prefs.remove('notiContacts');
                 await prefs.remove('notiContacts_received');
-                await prefs.remove('notiList');
+                await prefs.remove('notiListTask');
 
                 updateData.resetDB();
                 Navigator.push(context, new MaterialPageRoute(
@@ -726,12 +726,12 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         bool isTask = argumento['table'].contains('tasks');
 
         if (isTask) {
-          List<String> listTaskNew = await prefs.get('notiList');
+          List<String> listTaskNew = await prefs.get('notiListTask');
           if (listTaskNew == null) {
             listTaskNew = [];
           }
           listTaskNew.add(idDoc);
-          await prefs.setStringList('notiList', listTaskNew);
+          await prefs.setStringList('notiListTask', listTaskNew);
         }
 
         if (page == bottonSelect.opcion1 || page == bottonSelect.opcion3 ||

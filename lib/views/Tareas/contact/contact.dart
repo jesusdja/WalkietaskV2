@@ -331,6 +331,7 @@ class _ContactsState extends State<Contacts> {
       });
     } catch (e) {}
   }
+
   _inicializarUser() async {
     List<Usuario> listaUser = await  UserDatabaseProvider.db.getAll();
     mapIdUsers = new Map();
