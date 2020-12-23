@@ -19,6 +19,7 @@ class Usuario extends Equatable {
   String deletedAt;
   int fijo;
   int contact;
+  String fcmToken;
 
   Usuario(
       {this.id = 0,
@@ -37,25 +38,27 @@ class Usuario extends Equatable {
         this.deletedAt = '',
         this.fijo = 0,
         this.contact = 0,
+        this.fcmToken = '',
       });
 
   Usuario.fromJson(Map<String, dynamic> json) {
-    id = json['id']== null ? 0 : json['id'];
-    username = json['username']== null ? '' :json['username'];
-    email = json['email']== null ? '' :json['email'];
-    name = json['name']== null ? '' :json['name'];
-    address = json['address']== null ? '' :json['address'];
-    avatar = json['avatar']== null ? '' : json['avatar'];
-    createCases = json['create_cases']== null ? 0 : json['create_cases'];
-    active = json['active']== null ? 0 : json['active'];
-    system = json['system']== null ? 0 : json['system'];
-    levelId = json['level_id']== null ? 0 : json['level_id'];
-    companyId = json['company_id']== null ? 0 : json['company_id'];
-    createdAt = json['createdAt']== null ? '' :json['createdAt'];
-    updatedAt = json['updatedAt']== null ? '' :json['updatedAt'];
-    deletedAt = json['deletedAt']== null ? '' :json['deletedAt'];
-    fijo = json['fijo']== null ? 0 : json['fijo'];
-    contact = json['contact']== null ? 0 : json['contact'];
+    id = json['id'] ?? 0;
+    username = json['username'] ?? '';
+    email = json['email'] ?? '';
+    name = json['name'] ?? '';
+    address = json['address'] ?? '';
+    avatar = json['avatar'] ?? '';
+    createCases = json['create_cases'] ?? 0;
+    active = json['active'] ?? 0;
+    system = json['system'] ?? 0;
+    levelId = json['level_id'] ?? 0;
+    companyId = json['company_id'] ?? 0;
+    createdAt = json['createdAt'] ?? '';
+    updatedAt = json['updatedAt'] ?? '';
+    deletedAt = json['deletedAt'] ?? '';
+    fijo = json['fijo'] ?? 0;
+    contact = json['contact'] ?? 0;
+    fcmToken = json['fcm_token'] ?? '';
   }
 
   Map<String, dynamic> toJson() {
@@ -79,22 +82,23 @@ class Usuario extends Equatable {
     return data;
   }
   Usuario.fromMap(Map snapshot) :
-        id = snapshot['id']== null ? 0 :snapshot['id'],
-        username = snapshot['username']== null ? '' :snapshot['username'],
-        email = snapshot['email']== null ? '' :snapshot['email'],
-        name = snapshot['name']== null ? '' :snapshot['name'],
-        address = snapshot['address']== null ? '' :snapshot['address'],
-        avatar = snapshot['avatar']== null ? '' :snapshot['avatar'],
-        createCases = snapshot['create_cases']== null ? 0 :snapshot['create_cases'],
-        active = snapshot['active']== null ? 0 :snapshot['active'],
-        system = snapshot['system']== null ? 0 :snapshot['system'],
-        levelId = snapshot['level_id']== null ? 0 :snapshot['level_id'],
-        companyId = snapshot['company_id']== null ? 0 :snapshot['company_id'],
-        createdAt = snapshot['createdAt']== null ? '' :snapshot['createdAt'],
-        updatedAt = snapshot['updatedAt']== null ? '' :snapshot['updatedAt'],
-        deletedAt = snapshot['deletedAt']== null ? '' :snapshot['deletedAt'],
-        fijo = snapshot['fijo']== null ? 0 :snapshot['fijo'],
-        contact = snapshot['contact']== null ? 0 :snapshot['contact']
+        id = snapshot['id'] ?? 0,
+        username = snapshot['username'] ?? '',
+        email = snapshot['email'] ?? '',
+        name = snapshot['name'] ?? '',
+        address = snapshot['address'] ?? '',
+        avatar = snapshot['avatar'] ?? '',
+        createCases = snapshot['create_cases'] ?? 0,
+        active = snapshot['active'] ?? 0,
+        system = snapshot['system'] ?? 0,
+        levelId = snapshot['level_id'] ?? 0,
+        companyId = snapshot['company_id'] ?? 0,
+        createdAt = snapshot['createdAt'] ?? '',
+        updatedAt = snapshot['updatedAt'] ?? '',
+        deletedAt = snapshot['deletedAt'] ?? '',
+        fijo = snapshot['fijo'] ?? 0,
+        fcmToken = snapshot['fcm_token'] ?? '',
+        contact = snapshot['contact'] ?? 0
   ;
 
   Usuario.map(dynamic obj) {
@@ -152,7 +156,8 @@ class Usuario extends Equatable {
     updatedAt ,
     deletedAt ,
     fijo,
-    contact
+    contact,
+    fcmToken,
   ];
 
   @override

@@ -599,4 +599,25 @@ class conexionHttp{
     }
     return response;
   }
+
+  Future<http.Response> httpUpdateTokenFirebase(String tokenFb) async{
+    var response;
+    try{
+      String token  = await obtenerToken();
+      Map<String,String> headers = {
+        'Content-Type':'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Authorization': 'Bearer $token'
+      };
+      response = await http.post('$enlace/api/auth/fcm/token',
+        headers: headers,
+        body: {
+        'fcm_token' : tokenFb
+        },
+      );
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
 }

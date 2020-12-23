@@ -717,10 +717,11 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   pushProvider push;
   void _notificationListener(){
     push = new pushProvider();
-    push.obtenerToken();
+    push.getToken();
     push.initNotificaciones();
     push.mensajes.listen((argumento){
-
+      print('');
+      print(argumento);
     });
   }
 }

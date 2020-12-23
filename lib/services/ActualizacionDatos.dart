@@ -298,6 +298,7 @@ class UpdateData{
       blocInvitation.inList.add(true);
     }
   }
+
   actualizarListaInvitationReceived(BlocCasos blocInvitation) async {
     print('actualizarListaInvitationReceived');
     bool entre = false;

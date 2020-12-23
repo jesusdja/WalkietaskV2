@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/services/ActualizacionDatos.dart';
+import 'package:walkietaskv2/services/Conexionhttp.dart';
 
 class pushProvider{
 
@@ -15,13 +19,21 @@ class pushProvider{
     _mensajesStreamController?.close();
   }
 
-  obtenerToken() async {
+  getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _firebaseMessaging.requestNotificationPermissions();
     _firebaseMessaging.getToken().then((token) async {
       await prefs.setString('walkietaskIdNoti',token);
       print('======== TOKEN ========');
-      print(token);
+      try{
+        Usuario myUser = await UpdateData().getMyUser();
+        if(myUser.fcmToken == null || myUser.fcmToken != token){
+          var response = await conexionHttp().httpUpdateTokenFirebase(token);
+          var value = jsonDecode(response.body);
+        }
+      }catch(e){
+        print('ERROR AL OBTENER USUARIO EN TOKEN');
+      }
     });
   }
 
