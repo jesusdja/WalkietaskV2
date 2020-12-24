@@ -116,6 +116,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     prefs = await SharedPreferences.getInstance();
     valueSwitch = prefs.get('walkietaskFilterDate2') ?? false;
     setState(() {});
+    _updateDataNewFirebase();
   }
 
   @override
@@ -274,6 +275,13 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
   }
 
   Widget _tareas(Tarea tarea, bool favorite,){
+    bool isNew = false;
+    listViewTaskNew.forEach((element) {
+      if(element == tarea.id.toString()){
+        isNew = true;
+      }
+    });
+
     Image avatarUser = Image.network(avatarImage);
     if(mapIdUser != null){
       if(mapIdUser[tarea.user_id] != null && mapIdUser[tarea.user_id].avatar != ''){
@@ -342,15 +350,15 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                   children: <Widget>[
                     Flexible(
                       flex: 1,
-                      child: Text('${nameUser.substring(0,1).toUpperCase()}${nameUser.substring(1,nameUser.length).toLowerCase()}', maxLines: 1, style: favorite ? textStylePrimaryBold : textStylePrimary),
+                      child: Text(nameUser, maxLines: 1, style: favorite ? textStylePrimaryBold : isNew ? textStylePrimaryBold : textStylePrimary),
                     ),
                     Flexible(
                         flex: 1,
                         child: Text(tarea.name.isNotEmpty ? tarea.name : 'Tarea sin título. Tap para nombrarla',
                           maxLines: 1,
-                          style: tarea.name.isNotEmpty ? (favorite ? textStylePrimaryBold : textStylePrimary) : textStyleNotTitle,)
+                          style: tarea.name.isNotEmpty ? (favorite ? textStylePrimaryBold : isNew ? textStylePrimaryBold : textStylePrimary) : textStyleNotTitle,)
                     ),
-                    Text(proyectName,style: textStyleProject,maxLines: 1,),
+                    Text(proyectName,style: isNew ? textStylePrimaryBold : textStyleProject,maxLines: 1,),
                   ],
                 ),
               ),
@@ -711,6 +719,9 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
   }
 
   clickTarea(Tarea tarea) async {
+
+    _deleteDataNewFirebase(tarea.id.toString());
+
     try{
       if(tarea.name.isEmpty){
         var result  = await Navigator.push(context, new MaterialPageRoute(
@@ -902,10 +913,37 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
           }
           listTaskNew.add(idDoc);
           await prefs.setStringList('notiListTask', listTaskNew);
+          _updateDataNewFirebase();
         }
       }
     });
   }
 
-  void _updateDataNewFirebase()
+  List listViewTaskNew = [];
+  Future<void> _updateDataNewFirebase() async {
+    try{
+      listViewTaskNew = await prefs.get('notiListTask') ?? [];
+    }catch(e){
+      print(e.toString());
+    }
+    setState(() {});
+  }
+
+  Future<void> _deleteDataNewFirebase(String id) async {
+    List<String> list = [];
+    try{
+      listViewTaskNew = await prefs.get('notiListTask') ?? [];
+      listViewTaskNew.forEach((element) {
+        if(element != id){
+          list.add(element);
+        }
+      });
+      await prefs.setStringList('notiListTask', list);
+      listViewTaskNew = list;
+      setState(() {});
+    }catch(e){
+      print(e.toString());
+    }
+    setState(() {});
+  }
 }

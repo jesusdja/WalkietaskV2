@@ -286,7 +286,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           blocIndicatorProgress: blocIndicatorProgress,);
       case bottonSelect.opcion2:
         return loadTaskSend ? listRecibidos.length != 0 ?
-        ListadoTareasRecibidas(mapIdUserRes: mapIdUser,listRecibidos: listRecibidos,blocTaskReceivedRes: blocTaskReceived,listaCasosRes: listaCasos,myUserRes: myUser,) :
+        ListadoTareasRecibidas(mapIdUserRes: mapIdUser,listRecibidos: listRecibidos,blocTaskReceivedRes: blocTaskReceived,listaCasosRes: listaCasos,myUserRes: myUser,push: push,) :
         Center(child: Text('No existen tareas recibidas',style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
         Container(child: Cargando('Buscando tareas recibidas',context),) ;
       case bottonSelect.opcion3:
