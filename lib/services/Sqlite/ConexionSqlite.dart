@@ -99,7 +99,6 @@ class UserDatabaseProvider{
     }catch(e){
       print(e.toString());
     }
-
     return res;
   }
   //MODIFICAR

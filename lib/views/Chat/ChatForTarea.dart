@@ -397,7 +397,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
             child: IconButton(
               icon: Icon(Icons.send,color: WalkieTaskColors.color_4D9DFA,),
               onPressed: () async {
-                /*if(textChatSend.isNotEmpty){
+                if(textChatSend.isNotEmpty){
 
                   DateTime now = DateTime.now();
                   String formattedDate = DateFormat('yyyy-MM-dd').format(now);
@@ -421,7 +421,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                   }
 
                   bool res = await tareaFB.agregarMensaje(chatTarea.id,maplista);
-                  if(res){*/
+                  if(res){
                     try {
                       int idSend = 0;
                       if (idMyUser != tarea.user_id.toString()) {
@@ -435,16 +435,12 @@ class _ChatForTareaState extends State<ChatForTarea> {
                         Usuario userSendNoti = await UserDatabaseProvider.db.getCodeId(idSend.toString());
                         if (userSendNoti.fcmToken != null &&
                             userSendNoti.fcmToken.isNotEmpty) {
-                          var result = await HttpPushNotifications()
-                              .httpSendMessagero(
-                            userSendNoti.fcmToken, description: textChatSend,);
-                          print('');
+                            await HttpPushNotifications().httpSendMessagero(userSendNoti.fcmToken, description: textChatSend,);
                         }
                       }
                     }catch(e){
                       print(e.toString());
                     }
-/*
                     listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);
                     textChatSend = '';
                     _controllerChatSms.text = '';
@@ -452,7 +448,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                     FocusScope.of(context).requestFocus(new FocusNode());
                     setState(() {});
                   }
-                }*/
+                }
               },
             ),
           )  :
