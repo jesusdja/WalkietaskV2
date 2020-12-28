@@ -43,7 +43,8 @@ Future<Database> getDatabaseInstanace() async {
                 "createdAt TEXT, "
                 "updatedAt TEXT, "
                 "deletedAt TEXT, "
-                "fijo INT,"
+                "fijo INT, "
+                "fcmToken TEXT, "
                 "contact INT"
                 ")");
         await db.execute(

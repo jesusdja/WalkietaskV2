@@ -14,6 +14,7 @@ import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/services/Firebase/Notification/http_notifications.dart';
 import 'package:walkietaskv2/services/Firebase/chatTareasFirebase.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
@@ -396,7 +397,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
             child: IconButton(
               icon: Icon(Icons.send,color: WalkieTaskColors.color_4D9DFA,),
               onPressed: () async {
-                if(textChatSend.isNotEmpty){
+                /*if(textChatSend.isNotEmpty){
 
                   DateTime now = DateTime.now();
                   String formattedDate = DateFormat('yyyy-MM-dd').format(now);
@@ -419,15 +420,39 @@ class _ChatForTareaState extends State<ChatForTarea> {
                     });
                   }
 
-                  await tareaFB.agregarMensaje(chatTarea.id,maplista);
-
-                  listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);
-                  textChatSend = '';
-                  _controllerChatSms.text = '';
-                  buttonSend = false;
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                  setState(() {});
-                }
+                  bool res = await tareaFB.agregarMensaje(chatTarea.id,maplista);
+                  if(res){*/
+                    try {
+                      int idSend = 0;
+                      if (idMyUser != tarea.user_id.toString()) {
+                        idSend = tarea.user_id;
+                      } else {
+                        if (idMyUser != tarea.user_responsability_id.toString()) {
+                          idSend = tarea.user_responsability_id;
+                        }
+                      }
+                      if (idSend != 0) {
+                        Usuario userSendNoti = await UserDatabaseProvider.db.getCodeId(idSend.toString());
+                        if (userSendNoti.fcmToken != null &&
+                            userSendNoti.fcmToken.isNotEmpty) {
+                          var result = await HttpPushNotifications()
+                              .httpSendMessagero(
+                            userSendNoti.fcmToken, description: textChatSend,);
+                          print('');
+                        }
+                      }
+                    }catch(e){
+                      print(e.toString());
+                    }
+/*
+                    listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+                    textChatSend = '';
+                    _controllerChatSms.text = '';
+                    buttonSend = false;
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                    setState(() {});
+                  }
+                }*/
               },
             ),
           )  :

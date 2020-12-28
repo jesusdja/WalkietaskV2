@@ -79,6 +79,7 @@ class Usuario extends Equatable {
     data['deletedAt'] = this.deletedAt;
     data['fijo'] = this.fijo;
     data['contact'] = this.contact;
+    data['fcmToken'] = this.fcmToken;
     return data;
   }
   Usuario.fromMap(Map snapshot) :
@@ -118,6 +119,7 @@ class Usuario extends Equatable {
     this.deletedAt = obj['deletedAt'];
     this.fijo = obj['fijo'];
     this.contact = obj['contact'];
+    this.fcmToken = obj['fcmToken'];
   }
 
   Map<String, dynamic> toMap() => {
@@ -135,8 +137,9 @@ class Usuario extends Equatable {
     'createdAt':     createdAt== null ? '' :createdAt,
     'updatedAt':     updatedAt== null ? '' :updatedAt,
     'deletedAt':     deletedAt== null ? '' :deletedAt,
-    'fijo':           fijo== null ? 0 :fijo,
-    'contact':           contact== null ? 0 :contact,
+    'contact':       contact== null ? 0 : contact,
+    'fcmToken':      fcmToken == null ? '' : fcmToken,
+    'fijo':          fijo== null ? 0 : fijo,
   };
 
   @override
