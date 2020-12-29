@@ -10,6 +10,7 @@ import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/switch_button.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Chat/ChatForTarea.dart';
@@ -241,6 +242,13 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
         child: ReorderableListView(
           children: List.generate(listEnviados.length, (index) {
             Tarea tarea = listEnviados[index];
+
+            if(tarea.finalized == 1){
+              return Container(
+                key: ValueKey("value$index"),
+              );
+            }
+
             return Container(
               height: alto * 0.1,
               key: ValueKey("value$index"),
@@ -252,11 +260,11 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                 child: _tareas(tarea, tarea.is_priority != 0),
                 actions: <Widget>[
                   _buttonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: 30,),Colors.yellow[600],WalkieTaskColors.white,1,tarea),
-                  _buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
+                  //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
                 ],
                 secondaryActions: <Widget>[
-                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,tarea),
-                  _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,tarea),
+                  //_buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,tarea),
+                  //_buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,tarea),
                 ],
               ),
             );
@@ -269,12 +277,15 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
   }
 
   Widget _tareas(Tarea tarea, bool favorite,){
+
     Image avatarUser = Image.network(avatarImage);
     if(mapIdUser != null){
       if(mapIdUser[tarea.user_responsability_id] != null && mapIdUser[tarea.user_responsability_id].avatar != ''){
         avatarUser = Image.network('$directorioImage${mapIdUser[tarea.user_responsability_id].avatar}');
       }
     }
+
+    bool working = tarea.working == 1;
 
     String daysLeft = getDayDiff(tarea.deadline);
 
@@ -305,6 +316,14 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
               width: ancho * 0.2,
               child: Stack(
                 children: <Widget>[
+                  working ? Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      width: ancho * 0.015,
+                      height: alto * 0.06,
+                      color: WalkieTaskColors.color_89BD7D,
+                    ),
+                  ) : Container(),
                   Center(
                     child: Container(
                       padding: const EdgeInsets.all(3.0), // borde width
@@ -503,83 +522,92 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     List<Widget> listTaskRes = [];
     listTask.forEach((task) {
 
+      if(task.finalized != 1){
 
-      String proyectName = '(Sin proyecto asignado)';
-      if(task.project_id != null && task.project_id != 0 && mapCasos[task.project_id] != null){
-        proyectName = mapCasos[task.project_id].name;
-      }
+        bool working = task.working == 1;
 
-      String daysLeft = getDayDiff(task.deadline);
+        String proyectName = '(Sin proyecto asignado)';
+        if(task.project_id != null && task.project_id != 0 && mapCasos[task.project_id] != null){
+          proyectName = mapCasos[task.project_id].name;
+        }
 
-      bool reproTask = false;
-      if(taskReproduciendo == task.id){
-        reproTask = true;
-      }
+        String daysLeft = getDayDiff(task.deadline);
 
-      listTaskRes.add(
-          InkWell(
-            onTap: () =>clickTarea(task),
-            child: Container(
-              width: ancho,
-              padding: EdgeInsets.only(left: ancho * 0.04, right: ancho * 0.04,top: alto * 0.02),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
+        bool reproTask = false;
+        if(taskReproduciendo == task.id){
+          reproTask = true;
+        }
+
+        listTaskRes.add(
+            InkWell(
+              onTap: () =>clickTarea(task),
+              child: Container(
+                width: ancho,
+                padding: EdgeInsets.only(left: ancho * 0.04, right: ancho * 0.04,top: alto * 0.02),
+                child: Row(
+                  children: <Widget>[
+                    working ? Container(
+                      margin: EdgeInsets.only(right: ancho * 0.015),
+                      width: ancho * 0.015,
+                      height: alto * 0.05,
+                      color: WalkieTaskColors.color_89BD7D,
+                    ) : Container(),
+                    Expanded(
+                      child: Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(task.name.isEmpty ? 'Nombre no asignado' : task.name,
+                                maxLines: 1,
+                                style: textStylePrimaryBold),
+                            Text(proyectName,
+                              maxLines: 1,
+                              style: textStylePrimary,),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: ancho * 0.3,
+                      margin: EdgeInsets.only(right: ancho * 0.03),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Text(task.name.isEmpty ? 'Nombre no asignado' : task.name,
-                              maxLines: 1,
-                              style: textStylePrimaryBold),
-                          Text(proyectName,
-                            maxLines: 1,
-                            style: textStylePrimary,),
+                          Text(daysLeft,style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: daysLeft.contains('-') ? WalkieTaskColors.color_E07676 : Colors.grey[600]),),
+                          SizedBox(height: alto * 0.006,),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              //Icon(Icons.message,color: Colors.grey[600],size: alto * 0.03),
+                              // smsRecived ? CircleAvatar(
+                              //   backgroundColor: WalkieTaskColors.primary,
+                              //   radius: alto * 0.012,
+                              //   child: Text('2',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
+                              // ) : Container(),
+                              // smsRecived ? SizedBox(width: ancho * 0.01,) : Container(),
+                              InkWell(
+                                child: task.url_audio != '' ? Icon(Icons.volume_up,color: reproTask ? WalkieTaskColors.color_89BD7D : Colors.grey[600],size: alto * 0.03,) : Container(),
+                                onTap: (){
+                                  audioPlayer.play(task.url_audio);
+                                  setState(() {
+                                    taskReproduciendo = task.id;
+                                  });
+                                },
+                              ),
+                            ],
+                          )
                         ],
                       ),
                     ),
-                  ),
-                  Container(
-                    width: ancho * 0.3,
-                    margin: EdgeInsets.only(right: ancho * 0.03),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(daysLeft,style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: daysLeft.contains('-') ? WalkieTaskColors.color_E07676 : Colors.grey[600]),),
-                        SizedBox(height: alto * 0.006,),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            //Icon(Icons.message,color: Colors.grey[600],size: alto * 0.03),
-                            // smsRecived ? CircleAvatar(
-                            //   backgroundColor: WalkieTaskColors.primary,
-                            //   radius: alto * 0.012,
-                            //   child: Text('2',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
-                            // ) : Container(),
-                            // smsRecived ? SizedBox(width: ancho * 0.01,) : Container(),
-                            InkWell(
-                              child: task.url_audio != '' ? Icon(Icons.volume_up,color: reproTask ? WalkieTaskColors.color_89BD7D : Colors.grey[600],size: alto * 0.03,) : Container(),
-                              onTap: (){
-                                audioPlayer.play(task.url_audio);
-                                setState(() {
-                                  taskReproduciendo = task.id;
-                                });
-                              },
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          )
-      );
-
+            )
+        );
+      }
     });
     return listTaskRes;
   }
@@ -696,11 +724,11 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                 child: _tareas(task, task.is_priority != 0),
                 actions: <Widget>[
                   _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: 30,),Colors.yellow[600],WalkieTaskColors.white,1,task),
-                  _buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,task),
+                  //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,task),
                 ],
                 secondaryActions: <Widget>[
-                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
-                  _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,task),
+                  //_buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
+                  //_buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,task),
                 ],
               ),
             ),
@@ -732,6 +760,8 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     }
   }
 
+  conexionHttp connectionHttp = new conexionHttp();
+
   Widget _buttonSliderAction(String titulo,Icon icono,Color color,Color colorText,int accion,Tarea tarea){
     return IconSlideAction(
       color: color,
@@ -753,12 +783,42 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
             blocTaskSend.inList.add(true);
             //ENVIAR A API
             try{
-              var result = await conexionHispanos.httpModificarTarea(tarea);
-              print('${result.body}');
+              await conexionHispanos.httpModificarTarea(tarea);
             }catch(e){
               //SI NO HAY CONEXION GUARDAR EN TABLA LOCAL
-
             }
+          }
+        }
+        if(accion == 3){
+          try{
+            if(tarea.working == 0){
+              showAlert('Tarea iniciada',WalkieTaskColors.color_89BD7D);
+              tarea.working = 1;
+              if(await TaskDatabaseProvider.db.updateTask(tarea) == 1){
+                blocTaskSend.inList.add(true);
+                await conexionHispanos.httpTaskInit(tarea.id);
+              }
+            }else{
+              showAlert('Tarea ya se encuentra iniciada',WalkieTaskColors.color_89BD7D);
+            }
+          }catch(e){
+            print(e.toString());
+          }
+        }
+        if(accion == 4){
+          if(tarea.working == 1){
+            showAlert('Tarea finalizada',WalkieTaskColors.color_89BD7D);
+            try{
+              tarea.finalized = 1;
+              if(await TaskDatabaseProvider.db.updateTask(tarea) == 1){
+                blocTaskSend.inList.add(true);
+                await conexionHispanos.httpTaskFinalized(tarea.id);
+              }
+            }catch(e){
+              print(e.toString());
+            }
+          }else{
+            showAlert('La tarea debe estar iniciada para finalizarla.',WalkieTaskColors.color_E07676);
           }
         }
       },

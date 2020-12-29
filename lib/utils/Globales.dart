@@ -54,6 +54,7 @@ Future<Database> getDatabaseInstanace() async {
                 "description TEXT, "
                 "ord INT,"
                 "is_priority INT, "
+                "working INT, "
                 "finalized INT, "
                 "deadline TEXT, "
                 "rec_type INT, "

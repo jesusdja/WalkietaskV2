@@ -5,6 +5,7 @@ class Tarea  extends Equatable{
   int id;
   String name;
   String description;
+  int working;
   // ignore: non_constant_identifier_names
   int is_priority;
   int finalized;
@@ -51,6 +52,7 @@ class Tarea  extends Equatable{
         this.name,
         this.description,
         this.is_priority,
+        this.working,
         this.finalized,
         this.deadline,
         this.rec_type,
@@ -78,6 +80,7 @@ class Tarea  extends Equatable{
     name = isnullOrvacio(json['name']) ? '' : json['name'];
     description = isnullOrvacio(json['description']) ? '' : json['description'];
     is_priority = isnullOrvacio(json['is_priority']) ? 0 : json['is_priority'];
+    working = isnullOrvacio(json['working']) ? 0 : json['working'];
     finalized = isnullOrvacio(json['finalized']) ? 0 : json['finalized'];
     deadline = isnullOrvacio(json['deadline']) ? '' : json['deadline'];
     rec_type = isnullOrvacio(json['rec_type']) ? 0 : json['rec_type'];
@@ -130,6 +133,7 @@ class Tarea  extends Equatable{
     data['name'] = this.name;
     data['description'] = this.description;
     data['is_priority'] = this.is_priority;
+    data['working'] = this.working;
     data['finalized'] = this.finalized;
     data['deadline'] = this.deadline;
     data['rec_type'] = this.rec_type;
@@ -159,6 +163,7 @@ class Tarea  extends Equatable{
         name = snapshot['name'],
         description = snapshot['description'],
         is_priority = snapshot['is_priority'],
+        working = snapshot['working'],
         finalized = snapshot['finalized'],
         deadline = snapshot['deadline'],
         rec_type = snapshot['rec_type'],
@@ -186,6 +191,7 @@ class Tarea  extends Equatable{
     this.name = obj['name'];
     this.description = obj['description'];
     this.is_priority = obj['is_priority'];
+    this.working = obj['working'];
     this.finalized = obj['finalized'];
     this.deadline = obj['deadline'];
     this.rec_type = obj['rec_type'];
@@ -214,6 +220,7 @@ class Tarea  extends Equatable{
     'name' : name,
     'description' : description,
     'is_priority' : is_priority.toString(),
+    'working' : working.toString(),
     'finalized' : finalized,
     'deadline' : deadline.toString(),
     'rec_type' : rec_type.toString(),
@@ -242,6 +249,7 @@ class Tarea  extends Equatable{
     'name' : name,
     'description' : description,
     'is_priority' : is_priority,
+    'working' : working,
     'finalized' : finalized,
     'deadline' : deadline,
     'rec_type' : rec_type,
@@ -272,6 +280,7 @@ class Tarea  extends Equatable{
     name,
     description,
     is_priority,
+    working,
     finalized,
     deadline,
     rec_type,

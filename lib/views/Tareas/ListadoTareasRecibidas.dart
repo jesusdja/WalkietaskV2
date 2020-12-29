@@ -12,6 +12,7 @@ import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/switch_button.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
@@ -247,6 +248,13 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
         child: ReorderableListView(
           children: List.generate(listRecibidos.length, (index) {
             Tarea tarea = listRecibidos[index];
+
+            if(tarea.finalized == 1){
+              return Container(
+                key: ValueKey("value$index"),
+              );
+            }
+
             return Container(
               height: alto * 0.1,
               key: ValueKey("value$index"),
@@ -258,7 +266,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                 child: _tareas(tarea, tarea.is_priority != 0),
                 actions: <Widget>[
                   _buttonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: 30,),Colors.yellow[600],WalkieTaskColors.white,1,tarea),
-                  _buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
+                  //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
                 ],
                 secondaryActions: <Widget>[
                   _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,tarea),
@@ -281,6 +289,8 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
         isNew = true;
       }
     });
+
+    bool working = tarea.working == 1;
 
     Image avatarUser = Image.network(avatarImage);
     if(mapIdUser != null){
@@ -318,6 +328,14 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
               width: ancho * 0.2,
               child: Stack(
                 children: <Widget>[
+                  working ? Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      width: ancho * 0.015,
+                      height: alto * 0.06,
+                      color: WalkieTaskColors.color_89BD7D,
+                    ),
+                  ) : Container(),
                   Center(
                     child: Container(
                       padding: const EdgeInsets.all(3.0), // borde width
@@ -512,26 +530,35 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     List<Widget> listTaskRes = [];
     listTask.forEach((task) {
 
-      String daysLeft = getDayDiff(task.deadline);
+      if(task.finalized != 1){
+        String daysLeft = getDayDiff(task.deadline);
 
-      String proyectName = '(Sin proyecto asignado)';
-      if(task.project_id != null && task.project_id != 0 && mapCasos[task.project_id] != null){
-        proyectName = mapCasos[task.project_id].name;
-      }
+        bool working = task.working == 1;
 
-      bool reproTask = false;
-      if(taskReproduciendo == task.id){
-        reproTask = true;
-      }
+        String proyectName = '(Sin proyecto asignado)';
+        if(task.project_id != null && task.project_id != 0 && mapCasos[task.project_id] != null){
+          proyectName = mapCasos[task.project_id].name;
+        }
 
-      listTaskRes.add(
-          InkWell(
-            onTap: () =>clickTarea(task),
-            child: Container(
+        bool reproTask = false;
+        if(taskReproduciendo == task.id){
+          reproTask = true;
+        }
+
+        listTaskRes.add(
+            InkWell(
+              onTap: () =>clickTarea(task),
+              child: Container(
                 width: ancho,
                 padding: EdgeInsets.only(left: ancho * 0.04, right: ancho * 0.04,top: alto * 0.02),
                 child: Row(
                   children: <Widget>[
+                    working ? Container(
+                      margin: EdgeInsets.only(right: ancho * 0.015),
+                      width: ancho * 0.015,
+                      height: alto * 0.05,
+                      color: WalkieTaskColors.color_89BD7D,
+                    ) : Container(),
                     Expanded(
                       child: Container(
                         child: Column(
@@ -584,10 +611,10 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                     ),
                   ],
                 ),
-            ),
-          )
-      );
-
+              ),
+            )
+        );
+      }
     });
     return listTaskRes;
   }
@@ -704,7 +731,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                 child: _tareas(task, task.is_priority != 0),
                 actions: <Widget>[
                   _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: 30,),Colors.yellow[600],WalkieTaskColors.white,1,task),
-                  _buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,task),
+                  //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,task),
                 ],
                 secondaryActions: <Widget>[
                   _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
@@ -769,6 +796,38 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
             //SI NO HAY CONEXION GUARDAR EN TABLA LOCAL
 
             }
+          }
+        }
+        if(accion == 3){
+          try{
+            if(tarea.working == 0){
+              showAlert('Tarea iniciada',WalkieTaskColors.color_89BD7D);
+              tarea.working = 1;
+              if(await TaskDatabaseProvider.db.updateTask(tarea) == 1){
+                blocTaskReceived.inList.add(true);
+                await conexionHispanos.httpTaskInit(tarea.id);
+              }
+            }else{
+              showAlert('Tarea ya se encuentra iniciada',WalkieTaskColors.color_89BD7D);
+            }
+          }catch(e){
+            print(e.toString());
+          }
+        }
+        if(accion == 4){
+          if(tarea.working == 1){
+            showAlert('Tarea finalizada',WalkieTaskColors.color_89BD7D);
+            try{
+              tarea.finalized = 1;
+              if(await TaskDatabaseProvider.db.updateTask(tarea) == 1){
+                blocTaskReceived.inList.add(true);
+                await conexionHispanos.httpTaskFinalized(tarea.id);
+              }
+            }catch(e){
+              print(e.toString());
+            }
+          }else{
+            showAlert('La tarea debe estar iniciada para finalizarla.',WalkieTaskColors.color_E07676);
           }
         }
       },

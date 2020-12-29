@@ -620,4 +620,46 @@ class conexionHttp{
     }
     return response;
   }
+
+  Future<http.Response> httpTaskInit(int id) async {
+
+    String token  = await obtenerToken();
+    Map<String,String> headers = {
+      'Content-Type':'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Authorization': 'Bearer $token'
+    };
+
+    var response;
+
+    try{
+      response = await http.put('$enlace/api/auth/tasks/workingTask/$id',
+        headers: headers,
+      );
+    }catch(e){
+      print(e.toString());
+    }
+    return response;
+  }
+
+  Future<http.Response> httpTaskFinalized(int id) async {
+
+    String token  = await obtenerToken();
+    Map<String,String> headers = {
+      'Content-Type':'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Authorization': 'Bearer $token'
+    };
+
+    var response;
+
+    try{
+      response = await http.put('$enlace/api/auth/tasks/finalizeTask/$id',
+        headers: headers,
+      );
+    }catch(e){
+      print(e.toString());
+    }
+    return response;
+  }
 }
