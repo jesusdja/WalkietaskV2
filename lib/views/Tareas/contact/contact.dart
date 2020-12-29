@@ -81,6 +81,7 @@ class _ContactsState extends State<Contacts> {
   _initializarActive() async {
     prefs = await SharedPreferences.getInstance();
     activeRecived = await prefs.get('notiContacts_received');
+    activeRecived = activeRecived ?? false;
   }
 
   @override
