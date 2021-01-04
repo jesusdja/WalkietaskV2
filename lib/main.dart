@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:walkietaskv2/views/Home/StarLogo.dart';
 import 'App.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -46,15 +45,13 @@ class AppFR extends StatelessWidget {
         if (snapshot.hasError) {
           return Scaffold(backgroundColor: Colors.white,body: Center(child: Text('hasError'),),);
         }
-
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
           return App();
           //return Scaffold(backgroundColor: Colors.white,body: Center(child: Text('done'),),);
         }
-
         // Otherwise, show something whilst waiting for initialization to complete
-        return Scaffold(backgroundColor: Colors.white,body: Center(child: Text('NADA'),),);
+        return Scaffold(backgroundColor: Colors.white,body: Container(),);
       },
     );
   }

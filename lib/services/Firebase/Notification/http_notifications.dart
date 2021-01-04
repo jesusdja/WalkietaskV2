@@ -12,9 +12,14 @@ class HttpPushNotifications{
       'Authorization': 'key=AAAAchi7p6U:APA91bHYqqePapeybZ089xYX45qbm1qWbNP0zF7FGOBpjGNqsaNz1a7mvADEBWSn1PA9ikdav2wxGr_3MtTw4ruCapHKeUrD4__BY89_sPBWlXJfcTnzD94e-mL506Pt15BpwLV-vAKL'
     };
 
+    String sms = 'Nuevo mensaje: $description';
+    if(description.length > 20){
+      sms = 'Nuevo mensaje: ${description.substring(0,19)}...';
+    }
+
     final msg = jsonEncode({
       'notification': {
-        'body' : 'Nuevo mensaje Walkietask',
+        'body' : sms,
       },
       "priority" : "high",
       "data" : {

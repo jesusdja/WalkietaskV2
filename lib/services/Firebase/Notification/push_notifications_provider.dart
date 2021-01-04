@@ -24,7 +24,11 @@ class pushProvider{
     _firebaseMessaging.requestNotificationPermissions();
     _firebaseMessaging.getToken().then((token) async {
       await prefs.setString('walkietaskIdNoti',token);
-      print('======== TOKEN ========');
+      print('======== TOKEN FIREBASE ========');
+      print('======== TOKEN FIREBASE ========');
+      print(token);
+      print('======== TOKEN FIREBASE ========');
+      print('======== TOKEN FIREBASE ========');
       try{
         Usuario myUser = await UpdateData().getMyUser();
         if(myUser.fcmToken == null || myUser.fcmToken != token){

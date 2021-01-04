@@ -176,11 +176,11 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
   verificarPermisos()async{
     String token = await obtenerToken();
-    print('****************');
-    print('****************');
+    print('******** TOKEN SERVER ********');
+    print('******** TOKEN SERVER ********');
     print('$token');
-    print('****************');
-    print('****************');
+    print('******** TOKEN SERVER ********');
+    print('******** TOKEN SERVER ********');
     await PermisoStore();
     await PermisoSonido();
     await PermisoPhotos();
