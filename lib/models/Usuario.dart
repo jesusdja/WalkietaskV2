@@ -98,7 +98,7 @@ class Usuario extends Equatable {
         updatedAt = snapshot['updatedAt'] ?? '',
         deletedAt = snapshot['deletedAt'] ?? '',
         fijo = snapshot['fijo'] ?? 0,
-        fcmToken = snapshot['fcm_token'] ?? '',
+        fcmToken = snapshot['fcmToken'] ?? '',
         contact = snapshot['contact'] ?? 0
   ;
 
