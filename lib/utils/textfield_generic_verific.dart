@@ -19,6 +19,7 @@ class TextFildGenericVerific extends StatelessWidget {
   final int check;
   final double sizeHeight;
   final FocusNode focusNode;
+  final TextCapitalization textCapitalization;
 
   TextFildGenericVerific({
     this.initialValue = '',
@@ -38,6 +39,7 @@ class TextFildGenericVerific extends StatelessWidget {
     @required this.check,
     this.focusNode,
     this.sizeHeight = 0,
+    this.textCapitalization = TextCapitalization.sentences,
   });
 
   @override
@@ -86,6 +88,7 @@ class TextFildGenericVerific extends StatelessWidget {
               autocorrect: autoCorrect,
               validator: validator,
               keyboardType: textInputType,
+              textCapitalization: textCapitalization,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white,

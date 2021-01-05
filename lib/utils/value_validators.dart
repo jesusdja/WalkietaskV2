@@ -3,7 +3,7 @@ Map<String, dynamic> validateUserAddress(String input) {
   const emailRegex = r"""^[a-zA-Z]+""";
   const userRegex = ""r'^[a-zA-Z0-9]+$'"";
   if (RegExp(emailRegex).hasMatch(input)) {
-    if (input.length > 5 && input.length < 10){
+    if (input.length >= 4 && input.length < 10){
       if(RegExp(userRegex).hasMatch(input)){
         result['valid'] = true;
         result['sms'] = 'valido';

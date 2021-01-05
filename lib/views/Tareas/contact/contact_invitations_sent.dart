@@ -83,7 +83,7 @@ class _InvitationsSentState extends State<InvitationsSent> {
           String dia = date.day.toString(); if(dia.length < 2){ dia = '0$mes'; }
           String dateInvited = 'Enviada el $dia-$mes-${date.year}';
 
-          String nameUser = '${userInvited.name.substring(0,1).toUpperCase()}${userInvited.name.substring(1,userInvited.name.length).toLowerCase()}';
+          String nameUser = '${userInvited.name}';
           if(invitation.external == 1){
             nameUser = invitation.contact;
           }

@@ -188,7 +188,9 @@ class _LoginHomeState extends State<LoginHome> {
                           obscure: seePass,
                           suffixIcon: InkWell(
                             onTap: (){ setState(() {seePass = !seePass;});},
-                            child: seePass ? Icon(Icons.remove_red_eye_outlined) : Icon(Icons.remove_red_eye),
+                            child: seePass ?
+                            Icon(Icons.remove_red_eye_outlined,size: alto * 0.03,) :
+                            Icon(Icons.remove_red_eye,size: alto * 0.03),
                           ),
                         ),
                       ),

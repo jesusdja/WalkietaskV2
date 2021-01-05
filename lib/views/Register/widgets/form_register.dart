@@ -36,6 +36,7 @@ class _FormRegisterState extends State<FormRegister> {
   bool showError = false;
   bool showErrorCheck = false;
   bool isAccepted = false;
+  bool seePass = true;
 
   String name = '';
   String surname = '';
@@ -347,15 +348,22 @@ class _FormRegisterState extends State<FormRegister> {
                             labelStyle: textStyle1,
                             focusNode: focusNodePass,
                             initialValue: pass,
-                            obscure: true,
                             onChanged: (String value) {
                               setState(() {
                                 pass = value;
                               });
                             },
+                            textCapitalization: TextCapitalization.sentences,
                             sizeW: sizeW,
                             sizeH: sizeH,
                             sizeHeight: sizeH * 0.045,
+                            obscure: seePass,
+                            suffixIcon: InkWell(
+                              onTap: (){ setState(() {seePass = !seePass;});},
+                              child: seePass ?
+                              Icon(Icons.remove_red_eye_outlined,size: sizeH * 0.03,) :
+                              Icon(Icons.remove_red_eye,size: sizeH * 0.03),
+                            ),
                           ),
                           Container(
                             width: sizeW,

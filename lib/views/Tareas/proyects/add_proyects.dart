@@ -268,7 +268,7 @@ class _AddProyectsState extends State<AddProyects> {
             ),
           ),
           Expanded(
-            child: Text('${user.name.substring(0,1).toUpperCase()}${user.name.substring(1,user.name.length).toLowerCase()}', style: textStylePrimary,),
+            child: Text('${user.name}', style: textStylePrimary,),
           ),
           Checkbox(
               value: checkUser[user.id] ?? false,

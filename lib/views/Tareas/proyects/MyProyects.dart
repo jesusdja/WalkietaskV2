@@ -327,7 +327,7 @@ class _MyProyectsState extends State<MyProyects> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text('${name.substring(0,1).toUpperCase()}${name.substring(1,name.length).toLowerCase()}',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02),maxLines: 1,),
+                        Text('$name',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02),maxLines: 1,),
                         Text(email,style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, spacing: 1),maxLines: 1,)
                       ],
                     ),

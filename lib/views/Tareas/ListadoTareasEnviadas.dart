@@ -356,7 +356,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                   children: <Widget>[
                     Flexible(
                       flex: 1,
-                      child: Text('${nameUser.substring(0,1).toUpperCase()}${nameUser.substring(1,nameUser.length).toLowerCase()}', maxLines: 1, style: favorite ? textStylePrimaryBold : textStylePrimary),
+                      child: Text('$nameUser', maxLines: 1, style: favorite ? textStylePrimaryBold : textStylePrimary),
                     ),
                     Flexible(
                         flex: 1,
@@ -471,7 +471,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.only(left: ancho * 0.03,right: ancho * 0.03,),
-                    child: Text('${nameUser.substring(0,1).toUpperCase()}${nameUser.substring(1,nameUser.length).toLowerCase()}',
+                    child: Text('$nameUser',
                         style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.025, color: WalkieTaskColors.color_76ADE3)),
                   ),
                 ),

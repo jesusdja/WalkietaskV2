@@ -440,7 +440,7 @@ class _MyHomePageState extends State<EnviarTarea> {
                             Expanded(
                               child: Container(
                                 margin: EdgeInsets.only(left: ancho * 0.02),
-                                child: Text('${usuario.name.substring(0,1).toUpperCase()}${usuario.name.substring(1,usuario.name.length).toLowerCase()}',
+                                child: Text('${usuario.name}',
                                   style: userSelect ? textStylePrimaryBold : textStylePrimary,
                                 ),
                               ),

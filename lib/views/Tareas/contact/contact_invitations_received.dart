@@ -111,7 +111,7 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text('${userInvited.name.substring(0,1).toUpperCase()}${userInvited.name.substring(1,userInvited.name.length).toLowerCase()}',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.color_4D4D4D),),
+                          Text('${userInvited.name}',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.color_4D4D4D),),
                           Text('$dateInvited', style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: WalkieTaskColors.color_ACACAC, fontWeight: FontWeight.bold,spacing: 0.5,),),
                         ],
                       ),

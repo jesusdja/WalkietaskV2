@@ -90,8 +90,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
     }
 
     tarea = widget.tareaRes;
-    fechaTask = DateTime.parse(widget.tareaRes.created_at);
-    fechaTaskOld = DateTime.parse(widget.tareaRes.created_at);
+    fechaTask = widget.tareaRes.deadline.isEmpty ? null : DateTime.parse(widget.tareaRes.deadline);
+    fechaTaskOld = widget.tareaRes.deadline.isEmpty ? null :  DateTime.parse(widget.tareaRes.deadline);
 
     _controllerTitle = TextEditingController(text: tarea.name);
     _controllerDescription = TextEditingController(text: tarea.description);

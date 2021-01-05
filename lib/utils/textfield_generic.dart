@@ -27,6 +27,7 @@ class TextFildGeneric extends StatelessWidget {
   final Widget suffixIcon;
   final bool enable;
   final EdgeInsetsGeometry padding;
+  final TextCapitalization textCapitalization;
 
   TextFildGeneric({
     this.initialValue = '',
@@ -54,6 +55,7 @@ class TextFildGeneric extends StatelessWidget {
     this.suffixIcon,
     this.enable = true,
     this.padding = const EdgeInsets.only(left: 5),
+    this.textCapitalization = TextCapitalization.sentences,
   });
 
   @override
@@ -87,6 +89,7 @@ class TextFildGeneric extends StatelessWidget {
         validator: validator,
         keyboardType: textInputType,
         focusNode: focusNode,
+        textCapitalization: textCapitalization,
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.white,
