@@ -69,8 +69,10 @@ class pushProvider{
         Map<String,String> argumento = Map();
         if(Platform.isAndroid){
           argumento['idDoc'] = info['data']['idDoc'];
+          argumento['table'] = info['data']['table']; // contacts - tasks
         }else{
           argumento['idDoc'] = info['idDoc'];
+          argumento['table'] = info['table'];
         }
         _mensajesStreamController.sink.add(argumento);
       },
@@ -82,8 +84,10 @@ class pushProvider{
         Map<String,String> argumento = Map();
         if(Platform.isAndroid){
           argumento['idDoc'] = info['data']['idDoc'];
+          argumento['table'] = info['data']['table']; // contacts - tasks
         }else{
           argumento['idDoc'] = info['idDoc'];
+          argumento['table'] = info['table'];
         }
         _mensajesStreamController.sink.add(argumento);
       },

@@ -35,6 +35,9 @@ class _LoginHomeState extends State<LoginHome> {
   final formKey = GlobalKey<FormState>();
   SharedPreferences prefs;
   TextEditingController _email = new TextEditingController();
+  TextEditingController _pass = new TextEditingController();
+
+  bool seePass = true;
 
   @override
   void initState() {
@@ -174,13 +177,19 @@ class _LoginHomeState extends State<LoginHome> {
                             pasw = text;
                             setState(() {});
                           },
-                          obscure: true,
                           sizeH: alto,
                           sizeW: ancho,
                           borderColor: WalkieTaskColors.color_B7B7B7,
                           sizeBorder: 1.2,
                           sizeHeight: alto * 0.04,
                           textAlign: TextAlign.left,
+                          textEditingController: _pass,
+                          initialValue: null,
+                          obscure: seePass,
+                          suffixIcon: InkWell(
+                            onTap: (){ setState(() {seePass = !seePass;});},
+                            child: seePass ? Icon(Icons.remove_red_eye_outlined) : Icon(Icons.remove_red_eye),
+                          ),
                         ),
                       ),
                     ],
