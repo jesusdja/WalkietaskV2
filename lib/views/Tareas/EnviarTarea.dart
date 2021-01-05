@@ -596,6 +596,7 @@ class _MyHomePageState extends State<EnviarTarea> {
             width: ancho,
             margin: EdgeInsets.only(top: alto * 0.01),
             child: TextFildGeneric(
+              padding: EdgeInsets.all(5.0),
               onChanged: (text) {
                 setState(() {
                   descriptionTask = text;
@@ -838,10 +839,10 @@ class _MyHomePageState extends State<EnviarTarea> {
           SizedBox(height: alto * 0.01,),
           Container(
             height: tareaText[1] ? alto * 0.35 : alto * 0.23,
-            child: listaCasos == null ? Container() : ListView.builder(
+            child: listaCasos == null ? Container() :
+            ListView.builder(
               itemCount: listaCasos.length,
               itemBuilder: (context,index){
-
                 Caso caso = listaCasos[index];
                 if(controlleBuscador.text.length != 0 && !caso.name.toLowerCase().contains(controlleBuscador.text.toLowerCase())){
                   return Container();
