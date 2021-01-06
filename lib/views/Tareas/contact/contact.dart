@@ -122,7 +122,7 @@ class _ContactsState extends State<Contacts> {
                     var result = await Navigator.push(context, new MaterialPageRoute(
                         builder: (BuildContext context) => new SendInvitation(myUserRes: myUser, mapIdUsersRes: mapIdUsers,)));
                     if(result){
-                      await updateData.actualizarListaInvitationSent(blocInvitation);
+                      await updateData.actualizarListaInvitationSent(blocInvitation, null);
                     }
                   }catch(e){
                     print(e.toString());
@@ -290,15 +290,15 @@ class _ContactsState extends State<Contacts> {
         mapAppBar[2] = false;
         mapAppBar[index] = true;
         if(index == 0){
-          updateData.actualizarListaUsuarios(blocUser);
+          updateData.actualizarListaUsuarios(blocUser, null);
           inInvitedRecived = false;
         }
         if(index == 1){
-          updateData.actualizarListaInvitationSent(blocInvitation);
+          updateData.actualizarListaInvitationSent(blocInvitation, null);
           inInvitedRecived = false;
         }
         if(index == 2){
-          updateData.actualizarListaInvitationReceived(blocInvitation);
+          updateData.actualizarListaInvitationReceived(blocInvitation, null);
           await prefs.setBool('notiContacts_received', false);
           activeRecived = false;
           inInvitedRecived = true;
@@ -351,7 +351,7 @@ class _ContactsState extends State<Contacts> {
           activeRecived = true;
           setState(() {});
         }else{
-          updateData.actualizarListaInvitationReceived(blocInvitation);
+          updateData.actualizarListaInvitationReceived(blocInvitation, null);
         }
       }
     });

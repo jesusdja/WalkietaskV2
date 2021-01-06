@@ -49,6 +49,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   conexionHttp conexionHispanos = new conexionHttp();
   bool cargadoUsuarios = false;
   Usuario myUser;
+  bool conectionActive = false;
 
   bottonSelect page = bottonSelect.opcion1;
 
@@ -66,10 +67,10 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   BlocTask blocTaskSend;
   BlocTask blocTaskReceived;
   BlocCasos blocCasos;
-  BlocCasos blocEmpresa;
   BlocCasos blocInvitation;
   BlocProgress blocIndicatorProgress;
   BlocPage blocPage;
+  BlocCasos blocConection;
 
   UpdateData updateData = new UpdateData();
 
@@ -78,6 +79,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   StreamSubscription streamSubscriptionTaskRecived;
   StreamSubscription streamSubscriptionCasos;
   StreamSubscription streamSubscriptionInvitation;
+  StreamSubscription streamSubscriptionConection;
   StreamSubscription streamSubscriptionProgress;
   StreamSubscription streamSubscriptionPage;
 
@@ -103,7 +105,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     blocTaskSend = new BlocTask();
     blocTaskReceived = new BlocTask();
     blocCasos = new BlocCasos();
-    blocEmpresa = new BlocCasos();
+    blocConection = new BlocCasos();
     blocInvitation = new BlocCasos();
     blocIndicatorProgress = new BlocProgress();
     blocPage = BlocPage();
@@ -122,6 +124,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     _inicializarPatronBlocCasos();
     _inicializarPatronBlocProgress();
     _inicializarPatronBlocPage();
+    _inicializarPatronBlocConection();
 
     _inicializarUser();
     _inicializarTaskRecived();
@@ -129,12 +132,12 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     _inicializarCasos();
     _inicializarInvitation();
 
-    updateData.actualizarListaUsuarios(blocUser);
-    updateData.actualizarListaRecibidos(blocTaskReceived);
-    updateData.actualizarListaEnviados(blocTaskSend);
+    updateData.actualizarListaUsuarios(blocUser, blocConection);
+    updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
+    updateData.actualizarListaEnviados(blocTaskSend, blocConection);
     updateData.actualizarCasos(blocCasos);
-    updateData.actualizarListaInvitationSent(blocInvitation);
-    updateData.actualizarListaInvitationReceived(blocInvitation);
+    updateData.actualizarListaInvitationSent(blocInvitation, blocConection);
+    updateData.actualizarListaInvitationReceived(blocInvitation, blocConection);
 
     mapNavigatorBotton[bottonSelect.opcion1] = true;
     mapNavigatorBotton[bottonSelect.opcion2] = false;
@@ -155,6 +158,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       streamSubscriptionTaskRecived?.cancel();
       streamSubscriptionCasos?.cancel();
       streamSubscriptionInvitation?.cancel();
+      streamSubscriptionConection?.cancel();
       streamSubscriptionProgress?.cancel();
       streamSubscriptionPage?.cancel();
       blocUser.dispose();
@@ -162,7 +166,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       blocTaskReceived.dispose();
       blocCasos.dispose();
       blocInvitation.dispose();
-      blocEmpresa.dispose();
+      blocConection.dispose();
       blocIndicatorProgress.dispose();
       blocPage.dispose();
     }catch(e){
@@ -275,27 +279,37 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     return Container();
   }
   Widget navigatorBotton(){
-    return Container(
-      height: alto * 0.08,
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: navigatorBottonContenido(bottonSelect.opcion1,'','Enviar tarea','Tarea',false),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: navigatorBottonContenido(bottonSelect.opcion1,'','Enviar tarea','Tarea',false),
+              ),
+              Expanded(
+                child: navigatorBottonContenido(bottonSelect.opcion2,'-1','Tareas recibidas', 'Recibidas',notiRecived),
+              ),
+              Expanded(
+                child: navigatorBottonContenido(bottonSelect.opcion3,'-3','Tareas enviadas', 'Enviadas',notiSend),
+              ),
+              Expanded(
+                child: navigatorBottonContenido(bottonSelect.opcion4,'-4','Proyectos', 'Proyectos',false),
+              ),
+              Expanded(
+                child: navigatorBottonContenido(bottonSelect.opcion5,'-5','Contactos', 'Contactos',notiContacts),
+              ),
+            ],
           ),
-          Expanded(
-            child: navigatorBottonContenido(bottonSelect.opcion2,'-1','Tareas recibidas', 'Recibidas',notiRecived),
-          ),
-          Expanded(
-            child: navigatorBottonContenido(bottonSelect.opcion3,'-3','Tareas enviadas', 'Enviadas',notiSend),
-          ),
-          Expanded(
-            child: navigatorBottonContenido(bottonSelect.opcion4,'-4','Proyectos', 'Proyectos',false),
-          ),
-          Expanded(
-            child: navigatorBottonContenido(bottonSelect.opcion5,'-5','Contactos', 'Contactos',notiContacts),
-          ),
-        ],
-      ),
+        ),
+        conectionActive ? Container(
+          width: ancho,
+          height: alto * 0.05,
+          color: Colors.red[300],
+          child: Center(child: Text('Sin conexion, intentando reconectar . . . '),),
+        ) : Container(),
+      ],
     );
   }
   Widget navigatorBottonContenido(bottonSelect index,String num,String tit, subTitle, bool noti){
@@ -303,6 +317,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       children: [
         InkWell(
           child: Container(
+            padding: EdgeInsets.only(top: alto * 0.005, bottom: alto * 0.005),
             color: mapNavigatorBotton[index] ? Colors.white : Colors.grey[200],
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -332,29 +347,29 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
             page = index;
 
             if(page == bottonSelect.opcion1){
-              updateData.actualizarListaUsuarios(blocUser);
+              updateData.actualizarListaUsuarios(blocUser, blocConection);
               updateData.actualizarCasos(blocCasos);
             }
             if(page == bottonSelect.opcion2){
-              updateData.actualizarListaUsuarios(blocUser);
-              updateData.actualizarListaRecibidos(blocTaskReceived);
+              updateData.actualizarListaUsuarios(blocUser, blocConection);
+              updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
               updateData.actualizarCasos(blocCasos);
               updateNoti(0, false);
             }
             if(page == bottonSelect.opcion3){
-              updateData.actualizarListaUsuarios(blocUser);
-              updateData.actualizarListaEnviados(blocTaskSend);
+              updateData.actualizarListaUsuarios(blocUser, blocConection);
+              updateData.actualizarListaEnviados(blocTaskSend, blocConection);
               updateData.actualizarCasos(blocCasos);
               updateNoti(3, false);
             }
             if(page == bottonSelect.opcion4){
-              updateData.actualizarListaUsuarios(blocUser);
+              updateData.actualizarListaUsuarios(blocUser, blocConection);
               updateData.actualizarCasos(blocCasos);
             }
             if(page == bottonSelect.opcion5){
-              updateData.actualizarListaUsuarios(blocUser);
-              updateData.actualizarListaInvitationSent(blocInvitation);
-              updateData.actualizarListaInvitationReceived(blocInvitation);
+              updateData.actualizarListaUsuarios(blocUser, blocConection);
+              updateData.actualizarListaInvitationSent(blocInvitation, blocConection);
+              updateData.actualizarListaInvitationReceived(blocInvitation, blocConection);
               updateNoti(1, false);
             }
             setState(() {});
@@ -623,7 +638,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     try {
       // ignore: cancel_subscriptions
       streamSubscriptionInvitation = blocInvitation.outList.listen((newVal) {
-        print('');
         if(newVal){
           _inicializarInvitation();
         }
@@ -680,6 +694,16 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         mapNavigatorBotton[mapNewValue[newVal]] = true;
         page = mapNewValue[newVal];
         setState(() {});
+      });
+    } catch (e) {}
+  }
+  _inicializarPatronBlocConection(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionConection = blocConection.outList.listen((newVal) {
+        setState(() {
+          conectionActive = newVal;
+        });
       });
     } catch (e) {}
   }

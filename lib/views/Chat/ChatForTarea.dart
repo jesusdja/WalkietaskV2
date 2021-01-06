@@ -844,8 +844,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
       var value = jsonDecode(response.body);
       if(response.statusCode == 200){
         showAlert('Tarea modificada con exito!',WalkieTaskColors.color_89BD7D);
-        updateData.actualizarListaRecibidos(blocTaskSend);
-        updateData.actualizarListaEnviados(blocTaskSend);
+        updateData.actualizarListaRecibidos(blocTaskSend, null);
+        updateData.actualizarListaEnviados(blocTaskSend, null);
         setState(() {
           edit = false;
         });

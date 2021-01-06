@@ -24,7 +24,7 @@ class UpdateData{
     print('BASE DE DATOS LIMPIAS');
   }
 
-  actualizarListaUsuarios(BlocUser blocUser) async {
+  actualizarListaUsuarios(BlocUser blocUser, BlocCasos blocConection) async {
     print('actualizarListaUsuarios');
     bool entre = false;
     //ACTUALIZAR TABLA LOCAL
@@ -49,8 +49,10 @@ class UpdateData{
           }
         }
       }
+      if(blocConection != null){blocConection.inList.add(false);}
     }catch(e){
       print('SIN CONEXION PARA ACTUALIZAR USUARIOS');
+      if(blocConection != null){blocConection.inList.add(true);}
     }
 
     if(entre){
@@ -130,7 +132,7 @@ class UpdateData{
 
   }
 
-  actualizarListaRecibidos(BlocTask blocTaskReceived) async {
+  actualizarListaRecibidos(BlocTask blocTaskReceived, BlocCasos blocConection) async {
     print('actualizarListaRecibidos');
     try{
       var response = await conexionHispanos.httpListTareasRecibidas();
@@ -154,13 +156,14 @@ class UpdateData{
       if(entre){
         blocTaskReceived.inList.add(true);
       }
-
+      blocConection.inList.add(false);
     }catch(e){
+      if(blocConection != null){blocConection.inList.add(true);}
       print('SIN CONEXION PARA ACTUALIZAR TAREAS RECIBIDAS');
     }
   }
 
-  actualizarListaEnviados(BlocTask blocTaskSend) async {
+  actualizarListaEnviados(BlocTask blocTaskSend, BlocCasos blocConection) async {
     print('actualizarListaEnviados');
     try{
       var response = await conexionHispanos.httpListTareasEnviadas();
@@ -184,7 +187,9 @@ class UpdateData{
       if(entre){
         blocTaskSend.inList.add(true);
       }
+      if(blocConection != null){blocConection.inList.add(false);}
     }catch(e){
+      if(blocConection != null){blocConection.inList.add(true);}
       print('SIN CONEXION PARA ACTUALIZAR TAREAS ENVIADAS');
     }
   }
@@ -251,7 +256,7 @@ class UpdateData{
     return user;
   }
 
-  actualizarListaInvitationSent(BlocCasos blocInvitation) async {
+  actualizarListaInvitationSent(BlocCasos blocInvitation, BlocCasos blocConection) async {
     print('actualizarListaInvitationSent');
     bool entre = false;
     //ACTUALIZAR TABLA LOCAL
@@ -287,11 +292,14 @@ class UpdateData{
             await  InvitationDatabaseProvider.db.deleteInvitation(invitationsLocal[x].id);
           }
         }
+        if(blocConection != null){blocConection.inList.add(false);}
       }catch(e){
+        if(blocConection != null){blocConection.inList.add(true);}
         print('SIN CONEXION PARA ACTUALIZAR INVITACIONES ENVIADAS II');
       }
-
+      if(blocConection != null){blocConection.inList.add(false);}
     }catch(e){
+      if(blocConection != null){blocConection.inList.add(true);}
       print('SIN CONEXION PARA ACTUALIZAR INVITACIONES ENVIADAS');
     }
     if(entre){
@@ -299,7 +307,7 @@ class UpdateData{
     }
   }
 
-  actualizarListaInvitationReceived(BlocCasos blocInvitation) async {
+  actualizarListaInvitationReceived(BlocCasos blocInvitation, BlocCasos blocConection) async {
     print('actualizarListaInvitationReceived');
     bool entre = false;
     //ACTUALIZAR TABLA LOCAL
@@ -335,11 +343,14 @@ class UpdateData{
             await  InvitationDatabaseProvider.db.deleteInvitation(invitationsLocal[x].id);
           }
         }
+        if(blocConection != null){blocConection.inList.add(false);}
       }catch(e){
+        if(blocConection != null){blocConection.inList.add(true);}
         print('SIN CONEXION PARA ACTUALIZAR INVITACIONES RECIBIDAS II');
       }
-
+      if(blocConection != null){blocConection.inList.add(false);}
     }catch(e){
+      if(blocConection != null){blocConection.inList.add(true);}
       print('SIN CONEXION PARA ACTUALIZAR INVITACIONES RECIBIDAS');
     }
     if(entre){
