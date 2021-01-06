@@ -52,6 +52,7 @@ class pushProvider{
         print('============= onMessage ========== ');
         print(info);
         Map<String,String> argumento = Map();
+        argumento['type'] = '1';
         if(Platform.isAndroid){
           argumento['idDoc'] = info['data']['idDoc'];
           argumento['table'] = info['data']['table']; // contacts - tasks
@@ -67,6 +68,7 @@ class pushProvider{
         print('============= onResume ========== ');
         print(info);
         Map<String,String> argumento = Map();
+        argumento['type'] = '2';
         if(Platform.isAndroid){
           argumento['idDoc'] = info['data']['idDoc'];
           argumento['table'] = info['data']['table']; // contacts - tasks
@@ -82,6 +84,7 @@ class pushProvider{
         print('============= onLaunch ========== ');
         print(info);
         Map<String,String> argumento = Map();
+        argumento['type'] = '3';
         if(Platform.isAndroid){
           argumento['idDoc'] = info['data']['idDoc'];
           argumento['table'] = info['data']['table']; // contacts - tasks

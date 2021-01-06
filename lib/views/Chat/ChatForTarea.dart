@@ -425,6 +425,12 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
                   bool res = await tareaFB.agregarMensaje(chatTarea.id,maplista);
                   if(res){
+                    listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+                    textChatSend = '';
+                    _controllerChatSms.text = '';
+                    buttonSend = false;
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                    setState(() {});
                     try {
                       int idSend = 0;
                       if (idMyUser != tarea.user_id.toString()) {
@@ -438,18 +444,12 @@ class _ChatForTareaState extends State<ChatForTarea> {
                         Usuario userSendNoti = await UserDatabaseProvider.db.getCodeId(idSend.toString());
                         if (userSendNoti.fcmToken != null &&
                             userSendNoti.fcmToken.isNotEmpty) {
-                            await HttpPushNotifications().httpSendMessagero(userSendNoti.fcmToken, description: textChatSend,);
+                            await HttpPushNotifications().httpSendMessagero(userSendNoti.fcmToken, tarea.id.toString(), description: textChatSend,);
                         }
                       }
                     }catch(e){
                       print(e.toString());
                     }
-                    listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);
-                    textChatSend = '';
-                    _controllerChatSms.text = '';
-                    buttonSend = false;
-                    FocusScope.of(context).requestFocus(new FocusNode());
-                    setState(() {});
                   }
                 }
               },

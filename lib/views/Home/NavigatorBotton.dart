@@ -23,6 +23,7 @@ import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/DialogAlert.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/avatar_widget.dart';
+import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
@@ -88,6 +89,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   bool loadTaskRecived = false;
 
   bool notiRecived = false;
+  bool notiSend = false;
   bool notiContacts = false;
 
   @override
@@ -141,8 +143,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     mapNavigatorBotton[bottonSelect.opcion5] = false;
 
     verificarPermisos();
-    uploadData();
-
     _notificationListener();
   }
 
@@ -171,7 +171,10 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   }
 
   void uploadData() async {
-    uploadBackDocuments(blocIndicatorProgress);
+    List<dynamic> listDocuments = await SharedPrefe().getValue('WalListDocument') ?? [];
+    if(listDocuments.isNotEmpty){
+      uploadBackDocuments(blocIndicatorProgress);
+    }
   }
 
   verificarPermisos()async{
@@ -203,6 +206,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     try{
       notiRecived = await prefs.get('notiRecived') ?? false;
       notiContacts = await prefs.get('notiContacts') ?? false;
+      notiSend = await prefs.get('notiSend') ?? false;
     } catch (e) {
       print(e.toString());
     }
@@ -218,6 +222,9 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   Widget build(BuildContext context) {
     alto = MediaQuery.of(context).size.height;
     ancho = MediaQuery.of(context).size.width;
+
+    uploadData();
+
     return WillPopScope(
       onWillPop: exit,
       child: Scaffold(
@@ -239,38 +246,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           ),
           bottom: _indicatorProgress(),
         ),
-        // body: SafeArea(
-        //   child: Container(
-        //     width: ancho,
-        //     height: double.infinity,
-        //     color: Colors.white,
-        //     child: SingleChildScrollView(
-        //       child: Column(
-        //         children: [
-        //           _indicatorProgress(),
-        //           Container(
-        //             width: ancho,
-        //             height: alto > 600 ? alto * 0.08 : alto * 0.09,
-        //             child: Row(
-        //               children: [
-        //                 InkWell(
-        //                   child: Icon(Icons.menu,color: Colors.grey,size: 35,),
-        //                   onTap: (){
-        //                     _scaffoldKey.currentState.openDrawer();
-        //                   },
-        //                 ),
-        //                 Expanded(
-        //
-        //                 ),
-        //               ],
-        //             ),
-        //           ),
-        //           contenido(),
-        //         ],
-        //       ),
-        //     ),
-        //   ),
-        // ),
         body: Container(child: contenido(),),
         bottomNavigationBar: navigatorBotton(),
       ),
@@ -280,10 +255,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   Widget contenido(){
     switch(page){
       case bottonSelect.opcion1:
-        return EnviarTarea(blocUserRes: blocUser,listUserRes: listaUser,
-          myUserRes: myUser,listaCasosRes: listaCasos,
-          blocTaskReceived: blocTaskReceived,blocTaskSend: blocTaskSend,
-          blocIndicatorProgress: blocIndicatorProgress,);
+        return EnviarTarea(blocUserRes: blocUser,listUserRes: listaUser,myUserRes: myUser,listaCasosRes: listaCasos,blocTaskReceived: blocTaskReceived,blocTaskSend: blocTaskSend,blocIndicatorProgress: blocIndicatorProgress,);
       case bottonSelect.opcion2:
         return loadTaskSend ? listRecibidos.length != 0 ?
         ListadoTareasRecibidas(mapIdUserRes: mapIdUser,listRecibidos: listRecibidos,blocTaskReceivedRes: blocTaskReceived,listaCasosRes: listaCasos,myUserRes: myUser,push: push,) :
@@ -292,16 +264,13 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       case bottonSelect.opcion3:
         return loadTaskRecived ?
         listEnviados.length != 0 ?
-        ListadoTareasEnviadas(listEnviadosRes: listEnviados,mapIdUserRes: mapIdUser,
-          blocTaskSendRes: blocTaskSend,listaCasosRes: listaCasos,myUserRes: myUser,) :
+        ListadoTareasEnviadas(listEnviadosRes: listEnviados,mapIdUserRes: mapIdUser,blocTaskSendRes: blocTaskSend,listaCasosRes: listaCasos,myUserRes: myUser, push: push,) :
         Center(child: Text('No existen tareas enviadas',style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
         Container(child: Cargando('Buscando tareas enviadas',context),);
       case bottonSelect.opcion4:
-        return MyProyects(myUserRes: myUser, listUserRes: listaUser,
-          blocPage: blocPage,listaCasosRes: listaCasos,blocCasos: blocCasos,);
+        return MyProyects(myUserRes: myUser, listUserRes: listaUser, blocPage: blocPage,listaCasosRes: listaCasos,blocCasos: blocCasos,);
       case bottonSelect.opcion5:
-        return Contacts(myUserRes: myUser,mapIdUsersRes: mapIdUser,
-          listInvitation: listInvitation,blocInvitation: blocInvitation,blocUser: blocUser,push: push,);
+        return Contacts(myUserRes: myUser,mapIdUsersRes: mapIdUser, listInvitation: listInvitation,blocInvitation: blocInvitation,blocUser: blocUser,push: push,);
     }
     return Container();
   }
@@ -317,7 +286,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
             child: navigatorBottonContenido(bottonSelect.opcion2,'-1','Tareas recibidas', 'Recibidas',notiRecived),
           ),
           Expanded(
-            child: navigatorBottonContenido(bottonSelect.opcion3,'-3','Tareas enviadas', 'Enviadas',false),
+            child: navigatorBottonContenido(bottonSelect.opcion3,'-3','Tareas enviadas', 'Enviadas',notiSend),
           ),
           Expanded(
             child: navigatorBottonContenido(bottonSelect.opcion4,'-4','Proyectos', 'Proyectos',false),
@@ -376,6 +345,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
               updateData.actualizarListaUsuarios(blocUser);
               updateData.actualizarListaEnviados(blocTaskSend);
               updateData.actualizarCasos(blocCasos);
+              updateNoti(3, false);
             }
             if(page == bottonSelect.opcion4){
               updateData.actualizarListaUsuarios(blocUser);
@@ -483,6 +453,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                 await prefs.remove('walkietaskFilterDate');
                 await prefs.remove('walkietaskFilterDate2');
                 await prefs.remove('notiRecived');
+                await prefs.remove('notiSend');
                 await prefs.remove('notiContacts');
                 await prefs.remove('notiContacts_received');
                 await prefs.remove('notiListTask');
@@ -720,18 +691,20 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     push.getToken();
     push.initNotificaciones();
     push.mensajes.listen((argumento) async {
-      if(argumento['table'] != null &&
-        (argumento['table'].contains('tasks') || argumento['table'].contains('contacts'))) {
+      if(argumento['table'] != null && (argumento['table'].contains('tasks') || argumento['table'].contains('contacts'))) {
         String idDoc = argumento['idDoc'];
         bool isTask = argumento['table'].contains('tasks');
-
         if (isTask) {
-          List<String> listTaskNew = await prefs.get('notiListTask');
-          if (listTaskNew == null) {
-            listTaskNew = [];
-          }
-          listTaskNew.add(idDoc);
-          await prefs.setStringList('notiListTask', listTaskNew);
+          try{
+            List<dynamic> listTaskNew = await prefs.get('notiListTask');
+            if (listTaskNew == null) {
+              listTaskNew = [];
+            }
+            List<String> listTaskNewString = [];
+            listTaskNew.forEach((element) { listTaskNewString.add(element);});
+            listTaskNewString.add(argumento['idDoc']);
+            await prefs.setStringList('notiListTask', listTaskNewString);
+          }catch(_){}
         }
 
         if (page == bottonSelect.opcion1 || page == bottonSelect.opcion3 ||
@@ -753,6 +726,34 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           updateNoti(isTask ? 0 : 2, true);
         }
       }
+
+      if(argumento['table'] != null && argumento['table'].contains('sms')){
+        if(argumento['idDoc'] != null){
+
+          try{
+            List<dynamic> listTaskNew = await prefs.get('notiListTask');
+            if (listTaskNew == null) {
+              listTaskNew = [];
+            }
+            List<String> listTaskNewString = [];
+            listTaskNew.forEach((element) { listTaskNewString.add(element);});
+            listTaskNewString.add(argumento['idDoc']);
+            await prefs.setStringList('notiListTask', listTaskNewString);
+          }catch(_){}
+
+          Tarea task = await TaskDatabaseProvider.db.getCodeId(argumento['idDoc']);
+          if(task != null){
+            //ENVIADO
+            if(task.user_id == myUser.id && page != bottonSelect.opcion3){
+              updateNoti(3, true);
+            }
+            //RECIBIDO
+            if(task.user_responsability_id == myUser.id && page != bottonSelect.opcion2){
+              updateNoti(0, true);
+            }
+          }
+        }
+      }
     });
   }
 
@@ -768,6 +769,10 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     }
     if(index == 2){
       await prefs.setBool('notiContacts_received', value);
+    }
+    if(index == 3){
+      notiSend = value;
+      await prefs.setBool('notiSend', value);
     }
     setState(() {});
   }

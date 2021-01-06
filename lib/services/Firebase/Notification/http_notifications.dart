@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 class HttpPushNotifications{
 
-  Future<http.Response> httpSendMessagero(String to,{String description : ''}) async{
+  Future<http.Response> httpSendMessagero(String to, String idDoc,{String description : ''}) async{
     var url = "https://fcm.googleapis.com/fcm/send";
 
     Map<String, String> requestHeaders = {
@@ -26,6 +26,7 @@ class HttpPushNotifications{
         "click_action" : "FLUTTER_NOTIFICATION_CLICK",
         "table" : "sms",
         "description": description,
+        "idDoc": idDoc,
       },
       "to" : "$to"
     });

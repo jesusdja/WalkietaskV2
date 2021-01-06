@@ -6,6 +6,7 @@ import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/services/Firebase/Notification/push_notifications_provider.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
@@ -18,12 +19,14 @@ import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
 
 class ListadoTareasEnviadas extends StatefulWidget {
 
-  ListadoTareasEnviadas({this.listEnviadosRes,this.mapIdUserRes,this.blocTaskSendRes,this.listaCasosRes, this.myUserRes});
+  ListadoTareasEnviadas({this.push,
+    this.listEnviadosRes,this.mapIdUserRes,this.blocTaskSendRes,this.listaCasosRes, this.myUserRes});
   final List<Tarea> listEnviadosRes;
   final Map<int,Usuario> mapIdUserRes;
   final BlocTask blocTaskSendRes;
   final List<Caso> listaCasosRes;
   final Usuario myUserRes;
+  final pushProvider push;
 
   @override
   _ListadoTareasState createState() => _ListadoTareasState();
@@ -69,6 +72,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     _inicializar2();
     _inicializar3();
     _inicializarShared();
+    _notificationListener();
   }
 
   void _inicializar(){
@@ -102,6 +106,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     prefs = await SharedPreferences.getInstance();
     valueSwitch = prefs.get('walkietaskFilterDate') ?? false;
     setState(() {});
+    _updateDataNewFirebase();
   }
 
   @override
@@ -739,6 +744,9 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
   }
 
   clickTarea(Tarea tarea) async {
+
+    _deleteDataNewFirebase(tarea.id.toString());
+
     try{
       if(tarea.name.isEmpty){
       var result  = await Navigator.push(context, new MaterialPageRoute(
@@ -903,5 +911,52 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
         setState(() {});
       }
     });
+  }
+
+  void _notificationListener(){
+    widget.push.mensajes.listen((argumento) async {
+      if(argumento['table'] != null && argumento['table'].contains('tasks')) {
+        String idDoc = argumento['idDoc'];
+        bool isTask = argumento['table'].contains('tasks');
+
+        if (isTask) {
+          List<String> listTaskNew = await prefs.get('notiListTask');
+          if (listTaskNew == null) {
+            listTaskNew = [];
+          }
+          listTaskNew.add(idDoc);
+          await prefs.setStringList('notiListTask', listTaskNew);
+          _updateDataNewFirebase();
+        }
+      }
+    });
+  }
+
+  List listViewTaskNew = [];
+  Future<void> _updateDataNewFirebase() async {
+    try{
+      listViewTaskNew = await prefs.get('notiListTask') ?? [];
+    }catch(e){
+      print(e.toString());
+    }
+    setState(() {});
+  }
+
+  Future<void> _deleteDataNewFirebase(String id) async {
+    List<String> list = [];
+    try{
+      listViewTaskNew = await prefs.get('notiListTask') ?? [];
+      listViewTaskNew.forEach((element) {
+        if(element != id){
+          list.add(element);
+        }
+      });
+      await prefs.setStringList('notiListTask', list);
+      listViewTaskNew = list;
+      setState(() {});
+    }catch(e){
+      print(e.toString());
+    }
+    setState(() {});
   }
 }
