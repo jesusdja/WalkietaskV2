@@ -30,16 +30,20 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
 
     if(data.length > 0 && data[0] != ''){  jsonBody['user_responsability_id'] = data[0] == '0' ? myUser : data[0]; }
     if(data.length > 1 && data[1] != ''){  jsonBody['name'] = data[1]; }
+    bool errorInAudio = true;
     if(data.length > 2 && data[2] != ''){
       try{
         List data = listDocuments[x].split('|');
         String urlAudio = '';
-        if(data.length > 2 && data[2] != ''){ urlAudio = data[2]; }
-        Map<String,String> result = await subirAudio(urlAudio);
-        if(result['subir'] == 'true'){
-          String pathUrlAudio = result['location'];
-          //pathUrlAudio = pathUrlAudio.replaceAll('%', '/');
-          jsonBody['url_audio'] = pathUrlAudio;
+        if(data.length > 2 && data[2] != ''){
+          urlAudio = data[2];
+          Map<String,String> result = await subirAudio(urlAudio);
+          errorInAudio = result['subir'].toString().contains('true');
+          if(result['subir'] == 'true'){
+            String pathUrlAudio = result['location'];
+            //pathUrlAudio = pathUrlAudio.replaceAll('%', '/');
+            jsonBody['url_audio'] = pathUrlAudio;
+          }
         }
       }catch(e){
         print(e.toString());
@@ -77,34 +81,44 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
     //await Future.delayed(Duration(seconds: 3));
     blocIndicatorProgress.inList.add({'progressIndicator' : 0.5, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
 
-    try{
-      var response = await connectionHttp.httpCrearTarea(jsonBody);
-      //await Future.delayed(Duration(seconds: 3));
-      blocIndicatorProgress.inList.add({'progressIndicator' : 0.8, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
-      var value = jsonDecode(response.body);
-      //await Future.delayed(Duration(seconds: 3));
-      blocIndicatorProgress.inList.add({'progressIndicator' : 0.9, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
-      if(value['status_code'] == 201){
-        //ELIMINAR AUDIO
+    if(errorInAudio){
+      try{
+        var response = await connectionHttp.httpCrearTarea(jsonBody);
+        //await Future.delayed(Duration(seconds: 3));
+        blocIndicatorProgress.inList.add({'progressIndicator' : 0.8, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
+        var value = jsonDecode(response.body);
+        //await Future.delayed(Duration(seconds: 3));
+        blocIndicatorProgress.inList.add({'progressIndicator' : 0.9, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
+        if(value['status_code'] == 201){
+          //ELIMINAR AUDIO
 
-        //ELIMINAR TAREA DE LISTA
-        List<String> listDocumentsNoSend = [];
-        for(int x1 = 0; x1 < listDocuments.length; x1++){
-          if(x != x1){ listDocumentsNoSend.add(listDocuments[x]); }
+          //ELIMINAR TAREA DE LISTA
+          List<String> listDocumentsNoSend = [];
+          for(int x1 = 0; x1 < listDocuments.length; x1++){
+            if(x != x1){ listDocumentsNoSend.add(listDocuments[x]); }
+          }
+          await SharedPrefe().setStringListValue('WalListDocument',listDocumentsNoSend);
+          //await Future.delayed(Duration(seconds: 1));
+          blocIndicatorProgress.inList.add({'progressIndicator' : 1, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
+          print('CREADO - ${data[1]}');
+        }else{
+          print('NO CREADO - ${data[1]}');
         }
-        await SharedPrefe().setStringListValue('WalListDocument',listDocumentsNoSend);
-        //await Future.delayed(Duration(seconds: 1));
-        blocIndicatorProgress.inList.add({'progressIndicator' : 1, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
-        print('CREADO - ${data[1]}');
-      }else{
+      }catch(e){
+        print(e.toString());
         print('NO CREADO - ${data[1]}');
+        await Future.delayed(Duration(seconds: 1));
+        blocIndicatorProgress.inList.add({'progressIndicator' : 1, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
       }
-    }catch(e){
-      print(e.toString());
-      print('NO CREADO - ${data[1]}');
-      await Future.delayed(Duration(seconds: 1));
-      blocIndicatorProgress.inList.add({'progressIndicator' : 1, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
+    }else{
+      //ELIMINAR TAREA DE LISTA
+      List<String> listDocumentsNoSend = [];
+      for(int x1 = 0; x1 < listDocuments.length; x1++){
+        if(x != x1){ listDocumentsNoSend.add(listDocuments[x]); }
+      }
+      await SharedPrefe().setStringListValue('WalListDocument',listDocumentsNoSend);
     }
+
     await Future.delayed(Duration(seconds: 2));
     blocIndicatorProgress.inList.add({'progressIndicator' : 0, 'viewIndicatorProgress' : false, 'cant' : (listDocuments.length - x)});
 

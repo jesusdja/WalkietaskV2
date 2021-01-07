@@ -52,6 +52,8 @@ Future<Map<String,String>> subirAudio(String ruta) async{
     mapRes['location'] = '${res.headers['location']}';
 
   } catch (e) {
+    mapRes['subir'] = 'false';
+    mapRes['error'] = e.toString();
     print(e.toString());
   }
   return mapRes;

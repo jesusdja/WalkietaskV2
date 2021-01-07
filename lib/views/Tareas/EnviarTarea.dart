@@ -53,7 +53,6 @@ class EnviarTarea extends StatefulWidget {
 class _MyHomePageState extends State<EnviarTarea> {
 
   FlutterSound flutterSound = new FlutterSound();
-  StreamSubscription _recorderSubscription;
   AudioPlayer audioPlayer;
   AudioCache audioCache;
   StreamSubscription _durationSubscription;
@@ -108,13 +107,11 @@ class _MyHomePageState extends State<EnviarTarea> {
 
     _durationSubscription = audioPlayer.onDurationChanged.listen((duration) {
       setState(() => _duration = duration);
-      print('$_duration');
     });
 
     blocIndicatorProgress = widget.blocIndicatorProgress;
 
     listenerAudio();
-    //_inicializarPatronBlocUser();
   }
 
   void dispose() {
@@ -1009,6 +1006,13 @@ class _MyHomePageState extends State<EnviarTarea> {
   bool enviar = false;
   Widget _buttonRed(){
     return GestureDetector(
+      onTapDown: (va){
+        setState(() {
+          grabando = true;
+        });
+        _contMinute();
+        grabarSound();
+      },
       onTapUp: (va){
         setState(() {
           grabando = false;
@@ -1016,12 +1020,19 @@ class _MyHomePageState extends State<EnviarTarea> {
         });
         detenergrabar();
       },
-      onTapDown: (va){
+      onHorizontalDragEnd: (d){
         setState(() {
-          grabando = true;
+          grabando = false;
+          enviar = true;
         });
-        _contMinute();
-        grabarSound();
+        detenergrabar();
+      },
+      onVerticalDragEnd: (d){
+        setState(() {
+          grabando = false;
+          enviar = true;
+        });
+        detenergrabar();
       },
       child: grabando ? Container(
         width: alto * 0.13,
@@ -1047,36 +1058,38 @@ class _MyHomePageState extends State<EnviarTarea> {
   }
   grabarSound() async {
     try {
-      //String path = await flutterSound.startRecorder('/storage/emulated/0/$ruta.mp4');
-      // /storage/emulated/0/Android/data/com.conexion.grabarsonido2/files/Get2.mp4
-      //String path = await flutterSound.startRecorder('$appDocPath/jesus.mp4');
       DateTime date = DateTime.now();
       audioName = 'audioplay${date.year}${date.month}${date.day}${date.hour}${date.minute}${date.second}';
       audioPath = '$appDocPath/$audioName.mp4';
-      setState(() {});
       String path = await flutterSound.startRecorder('$appDocPath/$audioName.mp4');
-
       print('startRecorder: $path');
-
-      _recorderSubscription = flutterSound.onRecorderStateChanged.listen((e) {
-        //DateTime date = new DateTime.fromMillisecondsSinceEpoch(e.currentPosition.toInt());
-        //String txt = '${date.minute}:${date.second}:${date.millisecond}';//DateFormat('mm:ss:SS', 'en_US').format(date);
-        //print(date.millisecond.toString());
-      });
+      setState(() {});
     } catch (err) {
       print('startRecorder error: $err');
     }
   }
   detenergrabar() async {
-    String result = await flutterSound.stopRecorder();
-    print('stopRecorder: $result');
-
-    if (_recorderSubscription != null) {
-      _recorderSubscription.cancel();
-      _recorderSubscription = null;
+    try{
+      String result = await flutterSound.stopRecorder();
+      print('stopRecorder: $result');
       setState(() {
         grabado = true;
       });
+    }catch(e){
+      print('detenergrabar error: $e');
+      bool exit = audioPath != null ? await File(audioPath).exists() : false;
+      print('(detenergrabar error)EL AUDIO = $exit');
+      if(!exit){
+        setState(() {
+          enviar = false;
+          reproduciendo = false;
+          minutos = '00';
+          segundos = '00';
+          mostrarMinutosEspera = 0;
+          segundoEspera = 0;
+          audioPath = null;
+        });
+      }
     }
   }
 
@@ -1222,6 +1235,7 @@ class _MyHomePageState extends State<EnviarTarea> {
       onTap: () async {
         if(enviar){
           if(!reproduciendo){
+            print('botonPlay : $appDocPath/$audioName.mp4');
             audioPlayer.play('$appDocPath/$audioName.mp4',isLocal: true,position: _durationPause);
           }else{
             await audioPlayer.pause();
@@ -1315,12 +1329,32 @@ class _MyHomePageState extends State<EnviarTarea> {
             shared = '$shared$_pathAdjunto|';
           }else{ shared = '$shared|';}
           listShared.add(shared);
-          //ENVIAR A SEGUNDO PLANO
-          await SharedPrefe().setStringListValue('WalListDocument',listShared);
-          uploadBackDocuments(blocIndicatorProgress);
-          _reiniciarVariables();
-          _reiniciarSonido();
-          showAlert('Tarea enviada',WalkieTaskColors.color_89BD7D);
+          bool errorAudio = true;
+          if(tareaText[0]){
+            bool exit = audioPath != null ? await File(audioPath).exists() : false;
+            print('EL AUDIO = $exit');
+            if(!exit){
+              errorAudio = false;
+              showAlert('Problemas para cargar el audio. Intente de nuevo.',WalkieTaskColors.color_E07676);
+              setState(() {
+                enviar = false;
+                reproduciendo = false;
+                minutos = '00';
+                segundos = '00';
+                mostrarMinutosEspera = 0;
+                segundoEspera = 0;
+                audioPath = null;
+              });
+            }
+          }
+          if(errorAudio){
+            //ENVIAR A SEGUNDO PLANO
+            await SharedPrefe().setStringListValue('WalListDocument',listShared);
+            uploadBackDocuments(blocIndicatorProgress);
+            _reiniciarVariables();
+            _reiniciarSonido();
+            showAlert('Tarea enviada',WalkieTaskColors.color_89BD7D);
+          }
         }else{
           showAlert('Seleccionar integrante.',WalkieTaskColors.color_E07676);
         }

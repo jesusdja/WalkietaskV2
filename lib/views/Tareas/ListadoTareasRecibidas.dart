@@ -815,7 +815,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
           }
         }
         if(accion == 4){
-          if(tarea.working == 1){
+          if(tarea.working == 1 || tarea.working == 0){
             showAlert('Tarea finalizada',WalkieTaskColors.color_89BD7D);
             try{
               tarea.finalized = 1;

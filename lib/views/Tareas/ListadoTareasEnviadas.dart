@@ -129,6 +129,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
 
     _inicializar();
     return Scaffold(
+      backgroundColor: Colors.white,
       body: _contenido(),
     );
   }

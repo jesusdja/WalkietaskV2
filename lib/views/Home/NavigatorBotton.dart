@@ -732,7 +732,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     push.getToken();
     push.initNotificaciones();
     push.mensajes.listen((argumento) async {
-      if(argumento['table'] != null && (argumento['table'].contains('tasks') || argumento['table'].contains('contacts'))) {
+      if(argumento['table'] != null && (argumento['table'].contains('tasks') ||
+          argumento['table'].contains('contacts'))) {
         String idDoc = argumento['idDoc'];
         bool isTask = argumento['table'].contains('tasks');
         if (isTask) {
