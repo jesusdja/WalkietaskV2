@@ -1275,53 +1275,55 @@ class _MyHomePageState extends State<EnviarTarea> {
   void _sendTask() async {
     enviandoTarea = true;
     setState(() {});
-    //await Future.delayed(Duration(seconds: 3));
-
     try{
-      //VERIFICAR SI SE SELECCIONO UN INTEGRANTE
-      int userSend;
-      mapUserSelect.forEach((key, value) {
-        if(value){ userSend = key;}
-      });
-      if(userSend != null){
-        //VERIFICAR DATOS EXTRAS
-        List<dynamic> listShared2 = await SharedPrefe().getValue('WalListDocument');
-        listShared2 = listShared2 ?? [];
-        List<String> listShared = [];
-        listShared = listShared2.map((e) => e.toString()).toList();
-        String shared = '';
-        //id integrante | titulo | path audio | id caso | descripcion | fecha | path adjunto
-        shared = '$userSend|';
-        if(titleTask != null && titleTask.isNotEmpty){
-          shared = '$shared$titleTask|';
-        }else{ shared = '$shared|';}
-        if(audioPath != null && tareaText[0]){
-          shared = '$shared$audioPath|';
-        }else{ shared = '$shared|';}
-        mapcasoSelect.forEach((key, value) {
-          if(value){
-            shared = '$shared$key|';
-          }
-        });
-        if(mapcasoSelect.length == 0){ shared = '$shared|';}
-        if(descriptionTask != null && descriptionTask.isNotEmpty){
-          shared = '$shared$descriptionTask|';
-        }else{ shared = '$shared|';}
-        if(fechaTask != null){
-          shared = '$shared$fechaTask|';
-        }else{ shared = '$shared|';}
-        if(_pathAdjunto != null && _pathAdjunto.isNotEmpty){
-          shared = '$shared$_pathAdjunto|';
-        }else{ shared = '$shared|';}
-        listShared.add(shared);
-        //ENVIAR A SEGUNDO PLANO
-        await SharedPrefe().setStringListValue('WalListDocument',listShared);
-        uploadBackDocuments(blocIndicatorProgress);
-        _reiniciarVariables();
-        _reiniciarSonido();
-        showAlert('Tarea enviada',WalkieTaskColors.color_89BD7D);
+      if(tareaText[1] && titleTask.isEmpty){
+        showAlert('Las tareas de texto deben llevar título.',WalkieTaskColors.color_E07676);
       }else{
-        showAlert('Seleccionar integrante.',WalkieTaskColors.color_E07676);
+        //VERIFICAR SI SE SELECCIONO UN INTEGRANTE
+        int userSend;
+        mapUserSelect.forEach((key, value) {
+          if(value){ userSend = key;}
+        });
+        if(userSend != null){
+          //VERIFICAR DATOS EXTRAS
+          List<dynamic> listShared2 = await SharedPrefe().getValue('WalListDocument');
+          listShared2 = listShared2 ?? [];
+          List<String> listShared = [];
+          listShared = listShared2.map((e) => e.toString()).toList();
+          String shared = '';
+          //id integrante | titulo | path audio | id caso | descripcion | fecha | path adjunto
+          shared = '$userSend|';
+          if(titleTask != null && titleTask.isNotEmpty){
+            shared = '$shared$titleTask|';
+          }else{ shared = '$shared|';}
+          if(audioPath != null && tareaText[0]){
+            shared = '$shared$audioPath|';
+          }else{ shared = '$shared|';}
+          mapcasoSelect.forEach((key, value) {
+            if(value){
+              shared = '$shared$key|';
+            }
+          });
+          if(mapcasoSelect.length == 0){ shared = '$shared|';}
+          if(descriptionTask != null && descriptionTask.isNotEmpty){
+            shared = '$shared$descriptionTask|';
+          }else{ shared = '$shared|';}
+          if(fechaTask != null){
+            shared = '$shared$fechaTask|';
+          }else{ shared = '$shared|';}
+          if(_pathAdjunto != null && _pathAdjunto.isNotEmpty){
+            shared = '$shared$_pathAdjunto|';
+          }else{ shared = '$shared|';}
+          listShared.add(shared);
+          //ENVIAR A SEGUNDO PLANO
+          await SharedPrefe().setStringListValue('WalListDocument',listShared);
+          uploadBackDocuments(blocIndicatorProgress);
+          _reiniciarVariables();
+          _reiniciarSonido();
+          showAlert('Tarea enviada',WalkieTaskColors.color_89BD7D);
+        }else{
+          showAlert('Seleccionar integrante.',WalkieTaskColors.color_E07676);
+        }
       }
     }catch(e){
       print(e.toString());

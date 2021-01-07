@@ -19,9 +19,6 @@ Future<String> obtenerToken() async {
   return token;
 }
 
-
-
-
 Future<Database> getDatabaseInstanace() async {
   Directory directory = await getApplicationDocumentsDirectory();
   String path = join(directory.path, "unity.db");

@@ -11,6 +11,7 @@ import 'package:walkietaskv2/services/Sqlite/ConexionSqliteCasos.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqliteInvitation.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/utils/Globales.dart';
 
 class UpdateData{
 
@@ -52,7 +53,8 @@ class UpdateData{
       if(blocConection != null){blocConection.inList.add(false);}
     }catch(e){
       print('SIN CONEXION PARA ACTUALIZAR USUARIOS');
-      if(blocConection != null){blocConection.inList.add(true);}
+      bool conect = await checkConectivity();
+      if(blocConection != null){blocConection.inList.add(!conect);}
     }
 
     if(entre){
@@ -158,7 +160,8 @@ class UpdateData{
       }
       blocConection.inList.add(false);
     }catch(e){
-      if(blocConection != null){blocConection.inList.add(true);}
+      bool conect = await checkConectivity();
+      if(blocConection != null){blocConection.inList.add(!conect);}
       print('SIN CONEXION PARA ACTUALIZAR TAREAS RECIBIDAS');
     }
   }
@@ -189,7 +192,8 @@ class UpdateData{
       }
       if(blocConection != null){blocConection.inList.add(false);}
     }catch(e){
-      if(blocConection != null){blocConection.inList.add(true);}
+      bool conect = await checkConectivity();
+      if(blocConection != null){blocConection.inList.add(!conect);}
       print('SIN CONEXION PARA ACTUALIZAR TAREAS ENVIADAS');
     }
   }
@@ -294,12 +298,14 @@ class UpdateData{
         }
         if(blocConection != null){blocConection.inList.add(false);}
       }catch(e){
-        if(blocConection != null){blocConection.inList.add(true);}
+        bool conect = await checkConectivity();
+        if(blocConection != null){blocConection.inList.add(!conect);}
         print('SIN CONEXION PARA ACTUALIZAR INVITACIONES ENVIADAS II');
       }
       if(blocConection != null){blocConection.inList.add(false);}
     }catch(e){
-      if(blocConection != null){blocConection.inList.add(true);}
+      bool conect = await checkConectivity();
+      if(blocConection != null){blocConection.inList.add(!conect);}
       print('SIN CONEXION PARA ACTUALIZAR INVITACIONES ENVIADAS');
     }
     if(entre){
@@ -345,12 +351,14 @@ class UpdateData{
         }
         if(blocConection != null){blocConection.inList.add(false);}
       }catch(e){
-        if(blocConection != null){blocConection.inList.add(true);}
+        bool conect = await checkConectivity();
+        if(blocConection != null){blocConection.inList.add(!conect);}
         print('SIN CONEXION PARA ACTUALIZAR INVITACIONES RECIBIDAS II');
       }
       if(blocConection != null){blocConection.inList.add(false);}
     }catch(e){
-      if(blocConection != null){blocConection.inList.add(true);}
+      bool conect = await checkConectivity();
+      if(blocConection != null){blocConection.inList.add(!conect);}
       print('SIN CONEXION PARA ACTUALIZAR INVITACIONES RECIBIDAS');
     }
     if(entre){

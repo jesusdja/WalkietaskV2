@@ -147,6 +147,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
     verificarPermisos();
     _notificationListener();
+
+    uploadData();
   }
 
   @override
@@ -179,6 +181,23 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     if(listDocuments.isNotEmpty){
       uploadBackDocuments(blocIndicatorProgress);
     }
+  }
+
+  Future<void> reconection() async {
+    try{
+      if(conectionActive){
+        bool conect = false;
+        print('Esperando conexion');
+        conect = await checkConectivity();
+        print('Esperando conexion  = $conect');
+        if(conect){
+          updateData.actualizarListaUsuarios(blocUser, blocConection);
+          updateData.actualizarCasos(blocCasos);
+        }else{
+          reconection();
+        }
+      }
+    }catch(_){}
   }
 
   verificarPermisos()async{
@@ -226,9 +245,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   Widget build(BuildContext context) {
     alto = MediaQuery.of(context).size.height;
     ancho = MediaQuery.of(context).size.width;
-
-    uploadData();
-
+    reconection();
     return WillPopScope(
       onWillPop: exit,
       child: Scaffold(
