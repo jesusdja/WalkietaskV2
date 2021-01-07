@@ -187,6 +187,24 @@ class UpdateData{
           }
         }
       }
+
+      List<Tarea> listEnviados = await TaskDatabaseProvider.db.getAllSend();
+      for(int x = 0; x < listEnviados.length; x++){
+        bool existTask = false;
+        for(int xx = 0; xx < tareas.length; xx++){
+          if(listEnviados[x].id == tareas[xx]['id']){
+            existTask = true;
+          }
+        }
+        print('');
+        if(!existTask){
+          entre = true;
+          Tarea taskUpdate = listEnviados[x];
+          taskUpdate.finalized = 1;
+          await TaskDatabaseProvider.db.updateTask(taskUpdate);
+        }
+      }
+
       if(entre){
         blocTaskSend.inList.add(true);
       }
