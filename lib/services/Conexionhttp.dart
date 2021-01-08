@@ -629,9 +629,7 @@ class conexionHttp{
       'X-Requested-With': 'XMLHttpRequest',
       'Authorization': 'Bearer $token'
     };
-
     var response;
-
     try{
       response = await http.put('$enlace/api/auth/tasks/workingTask/$id',
         headers: headers,

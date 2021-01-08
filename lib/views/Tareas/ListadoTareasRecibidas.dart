@@ -822,6 +822,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
               if(await TaskDatabaseProvider.db.updateTask(tarea) == 1){
                 blocTaskReceived.inList.add(true);
                 await conexionHispanos.httpTaskFinalized(tarea.id);
+                updateData.actualizarListaRecibidos(blocTaskReceived, null);
               }
             }catch(e){
               print(e.toString());

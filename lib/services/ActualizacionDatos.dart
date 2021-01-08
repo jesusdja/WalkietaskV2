@@ -155,6 +155,23 @@ class UpdateData{
           }
         }
       }
+
+      List<Tarea> listRecibida = await TaskDatabaseProvider.db.getAllRecevid();
+      for(int x = 0; x < listRecibida.length; x++){
+        bool existTask = false;
+        for(int xx = 0; xx < tareas.length; xx++){
+          if(listRecibida[x].id == tareas[xx]['id']){
+            existTask = true;
+          }
+        }
+        if(!existTask){
+          entre = true;
+          Tarea taskUpdate = listRecibida[x];
+          taskUpdate.finalized = 1;
+          await TaskDatabaseProvider.db.deleteTaskId(taskUpdate.id);
+        }
+      }
+
       if(entre){
         blocTaskReceived.inList.add(true);
       }
@@ -196,12 +213,11 @@ class UpdateData{
             existTask = true;
           }
         }
-        print('');
         if(!existTask){
           entre = true;
           Tarea taskUpdate = listEnviados[x];
           taskUpdate.finalized = 1;
-          await TaskDatabaseProvider.db.updateTask(taskUpdate);
+          await TaskDatabaseProvider.db.deleteTaskId(taskUpdate.id);
         }
       }
 

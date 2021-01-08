@@ -180,5 +180,15 @@ class TaskDatabaseProvider{
     }
     return res;
   }
-
+  //ELIMINAR TAREA
+  Future<int> deleteTaskId(int id) async {
+    var dbClient = await  database;
+    int res = 0;
+    try{
+      res = await dbClient.rawDelete('DELETE FROM Tareas WHERE id = ?', ['$id']);
+    }catch(e){
+      print(e.toString());
+    }
+    return res;
+  }
 }
