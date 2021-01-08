@@ -489,6 +489,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                 await prefs.remove('notiContacts');
                 await prefs.remove('notiContacts_received');
                 await prefs.remove('notiListTask');
+                await prefs.remove('notiListChat');
 
                 updateData.resetDB();
                 Navigator.push(context, new MaterialPageRoute(
@@ -772,18 +773,17 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       if(argumento['table'] != null && argumento['table'].contains('sms')){
         if(argumento['idDoc'] != null){
 
-          try{
-            List<dynamic> listTaskNew = await prefs.get('notiListTask');
-            if (listTaskNew == null) {
-              listTaskNew = [];
-            }
-            List<String> listTaskNewString = [];
-            listTaskNew.forEach((element) { listTaskNewString.add(element);});
-            listTaskNewString.add(argumento['idDoc']);
-            await prefs.setStringList('notiListTask', listTaskNewString);
-          }catch(_){}
-
           Tarea task = await TaskDatabaseProvider.db.getCodeId(argumento['idDoc']);
+
+          List<dynamic> listTaskNew = await prefs.get('notiListChat');
+          if (listTaskNew == null) {
+            listTaskNew = [];
+          }
+          List<String> listTaskNewString = [];
+          listTaskNew.forEach((element) { listTaskNewString.add(element);});
+          listTaskNewString.add(argumento['idDoc']);
+          await prefs.setStringList('notiListChat', listTaskNewString);
+
           if(task != null){
             //ENVIADO
             if(task.user_id == myUser.id && page != bottonSelect.opcion3){
@@ -794,6 +794,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
               updateNoti(0, true);
             }
           }
+
         }
       }
     });

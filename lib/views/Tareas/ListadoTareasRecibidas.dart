@@ -118,6 +118,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     valueSwitch = prefs.get('walkietaskFilterDate2') ?? false;
     setState(() {});
     _updateDataNewFirebase();
+    _checkListChat();
   }
 
   @override
@@ -319,6 +320,16 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
       reproTask = true;
     }
 
+    int chatCont = 0;
+    listCheckChat.forEach((element) {
+      if(tarea.id.toString() == element){
+        chatCont++;
+      }
+    });
+    double radiusChat = 0.012;
+    if(chatCont >= 10 && chatCont < 100){radiusChat = 0.014; }
+    if(chatCont > 100){radiusChat = 0.018; }
+
     return InkWell(
       onTap: () =>clickTarea(tarea),
       child: Container(
@@ -393,13 +404,15 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      //Icon(Icons.message,color: Colors.grey[600],size: alto * 0.03),
-                      // favorite ? CircleAvatar(
-                      //   backgroundColor: WalkieTaskColors.primary,
-                      //   radius: alto * 0.012,
-                      //   child: Text('2',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
-                      // ) : Container(),
-                      // favorite ? SizedBox(width: ancho * 0.01,) : Container(),
+                      chatCont != 0 ? Container(
+                        margin: EdgeInsets.only(right: ancho * 0.002),
+                        child: CircleAvatar(
+                          backgroundColor: WalkieTaskColors.primary,
+                          // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
+                          radius: alto * radiusChat,
+                          child: Text('$chatCont',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
+                        ),
+                      ) : Container(),
                       InkWell(
                         child: tarea.url_audio != '' ? Icon(Icons.volume_up,color: reproTask ? WalkieTaskColors.color_89BD7D : Colors.grey[600],size: alto * 0.03,) : Container(),
                         onTap: (){
@@ -745,10 +758,10 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     return listTaskRes;
   }
 
-  clickTarea(Tarea tarea) async {
+  void clickTarea(Tarea tarea) async {
 
     _deleteDataNewFirebase(tarea.id.toString());
-
+    _deleteDataNewChat(tarea.id.toString());
     try{
       if(tarea.name.isEmpty){
         var result  = await Navigator.push(context, new MaterialPageRoute(
@@ -962,18 +975,25 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
 
   void _notificationListener(){
     widget.push.mensajes.listen((argumento) async {
-      if(argumento['table'] != null && argumento['table'].contains('tasks')) {
+      if(argumento['table'] != null && argumento['table'] == 'tasks') {
         String idDoc = argumento['idDoc'];
-        bool isTask = argumento['table'].contains('tasks');
+        List<String> listTaskNew = await prefs.get('notiListTask');
+        if (listTaskNew == null) {
+          listTaskNew = [];
+        }
+        listTaskNew.add(idDoc);
+        await prefs.setStringList('notiListTask', listTaskNew);
+        listViewTaskNew.add(idDoc);
+        updateData.actualizarListaRecibidos(blocTaskReceived, null);
+        setState(() {});
+      }
 
-        if (isTask) {
-          List<String> listTaskNew = await prefs.get('notiListTask');
-          if (listTaskNew == null) {
-            listTaskNew = [];
-          }
-          listTaskNew.add(idDoc);
-          await prefs.setStringList('notiListTask', listTaskNew);
-          _updateDataNewFirebase();
+      if(argumento['table'] != null && argumento['table'].contains('sms')){
+        if(argumento['idDoc'] != null){
+          try{
+            await Future.delayed(Duration(seconds: 2));
+            await _checkListChat();
+          }catch(_){}
         }
       }
     });
@@ -983,10 +1003,10 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
   Future<void> _updateDataNewFirebase() async {
     try{
       listViewTaskNew = await prefs.get('notiListTask') ?? [];
+      setState(() {});
     }catch(e){
       print(e.toString());
     }
-    setState(() {});
   }
 
   Future<void> _deleteDataNewFirebase(String id) async {
@@ -1005,5 +1025,32 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
       print(e.toString());
     }
     setState(() {});
+  }
+
+  Future<void> _deleteDataNewChat(String id) async {
+    try{
+      List<dynamic> listTaskNew = await prefs.get('notiListChat');
+      if (listTaskNew == null) {
+        listTaskNew = [];
+      }
+      List<String> listTaskNewString = [];
+      listTaskNew.forEach((element) {
+        if(element != id){
+          listTaskNewString.add(element);
+        }
+      });
+      await prefs.setStringList('notiListChat', listTaskNewString);
+      await _checkListChat();
+    }catch(_){}
+  }
+
+  List listCheckChat = [];
+  Future<void> _checkListChat() async {
+    try{
+      listCheckChat = await prefs.get('notiListChat') ?? [];
+      setState(() {});
+    }catch(e){
+      print(e.toString());
+    }
   }
 }
