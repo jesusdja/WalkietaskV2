@@ -189,7 +189,7 @@ class conexionHttp{
     return response;
   }
 
-  Future<http.Response> httpModificarTarea(Tarea tarea) async {
+  Future<http.Response> httpSendFavorite(Tarea tarea) async {
 
     String token  = await obtenerToken();
     Map<String,String> headers = {
@@ -205,7 +205,6 @@ class conexionHttp{
         headers: headers,
         body: {
           'name': tarea.name,
-          'deadline': tarea.deadline,
           'reminder_type_id': tarea.reminder_type_id.toString(),
           'user_id': tarea.user_id.toString(),
           'status_id': tarea.status_id.toString(),

@@ -804,11 +804,8 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
             blocTaskReceived.inList.add(true);
             //ENVIAR A API
             try{
-              await conexionHispanos.httpModificarTarea(tarea);
-            }catch(e){
-            //SI NO HAY CONEXION GUARDAR EN TABLA LOCAL
-
-            }
+              await conexionHispanos.httpSendFavorite(tarea);
+            }catch(e){}
           }
         }
         if(accion == 3){
