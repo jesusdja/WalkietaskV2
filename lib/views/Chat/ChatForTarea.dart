@@ -273,12 +273,20 @@ class _ChatForTareaState extends State<ChatForTarea> {
         stream: tareasColeccion.where("idTarea", isEqualTo: tarea.id.toString()).snapshots(),
         builder: (context,snapshot){
           if (snapshot.data == null){
-            return Container();
+            return Container(
+              height: alto * 0.9,
+              width: ancho,
+              child: Center(child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),),
+            );
           }
           if(chatTarea != null){
             chatTarea.mensajes = snapshot.data.docs[0].data()["mensajes"];
           }
-          return chatTarea != null ? ListView.builder(
+          return chatTarea != null ?
+
+          ListView.builder(
             padding: EdgeInsets.all(10.0),
             itemCount: chatTarea.mensajes.length,
             reverse: true,
