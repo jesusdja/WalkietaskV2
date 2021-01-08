@@ -167,6 +167,7 @@ class _LoginHomeState extends State<LoginHome> {
                           textEditingController: _email,
                           initialValue: null,
                           sizeBorder: 1.2,
+                          textCapitalization: TextCapitalization.none,
                         ),
                       ),
                       SizedBox(height: alto * 0.025,),

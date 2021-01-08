@@ -128,6 +128,7 @@ class _SendInvitationState extends State<SendInvitation> {
                         textEditingController: _controllerUser,
                         initialValue: null,
                         textInputType: TextInputType.emailAddress,
+                        textCapitalization: TextCapitalization.none,
                       ),
                     ),
                   )
@@ -195,6 +196,7 @@ class _SendInvitationState extends State<SendInvitation> {
                         textEditingController: _controllerNewUser,
                         initialValue: null,
                         textInputType: TextInputType.emailAddress,
+                        textCapitalization: TextCapitalization.none,
                       ),
                     ),
                   )

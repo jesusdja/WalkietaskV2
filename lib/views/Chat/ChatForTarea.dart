@@ -381,7 +381,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                   setState(() {});
                 },
                 style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.color_4D4D4D,spacing: 1,fontWeight: FontWeight.bold),
-                //style:estiloLetras(alto * 0.025,colortitulo),
+                textCapitalization: TextCapitalization.sentences,
                 decoration: new InputDecoration(
                     focusedBorder: styleBorder,
                     enabledBorder: styleBorder,

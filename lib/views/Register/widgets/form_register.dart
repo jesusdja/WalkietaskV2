@@ -258,6 +258,7 @@ class _FormRegisterState extends State<FormRegister> {
                         sizeW: sizeW,
                         sizeH: sizeH,
                         sizeHeight: sizeH * 0.045,
+                        textCapitalization: TextCapitalization.none,
                       ),
                     )
                   ],

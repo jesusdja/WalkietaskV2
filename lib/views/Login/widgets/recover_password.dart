@@ -97,6 +97,7 @@ class _RecoverPasswordState extends State<RecoverPassword> {
                           sizeBorder: 1.2,
                           sizeHeight: sizeH * 0.045,
                           textAlign: TextAlign.left,
+                          textCapitalization: TextCapitalization.none,
                         ),
                       ),
                     ),
