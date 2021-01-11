@@ -28,6 +28,7 @@ import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
+import 'package:walkietaskv2/views/Tareas/Create/crear_tarea.dart';
 import 'package:walkietaskv2/views/Tareas/ListadoTareasRecibidas.dart';
 import 'package:walkietaskv2/views/Tareas/ListadoTareasEnviadas.dart';
 import 'package:walkietaskv2/views/Tareas/EnviarTarea.dart';
@@ -45,7 +46,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
   double alto = 0;
   double ancho = 0;
-  String titulo = 'Enviar tarea';
+  String titulo = 'Tareas';
   conexionHttp conexionHispanos = new conexionHttp();
   bool cargadoUsuarios = false;
   Usuario myUser;
@@ -253,9 +254,10 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         drawer: _drawerMenu(),
         appBar: AppBar(
           title: Container(
+            padding: EdgeInsets.only(right: page == bottonSelect.opcion1 ? ancho * 0.1 : 0),
             width: ancho,
             child: Text('$titulo',
-              style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.03, color: WalkieTaskColors.color_969696),textAlign: TextAlign.right,),
+              style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.03, color: WalkieTaskColors.color_969696),textAlign: page == bottonSelect.opcion1 ? TextAlign.center : TextAlign.right,),
           ),
           elevation: 0,
           backgroundColor: Colors.grey[100],
@@ -276,22 +278,60 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   Widget contenido(){
     switch(page){
       case bottonSelect.opcion1:
-        return EnviarTarea(blocUserRes: blocUser,listUserRes: listaUser,myUserRes: myUser,listaCasosRes: listaCasos,blocTaskReceived: blocTaskReceived,blocTaskSend: blocTaskSend,blocIndicatorProgress: blocIndicatorProgress,);
+        return (loadTaskRecived && loadTaskSend) ? CreateTask(
+          myUserRes: myUser,
+          listUserRes: listaUser,
+          mapIdUserRes: mapIdUser,
+          listaCasosRes: listaCasos,
+          listEnviadosRes: listEnviados,
+          listRecibidos: listRecibidos,
+          blocUserRes: blocUser,
+          blocTaskReceived: blocTaskReceived,
+          blocTaskSend: blocTaskSend,
+          blocIndicatorProgress: blocIndicatorProgress,
+        ) : Container(child: Cargando('Actualizando tareas.',context),);
       case bottonSelect.opcion2:
         return loadTaskSend ? listRecibidos.length != 0 ?
-        ListadoTareasRecibidas(mapIdUserRes: mapIdUser,listRecibidos: listRecibidos,blocTaskReceivedRes: blocTaskReceived,listaCasosRes: listaCasos,myUserRes: myUser,push: push,) :
+        ListadoTareasRecibidas(
+          mapIdUserRes: mapIdUser,
+          listRecibidos: listRecibidos,
+          blocTaskReceivedRes: blocTaskReceived,
+          listaCasosRes: listaCasos,
+          myUserRes: myUser,
+          push: push,
+        ) :
         Center(child: Text('No existen tareas recibidas',style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
         Container(child: Cargando('Buscando tareas recibidas',context),) ;
       case bottonSelect.opcion3:
         return loadTaskRecived ?
         listEnviados.length != 0 ?
-        ListadoTareasEnviadas(listEnviadosRes: listEnviados,mapIdUserRes: mapIdUser,blocTaskSendRes: blocTaskSend,listaCasosRes: listaCasos,myUserRes: myUser, push: push,) :
+        ListadoTareasEnviadas(
+          listEnviadosRes: listEnviados,
+          mapIdUserRes: mapIdUser,
+          blocTaskSendRes: blocTaskSend,
+          listaCasosRes: listaCasos,
+          myUserRes: myUser,
+          push: push,
+        ) :
         Center(child: Text('No existen tareas enviadas',style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
         Container(child: Cargando('Buscando tareas enviadas',context),);
       case bottonSelect.opcion4:
-        return MyProyects(myUserRes: myUser, listUserRes: listaUser, blocPage: blocPage,listaCasosRes: listaCasos,blocCasos: blocCasos,);
+        return MyProyects(
+          myUserRes: myUser,
+          listUserRes: listaUser,
+          blocPage: blocPage,
+          listaCasosRes: listaCasos,
+          blocCasos: blocCasos,
+        );
       case bottonSelect.opcion5:
-        return Contacts(myUserRes: myUser,mapIdUsersRes: mapIdUser, listInvitation: listInvitation,blocInvitation: blocInvitation,blocUser: blocUser,push: push,);
+        return Contacts(
+          myUserRes: myUser,
+          mapIdUsersRes: mapIdUser,
+          listInvitation: listInvitation,
+          blocInvitation: blocInvitation,
+          blocUser: blocUser,
+          push: push,
+        );
     }
     return Container();
   }
@@ -303,7 +343,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           child: Row(
             children: <Widget>[
               Expanded(
-                child: navigatorBottonContenido(bottonSelect.opcion1,'','Enviar tarea','Tarea',false),
+                child: navigatorBottonContenido(bottonSelect.opcion1,'','Tareas','Tarea',false),
               ),
               Expanded(
                 child: navigatorBottonContenido(bottonSelect.opcion2,'-1','Tareas recibidas', 'Recibidas',notiRecived),
@@ -366,6 +406,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
             if(page == bottonSelect.opcion1){
               updateData.actualizarListaUsuarios(blocUser, blocConection);
               updateData.actualizarCasos(blocCasos);
+              updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
+              updateData.actualizarListaEnviados(blocTaskSend, blocConection);
             }
             if(page == bottonSelect.opcion2){
               updateData.actualizarListaUsuarios(blocUser, blocConection);

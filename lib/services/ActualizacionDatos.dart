@@ -84,14 +84,8 @@ class UpdateData{
       for(int x = 0; x < contacts.length; x++){
         Usuario contact = Usuario.fromJson(contacts[x]);
         contact.contact = 1;
+        contact.fijo = mapContactsLocal[contact.id] == null ? 0 : mapContactsLocal[contact.id].fijo;
         mapContactsLocal[contact.id] = contact;
-        //EXTRAER VARIABLE DE USUARIO FIJO
-        // Usuario userVery = await  UserDatabaseProvider.db.getCodeId('${contact.id}');
-        // if(userVery != null && userVery.contact == 0){
-        //   userVery.contact = 1;
-        //   await UserDatabaseProvider.db.updateUser(userVery);
-        //   entre = true;
-        // }
       }
     }catch(e){
       print('SIN CONEXION PARA ACTUALIZAR CONTACTOS');

@@ -265,12 +265,12 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                 actionExtentRatio: 0.25,
                 child: _tareas(tarea, tarea.is_priority != 0),
                 actions: <Widget>[
-                  _buttonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: 30,),Colors.yellow[600],WalkieTaskColors.white,1,tarea),
+                  _buttonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1,tarea),
                   //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
                 ],
                 secondaryActions: <Widget>[
-                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,tarea),
-                  _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,tarea),
+                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.045,),colorSliderTrabajando,WalkieTaskColors.white,3,tarea),
+                  _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.045,),colorSliderListo,WalkieTaskColors.white,4,tarea),
                 ],
               ),
             );
@@ -743,12 +743,12 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                 actionExtentRatio: 0.25,
                 child: _tareas(task, task.is_priority != 0),
                 actions: <Widget>[
-                  _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: 30,),Colors.yellow[600],WalkieTaskColors.white,1,task),
+                  _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1,task),
                   //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,task),
                 ],
                 secondaryActions: <Widget>[
-                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
-                  _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,task),
+                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.045,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
+                  _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.045,),colorSliderListo,WalkieTaskColors.white,4,task),
                 ],
               ),
             ),
