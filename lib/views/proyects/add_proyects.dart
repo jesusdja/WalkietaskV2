@@ -12,7 +12,7 @@ import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
-import 'package:walkietaskv2/views/Tareas/proyects/add_proyects_sumit.dart';
+import 'package:walkietaskv2/views/proyects/add_proyects_sumit.dart';
 
 
 class AddProyects extends StatefulWidget {

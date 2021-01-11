@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:walkietaskv2/App.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/bloc/blocPage.dart';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
@@ -30,9 +31,8 @@ import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Tareas/ListadoTareasRecibidas.dart';
 import 'package:walkietaskv2/views/Tareas/ListadoTareasEnviadas.dart';
 import 'package:walkietaskv2/views/Tareas/EnviarTarea.dart';
-import 'package:walkietaskv2/views/Tareas/contact/contact.dart';
-import 'package:walkietaskv2/views/Tareas/proyects/MyProyects.dart';
-import '../../App.dart';
+import 'package:walkietaskv2/views/contact/contact.dart';
+import 'package:walkietaskv2/views/proyects/MyProyects.dart';
 
 enum bottonSelect {opcion1,opcion2,opcion3,opcion4,opcion5}
 

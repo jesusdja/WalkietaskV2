@@ -17,9 +17,9 @@ import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
-import 'package:walkietaskv2/views/Tareas/contact/contact_invitations_received.dart';
-import 'package:walkietaskv2/views/Tareas/contact/contact_invitations_sent.dart';
-import 'package:walkietaskv2/views/Tareas/contact/contact_send_invitation.dart';
+import 'package:walkietaskv2/views/contact/contact_invitations_received.dart';
+import 'package:walkietaskv2/views/contact/contact_invitations_sent.dart';
+import 'package:walkietaskv2/views/contact/contact_send_invitation.dart';
 
 class Contacts extends StatefulWidget {
   Contacts({this.myUserRes, this.mapIdUsersRes, this.listInvitation,
