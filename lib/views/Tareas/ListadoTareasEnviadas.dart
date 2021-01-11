@@ -245,41 +245,38 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
 
   Widget _listado(){
     return Container(
-        height: alto * 0.7,
-        child: ReorderableListView(
-          children: List.generate(listEnviados.length, (index) {
-            Tarea tarea = listEnviados[index];
-
-            if(tarea.finalized == 1){
-              return Container(
-                key: ValueKey("value$index"),
-              );
-            }
-
+      height: alto * 0.8,
+      child: ReorderableListView(
+        children: List.generate(listEnviados.length, (index) {
+          Tarea tarea = listEnviados[index];
+          if(tarea.finalized == 1){
             return Container(
-              height: alto * 0.1,
               key: ValueKey("value$index"),
-              padding: EdgeInsets.only(top: alto * 0.01,bottom: alto * 0.01),
-              color: Colors.white,
-              child: Slidable(
-                actionPane: SlidableDrawerActionPane(),
-                actionExtentRatio: 0.25,
-                child: _tareas(tarea, tarea.is_priority != 0),
-                actions: <Widget>[
-                  _buttonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: 30,),Colors.yellow[600],WalkieTaskColors.white,1,tarea),
-                  //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
-                ],
-                secondaryActions: <Widget>[
-                  //_buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,tarea),
-                  //_buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,tarea),
-                ],
-              ),
             );
-          }),
-          onReorder: (int oldIndex, int newIndex) {
-            //_updateMyItems(oldIndex, newIndex);
-          },
-        )
+          }
+          return Container(
+            key: ValueKey("value$index"),
+            padding: EdgeInsets.only(top: alto * 0.01,bottom: alto * 0.01),
+            color: Colors.white,
+            child: Slidable(
+              actionPane: SlidableDrawerActionPane(),
+              actionExtentRatio: 0.25,
+              child: _tareas(tarea, tarea.is_priority != 0),
+              actions: <Widget>[
+                _buttonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: 30,),Colors.yellow[600],WalkieTaskColors.white,1,tarea),
+                //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
+              ],
+              secondaryActions: <Widget>[
+                //_buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,tarea),
+                //_buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,tarea),
+              ],
+            ),
+          );
+        }),
+        onReorder: (int oldIndex, int newIndex) {
+          //_updateMyItems(oldIndex, newIndex);
+        },
+      ),
     );
   }
 
@@ -371,17 +368,10 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Flexible(
-                      flex: 1,
-                      child: Text('$nameUser', maxLines: 1, style: favorite ? textStylePrimaryBold : textStylePrimary),
-                    ),
-                    Flexible(
-                        flex: 1,
-                        child: Text(tarea.name.isNotEmpty ? tarea.name : 'Tarea sin título. Tap para nombrarla',
-                          maxLines: 1,
-                          style: tarea.name.isNotEmpty ? (favorite ? textStylePrimaryBold : textStylePrimary) : textStyleNotTitle,)
-                    ),
-                    Text(proyectName,style: textStyleProject,maxLines: 1,),
+                    Text('$nameUser', style: favorite ? textStylePrimaryBold : textStylePrimary),
+                    Text(tarea.name.isNotEmpty ? tarea.name : 'Tarea sin título. Tap para nombrarla',
+                      style: tarea.name.isNotEmpty ? (favorite ? textStylePrimaryBold : textStylePrimary) : textStyleNotTitle,),
+                    Text(proyectName,style: textStyleProject,),
                   ],
                 ),
               ),
@@ -557,6 +547,16 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
           reproTask = true;
         }
 
+        int chatCont = 0;
+        listCheckChat.forEach((element) {
+          if(task.id.toString() == element){
+            chatCont++;
+          }
+        });
+        double radiusChat = 0.012;
+        if(chatCont >= 10 && chatCont < 100){radiusChat = 0.014; }
+        if(chatCont > 100){radiusChat = 0.018; }
+
         listTaskRes.add(
             InkWell(
               onTap: () =>clickTarea(task),
@@ -578,18 +578,15 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Text(task.name.isEmpty ? 'Nombre no asignado' : task.name,
-                                maxLines: 1,
                                 style: textStylePrimaryBold),
                             Text(proyectName,
-                              maxLines: 1,
                               style: textStylePrimary,),
                           ],
                         ),
                       ),
                     ),
                     Container(
-                      width: ancho * 0.3,
-                      margin: EdgeInsets.only(right: ancho * 0.03),
+                      margin: EdgeInsets.only(right: ancho * 0.03, left: ancho * 0.03),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -600,13 +597,15 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
-                              //Icon(Icons.message,color: Colors.grey[600],size: alto * 0.03),
-                              // smsRecived ? CircleAvatar(
-                              //   backgroundColor: WalkieTaskColors.primary,
-                              //   radius: alto * 0.012,
-                              //   child: Text('2',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
-                              // ) : Container(),
-                              // smsRecived ? SizedBox(width: ancho * 0.01,) : Container(),
+                              chatCont != 0 ? Container(
+                                margin: EdgeInsets.only(right: ancho * 0.002),
+                                child: CircleAvatar(
+                                  backgroundColor: WalkieTaskColors.primary,
+                                  // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
+                                  radius: alto * radiusChat,
+                                  child: Text('$chatCont',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
+                                ),
+                              ) : Container(),
                               InkWell(
                                 child: task.url_audio != '' ? Icon(Icons.volume_up,color: reproTask ? WalkieTaskColors.color_89BD7D : Colors.grey[600],size: alto * 0.03,) : Container(),
                                 onTap: (){
@@ -733,7 +732,6 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
           InkWell(
             onTap: () =>clickTarea(task),
             child: Container(
-              height: alto * 0.1,
               key: ValueKey("value$index"),
               padding: EdgeInsets.only(top: alto * 0.01,bottom: alto * 0.01),
               color: Colors.white,
