@@ -44,15 +44,13 @@ class NavigatorBottonPage extends StatefulWidget {
 
 class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
+  Usuario myUser;
+
+  String titulo = 'Tareas';
+
   double alto = 0;
   double ancho = 0;
-  String titulo = 'Tareas';
-  conexionHttp conexionHispanos = new conexionHttp();
-  bool cargadoUsuarios = false;
-  Usuario myUser;
-  bool conectionActive = false;
-
-  bottonSelect page = bottonSelect.opcion1;
+  double progressIndicator = 0;
 
   Map<bottonSelect,bool> mapNavigatorBotton = new Map<bottonSelect,bool>();
   Map<int,Usuario> mapIdUser;
@@ -85,16 +83,23 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   StreamSubscription streamSubscriptionProgress;
   StreamSubscription streamSubscriptionPage;
 
-  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
-
   bool viewIndicatorProgress = false;
-  double progressIndicator = 0;
+  bool cargadoUsuarios = false;
+  bool conectionActive = false;
   bool loadTaskSend = false;
   bool loadTaskRecived = false;
-
+  bool loadListUser = false;
+  bool loadCasos = false;
+  bool loadMyUser = false;
   bool notiRecived = false;
   bool notiSend = false;
   bool notiContacts = false;
+
+  conexionHttp conexionHispanos = new conexionHttp();
+
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+
+  bottonSelect page = bottonSelect.opcion1;
 
   @override
   void initState() {
@@ -223,6 +228,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       myUser = await UserDatabaseProvider.db.getCodeId(idMyUser);
       if(myUser != null){
         listo = false;
+        loadMyUser = true;
       }else{
         await Future.delayed(Duration(seconds: 3));
       }
@@ -284,7 +290,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           mapDataUserHome = _dataToMapDataUserHome();
         }
 
-        return (loadTaskRecived && loadTaskSend) ? CreateTask(
+        return (loadTaskRecived && loadTaskSend && loadListUser && loadCasos && loadMyUser) ? CreateTask(
           myUserRes: myUser,
           listUserRes: listaUser,
           mapIdUserRes: mapIdUser,
@@ -462,34 +468,42 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         if(data[task.user_id][0] == ''){
           data[task.user_id][0] = task.deadline;
         }else{
-          DateTime dateCreate = DateTime.parse(task.deadline);
-          Duration difDays = dateCreate.difference(DateTime.now());
+          if(task.deadline.isEmpty || data[task.user_id][0].isEmpty){
+            if(data[task.user_id][0].isEmpty){ data[task.user_id][0] = task.deadline.isEmpty; }
+          }else{
+            DateTime dateCreate = DateTime.parse(task.deadline);
+            Duration difDays = dateCreate.difference(DateTime.now());
 
-          DateTime dateCreate2 = DateTime.parse(data[task.user_id][0]);
-          Duration difDays2 = dateCreate2.difference(DateTime.now());
+            DateTime dateCreate2 = DateTime.parse(data[task.user_id][0]);
+            Duration difDays2 = dateCreate2.difference(DateTime.now());
 
-          if(difDays < difDays2){
-            data[task.user_id][0] = dateCreate2.toString();
+            if(difDays < difDays2){
+              data[task.user_id][0] = dateCreate2.toString();
+            }
           }
         }
       });
 
       listEnviados.forEach((task) {
-        if(data[task.user_id] == null){
-          data[task.user_id] = ['',[],[]];
+        if(data[task.user_responsability_id] == null){
+          data[task.user_responsability_id] = ['',[],[]];
         }
-        data[task.user_id][1].add(task);
-        if(data[task.user_id][0] == ''){
-          data[task.user_id][0] = task.deadline;
+        data[task.user_responsability_id][2].add(task);
+        if(data[task.user_responsability_id][0] == ''){
+          data[task.user_responsability_id][0] = task.deadline;
         }else{
-          DateTime dateCreate = DateTime.parse(task.deadline);
-          Duration difDays = dateCreate.difference(DateTime.now());
+          if(task.deadline.isEmpty || data[task.user_responsability_id][0].isEmpty){
+            if(data[task.user_responsability_id][0].isEmpty){ data[task.user_responsability_id][0] = task.deadline.isEmpty; }
+          }else{
+            DateTime dateCreate = DateTime.parse(task.deadline);
+            Duration difDays = dateCreate.difference(DateTime.now());
 
-          DateTime dateCreate2 = DateTime.parse(data[task.user_id][0]);
-          Duration difDays2 = dateCreate2.difference(DateTime.now());
+            DateTime dateCreate2 = DateTime.parse(data[task.user_responsability_id][0]);
+            Duration difDays2 = dateCreate2.difference(DateTime.now());
 
-          if(difDays < difDays2){
-            data[task.user_id][0] = dateCreate2.toString();
+            if(difDays < difDays2){
+              data[task.user_responsability_id][0] = dateCreate2.toString();
+            }
           }
         }
       });
@@ -708,15 +722,16 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   }
   _inicializarUser() async {
     listaUser = await  UserDatabaseProvider.db.getAll();
-    setState(() {});
     mapIdUser = new Map();
     for(int x = 0; x < listaUser.length; x++){
       mapIdUser[listaUser[x].id] = listaUser[x];
     }
+    loadListUser = true;
     setState(() {});
   }
   _inicializarCasos() async {
     listaCasos = await  CasosDatabaseProvider.db.getAll();
+    loadCasos = true;
     setState(() {});
   }
   _inicializarInvitation() async {

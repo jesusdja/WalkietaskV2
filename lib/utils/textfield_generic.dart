@@ -25,9 +25,12 @@ class TextFildGeneric extends StatelessWidget {
   final List<BoxShadow> boxShadow;
   final double sizeBorder;
   final Widget suffixIcon;
+  final Widget prefixIcon;
   final bool enable;
   final EdgeInsetsGeometry padding;
   final TextCapitalization textCapitalization;
+  final String hintText;
+  final Color colorBack;
 
   TextFildGeneric({
     this.initialValue = '',
@@ -53,9 +56,12 @@ class TextFildGeneric extends StatelessWidget {
     this.boxShadow,
     this.sizeBorder = 1.2,
     this.suffixIcon,
+    this.prefixIcon,
     this.enable = true,
     this.padding = const EdgeInsets.only(left: 5),
     this.textCapitalization = TextCapitalization.sentences,
+    this.hintText = '',
+    this.colorBack = Colors.white,
   });
 
   @override
@@ -66,7 +72,7 @@ class TextFildGeneric extends StatelessWidget {
       padding: padding,
       decoration: new BoxDecoration(
         shape: BoxShape.rectangle,
-        color: Colors.white,
+        color: colorBack,
         borderRadius: BorderRadius.all(Radius.circular(radius)),
         border: new Border.all(
           width: sizeBorder,
@@ -92,7 +98,7 @@ class TextFildGeneric extends StatelessWidget {
         textCapitalization: textCapitalization,
         decoration: InputDecoration(
           filled: true,
-          fillColor: Colors.white,
+          fillColor: colorBack,
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(radius)),
             borderSide: BorderSide(
@@ -111,11 +117,9 @@ class TextFildGeneric extends StatelessWidget {
           labelText: placeHolder,
           labelStyle: labelStyle,
           errorStyle: labelStyle,
-          prefixIcon: icon != null ? Icon(
-            icon,
-            size: 15.0,
-            color: WalkieTaskColors.black,
-          ) : null,
+          hintText: hintText,
+          hintStyle: labelStyle,
+          prefixIcon: prefixIcon,
           contentPadding:EdgeInsets.symmetric(horizontal: sizeW * 0.01, vertical: sizeH * 0.001)
         ),
       ),
