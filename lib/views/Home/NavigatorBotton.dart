@@ -55,10 +55,11 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   bottonSelect page = bottonSelect.opcion1;
 
   Map<bottonSelect,bool> mapNavigatorBotton = new Map<bottonSelect,bool>();
+  Map<int,Usuario> mapIdUser;
+  Map<int,List> mapDataUserHome = {};
 
   List<Tarea> listRecibidos;
   List<Tarea> listEnviados;
-  Map<int,Usuario> mapIdUser;
   List<Usuario> listaUser;
   List<Caso> listaCasos;
   List<InvitationModel> listInvitation;
@@ -278,6 +279,11 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   Widget contenido(){
     switch(page){
       case bottonSelect.opcion1:
+
+        if((loadTaskRecived && loadTaskSend)){
+          mapDataUserHome = _dataToMapDataUserHome();
+        }
+
         return (loadTaskRecived && loadTaskSend) ? CreateTask(
           myUserRes: myUser,
           listUserRes: listaUser,
@@ -289,6 +295,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           blocTaskReceived: blocTaskReceived,
           blocTaskSend: blocTaskSend,
           blocIndicatorProgress: blocIndicatorProgress,
+          mapDataUserHome: mapDataUserHome,
         ) : Container(child: Cargando('Actualizando tareas.',context),);
       case bottonSelect.opcion2:
         return loadTaskSend ? listRecibidos.length != 0 ?
@@ -443,6 +450,53 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         ) : Container(),
       ],
     );
+  }
+  Map<int,List> _dataToMapDataUserHome(){
+    Map<int,List> data = {};
+    try{
+      listRecibidos.forEach((task) {
+        if(data[task.user_id] == null){
+          data[task.user_id] = ['',[],[]];
+        }
+        data[task.user_id][1].add(task);
+        if(data[task.user_id][0] == ''){
+          data[task.user_id][0] = task.deadline;
+        }else{
+          DateTime dateCreate = DateTime.parse(task.deadline);
+          Duration difDays = dateCreate.difference(DateTime.now());
+
+          DateTime dateCreate2 = DateTime.parse(data[task.user_id][0]);
+          Duration difDays2 = dateCreate2.difference(DateTime.now());
+
+          if(difDays < difDays2){
+            data[task.user_id][0] = dateCreate2.toString();
+          }
+        }
+      });
+
+      listEnviados.forEach((task) {
+        if(data[task.user_id] == null){
+          data[task.user_id] = ['',[],[]];
+        }
+        data[task.user_id][1].add(task);
+        if(data[task.user_id][0] == ''){
+          data[task.user_id][0] = task.deadline;
+        }else{
+          DateTime dateCreate = DateTime.parse(task.deadline);
+          Duration difDays = dateCreate.difference(DateTime.now());
+
+          DateTime dateCreate2 = DateTime.parse(data[task.user_id][0]);
+          Duration difDays2 = dateCreate2.difference(DateTime.now());
+
+          if(difDays < difDays2){
+            data[task.user_id][0] = dateCreate2.toString();
+          }
+        }
+      });
+    }catch(e){
+      print('ERROR AL ORDENAR DATA DE HOME');
+    }
+    return data;
   }
 
   Widget _drawerMenu(){

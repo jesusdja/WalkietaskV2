@@ -27,6 +27,7 @@ class CreateTask extends StatefulWidget {
     @required this.blocIndicatorProgress,
     @required this.listRecibidos,
     @required this.listEnviadosRes,
+    @required this.mapDataUserHome,
   });
 
   final Map<int,Usuario> mapIdUserRes;
@@ -39,6 +40,7 @@ class CreateTask extends StatefulWidget {
   final BlocTask blocTaskSend;
   final BlocTask blocTaskReceived;
   final BlocProgress blocIndicatorProgress;
+  final Map<int,List> mapDataUserHome;
 
   @override
   _CreateTaskState createState() => _CreateTaskState();
@@ -51,6 +53,8 @@ class _CreateTaskState extends State<CreateTask> {
   TextStyle textStylePrimary;
   TextStyle textStylePrimaryLitle;
   TextStyle textStylePrimaryBold;
+  TextStyle textStylePrimaryLitleRed;
+  TextStyle textStylePrimaryLitleBold;
 
   List<Tarea> listEnviados = [];
   List<Tarea> listRecibidos = [];
@@ -58,6 +62,7 @@ class _CreateTaskState extends State<CreateTask> {
   List<Caso> listaCasos = [];
 
   Map<int,Usuario> mapIdUser = {};
+  Map<int,List> mapDataUserHome = {};
 
   @override
   void initState() {
@@ -75,6 +80,8 @@ class _CreateTaskState extends State<CreateTask> {
 
     textStylePrimary = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.black, spacing: 1);
     textStylePrimaryLitle = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.015, color: WalkieTaskColors.black, spacing: 1);
+    textStylePrimaryLitleRed = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.015, color: WalkieTaskColors.color_DD7777, spacing: 1, fontWeight: FontWeight.bold);
+    textStylePrimaryLitleBold = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.015, color: WalkieTaskColors.black, spacing: 1, fontWeight: FontWeight.bold);
     textStylePrimaryBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.black);
 
     listEnviados = widget.listEnviadosRes;
@@ -82,6 +89,7 @@ class _CreateTaskState extends State<CreateTask> {
     listUser = widget.listUserRes;
     listaCasos = widget.listaCasosRes;
     mapIdUser = widget.mapIdUserRes;
+    mapDataUserHome = widget.mapDataUserHome;
 
     return GestureDetector(
       onTap: () {
@@ -142,6 +150,18 @@ class _CreateTaskState extends State<CreateTask> {
   }
 
   Widget _reminderPersonal(){
+
+    String dateDiff = 'Sin fecha';
+    int cant = 0;
+    bool redColor = false;
+    if(widget.myUserRes != null && mapDataUserHome[widget.myUserRes.id] != null){
+      if(mapDataUserHome[widget.myUserRes.id][0] != ''){
+        dateDiff = getDayDiff(mapDataUserHome[widget.myUserRes.id][0]);
+        redColor = dateDiff.contains('Hace');
+      }
+      cant = mapDataUserHome[widget.myUserRes.id][1].length + mapDataUserHome[widget.myUserRes.id][2].length;
+    }
+
     return Container(
       padding: EdgeInsets.only(left: ancho * 0.03, right: ancho * 0.03),
       width: ancho,
@@ -170,8 +190,29 @@ class _CreateTaskState extends State<CreateTask> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('Sin Fecha',style: textStylePrimaryLitle,),
-                Text('Recordatorio: 0',style: textStylePrimaryLitle,),
+                redColor ?
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                        height: alto * 0.02,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: ancho * 0.02),
+                      Text(dateDiff,style: textStylePrimaryLitleRed,)
+                    ],
+                  ),
+                )
+                    :
+                Text(dateDiff,style: textStylePrimaryLitleBold,),
+                Text('Recordatorio: $cant',style: textStylePrimaryLitle,),
               ],
             ),
           ),
@@ -208,6 +249,19 @@ class _CreateTaskState extends State<CreateTask> {
       }
 
       bool favorite = user.fijo == 1;
+
+      String dateDiff = 'Sin fecha';
+      int cantRecived = 0;
+      int cantSend = 0;
+      bool redColor = false;
+      if(mapDataUserHome[user.id] != null){
+        if(mapDataUserHome[user.id][0] != ''){
+          dateDiff = getDayDiff(mapDataUserHome[user.id][0]);
+          redColor = dateDiff.contains('Hace');
+        }
+        cantRecived = mapDataUserHome[user.id][1].length;
+        cantSend = mapDataUserHome[user.id][2].length;
+      }
 
       users.add(
         Slidable(
@@ -251,9 +305,30 @@ class _CreateTaskState extends State<CreateTask> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text('Sin Fecha',style: textStylePrimaryLitle,),
-                      Text('Recibidas: 100',style: textStylePrimaryLitle,),
-                      Text('Enviadas: 100',style: textStylePrimaryLitle,),
+                      redColor ?
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                              height: alto * 0.02,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: ancho * 0.02),
+                            Text(dateDiff,style: textStylePrimaryLitleRed,)
+                          ],
+                        ),
+                      )
+                      :
+                      Text(dateDiff,style: textStylePrimaryLitleBold,),
+                      Text('Recibidas: $cantRecived',style: textStylePrimaryLitle,),
+                      Text('Enviadas: $cantSend',style: textStylePrimaryLitle,),
                     ],
                   ),
                 ),
@@ -300,5 +375,38 @@ class _CreateTaskState extends State<CreateTask> {
         }
       },
     );
+  }
+
+  String getDayDiff(String deadLine){
+    String daysLeft = '';
+    if(deadLine.isNotEmpty){
+      daysLeft = 'Ahora';
+      DateTime dateCreate = DateTime.parse(deadLine);
+      Duration difDays = dateCreate.difference(DateTime.now());
+      if(difDays.inMinutes > 0){
+        if(difDays.inMinutes < 60){
+          daysLeft = 'Faltan ${difDays.inMinutes} min';
+        }else{
+          if(difDays.inHours < 24){
+            daysLeft = 'Faltan ${difDays.inHours} horas';
+          }else{
+            double days = difDays.inHours / 24;
+            daysLeft = 'Faltan ${days.toStringAsFixed(0)} días';
+          }
+        }
+      }else{
+        if((difDays.inMinutes * -1) < 60){
+          daysLeft = 'Hace ${difDays.inMinutes} min';
+        }else{
+          if((difDays.inHours * -1) < 24){
+            daysLeft = 'Hace ${difDays.inHours} horas';
+          }else{
+            double days = (difDays.inHours * -1) / 24;
+            daysLeft = 'Hace ${days.toStringAsFixed(0)} días';
+          }
+        }
+      }
+    }
+    return daysLeft;
   }
 }

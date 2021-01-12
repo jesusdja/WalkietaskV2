@@ -844,10 +844,17 @@ class _ChatForTareaState extends State<ChatForTarea> {
       conexionHttp connectionHttp = new conexionHttp();
       Map<String,dynamic> body = {
         'name' : '${_controllerTitle.text}',
-        'description' : '${_controllerDescription.text}',
-        'deadline' : fechaTask.toString(),
+        //'deadline' : fechaTask.toString(),
         //'description' : '${_controllerDescription.text}'
       };
+      if(_controllerDescription.text.isNotEmpty){
+        body['description'] = '${_controllerDescription.text}';
+      }
+      if(fechaTask != null){
+        body['deadline'] = fechaTask.toString();
+      }
+
+
       var response = await connectionHttp.httpUpdateTask(body, tarea.id);
       var value = jsonDecode(response.body);
       if(response.statusCode == 200){
