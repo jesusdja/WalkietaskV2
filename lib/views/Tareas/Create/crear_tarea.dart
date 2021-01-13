@@ -10,6 +10,7 @@ import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/task_sound.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
@@ -687,7 +688,12 @@ class _CreateTaskState extends State<CreateTask> {
     List<Widget> tasks = [];
 
     mapDataUserHome.forEach((key, list) {
-      list[1].forEach((task2) {
+      List listAll = [];
+      list[1].forEach((task){listAll.add(task);});
+      list[2].forEach((task){listAll.add(task);});
+
+
+      listAll.forEach((task2) {
         Tarea task = task2;
         if(task.name.toLowerCase().contains(controlleBuscador.text.toLowerCase())){
 
@@ -727,6 +733,12 @@ class _CreateTaskState extends State<CreateTask> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(date, style: textStylePrimary,),
+                        task.url_audio.isNotEmpty ?
+                        SoundTask(
+                          alto: alto * 0.03,
+                          colorStop: WalkieTaskColors.color_E07676,
+                          path: task.url_audio,
+                        ) : Container(),
                       ],
                     ),
                   ),
