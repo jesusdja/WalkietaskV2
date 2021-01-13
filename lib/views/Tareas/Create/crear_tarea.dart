@@ -14,6 +14,7 @@ import 'package:walkietaskv2/utils/task_sound.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
+import 'package:walkietaskv2/views/Tareas/Create/detalles_tareas_user.dart';
 
 
 class CreateTask extends StatefulWidget {
@@ -171,61 +172,64 @@ class _CreateTaskState extends State<CreateTask> {
       cant = mapDataUserHome[widget.myUserRes.id][2].length;
     }
 
-    return Container(
-      padding: EdgeInsets.only(left: ancho * 0.03, right: ancho * 0.03),
-      width: ancho,
-      child: Row(
-        children: [
-          Container(
-            height: alto * 0.06,
-            width: alto * 0.06,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: ViewImage().assetsImage("assets/image/icon_personal.png").image,
-                fit: BoxFit.fill,
+    return InkWell(
+      onTap: () => _onTapUser(widget.myUserRes, true),
+      child: Container(
+        padding: EdgeInsets.only(left: ancho * 0.03, right: ancho * 0.03),
+        width: ancho,
+        child: Row(
+          children: [
+            Container(
+              height: alto * 0.06,
+              width: alto * 0.06,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: ViewImage().assetsImage("assets/image/icon_personal.png").image,
+                  fit: BoxFit.fill,
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.only(left: ancho * 0.02),
-              width: ancho,
-              child: Text('Yo (recordatorio personal)',
-                style: textStylePrimaryBold, textAlign: TextAlign.left,),
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.only(left: ancho * 0.02),
+                width: ancho,
+                child: Text('Yo (recordatorio personal)',
+                  style: textStylePrimaryBold, textAlign: TextAlign.left,),
+              ),
             ),
-          ),
-          Container(
-            width: ancho * 0.3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                redColor ?
-                Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-                        height: alto * 0.02,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
-                            fit: BoxFit.contain,
+            Container(
+              width: ancho * 0.3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  redColor ?
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                          height: alto * 0.02,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(width: ancho * 0.02),
-                      Text(dateDiff,style: textStylePrimaryLitleRed,)
-                    ],
-                  ),
-                )
-                    :
-                Text(dateDiff,style: textStylePrimaryLitleBold,),
-                Text('Recordatorio: $cant',style: textStylePrimaryLitle,),
-              ],
+                        SizedBox(width: ancho * 0.02),
+                        Text(dateDiff,style: textStylePrimaryLitleRed,)
+                      ],
+                    ),
+                  )
+                      :
+                  Text(dateDiff,style: textStylePrimaryLitleBold,),
+                  Text('Recordatorio: $cant',style: textStylePrimaryLitle,),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -295,80 +299,83 @@ class _CreateTaskState extends State<CreateTask> {
       }
 
       users.add(
-        Slidable(
-          actionPane: SlidableDrawerActionPane(),
-          actionExtentRatio: 0.25,
-          child: Container(
-            width: ancho,
-            margin: EdgeInsets.only(bottom: alto * 0.01, right: ancho * 0.03),
-            child: Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(left: ancho * 0.03, right: ancho * 0.03),
-                  child: Stack(
-                    children: <Widget>[
-                      Center(
-                        child: Container(
-                          decoration: new BoxDecoration(
-                            color: bordeCirculeAvatar, // border color
-                            shape: BoxShape.circle,
-                          ),
-                          child: CircleAvatar(
-                            radius: alto * 0.03,
-                            backgroundImage: avatarUser.image,
-                            //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
+        InkWell(
+          onTap: () => _onTapUser(user, false),
+          child: Slidable(
+            actionPane: SlidableDrawerActionPane(),
+            actionExtentRatio: 0.25,
+            child: Container(
+              width: ancho,
+              margin: EdgeInsets.only(bottom: alto * 0.01, right: ancho * 0.03),
+              child: Row(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: ancho * 0.03, right: ancho * 0.03),
+                    child: Stack(
+                      children: <Widget>[
+                        Center(
+                          child: Container(
+                            decoration: new BoxDecoration(
+                              color: bordeCirculeAvatar, // border color
+                              shape: BoxShape.circle,
+                            ),
+                            child: CircleAvatar(
+                              radius: alto * 0.03,
+                              backgroundImage: avatarUser.image,
+                              //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
+                            ),
                           ),
                         ),
-                      ),
-                      favorite ? Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          margin: EdgeInsets.only(top: alto * 0.035, left: ancho * 0.08),
-                          child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
-                        ),
-                      ) : Container(),
-                    ],
+                        favorite ? Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            margin: EdgeInsets.only(top: alto * 0.035, left: ancho * 0.08),
+                            child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
+                          ),
+                        ) : Container(),
+                      ],
+                    ),
                   ),
-                ),
-                Expanded(child: Text(user.name, style: textStylePrimaryBold,)),
-                Container(
-                  width: ancho * 0.3,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      redColor ?
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-                              height: alto * 0.02,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
-                                  fit: BoxFit.contain,
+                  Expanded(child: Text(user.name, style: textStylePrimaryBold,)),
+                  Container(
+                    width: ancho * 0.3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        redColor ?
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                                height: alto * 0.02,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                                    fit: BoxFit.contain,
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(width: ancho * 0.02),
-                            Text(dateDiff,style: textStylePrimaryLitleRed,)
-                          ],
-                        ),
-                      )
-                          :
-                      Text(dateDiff,style: textStylePrimaryLitleBold,),
-                      Text('Recibidas: $cantRecived',style: textStylePrimaryLitle,),
-                      Text('Enviadas: $cantSend',style: textStylePrimaryLitle,),
-                    ],
+                              SizedBox(width: ancho * 0.02),
+                              Text(dateDiff,style: textStylePrimaryLitleRed,)
+                            ],
+                          ),
+                        )
+                            :
+                        Text(dateDiff,style: textStylePrimaryLitleBold,),
+                        Text('Recibidas: $cantRecived',style: textStylePrimaryLitle,),
+                        Text('Enviadas: $cantSend',style: textStylePrimaryLitle,),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+            actions: <Widget>[
+              _buttonSliderAction(user.fijo == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1, user),
+            ],
           ),
-          actions: <Widget>[
-            _buttonSliderAction(user.fijo == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1, user),
-          ],
         ),
 
       );
@@ -391,6 +398,19 @@ class _CreateTaskState extends State<CreateTask> {
         ),
       ),
     );
+  }
+
+  void _onTapUser(Usuario user, bool personal){
+    Navigator.push(context, new MaterialPageRoute(
+        builder: (BuildContext context) =>
+        new DetailsTasksForUser(
+          user: user,
+          isPersonal: personal,
+          mapDataUserHome: mapDataUserHome,
+          listaCasos: listaCasos,
+          blocTaskSend: widget.blocTaskSend,
+          blocTaskReceived: widget.blocTaskReceived,
+        )));
   }
 
   Widget _buttonSliderAction(String titulo,Icon icono,Color color,Color colorText,int accion, Usuario user){
