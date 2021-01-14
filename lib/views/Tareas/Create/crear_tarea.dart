@@ -410,6 +410,7 @@ class _CreateTaskState extends State<CreateTask> {
           listaCasos: listaCasos,
           blocTaskSend: widget.blocTaskSend,
           blocTaskReceived: widget.blocTaskReceived,
+          blocIndicatorProgress: widget.blocIndicatorProgress,
         )));
   }
 

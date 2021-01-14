@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
@@ -12,6 +13,7 @@ import 'package:walkietaskv2/utils/task_sound.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Chat/ChatForTarea.dart';
+import 'package:walkietaskv2/views/Tareas/Create/new_task_user.dart';
 import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
 
 class DetailsTasksForUser extends StatefulWidget {
@@ -22,6 +24,7 @@ class DetailsTasksForUser extends StatefulWidget {
   final List<Caso> listaCasos;
   final BlocTask blocTaskSend;
   final BlocTask blocTaskReceived;
+  final BlocProgress blocIndicatorProgress;
 
   DetailsTasksForUser({
     @required this.user,
@@ -30,6 +33,7 @@ class DetailsTasksForUser extends StatefulWidget {
     @required this.listaCasos,
     @required this.blocTaskReceived,
     @required this.blocTaskSend,
+    @required this.blocIndicatorProgress,
   });
 
   @override
@@ -40,25 +44,30 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
 
   double alto = 0;
   double ancho = 0;
+  double progressIndicator = 0;
+  int cant = 0;
 
   TextStyle textStylePrimary;
+  TextStyle textStylePrimaryBold;
   TextStyle textStyleBlue;
   TextStyle textStyleBlueLitle;
-  TextStyle textStylePrimaryBold;
   TextStyle textStylePrimaryLitle;
   TextStyle textStylePrimaryLitleRed;
 
   bool isPersonal = false;
-  Usuario user;
-  Map<int,List> mapDataUserHome;
+  bool viewIndicatorProgress = false;
 
+  Usuario user;
+
+  Map<int,List> mapDataUserHome;
+  Map<int,Caso> mapCasos = {};
   List<Tarea> listRecived = [];
   List<Tarea> listSend = [];
 
-  Map<int,Caso> mapCasos = {};
 
   StreamSubscription streamSubscriptionTaskSend;
   StreamSubscription streamSubscriptionTaskRecived;
+  StreamSubscription streamSubscriptionProgress;
 
   @override
   void initState() {
@@ -78,6 +87,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
 
     _inicializarPatronBlocTaskSend();
     _inicializarPatronBlocTaskRecived();
+    _inicializarPatronBlocProgress();
   }
 
   @override
@@ -86,6 +96,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
     try{
       streamSubscriptionTaskSend?.cancel();
       streamSubscriptionTaskRecived?.cancel();
+      streamSubscriptionProgress?.cancel();
     }catch(e){
       print(e.toString());
     }
@@ -121,42 +132,44 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
 
     double h = alto < 600 ? alto * 0.32 : alto * 0.34;
 
-    return Container(
-      width: ancho,
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Container(
-            width: ancho,
-            height: alto * 0.06,
-            //color: Colors.orange,
-            child: Container(
-              margin: EdgeInsets.only(top: alto * 0.02, left: ancho * 0.03),
-              child: Text('Tareas recibidas', style: textStylePrimaryBold,),
+    return SingleChildScrollView(
+      child: Container(
+        width: ancho,
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Container(
+              width: ancho,
+              height: alto * 0.06,
+              //color: Colors.orange,
+              child: Container(
+                margin: EdgeInsets.only(top: alto * 0.02, left: ancho * 0.03),
+                child: Text('Tareas recibidas', style: textStylePrimaryBold,),
+              ),
             ),
-          ),
-          Container(
-            width: ancho,
-            height: h,
-            //color: Colors.red,
-            child: _listTaskRecived(h),
-          ),
-          Container(
-            width: ancho,
-            height: alto * 0.06,
-            //color: Colors.blue,
-            child: Container(
-              margin: EdgeInsets.only(top: alto * 0.02, left: ancho * 0.03),
-              child: Text('Tareas enviadas', style: textStylePrimaryBold,),
+            Container(
+              width: ancho,
+              height: h,
+              //color: Colors.red,
+              child: _listTaskRecived(h),
             ),
-          ),
-          Container(
-            width: ancho,
-            height: h,
-            //color: Colors.grey,
-            child: _listTaskSend(h),
-          ),
-        ],
+            Container(
+              width: ancho,
+              height: alto * 0.06,
+              //color: Colors.blue,
+              child: Container(
+                margin: EdgeInsets.only(top: alto * 0.02, left: ancho * 0.03),
+                child: Text('Tareas enviadas', style: textStylePrimaryBold,),
+              ),
+            ),
+            Container(
+              width: ancho,
+              height: h,
+              //color: Colors.grey,
+              child: _listTaskSend(h),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -379,6 +392,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
           child: Icon(Icons.arrow_back_ios, size: alto * 0.035, color: WalkieTaskColors.primary,),
         ),
       ),
+      bottom: _indicatorProgress(),
     );
   }
 
@@ -394,23 +408,36 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
               child: Text('Nueva tarea para ${user.name}:', style: textStyleBlue,maxLines: 2,),
             ),
           ),
-          Container(
-            margin: EdgeInsets.only(left: ancho * 0.02, right: ancho * 0.04),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  height: alto * 0.03,
-                  width: alto * 0.025,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: ViewImage().assetsImage("assets/image/Icon_text.png", color: WalkieTaskColors.primary).image,
-                      fit: BoxFit.fitHeight,
+          InkWell(
+            onTap: (){
+              Navigator.push(context, new MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                  new NewTaskForUser(
+                    user: user,
+                    isPersonal: isPersonal,
+                    pathAudio: '',
+                    listaCasos: widget.listaCasos,
+                    blocIndicatorProgress: widget.blocIndicatorProgress,
+                  )));
+            },
+            child: Container(
+              margin: EdgeInsets.only(left: ancho * 0.02, right: ancho * 0.04),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    height: alto * 0.03,
+                    width: alto * 0.025,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: ViewImage().assetsImage("assets/image/Icon_text.png", color: WalkieTaskColors.primary).image,
+                        fit: BoxFit.fitHeight,
+                      ),
                     ),
                   ),
-                ),
-                Text('Texto', style: textStyleBlueLitle,)
-              ],
+                  Text('Texto', style: textStyleBlueLitle,)
+                ],
+              ),
             ),
           ),
           Container(
@@ -497,7 +524,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       // ignore: cancel_subscriptions
       streamSubscriptionTaskSend = widget.blocTaskSend.outList.listen((newVal) {
         if(newVal){
-          _UpdateTask();
+          _updateTask();
         }
       });
     } catch (e) {}
@@ -507,15 +534,74 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       // ignore: cancel_subscriptions
       streamSubscriptionTaskRecived = widget.blocTaskReceived.outList.listen((newVal) {
         if(newVal){
-          _UpdateTask();
+          _updateTask();
         }
       });
     } catch (e) {}
   }
 
-  _UpdateTask() async {
+  _updateTask() async {
     listSend = await TaskDatabaseProvider.db.getAllSend();
     listRecived = await TaskDatabaseProvider.db.getAllRecevid();
     setState(() {});
+  }
+
+  Widget _indicatorProgress(){
+
+    String textCant = 'Enviando tarea...';
+    if(cant > 1){
+      textCant = 'Enviando tareas($cant)...';
+    }
+
+    return viewIndicatorProgress ? PreferredSize(
+      preferredSize: Size.fromHeight(alto * 0.05),
+      child: Container(
+        color: colorfondoSelectUser,
+        height: alto * 0.05,
+        width: ancho,
+        padding: EdgeInsets.only(left: ancho * 0.05, right: ancho * 0.05),
+        child: Row(
+          children: <Widget>[
+            Container(
+              child: Text(textCant, style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.021, color: WalkieTaskColors.color_969696),),
+            ),
+            Expanded(
+              child: Container(
+                decoration: new BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(50)),
+                  border: new Border.all(
+                    width: 2,
+                    color: WalkieTaskColors.primary,
+                  ),
+                ),
+                child: LinearProgressIndicator(
+                  backgroundColor: WalkieTaskColors.white,
+                  valueColor: AlwaysStoppedAnimation<Color>(WalkieTaskColors.primary),
+                  value: progressIndicator,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ) :
+    PreferredSize(
+        preferredSize: Size.fromHeight(0),
+        child: Container()
+    );
+  }
+
+  _inicializarPatronBlocProgress(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionProgress = widget.blocIndicatorProgress.outList.listen((newVal) {
+        progressIndicator = double.parse('${newVal['progressIndicator']}');
+        cant = int.parse('${newVal['cant']}');
+        viewIndicatorProgress = newVal['viewIndicatorProgress'];
+        setState(() {});
+      });
+    } catch (e) {}
   }
 }
