@@ -1,11 +1,14 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
+import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
@@ -19,12 +22,18 @@ class BottomDetailsTask extends StatefulWidget {
   final bool isPersonal;
   final List<Caso> listaCasos;
   final BlocProgress blocIndicatorProgress;
+  final UpdateData updateData;
+  final BlocTask blocTaskSend;
+  final BlocTask blocTaskReceived;
 
   BottomDetailsTask({
     @required this.user,
     @required this.isPersonal,
     @required this.listaCasos,
     @required this.blocIndicatorProgress,
+    @required this.updateData,
+    @required this.blocTaskSend,
+    @required this.blocTaskReceived,
   });
 
   @override
@@ -56,10 +65,13 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
 
   FlutterSound flutterSound = new FlutterSound();
 
+  UpdateData updateData;
+
   @override
   void initState() {
     super.initState();
     user = widget.user;
+    updateData = widget.updateData;
     pathinicial();
   }
 
@@ -96,7 +108,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
 
   Widget _buttonText(){
     return InkWell(
-      onTap: (){
+      onTap: () async {
         Navigator.push(context, new MaterialPageRoute(
             builder: (BuildContext context) =>
             new NewTaskForUser(
@@ -145,6 +157,17 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            grabando ?
+            Container(
+              height: alto * 0.03,
+              width: alto * 0.025,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: ViewImage().assetsImage("assets/image/micro_red.png",).image,
+                  fit: BoxFit.fitHeight,
+                ),
+              ),
+            ) :
             Container(
               height: alto * 0.03,
               width: alto * 0.025,
@@ -155,7 +178,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
                 ),
               ),
             ),
-            Text('Audio', style: textStyleBlueLitle,)
+            Text('Audio', style: grabando ? textStyleRedLitle : textStyleBlueLitle,)
           ],
         ),
       ),
@@ -200,7 +223,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
         String ss = segundos;
         String path = audioPath;
 
-        Navigator.push(context, new MaterialPageRoute(
+        var result = await Navigator.push(context, new MaterialPageRoute(
             builder: (BuildContext context) =>
             new NewTaskForUser(
               user: user,
@@ -215,6 +238,10 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
                 'segundoEspera' : s,
               },
             )));
+        if(result){
+          updateData.actualizarListaEnviados(widget.blocTaskSend, null);
+          updateData.actualizarListaRecibidos(widget.blocTaskReceived, null);
+        }
       }else{
         showAlert('El mensaje es muy corto o no contiene audio.',WalkieTaskColors.color_E07676);
       }

@@ -6,6 +6,7 @@ import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
@@ -14,8 +15,6 @@ import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Chat/ChatForTarea.dart';
 import 'package:walkietaskv2/views/Tareas/Create/detalles_tareas_user_bottom.dart';
-import 'package:walkietaskv2/views/Tareas/Create/new_task_user.dart';
-import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
 
 class DetailsTasksForUser extends StatefulWidget {
 
@@ -26,6 +25,7 @@ class DetailsTasksForUser extends StatefulWidget {
   final BlocTask blocTaskSend;
   final BlocTask blocTaskReceived;
   final BlocProgress blocIndicatorProgress;
+  final UpdateData updateData;
 
   DetailsTasksForUser({
     @required this.user,
@@ -35,6 +35,7 @@ class DetailsTasksForUser extends StatefulWidget {
     @required this.blocTaskReceived,
     @required this.blocTaskSend,
     @required this.blocIndicatorProgress,
+    @required this.updateData,
   });
 
   @override
@@ -128,6 +129,9 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
           isPersonal: isPersonal,
           listaCasos: widget.listaCasos,
           blocIndicatorProgress: widget.blocIndicatorProgress,
+          blocTaskReceived: widget.blocTaskReceived,
+          blocTaskSend: widget.blocTaskSend,
+          updateData: widget.updateData,
         ),
         body: _body(),
       ),
@@ -606,6 +610,9 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
         progressIndicator = double.parse('${newVal['progressIndicator']}');
         cant = int.parse('${newVal['cant']}');
         viewIndicatorProgress = newVal['viewIndicatorProgress'];
+        if(progressIndicator == 1.0){
+          widget.updateData.actualizarListaEnviados(widget.blocTaskSend, null);
+        }
         setState(() {});
       });
     } catch (e) {}

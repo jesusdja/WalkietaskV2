@@ -380,6 +380,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
     return Container(
       height: alto * 0.04,
       child: TextFildGeneric(
+        initialValue: titleTask,
         onChanged: (text) {
           setState(() {
             titleTask = text;
@@ -624,7 +625,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
               opcionesOpen = false;
             });
           }else{
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(false);
           }
         },
         child: Container(
@@ -683,19 +684,20 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
             },
             child: Container(
               margin: EdgeInsets.only(left: ancho * 0.03),
+              width: ancho * 0.2,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   pause ? mostrarImage('Pausa') : mostrarImage('playOpa'),
-                  pause ?Text('Pausa',style: textStyleLitle,) : Text('Reproducir',style: textStyleGreenLitle,),
+                  pause ? Text('Pausa',style: textStyleLitle,) : Text('Reproducir',style: textStyleGreenLitle,),
                 ],
               ),
             ),
           ),
           InkWell(
-            onTap: () => Navigator.of(context).pop(),
+            onTap: () => Navigator.of(context).pop(false),
             child: Container(
-              margin: EdgeInsets.only(left: ancho * 0.05),
+              margin: EdgeInsets.only(left: ancho * 0.01),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -851,7 +853,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
             //ENVIAR A SEGUNDO PLANO
             await SharedPrefe().setStringListValue('WalListDocument',listShared);
             uploadBackDocuments(widget.blocIndicatorProgress);
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(true);
             showAlert('Tarea enviada',WalkieTaskColors.color_89BD7D);
           }
         }else{

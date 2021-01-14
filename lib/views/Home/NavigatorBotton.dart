@@ -290,7 +290,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           mapDataUserHome = _dataToMapDataUserHome();
         }
 
-        return (loadTaskRecived && loadTaskSend && loadListUser && loadCasos && loadMyUser) ? CreateTask(
+        return (loadTaskRecived && loadTaskSend && loadListUser && loadCasos && loadMyUser) ?
+        CreateTask(
           myUserRes: myUser,
           listUserRes: listaUser,
           mapIdUserRes: mapIdUser,
@@ -302,6 +303,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           blocTaskSend: blocTaskSend,
           blocIndicatorProgress: blocIndicatorProgress,
           mapDataUserHome: mapDataUserHome,
+          updateData: updateData,
         ) : Container(child: Cargando('Actualizando tareas.',context),);
       case bottonSelect.opcion2:
         return loadTaskSend ? listRecibidos.length != 0 ?
@@ -800,6 +802,9 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         progressIndicator = double.parse('${newVal['progressIndicator']}');
         cant = int.parse('${newVal['cant']}');
         viewIndicatorProgress = newVal['viewIndicatorProgress'];
+        if(progressIndicator == 1.0){
+          _inicializarTaskSend();
+        }
         setState(() {});
       });
     } catch (e) {}

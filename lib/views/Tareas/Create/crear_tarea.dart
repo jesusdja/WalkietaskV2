@@ -7,6 +7,7 @@ import 'package:walkietaskv2/bloc/blocUser.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
@@ -31,6 +32,7 @@ class CreateTask extends StatefulWidget {
     @required this.listRecibidos,
     @required this.listEnviadosRes,
     @required this.mapDataUserHome,
+    @required this.updateData,
   });
 
   final Map<int,Usuario> mapIdUserRes;
@@ -44,6 +46,7 @@ class CreateTask extends StatefulWidget {
   final BlocTask blocTaskReceived;
   final BlocProgress blocIndicatorProgress;
   final Map<int,List> mapDataUserHome;
+  final UpdateData updateData;
 
   @override
   _CreateTaskState createState() => _CreateTaskState();
@@ -411,6 +414,7 @@ class _CreateTaskState extends State<CreateTask> {
           blocTaskSend: widget.blocTaskSend,
           blocTaskReceived: widget.blocTaskReceived,
           blocIndicatorProgress: widget.blocIndicatorProgress,
+          updateData: widget.updateData,
         )));
   }
 
