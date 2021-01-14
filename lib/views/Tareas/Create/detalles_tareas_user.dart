@@ -13,6 +13,7 @@ import 'package:walkietaskv2/utils/task_sound.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Chat/ChatForTarea.dart';
+import 'package:walkietaskv2/views/Tareas/Create/detalles_tareas_user_bottom.dart';
 import 'package:walkietaskv2/views/Tareas/Create/new_task_user.dart';
 import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
 
@@ -122,7 +123,12 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       child: Scaffold(
         backgroundColor: WalkieTaskColors.white,
         appBar: _appBar(),
-        bottomNavigationBar: _bottomNavigationBar(),
+        bottomNavigationBar: BottomDetailsTask(
+          user: user,
+          isPersonal: isPersonal,
+          listaCasos: widget.listaCasos,
+          blocIndicatorProgress: widget.blocIndicatorProgress,
+        ),
         body: _body(),
       ),
     );
@@ -396,72 +402,72 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
     );
   }
 
-  Widget _bottomNavigationBar(){
-    return Container(
-      color: Colors.grey[100],
-      padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01, left: ancho * 0.02, right: ancho * 0.04),
-      width: ancho,
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              child: Text('Nueva tarea para ${user.name}:', style: textStyleBlue,maxLines: 2,),
-            ),
-          ),
-          InkWell(
-            onTap: (){
-              Navigator.push(context, new MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                  new NewTaskForUser(
-                    user: user,
-                    isPersonal: isPersonal,
-                    pathAudio: '',
-                    listaCasos: widget.listaCasos,
-                    blocIndicatorProgress: widget.blocIndicatorProgress,
-                  )));
-            },
-            child: Container(
-              margin: EdgeInsets.only(left: ancho * 0.02, right: ancho * 0.04),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    height: alto * 0.03,
-                    width: alto * 0.025,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: ViewImage().assetsImage("assets/image/Icon_text.png", color: WalkieTaskColors.primary).image,
-                        fit: BoxFit.fitHeight,
-                      ),
-                    ),
-                  ),
-                  Text('Texto', style: textStyleBlueLitle,)
-                ],
-              ),
-            ),
-          ),
-          Container(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  height: alto * 0.03,
-                  width: alto * 0.025,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: ViewImage().assetsImage("assets/image/Icon_microphone_blue.png", color: WalkieTaskColors.primary).image,
-                      fit: BoxFit.fitHeight,
-                    ),
-                  ),
-                ),
-                Text('Audio', style: textStyleBlueLitle,)
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _bottomNavigationBar(){
+  //   return Container(
+  //     color: Colors.grey[100],
+  //     padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01, left: ancho * 0.02, right: ancho * 0.04),
+  //     width: ancho,
+  //     child: Row(
+  //       children: [
+  //         Expanded(
+  //           child: Container(
+  //             child: Text('Nueva tarea para ${user.name}:', style: textStyleBlue,maxLines: 2,),
+  //           ),
+  //         ),
+  //         InkWell(
+  //           onTap: (){
+  //             Navigator.push(context, new MaterialPageRoute(
+  //                 builder: (BuildContext context) =>
+  //                 new NewTaskForUser(
+  //                   user: user,
+  //                   isPersonal: isPersonal,
+  //                   pathAudio: '',
+  //                   listaCasos: widget.listaCasos,
+  //                   blocIndicatorProgress: widget.blocIndicatorProgress,
+  //                 )));
+  //           },
+  //           child: Container(
+  //             margin: EdgeInsets.only(left: ancho * 0.02, right: ancho * 0.04),
+  //             child: Column(
+  //               mainAxisSize: MainAxisSize.min,
+  //               children: [
+  //                 Container(
+  //                   height: alto * 0.03,
+  //                   width: alto * 0.025,
+  //                   decoration: BoxDecoration(
+  //                     image: DecorationImage(
+  //                       image: ViewImage().assetsImage("assets/image/Icon_text.png", color: WalkieTaskColors.primary).image,
+  //                       fit: BoxFit.fitHeight,
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 Text('Texto', style: textStyleBlueLitle,)
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //         Container(
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               Container(
+  //                 height: alto * 0.03,
+  //                 width: alto * 0.025,
+  //                 decoration: BoxDecoration(
+  //                   image: DecorationImage(
+  //                     image: ViewImage().assetsImage("assets/image/Icon_microphone_blue.png", color: WalkieTaskColors.primary).image,
+  //                     fit: BoxFit.fitHeight,
+  //                   ),
+  //                 ),
+  //               ),
+  //               Text('Audio', style: textStyleBlueLitle,)
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   String getDayDiff(String deadLine){
     String daysLeft = '';
@@ -499,13 +505,13 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
   void clickTarea(Tarea tarea) async {
 
     try{
-      if(tarea.name.isEmpty){
-        var result  = await Navigator.push(context, new MaterialPageRoute(
-            builder: (BuildContext context) => new AddNameTask(tareaRes: tarea,)));
-        // if(result){
-        //   blocTaskReceived.inList.add(true);
-        // }
-      }else{
+      // if(tarea.name.isEmpty){
+      //   var result  = await Navigator.push(context, new MaterialPageRoute(
+      //       builder: (BuildContext context) => new AddNameTask(tareaRes: tarea,)));
+      //   // if(result){
+      //   //   blocTaskReceived.inList.add(true);
+      //   // }
+      // }else{
         Navigator.push(context, new MaterialPageRoute(
             builder: (BuildContext context) =>
             new ChatForTarea(
@@ -513,7 +519,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
               listaCasosRes: widget.listaCasos,
               blocTaskSend: widget.blocTaskReceived,
             )));
-      }
+      // }
     }catch(e){
       print(e.toString());
     }
