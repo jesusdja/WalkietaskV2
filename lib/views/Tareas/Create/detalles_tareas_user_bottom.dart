@@ -105,6 +105,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
               pathAudio: '',
               listaCasos: widget.listaCasos,
               blocIndicatorProgress: widget.blocIndicatorProgress,
+              mapMinSeg: {},
             )));
       },
       child: Container(
@@ -167,8 +168,6 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
     _detenergrabar();
   }
 
-
-
   _grabarSound() async {
     try {
       DateTime date = DateTime.now();
@@ -193,7 +192,29 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
 
       if(segundoEspera >= 3){
         bool exit = audioPath != null ? await File(audioPath).exists() : false;
-        print('');
+        print('Audio = $exit');
+
+        int m = mostrarMinutosEspera;
+        int s = segundoEspera;
+        String ms = minutos;
+        String ss = segundos;
+        String path = audioPath;
+
+        Navigator.push(context, new MaterialPageRoute(
+            builder: (BuildContext context) =>
+            new NewTaskForUser(
+              user: user,
+              isPersonal: widget.isPersonal,
+              pathAudio: path,
+              listaCasos: widget.listaCasos,
+              blocIndicatorProgress: widget.blocIndicatorProgress,
+              mapMinSeg: {
+                'minutos' : ms,
+                'segundos' : ss,
+                'mostrarMinutosEspera' : m,
+                'segundoEspera' : s,
+              },
+            )));
       }else{
         showAlert('El mensaje es muy corto o no contiene audio.',WalkieTaskColors.color_E07676);
       }

@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,7 @@ class NewTaskForUser extends StatefulWidget {
   final String pathAudio;
   final List<Caso> listaCasos;
   final BlocProgress blocIndicatorProgress;
+  final Map mapMinSeg;
 
   NewTaskForUser({
     @required this.user,
@@ -29,6 +32,7 @@ class NewTaskForUser extends StatefulWidget {
     @required this.pathAudio,
     @required this.listaCasos,
     @required this.blocIndicatorProgress,
+    @required this.mapMinSeg,
   });
 
   @override
@@ -40,23 +44,38 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
   double alto = 0;
   double ancho = 0;
 
+  int mostrarMinutosEspera = 0;
+  int segundoEspera = 0;
+  int mostrarMinutosEsperaOld = 0;
+  int segundoEsperaOld = 0;
+
   bool isPersonal = false;
   bool isAudio = false;
   bool opcionesOpen = false;
   bool iconBuscadorCasos = false;
   bool enviandoTarea = false;
+  bool reproduciendo = false;
+  bool pause = false;
+  bool pausado = false;
 
   String audioPath;
   String titleTask = '';
   String descriptionTask = '';
   String _pathAdjunto;
   String _fileNameAdjunto = '';
+  String minutos = '00';
+  String segundos = '00';
+  String minutosold = '00';
+  String segundosold = '00';
 
   DateTime fechaTask;
 
   TextStyle textStylePrimary;
   TextStyle textStylePrimaryBold;
   TextStyle textStyleBlueLitle;
+  TextStyle textStyleGreenLitle;
+  TextStyle textStyleRedLitle;
+  TextStyle textStyleLitle;
 
   Usuario user;
   Caso casoSeleccionado;
@@ -65,6 +84,9 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
 
   Map<int,bool> mapcasoSelect = {};
   List<Caso> listaCasos;
+
+  AudioPlayer audioPlayer = new AudioPlayer();
+  Duration _durationPause = Duration(seconds: 0);
 
   @override
   void initState() {
@@ -75,6 +97,24 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
     audioPath = widget.pathAudio;
     isAudio = audioPath.isNotEmpty;
     listaCasos = widget.listaCasos;
+
+    mostrarMinutosEspera =  0;
+    segundoEspera =  0;
+    minutos =  '00';
+    segundos =  '00';
+
+    mostrarMinutosEsperaOld = widget.mapMinSeg['mostrarMinutosEspera'] ?? 0;
+    segundoEsperaOld = widget.mapMinSeg['segundoEspera'] ?? 0;
+    minutosold = widget.mapMinSeg['minutos'] ?? '00';
+    segundosold = widget.mapMinSeg['segundos'] ?? '00';
+
+    listenerAudio();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    audioPlayer?.dispose();
   }
 
   @override
@@ -86,6 +126,9 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
     textStylePrimary = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022, color: WalkieTaskColors.black, spacing: 1);
     textStylePrimaryBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.022, color: WalkieTaskColors.black, spacing: 0.5);
     textStyleBlueLitle = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.016, color: WalkieTaskColors.primary, spacing: 0.5, fontWeight: FontWeight.bold);
+    textStyleGreenLitle = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.016, color: WalkieTaskColors.color_89BD7D, spacing: 0.5, fontWeight: FontWeight.bold);
+    textStyleRedLitle = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.016, color: WalkieTaskColors.color_E07676, spacing: 0.5, fontWeight: FontWeight.bold);
+    textStyleLitle = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.016, color: WalkieTaskColors.black, spacing: 0.5, fontWeight: FontWeight.bold);
 
     return GestureDetector(
       onTap: () {
@@ -600,30 +643,157 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
+          Expanded(
+            child: isAudio ? _playSonund() : Container(height: 20,),
+          ),
           InkWell(
             onTap: () => _sendTask(),
             child: Container(
-              width: alto * 0.1,
+              width: ancho * 0.2,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Container(
-                    height: alto * 0.03,
-                    width: alto * 0.04,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: ViewImage().assetsImage("assets/image/SendTask.png", color: WalkieTaskColors.primary).image,
-                        fit: BoxFit.fitHeight,
-                      ),
-                    ),
-                  ),
+                  mostrarImage('SendTask'),
                   Text('Enviar', style: textStyleBlueLitle,)
                 ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _playSonund(){
+    return Container(
+      child: Row(
+        children: [
+          InkWell(
+            onTap: () async {
+              if(!reproduciendo){
+                print('botonPlay : $audioPath');
+                audioPlayer.play(audioPath,isLocal: true,position: _durationPause);
+              }else{
+                await audioPlayer.pause();
+              }
+              setState(() {
+                reproduciendo = !reproduciendo;
+              });
+            },
+            child: Container(
+              margin: EdgeInsets.only(left: ancho * 0.03),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  pause ? mostrarImage('Pausa') : mostrarImage('playOpa'),
+                  pause ?Text('Pausa',style: textStyleLitle,) : Text('Reproducir',style: textStyleGreenLitle,),
+                ],
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () => Navigator.of(context).pop(),
+            child: Container(
+              margin: EdgeInsets.only(left: ancho * 0.05),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  mostrarImage('deleteOpa'),
+                  Text('Eliminar',style: textStyleRedLitle,)
+                ],
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: ancho * 0.05),
+            child: reproduciendo ?
+            Text('$minutos:$segundos', style: textStylePrimary,) :
+                pausado ? Text('$minutos:$segundos', style: textStylePrimary,) :
+                          Text('$minutosold:$segundosold', style: textStylePrimary,),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> listenerAudio() async {
+    audioPlayer.onAudioPositionChanged.listen((Duration  p){
+      print('Current position: $p');
+      _durationPause = p;
+    });
+    AudioPlayerState oldState = AudioPlayerState.COMPLETED;
+    audioPlayer.onPlayerStateChanged.listen((AudioPlayerState s){
+      print('Current player state: $s');
+      if(AudioPlayerState.COMPLETED == s){
+        setState(() {
+          pause = false;
+          reproduciendo = false;
+          pausado = false;
+          _durationPause = Duration(seconds: 0);
+        });
+      }
+      if(AudioPlayerState.PAUSED == s){
+        pause = false;
+        pausado = true;
+        setState(() {});
+      }
+      if(AudioPlayerState.PLAYING == s){
+        if(oldState == AudioPlayerState.COMPLETED){
+          _resetSoundPause();
+        }
+        pause = true;
+        pausado = false;
+        setState(() {});
+        _contMinutePause();
+      }
+      oldState = s;
+
+      if(AudioPlayerState.STOPPED == s){
+        oldState = AudioPlayerState.COMPLETED;
+      }
+    });
+  }
+
+  Future<void> _contMinutePause() async {
+    if(reproduciendo){
+      segundoEspera++;
+      if(segundoEspera > 59){
+        mostrarMinutosEspera++;
+      }
+
+      minutos = mostrarMinutosEspera.toString();
+      segundos = segundoEspera.toString();
+
+      if(mostrarMinutosEspera < 10){
+        minutos = '0$minutos';
+      }
+      if(segundoEspera < 10){
+        segundos = '0$segundos';
+      }
+      setState((){});
+      await Future.delayed(Duration(seconds: 1));
+      _contMinutePause();
+    }
+  }
+
+  void _resetSoundPause(){
+    minutos = '00';
+    segundos = '00';
+    mostrarMinutosEspera = 0;
+    segundoEspera = 0;
+    setState(() {});
+  }
+
+  Widget mostrarImage(String name){
+    return Container(
+      height: alto * 0.05,
+      width: alto * 0.05,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: ViewImage().assetsImage("assets/image/$name.png",).image,
+          fit: BoxFit.fitHeight,
+        ),
       ),
     );
   }
