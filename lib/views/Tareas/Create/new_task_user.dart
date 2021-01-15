@@ -154,48 +154,50 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
   }
 
   Widget _taskSendOut(Image avatarUser){
-    return Container(
-      width: ancho,
-      padding: EdgeInsets.only(left: 10.0, right: 10.0),
-      child: Column(
-        children: [
-          SizedBox(height: alto * 0.1,),
-          Container(
-            child: Text('Enviarás una tarea a ${user.name}', style: textStylePrimary,),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: alto * 0.01),
-            child: Stack(
-              children: <Widget>[
-                Center(
-                  child: Container(
-                    decoration: new BoxDecoration(
-                      color: bordeCirculeAvatar, // border color
-                      shape: BoxShape.circle,
-                    ),
-                    child: CircleAvatar(
-                      radius: alto * 0.08,
-                      backgroundImage: avatarUser.image,
-                      //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
+    return SingleChildScrollView(
+      child: Container(
+        width: ancho,
+        padding: EdgeInsets.only(left: 10.0, right: 10.0),
+        child: Column(
+          children: [
+            SizedBox(height: alto * 0.1,),
+            Container(
+              child: Text('Enviarás una tarea a ${user.name}', style: textStylePrimary,),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: alto * 0.01),
+              child: Stack(
+                children: <Widget>[
+                  Center(
+                    child: Container(
+                      decoration: new BoxDecoration(
+                        color: bordeCirculeAvatar, // border color
+                        shape: BoxShape.circle,
+                      ),
+                      child: CircleAvatar(
+                        radius: alto * 0.08,
+                        backgroundImage: avatarUser.image,
+                        //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: alto * 0.02,right: ancho * 0.05,bottom: alto * 0.01),
-            width: ancho * 0.85,
-            child: Text('Titulo (opcional)',textAlign: TextAlign.left,
-                style: textStylePrimary),
-          ),
-          _tituloTarea(),
-          Container(
-            margin: EdgeInsets.only(left: ancho * 0.05,right: ancho * 0.05),
-            width: ancho,
-            child: _opcAvanz(),
-          ),
-        ],
+            Container(
+              margin: EdgeInsets.only(top: alto * 0.02,right: ancho * 0.05,bottom: alto * 0.01),
+              width: ancho * 0.85,
+              child: Text('Titulo (opcional)',textAlign: TextAlign.left,
+                  style: textStylePrimary),
+            ),
+            _tituloTarea(),
+            Container(
+              margin: EdgeInsets.only(left: ancho * 0.05,right: ancho * 0.05),
+              width: ancho,
+              child: _opcAvanz(),
+            ),
+          ],
+        ),
       ),
     );
   }

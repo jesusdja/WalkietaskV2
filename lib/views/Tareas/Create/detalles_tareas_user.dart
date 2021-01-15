@@ -11,10 +11,12 @@ import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/task_sound.dart';
+import 'package:walkietaskv2/utils/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Chat/ChatForTarea.dart';
 import 'package:walkietaskv2/views/Tareas/Create/detalles_tareas_user_bottom.dart';
+import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
 
 class DetailsTasksForUser extends StatefulWidget {
 
@@ -611,13 +613,18 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
   void clickTarea(Tarea tarea) async {
 
     try{
-      // if(tarea.name.isEmpty){
-      //   var result  = await Navigator.push(context, new MaterialPageRoute(
-      //       builder: (BuildContext context) => new AddNameTask(tareaRes: tarea,)));
-      //   // if(result){
-      //   //   blocTaskReceived.inList.add(true);
-      //   // }
-      // }else{
+      if(tarea.name.isEmpty){
+        var result  = await Navigator.push(context, new MaterialPageRoute(
+            builder: (BuildContext context) => new AddNameTask(tareaRes: tarea,)));
+        if(result){
+          try{
+            widget.updateData.actualizarListaEnviados(widget.blocTaskSend, null);
+            widget.updateData.actualizarListaRecibidos(widget.blocTaskReceived, null);
+          }catch(e){
+            print(e.toString());
+          }
+        }
+      }else{
         Navigator.push(context, new MaterialPageRoute(
             builder: (BuildContext context) =>
             new ChatForTarea(
@@ -625,7 +632,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
               listaCasosRes: widget.listaCasos,
               blocTaskSend: widget.blocTaskReceived,
             )));
-      // }
+      }
     }catch(e){
       print(e.toString());
     }
