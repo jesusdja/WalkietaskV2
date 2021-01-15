@@ -148,7 +148,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            Container(
+            isPersonal ? Container() : Container(
               width: ancho,
               height: alto * 0.06,
               //color: Colors.orange,
@@ -157,13 +157,13 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                 child: Text('Tareas recibidas', style: textStylePrimaryBold,),
               ),
             ),
-            Container(
+            isPersonal ? Container() : Container(
               width: ancho,
               height: h,
               //color: Colors.red,
               child: _listTaskRecived(h),
             ),
-            Container(
+            isPersonal ? Container() : Container(
               width: ancho,
               height: alto * 0.06,
               //color: Colors.blue,
@@ -172,12 +172,27 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                 child: Text('Tareas enviadas', style: textStylePrimaryBold,),
               ),
             ),
-            Container(
+            isPersonal ? Container() : Container(
               width: ancho,
               height: h,
               //color: Colors.grey,
               child: _listTaskSend(h),
             ),
+            isPersonal ? Container(
+              width: ancho,
+              height: alto * 0.06,
+              //color: Colors.blue,
+              child: Container(
+                margin: EdgeInsets.only(top: alto * 0.02, left: ancho * 0.03),
+                child: Text('Mis Recordatorios', style: textStylePrimaryBold,),
+              ),
+            ) : Container(),
+            isPersonal ? Container(
+              width: ancho,
+              height: h * 2.1,
+              //color: Colors.grey,
+              child: _listTaskPersonal(h),
+            ) : Container(),
           ],
         ),
       ),
@@ -358,6 +373,93 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
     );
   }
 
+  Widget _listTaskPersonal(double he){
+    List<Widget> data = [];
+    listRecived.forEach((task) {
+
+      String daysLeft = getDayDiff(task.deadline);
+
+      String nameCase = '(Sin proyecto asignado)';
+      if(task.project_id != null && task.project_id != 0 && mapCasos[task.project_id] != null){
+        nameCase = mapCasos[task.project_id].name;
+      }
+
+      data.add(
+          InkWell(
+            onTap: () => clickTarea(task),
+            child: Container(
+              padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
+              width: ancho,
+              child: Row(
+                children: [
+                  Container(
+                    width: ancho * 0.06,
+                    child: daysLeft.contains('-') ? Container(
+                      padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                      height: alto * 0.02,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ) : Container(),
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue :textStylePrimary),
+                        Text(nameCase, style: textStylePrimaryLitle,)
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: ancho * 0.2,
+                    margin: EdgeInsets.only(right: ancho * 0.02),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
+                        task.url_audio.isNotEmpty ?
+                        SoundTask(
+                          alto: alto * 0.03,
+                          colorStop: WalkieTaskColors.color_E07676,
+                          path: task.url_audio,
+                        ) : Container(),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+      );
+      data.add(Divider());
+    });
+
+
+    return Container(
+      width: ancho,
+      child: listRecived.isEmpty ?
+      Container(
+        margin: EdgeInsets.only(top: alto * 0.02),
+        width: ancho,
+        child: Text('Sin recordatorio personal', style: textStylePrimary, textAlign: TextAlign.center,),
+      ) :
+      Container(
+        width: ancho,
+        height: he * 2.1,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: data,
+          ),
+        ),
+      ),
+    );
+  }
+
   AppBar _appBar(){
 
     Image avatarUser = Image.network(avatarImage);
@@ -392,7 +494,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                 ],
               ),
             ),
-            Text(isPersonal ? 'Recordatorio Personal' : user.name, style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.025, color: WalkieTaskColors.black, spacing: 0.5, ),)
+            Text(isPersonal ? 'Recordatorio personal' : user.name, style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.025, color: WalkieTaskColors.black, spacing: 0.5, ),)
           ],
         ),
       ),
@@ -551,9 +653,76 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
   }
 
   _updateTask() async {
-    listSend = await TaskDatabaseProvider.db.getAllSend();
-    listRecived = await TaskDatabaseProvider.db.getAllRecevid();
+    List<Tarea> newListSend = await TaskDatabaseProvider.db.getAllSend();
+    List<Tarea> newListRecived = await TaskDatabaseProvider.db.getAllRecevid();
+    Map<int,List> mapList = _dataToMapDataUserHome(newListRecived, newListSend);
+    if(mapList[user.id] != null && mapList[user.id][1] != null){
+      List<Tarea> new1 = [];
+      mapList[user.id][1].forEach((element) { new1.add(element);});
+      listRecived = new1;
+    }
+    if(mapList[user.id] != null && mapList[user.id][2] != null){
+      List<Tarea> new2 = [];
+      mapList[user.id][2].forEach((element) { new2.add(element);});
+      listSend = new2;
+    }
     setState(() {});
+  }
+
+  Map<int,List> _dataToMapDataUserHome(List<Tarea> listRecibidos,List<Tarea> listEnviados, ){
+    Map<int,List> data = {};
+    try{
+      listRecibidos.forEach((task) {
+        if(data[task.user_id] == null){
+          data[task.user_id] = ['',[],[]];
+        }
+        data[task.user_id][1].add(task);
+        if(data[task.user_id][0] == ''){
+          data[task.user_id][0] = task.deadline;
+        }else{
+          if(task.deadline.isEmpty || data[task.user_id][0].isEmpty){
+            if(data[task.user_id][0].isEmpty){ data[task.user_id][0] = task.deadline.isEmpty; }
+          }else{
+            DateTime dateCreate = DateTime.parse(task.deadline);
+            Duration difDays = dateCreate.difference(DateTime.now());
+
+            DateTime dateCreate2 = DateTime.parse(data[task.user_id][0]);
+            Duration difDays2 = dateCreate2.difference(DateTime.now());
+
+            if(difDays < difDays2){
+              data[task.user_id][0] = dateCreate2.toString();
+            }
+          }
+        }
+      });
+
+      listEnviados.forEach((task) {
+        if(data[task.user_responsability_id] == null){
+          data[task.user_responsability_id] = ['',[],[]];
+        }
+        data[task.user_responsability_id][2].add(task);
+        if(data[task.user_responsability_id][0] == ''){
+          data[task.user_responsability_id][0] = task.deadline;
+        }else{
+          if(task.deadline.isEmpty || data[task.user_responsability_id][0].isEmpty){
+            if(data[task.user_responsability_id][0].isEmpty){ data[task.user_responsability_id][0] = task.deadline.isEmpty; }
+          }else{
+            DateTime dateCreate = DateTime.parse(task.deadline);
+            Duration difDays = dateCreate.difference(DateTime.now());
+
+            DateTime dateCreate2 = DateTime.parse(data[task.user_responsability_id][0]);
+            Duration difDays2 = dateCreate2.difference(DateTime.now());
+
+            if(difDays < difDays2){
+              data[task.user_responsability_id][0] = dateCreate2.toString();
+            }
+          }
+        }
+      });
+    }catch(e){
+      print('ERROR AL ORDENAR DATA DE HOME');
+    }
+    return data;
   }
 
   Widget _indicatorProgress(){
