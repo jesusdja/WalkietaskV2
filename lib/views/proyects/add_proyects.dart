@@ -297,7 +297,7 @@ class _AddProyectsState extends State<AddProyects> {
     });
 
     if(controlleNewName.text.isNotEmpty || widget.proyect != null){
-      if(members.isNotEmpty){
+      //if(members.isNotEmpty){
         Map jsonBody = {};
         if(widget.proyect == null){
           jsonBody['name'] = controlleNewName.text;
@@ -341,9 +341,9 @@ class _AddProyectsState extends State<AddProyects> {
           print(e.toString());
           showAlert('Error de conexión',WalkieTaskColors.color_E07676);
         }
-      }else{
-        showAlert('Debe seleccionar al menos un contacto.',WalkieTaskColors.color_E07676);
-      }
+      // }else{
+      //   showAlert('Debe seleccionar al menos un contacto.',WalkieTaskColors.color_E07676);
+      // }
     }else{
       showAlert('Se debe agregar un nombre de proyecto.',WalkieTaskColors.color_E07676);
     }
