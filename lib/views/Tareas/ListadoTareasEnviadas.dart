@@ -355,7 +355,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                   favorite ? Align(
                     alignment: Alignment.bottomRight,
                     child: Container(
-                      margin: EdgeInsets.only(right: ancho * 0.02),
+                      margin: EdgeInsets.only(right: ancho * 0.02, top: alto * 0.04),
                       child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
                     ),
                   ) : Container(),
