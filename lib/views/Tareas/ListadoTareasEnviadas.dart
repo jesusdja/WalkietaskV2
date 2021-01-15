@@ -263,7 +263,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
               actionExtentRatio: 0.25,
               child: _tareas(tarea, tarea.is_priority != 0),
               actions: <Widget>[
-                _buttonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: 30,),Colors.yellow[600],WalkieTaskColors.white,1,tarea),
+                _buttonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.04,),Colors.yellow[600],WalkieTaskColors.white,1,tarea),
                 //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
               ],
               secondaryActions: <Widget>[

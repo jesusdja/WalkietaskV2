@@ -1,15 +1,18 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
+import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/task_sound.dart';
 import 'package:walkietaskv2/utils/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
@@ -72,6 +75,8 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
   StreamSubscription streamSubscriptionTaskSend;
   StreamSubscription streamSubscriptionTaskRecived;
   StreamSubscription streamSubscriptionProgress;
+
+  conexionHttp conexionHispanos = new conexionHttp();
 
   @override
   void initState() {
@@ -216,48 +221,75 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
           InkWell(
             onTap: () => clickTarea(task),
             child: Container(
-              padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
-              width: ancho,
-              child: Row(
-                children: [
-                  Container(
-                    width: ancho * 0.06,
-                    child: daysLeft.contains('-') ? Container(
-                      padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-                      height: alto * 0.02,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
-                          fit: BoxFit.contain,
+              key: ValueKey("value${task.id}"),
+              color: Colors.white,
+              child: Slidable(
+                actionPane: SlidableDrawerActionPane(),
+                actionExtentRatio: 0.25,
+                child: Container(
+                  padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
+                  width: ancho,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: ancho * 0.06,
+                        child: Column(
+                          children: [
+                            daysLeft.contains('-') ?
+                            Container(
+                              padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                              height: alto * 0.02,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ) : Container(),
+                            task.is_priority == 1 ?
+                            Container(
+                              margin: EdgeInsets.only(right: ancho * 0.02),
+                              child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
+                            ) : Container(),
+
+                          ],
                         ),
                       ),
-                    ) : Container(),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue :textStylePrimary),
+                            Text(nameCase, style: textStylePrimaryLitle,)
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: ancho * 0.2,
+                        margin: EdgeInsets.only(right: ancho * 0.02),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
+                            task.url_audio.isNotEmpty ?
+                            SoundTask(
+                              alto: alto * 0.03,
+                              colorStop: WalkieTaskColors.color_E07676,
+                              path: task.url_audio,
+                            ) : Container(),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue :textStylePrimary),
-                        Text(nameCase, style: textStylePrimaryLitle,)
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: ancho * 0.2,
-                    margin: EdgeInsets.only(right: ancho * 0.02),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
-                        task.url_audio.isNotEmpty ?
-                        SoundTask(
-                          alto: alto * 0.03,
-                          colorStop: WalkieTaskColors.color_E07676,
-                          path: task.url_audio,
-                        ) : Container(),
-                      ],
-                    ),
-                  ),
+                ),
+                actions: <Widget>[
+                  _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.04,),Colors.yellow[600],WalkieTaskColors.white,1,task),
+                  //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
+                ],
+                secondaryActions: <Widget>[
+                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
+                  _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderListo,WalkieTaskColors.white,4,task),
                 ],
               ),
             ),
@@ -303,48 +335,75 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
           InkWell(
             onTap: () => clickTarea(task),
             child: Container(
-              padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
-              width: ancho,
-              child: Row(
-                children: [
-                  Container(
-                    width: ancho * 0.06,
-                    child: daysLeft.contains('-') ? Container(
-                      padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-                      height: alto * 0.02,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
-                          fit: BoxFit.contain,
+              key: ValueKey("value${task.id}"),
+              color: Colors.white,
+              child: Slidable(
+                actionPane: SlidableDrawerActionPane(),
+                actionExtentRatio: 0.25,
+                child: Container(
+                  padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
+                  width: ancho,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: ancho * 0.06,
+                        child: Column(
+                          children: [
+                            daysLeft.contains('-') ?
+                            Container(
+                              padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                              height: alto * 0.02,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ) : Container(),
+                            task.is_priority == 1 ?
+                            Container(
+                              margin: EdgeInsets.only(right: ancho * 0.02),
+                              child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
+                            ) : Container(),
+
+                          ],
                         ),
                       ),
-                    ) : Container(),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue :textStylePrimary),
+                            Text(nameCase, style: textStylePrimaryLitle,)
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: ancho * 0.2,
+                        margin: EdgeInsets.only(right: ancho * 0.02),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
+                            task.url_audio.isNotEmpty ?
+                            SoundTask(
+                              alto: alto * 0.03,
+                              colorStop: WalkieTaskColors.color_E07676,
+                              path: task.url_audio,
+                            ) : Container(),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue :textStylePrimary),
-                        Text(nameCase, style: textStylePrimaryLitle,)
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: ancho * 0.2,
-                    margin: EdgeInsets.only(right: ancho * 0.02),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
-                        task.url_audio.isNotEmpty ?
-                        SoundTask(
-                          alto: alto * 0.03,
-                          colorStop: WalkieTaskColors.color_E07676,
-                          path: task.url_audio,
-                        ) : Container(),
-                      ],
-                    ),
-                  ),
+                ),
+                actions: <Widget>[
+                  _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.04,),Colors.yellow[600],WalkieTaskColors.white,1,task),
+                  //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
+                ],
+                secondaryActions: <Widget>[
+                  //_buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
+                  //_buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderListo,WalkieTaskColors.white,4,task),
                 ],
               ),
             ),
@@ -390,52 +449,79 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
           InkWell(
             onTap: () => clickTarea(task),
             child: Container(
-              padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
-              width: ancho,
-              child: Row(
-                children: [
-                  Container(
-                    width: ancho * 0.06,
-                    child: daysLeft.contains('-') ? Container(
-                      padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-                      height: alto * 0.02,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
-                          fit: BoxFit.contain,
+              key: ValueKey("value${task.id}"),
+              color: Colors.white,
+              child: Slidable(
+                actionPane: SlidableDrawerActionPane(),
+                actionExtentRatio: 0.25,
+                child: Container(
+                  padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
+                  width: ancho,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: ancho * 0.06,
+                        child: Column(
+                          children: [
+                            daysLeft.contains('-') ?
+                            Container(
+                              padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                              height: alto * 0.02,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ) : Container(),
+                            task.is_priority == 1 ?
+                            Container(
+                              margin: EdgeInsets.only(right: ancho * 0.02),
+                              child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
+                            ) : Container(),
+
+                          ],
                         ),
                       ),
-                    ) : Container(),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue :textStylePrimary),
+                            Text(nameCase, style: textStylePrimaryLitle,)
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: ancho * 0.2,
+                        margin: EdgeInsets.only(right: ancho * 0.02),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
+                            task.url_audio.isNotEmpty ?
+                            SoundTask(
+                              alto: alto * 0.03,
+                              colorStop: WalkieTaskColors.color_E07676,
+                              path: task.url_audio,
+                            ) : Container(),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue :textStylePrimary),
-                        Text(nameCase, style: textStylePrimaryLitle,)
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: ancho * 0.2,
-                    margin: EdgeInsets.only(right: ancho * 0.02),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
-                        task.url_audio.isNotEmpty ?
-                        SoundTask(
-                          alto: alto * 0.03,
-                          colorStop: WalkieTaskColors.color_E07676,
-                          path: task.url_audio,
-                        ) : Container(),
-                      ],
-                    ),
-                  ),
+                ),
+                actions: <Widget>[
+                  _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.04,),Colors.yellow[600],WalkieTaskColors.white,1,task),
+                  //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
+                ],
+                secondaryActions: <Widget>[
+                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
+                  _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderListo,WalkieTaskColors.white,4,task),
                 ],
               ),
             ),
-          )
+          ),
       );
       data.add(Divider());
     });
@@ -792,5 +878,67 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
         setState(() {});
       });
     } catch (e) {}
+  }
+
+  Widget _buttonSliderAction(String titulo,Icon icono,Color color,Color colorText,int accion,Tarea tarea){
+    return IconSlideAction(
+      color: color,
+      iconWidget: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          icono,
+          Text('$titulo',style: estiloLetras(alto * 0.013, Colors.white,fontFamily: 'helveticaneue2'),),
+        ],
+      ),
+      onTap: () async {
+        if(accion == 1){
+          //CAMBIAR ESTADO DE DESTACAR 0 = FALSE, 1 = TRUE
+          if(tarea.is_priority == 0){tarea.is_priority = 1;}else{tarea.is_priority = 0;}
+          //GUARDAR LOCALMENTE
+          if(await TaskDatabaseProvider.db.updateTask(tarea) == 1){
+            //AVISAR A PATRONBLOC DE TAREAS ENVIADAS PARA QUE SE ACTUALICE
+            widget.blocTaskReceived.inList.add(true);
+            //ENVIAR A API
+            try{
+              await conexionHispanos.httpSendFavorite(tarea);
+            }catch(e){}
+          }
+        }
+        if(accion == 3){
+          try{
+            if(tarea.working == 0){
+              showAlert('Tarea iniciada',WalkieTaskColors.color_89BD7D);
+              tarea.working = 1;
+              if(await TaskDatabaseProvider.db.updateTask(tarea) == 1){
+                widget.blocTaskReceived.inList.add(true);
+                await conexionHispanos.httpTaskInit(tarea.id);
+              }
+            }else{
+              showAlert('Tarea ya se encuentra iniciada',WalkieTaskColors.color_89BD7D);
+            }
+          }catch(e){
+            print(e.toString());
+          }
+        }
+        if(accion == 4){
+          if(tarea.working == 1 || tarea.working == 0){
+            showAlert('Tarea finalizada',WalkieTaskColors.color_89BD7D);
+            try{
+              tarea.finalized = 1;
+              if(await TaskDatabaseProvider.db.updateTask(tarea) == 1){
+                widget.blocTaskReceived.inList.add(true);
+                await conexionHispanos.httpTaskFinalized(tarea.id);
+                widget.updateData.actualizarListaRecibidos(widget.blocTaskReceived, null);
+              }
+            }catch(e){
+              print(e.toString());
+            }
+          }else{
+            showAlert('La tarea debe estar iniciada para finalizarla.',WalkieTaskColors.color_E07676);
+          }
+        }
+      },
+    );
   }
 }
