@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/services/AWS.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
@@ -91,14 +92,20 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
         blocIndicatorProgress.inList.add({'progressIndicator' : 0.9, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
         if(value['status_code'] == 201){
           //ELIMINAR AUDIO
-
+          final file = File(data[2]);
+          var h = file.openRead();
+          bool exist = await file.exists();
+          if(exist){
+            var res = await File(data[2]).delete();
+            print('SE ELIMINO EL AUDIO');
+          }
           //ELIMINAR TAREA DE LISTA
           List<String> listDocumentsNoSend = [];
           for(int x1 = 0; x1 < listDocuments.length; x1++){
             if(x != x1){ listDocumentsNoSend.add(listDocuments[x]); }
           }
           await SharedPrefe().setStringListValue('WalListDocument',listDocumentsNoSend);
-          //await Future.delayed(Duration(seconds: 1));
+          await Future.delayed(Duration(seconds: 1));
           blocIndicatorProgress.inList.add({'progressIndicator' : 1, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
           print('CREADO - ${data[1]}');
         }else{
