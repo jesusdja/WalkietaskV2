@@ -501,7 +501,10 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                     ),
                   ),
                   onTap: (){
-                    openForUserTask[user.id] = !openForUserTask[user.id];
+                    Map<int,bool> mapAux = openForUserTask;
+                    bool res = openForUserTask[user.id];
+                    mapAux.forEach((key, value) { openForUserTask[key] = false; });
+                    openForUserTask[user.id] = !res;
                     setState(() {});
                   },
                 ),
@@ -697,7 +700,10 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                     ),
                   ),
                   onTap: (){
-                    openForProyectTask[keyOpen] = !openForProyectTask[keyOpen];
+                    Map<int,bool> mapAux = openForProyectTask;
+                    bool res = openForProyectTask[keyOpen];
+                    mapAux.forEach((key, value) { openForProyectTask[key] = false; });
+                    openForProyectTask[keyOpen] = !res;
                     setState(() {});
                   },
                 ),
