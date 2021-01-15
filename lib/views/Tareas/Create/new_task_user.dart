@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
@@ -84,9 +86,13 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
 
   Map<int,bool> mapcasoSelect = {};
   List<Caso> listaCasos;
+  List<int> projectAccepted = [];
 
   AudioPlayer audioPlayer = new AudioPlayer();
   Duration _durationPause = Duration(seconds: 0);
+
+  conexionHttp connectionHttp = new conexionHttp();
+
 
   @override
   void initState() {
@@ -109,6 +115,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
     segundosold = widget.mapMinSeg['segundos'] ?? '00';
 
     listenerAudio();
+    _getGuests();
   }
 
   @override
@@ -503,6 +510,10 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
                   return Container();
                 }
 
+                bool isAccepted = false;
+                projectAccepted.forEach((element) { if(element == caso.id){ isAccepted = true;}});
+                if(!isAccepted){ return Container();}
+
                 bool userSelect = false;
                 if(mapcasoSelect[caso.id] != null && mapcasoSelect[caso.id]){
                   userSelect = true;
@@ -867,6 +878,39 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
       showAlert('Error al enviar datos.',WalkieTaskColors.color_E07676);
     }
     enviandoTarea = false;
+    setState(() {});
+  }
+
+  Future<void> _getGuests() async {
+    // setState(() {
+    //   loadGuests = true;
+    // });
+    try{
+      var response = await connectionHttp.httpGetListGuestsForProjects();
+      var value = jsonDecode(response.body);
+      if(value['status_code'] == 200){
+        if(value['projects'] != null){
+          List listHttp = value['projects'];
+          listHttp.forEach((element) {
+            try{
+              bool exist = false;
+              element['userprojects'].forEach((userlist) {
+                if(userlist['user_id'] == user.id){
+                  exist = true;
+                }
+              });
+              if(exist){
+                projectAccepted.add(element['id']);
+              }
+            }catch(e){
+              print(e.toString());
+            }
+          });
+        }
+      }
+    }catch(e){
+      print(e.toString());
+    }
     setState(() {});
   }
 }
