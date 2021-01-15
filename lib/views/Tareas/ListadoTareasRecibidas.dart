@@ -14,6 +14,7 @@ import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/switch_button.dart';
+import 'package:walkietaskv2/utils/task_sound.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
 
@@ -405,15 +406,12 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                           child: Text('$chatCont',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
                         ),
                       ) : Container(),
-                      InkWell(
-                        child: tarea.url_audio != '' ? Icon(Icons.volume_up,color: reproTask ? WalkieTaskColors.color_89BD7D : Colors.grey[600],size: alto * 0.03,) : Container(),
-                        onTap: (){
-                          audioPlayer.play(tarea.url_audio);
-                          setState(() {
-                            taskReproduciendo = tarea.id;
-                          });
-                        },
-                      ),
+                      tarea.url_audio.isNotEmpty ?
+                      SoundTask(
+                        alto: alto * 0.03,
+                        colorStop: WalkieTaskColors.color_E07676,
+                        path: tarea.url_audio,
+                      ) : Container(),
                     ],
                   )
                 ],

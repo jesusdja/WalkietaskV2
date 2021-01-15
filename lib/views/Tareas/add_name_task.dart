@@ -200,10 +200,16 @@ class _AddNameTaskState extends State<AddNameTask> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
           InkWell(
-            child: imagen,
+            child:
+            // cargarAudio ?
+            // Container(
+            //   margin: EdgeInsets.only(right: ancho * 0.03),
+            //   child: Center(child: CircularProgressIndicator(),),
+            // ) :
+            imagen,
             onTap: () async {
               if(!reproduciendo){
-                audioPlayer.play(widget.tareaRes.url_audio);
+                audioPlayer.play(widget.tareaRes.url_audio,isLocal: false,respectSilence: false,volume: 1.0);
               }else{
                 await audioPlayer.pause();
               }

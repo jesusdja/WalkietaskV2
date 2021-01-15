@@ -75,7 +75,7 @@ class _SoundTaskState extends State<SoundTask> {
         }
       },
       child: Container(
-        width: ancho * 0.15,
+        width: ancho * 0.1,
         child: Icon(
           sonando ? Icons.stop : Icons.volume_up,
           color: sonando ? widget.colorStop : widget.colorPlay,
