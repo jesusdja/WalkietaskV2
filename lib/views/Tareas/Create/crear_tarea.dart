@@ -93,8 +93,8 @@ class _CreateTaskState extends State<CreateTask> {
     textStylePrimary = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.black, spacing: 1);
     textStylePrimaryLitle = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.015, color: WalkieTaskColors.black, spacing: 1);
     textStylePrimaryLitleRed = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.015, color: WalkieTaskColors.color_DD7777, spacing: 1, fontWeight: FontWeight.bold);
-    textStylePrimaryLitleBold = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.015, color: WalkieTaskColors.black, spacing: 1, fontWeight: FontWeight.bold);
-    textStylePrimaryBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.black);
+    textStylePrimaryLitleBold = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.015, color: WalkieTaskColors.black, spacing: 1,);
+    textStylePrimaryBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.black, fontWeight: FontWeight.bold);
     textStylePrimaryTitleBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.028, color: WalkieTaskColors.black);
 
     listEnviados = widget.listEnviadosRes;
@@ -201,7 +201,7 @@ class _CreateTaskState extends State<CreateTask> {
               ),
             ),
             Container(
-              width: ancho * 0.3,
+              width: ancho * 0.25,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [

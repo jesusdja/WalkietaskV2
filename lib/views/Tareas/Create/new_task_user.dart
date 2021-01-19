@@ -93,7 +93,6 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
 
   conexionHttp connectionHttp = new conexionHttp();
 
-
   @override
   void initState() {
     super.initState();
@@ -389,6 +388,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
     return Container(
       height: alto * 0.04,
       child: TextFildGeneric(
+        autofocus: true,
         initialValue: titleTask,
         onChanged: (text) {
           setState(() {

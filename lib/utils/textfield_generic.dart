@@ -31,6 +31,7 @@ class TextFildGeneric extends StatelessWidget {
   final TextCapitalization textCapitalization;
   final String hintText;
   final Color colorBack;
+  final bool autofocus;
 
   TextFildGeneric({
     this.initialValue = '',
@@ -62,6 +63,7 @@ class TextFildGeneric extends StatelessWidget {
     this.textCapitalization = TextCapitalization.sentences,
     this.hintText = '',
     this.colorBack = Colors.white,
+    this.autofocus = false,
   });
 
   @override
@@ -96,6 +98,7 @@ class TextFildGeneric extends StatelessWidget {
         keyboardType: textInputType,
         focusNode: focusNode,
         textCapitalization: textCapitalization,
+        autofocus: autofocus,
         decoration: InputDecoration(
           filled: true,
           fillColor: colorBack,
