@@ -333,91 +333,91 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     return InkWell(
       onTap: () =>clickTarea(tarea),
       child: Container(
-        child: Row(
-          children: <Widget>[
-            Container(
-              width: ancho * 0.2,
-              child: Stack(
-                children: <Widget>[
-                  working ? Align(
-                    alignment: Alignment.centerLeft,
-                    child: Container(
-                      width: ancho * 0.015,
-                      height: alto * 0.06,
-                      color: WalkieTaskColors.color_89BD7D,
-                    ),
-                  ) : Container(),
-                  Center(
-                    child: Container(
-                      padding: const EdgeInsets.all(3.0), // borde width
-                      decoration: new BoxDecoration(
-                        color: bordeCirculeAvatar, // border color
-                        shape: BoxShape.circle,
-                      ),
-                      child: CircleAvatar(
-                        radius: alto * 0.03,
-                        backgroundImage: avatarUser.image,
-                        //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
-                      ),
-                    ),
-                  ),
-                  favorite ? Align(
-                    alignment: Alignment.bottomRight,
-                    child: Container(
-                      margin: EdgeInsets.only(right: ancho * 0.02, top: alto * 0.04),
-                      child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
-                    ),
-                  ) : Container(),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              working ? Container(
+                width: ancho * 0.015,
+                color: WalkieTaskColors.color_89BD7D,
+              ) : Container(width: ancho * 0.015,),
+              Container(
+                width: ancho * 0.18,
+                child: Stack(
                   children: <Widget>[
-                    Text('$nameUser', style: favorite ? textStylePrimaryBold : textStylePrimary),
-                    Text(tarea.name.isNotEmpty ? tarea.name : 'Tarea sin título. Tap para nombrarla',
-                      style: tarea.name.isNotEmpty ? (favorite ? textStylePrimaryBold : textStylePrimary) : textStyleNotTitle,),
-                    Text(proyectName,style: textStyleProject,),
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: Container(
+                        padding: const EdgeInsets.all(3.0), // borde width
+                        decoration: new BoxDecoration(
+                          color: bordeCirculeAvatar, // border color
+                          shape: BoxShape.circle,
+                        ),
+                        child: CircleAvatar(
+                          radius: alto * 0.03,
+                          backgroundImage: avatarUser.image,
+                          //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
+                        ),
+                      ),
+                    ),
+                    favorite ? Align(
+                      alignment: Alignment.topRight,
+                      child: Container(
+                        margin: EdgeInsets.only(right: ancho * 0.02, top: alto * 0.04),
+                        child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
+                      ),
+                    ) : Container(),
                   ],
                 ),
               ),
-            ),
-            Container(
-              margin: EdgeInsets.only(right: ancho * 0.03),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(daysLeft,style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: daysLeft.contains('-') ? WalkieTaskColors.color_E07676 : Colors.grey[600]),),
-                  SizedBox(height: alto * 0.006,),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.end,
+              Expanded(
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      chatCont != 0 ? Container(
-                        margin: EdgeInsets.only(right: ancho * 0.002),
-                        child: CircleAvatar(
-                          backgroundColor: WalkieTaskColors.primary,
-                          // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
-                          radius: alto * radiusChat,
-                          child: Text('$chatCont',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
-                        ),
-                      ) : Container(),
-                      tarea.url_audio.isNotEmpty ?
-                      SoundTask(
-                        alto: alto * 0.03,
-                        colorStop: WalkieTaskColors.color_E07676,
-                        path: tarea.url_audio,
-                      ) : Container(),
+                      Text('$nameUser', style: favorite ? textStylePrimaryBold : textStylePrimary),
+                      Text(tarea.name.isNotEmpty ? tarea.name : 'Tarea sin título. Tap para nombrarla',
+                        style: tarea.name.isNotEmpty ? (favorite ? textStylePrimaryBold : textStylePrimary) : textStyleNotTitle,),
+                      Text(proyectName,style: textStyleProject,),
                     ],
-                  )
-                ],
+                  ),
+                ),
               ),
-            ),
-          ],
+              Container(
+                margin: EdgeInsets.only(right: ancho * 0.03),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(daysLeft,style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: daysLeft.contains('-') ? WalkieTaskColors.color_E07676 : Colors.grey[600]),),
+                    SizedBox(height: alto * 0.006,),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        chatCont != 0 ? Container(
+                          margin: EdgeInsets.only(right: ancho * 0.002),
+                          child: CircleAvatar(
+                            backgroundColor: WalkieTaskColors.primary,
+                            // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
+                            radius: alto * radiusChat,
+                            child: Text('$chatCont',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
+                          ),
+                        ) : Container(),
+                        tarea.url_audio.isNotEmpty ?
+                        SoundTask(
+                          alto: alto * 0.03,
+                          colorStop: WalkieTaskColors.color_E07676,
+                          path: tarea.url_audio,
+                        ) : Container(),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
