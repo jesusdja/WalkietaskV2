@@ -196,7 +196,7 @@ class _CreateTaskState extends State<CreateTask> {
               child: Container(
                 margin: EdgeInsets.only(left: ancho * 0.02),
                 width: ancho,
-                child: Text('Yo (recordatorio personal)',
+                child: Text('Yo (Recordatorios personales)',
                   style: textStylePrimaryBold, textAlign: TextAlign.left,),
               ),
             ),
