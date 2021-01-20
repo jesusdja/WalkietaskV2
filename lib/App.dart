@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:walkietaskv2/services/auth.dart';
 import 'package:walkietaskv2/views/Home/NavigatorBotton.dart';
@@ -11,6 +12,15 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App>{
+
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {

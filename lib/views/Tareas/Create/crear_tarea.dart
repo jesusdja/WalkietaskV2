@@ -65,6 +65,7 @@ class _CreateTaskState extends State<CreateTask> {
   TextStyle textStylePrimaryLitleRed;
   TextStyle textStylePrimaryLitleBold;
   TextStyle textStylePrimaryTitleBold;
+  TextStyle textStylePrimaryBoldName;
 
   List<Tarea> listEnviados = [];
   List<Tarea> listRecibidos = [];
@@ -94,8 +95,9 @@ class _CreateTaskState extends State<CreateTask> {
     textStylePrimaryLitle = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.015, color: WalkieTaskColors.black, spacing: 1);
     textStylePrimaryLitleRed = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.015, color: WalkieTaskColors.color_DD7777, spacing: 1, fontWeight: FontWeight.bold);
     textStylePrimaryLitleBold = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.015, color: WalkieTaskColors.black, spacing: 1,);
-    textStylePrimaryBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.black, fontWeight: FontWeight.bold);
+    textStylePrimaryBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.black,);
     textStylePrimaryTitleBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.028, color: WalkieTaskColors.black);
+    textStylePrimaryBoldName = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02,color: WalkieTaskColors.black,fontWeight: FontWeight.bold,spacing: 0.5);
 
     listEnviados = widget.listEnviadosRes;
     listRecibidos = widget.listRecibidos;
@@ -197,11 +199,11 @@ class _CreateTaskState extends State<CreateTask> {
                 margin: EdgeInsets.only(left: ancho * 0.02),
                 width: ancho,
                 child: Text('Yo (Recordatorios personales)',
-                  style: textStylePrimaryBold, textAlign: TextAlign.left,),
+                  style: textStylePrimaryBoldName, textAlign: TextAlign.left,),
               ),
             ),
             Container(
-              width: ancho * 0.25,
+              width: ancho * 0.26,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -339,7 +341,7 @@ class _CreateTaskState extends State<CreateTask> {
                       ],
                     ),
                   ),
-                  Expanded(child: Text(user.name, style: textStylePrimaryBold,)),
+                  Expanded(child: Text(user.name, style: textStylePrimaryBoldName,)),
                   Container(
                     width: ancho * 0.3,
                     child: Column(

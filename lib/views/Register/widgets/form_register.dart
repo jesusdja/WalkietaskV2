@@ -53,7 +53,6 @@ class _FormRegisterState extends State<FormRegister> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _blocUserCheck = BlocUserCheck();
     listenBlocCheck();
