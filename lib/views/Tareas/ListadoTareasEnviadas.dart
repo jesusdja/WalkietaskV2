@@ -307,11 +307,6 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
       }
     }
 
-    bool reproTask = false;
-    if(taskReproduciendo == tarea.id){
-      reproTask = true;
-    }
-
     int chatCont = 0;
     listCheckChat.forEach((element) {
       if(tarea.id.toString() == element){
@@ -324,22 +319,20 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
 
     return InkWell(
       onTap: () =>clickTarea(tarea),
-      child: Container(
+      child: IntrinsicHeight(
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            working ? Container(
+              width: ancho * 0.015,
+              color: WalkieTaskColors.color_89BD7D,
+            ) : Container(width: ancho * 0.015,),
             Container(
-              width: ancho * 0.2,
+              width: ancho * 0.18,
               child: Stack(
                 children: <Widget>[
-                  working ? Align(
-                    alignment: Alignment.centerLeft,
-                    child: Container(
-                      width: ancho * 0.015,
-                      height: alto * 0.06,
-                      color: WalkieTaskColors.color_89BD7D,
-                    ),
-                  ) : Container(),
-                  Center(
+                  Align(
+                    alignment: Alignment.topCenter,
                     child: Container(
                       padding: const EdgeInsets.all(3.0), // borde width
                       decoration: new BoxDecoration(
@@ -354,7 +347,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                     ),
                   ),
                   favorite ? Align(
-                    alignment: Alignment.bottomRight,
+                    alignment: Alignment.topRight,
                     child: Container(
                       margin: EdgeInsets.only(right: ancho * 0.02, top: alto * 0.04),
                       child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
@@ -563,65 +556,66 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
               onTap: () =>clickTarea(task),
               child: Container(
                 width: ancho,
-                padding: EdgeInsets.only(left: ancho * 0.04, right: ancho * 0.04,top: alto * 0.02),
-                child: Row(
-                  children: <Widget>[
-                    working ? Container(
-                      margin: EdgeInsets.only(right: ancho * 0.015),
-                      width: ancho * 0.015,
-                      height: alto * 0.05,
-                      color: WalkieTaskColors.color_89BD7D,
-                    ) : Container(),
-                    Expanded(
-                      child: Container(
+                padding: EdgeInsets.only(left: ancho * 0.02, right: ancho * 0.04,top: alto * 0.02),
+                child: IntrinsicHeight(
+                  child: Row(
+                    children: <Widget>[
+                      working ? Container(
+                        width: ancho * 0.015,
+                        color: WalkieTaskColors.color_89BD7D,
+                      ) : Container(width: ancho * 0.015,),
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.only(left: ancho * 0.01, ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(task.name.isEmpty ? 'Nombre no asignado' : task.name,
+                                  style: textStylePrimaryBold),
+                              Text(proyectName,
+                                style: textStylePrimary,),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(right: ancho * 0.03, left: ancho * 0.03),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Text(task.name.isEmpty ? 'Nombre no asignado' : task.name,
-                                style: textStylePrimaryBold),
-                            Text(proyectName,
-                              style: textStylePrimary,),
+                            Text(daysLeft,style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: daysLeft.contains('-') ? WalkieTaskColors.color_E07676 : Colors.grey[600]),),
+                            SizedBox(height: alto * 0.006,),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                chatCont != 0 ? Container(
+                                  margin: EdgeInsets.only(right: ancho * 0.002),
+                                  child: CircleAvatar(
+                                    backgroundColor: WalkieTaskColors.primary,
+                                    // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
+                                    radius: alto * radiusChat,
+                                    child: Text('$chatCont',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
+                                  ),
+                                ) : Container(),
+                                InkWell(
+                                  child: task.url_audio != '' ? Icon(Icons.volume_up,color: reproTask ? WalkieTaskColors.color_89BD7D : Colors.grey[600],size: alto * 0.03,) : Container(),
+                                  onTap: (){
+                                    audioPlayer.play(task.url_audio);
+                                    setState(() {
+                                      taskReproduciendo = task.id;
+                                    });
+                                  },
+                                ),
+                              ],
+                            )
                           ],
                         ),
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(right: ancho * 0.03, left: ancho * 0.03),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(daysLeft,style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: daysLeft.contains('-') ? WalkieTaskColors.color_E07676 : Colors.grey[600]),),
-                          SizedBox(height: alto * 0.006,),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              chatCont != 0 ? Container(
-                                margin: EdgeInsets.only(right: ancho * 0.002),
-                                child: CircleAvatar(
-                                  backgroundColor: WalkieTaskColors.primary,
-                                  // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
-                                  radius: alto * radiusChat,
-                                  child: Text('$chatCont',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
-                                ),
-                              ) : Container(),
-                              InkWell(
-                                child: task.url_audio != '' ? Icon(Icons.volume_up,color: reproTask ? WalkieTaskColors.color_89BD7D : Colors.grey[600],size: alto * 0.03,) : Container(),
-                                onTap: (){
-                                  audioPlayer.play(task.url_audio);
-                                  setState(() {
-                                    taskReproduciendo = task.id;
-                                  });
-                                },
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             )

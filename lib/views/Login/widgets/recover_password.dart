@@ -142,7 +142,9 @@ class _RecoverPasswordState extends State<RecoverPassword> {
                   setState(() {});
                   showAlert('Enviado.!',WalkieTaskColors.color_89BD7D);
                 }else{
-                  showAlert('Error en conexión',Colors.red[400]);
+                  String error = 'Problemas para enviar datos.';
+                  if(value['message'] != null) error = value['message'];
+                  showAlert(error,Colors.red[400]);
                 }
               }catch(e){
                 print(e.toString());

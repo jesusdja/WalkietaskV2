@@ -524,8 +524,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       }
     }
 
-    Widget _divider = Container(height: 0.5, color: WalkieTaskColors.white, width: ancho,
-      margin: EdgeInsets.only(bottom: alto * 0.02, top: alto * 0.02,),);
+    Widget _divider = Divider(color: WalkieTaskColors.white,);
 
     return Drawer(
       elevation: 20.0,
@@ -619,12 +618,11 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                       backgroundColor: WalkieTaskColors.white,
                       child: Center(
                         child: Container(
-                          width: ancho * 0.25,
                           height: alto * 0.08,
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: ViewImage().assetsImage("assets/image/LogoWN.png").image,
-                              fit: BoxFit.fill,
+                              fit: BoxFit.contain,
                             ),
                           ),
                         ),
