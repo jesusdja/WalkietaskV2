@@ -609,7 +609,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
             }),
             Flexible(
               child: Container(
-                margin: EdgeInsets.only(bottom: alto * 0.05),
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: Container(
@@ -631,7 +630,12 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                   ),
                 ),
               ),
-            )
+            ),
+            Container(
+              width: ancho,
+              margin: EdgeInsets.only(bottom: alto * 0.04,top: alto * 0.01),
+              child: Text('V-$versionApp',textAlign: TextAlign.center,style: WalkieTaskStyles().styleNunitoBold(size: alto * 0.02, color: WalkieTaskColors.white),),
+            ),
           ],
         ),
       ),

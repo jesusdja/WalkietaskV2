@@ -97,7 +97,7 @@ class _CreateTaskState extends State<CreateTask> {
     textStylePrimaryLitleBold = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.015, color: WalkieTaskColors.black, spacing: 1,);
     textStylePrimaryBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.black,);
     textStylePrimaryTitleBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.028, color: WalkieTaskColors.black);
-    textStylePrimaryBoldName = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02,color: WalkieTaskColors.black,fontWeight: FontWeight.bold,spacing: 0.5);
+    textStylePrimaryBoldName = WalkieTaskStyles().styleHelveticaneueRegular(fontWeight: FontWeight.bold,size: alto * 0.02,color: WalkieTaskColors.black,spacing: 0.5);
 
     listEnviados = widget.listEnviadosRes;
     listRecibidos = widget.listRecibidos;
