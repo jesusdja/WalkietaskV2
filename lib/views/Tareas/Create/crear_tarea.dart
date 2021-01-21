@@ -298,6 +298,7 @@ class _CreateTaskState extends State<CreateTask> {
         if(mapDataUserHome[user.id][0] != ''){
           dateDiff = getDayDiff(mapDataUserHome[user.id][0]);
           redColor = dateDiff.contains('Hace');
+          dateDiff = dateDiff.replaceAll('-', '');
         }
         cantRecived = mapDataUserHome[user.id][1].length;
         cantSend = mapDataUserHome[user.id][2].length;

@@ -288,6 +288,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
         if((loadTaskRecived && loadTaskSend)){
           mapDataUserHome = _dataToMapDataUserHome();
+          print('');
         }
 
         return (loadTaskRecived && loadTaskSend && loadListUser && loadCasos && loadMyUser) ?
@@ -468,12 +469,12 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         }
         data[task.user_id][1].add(task);
         if(data[task.user_id][0] == ''){
-          data[task.user_id][0] = task.deadline;
+          data[task.user_id][0] = task.updated_at;
         }else{
-          if(task.deadline.isEmpty || data[task.user_id][0].isEmpty){
-            if(data[task.user_id][0].isEmpty){ data[task.user_id][0] = task.deadline.isEmpty; }
+          if(task.updated_at.isEmpty || data[task.user_id][0].isEmpty){
+            if(data[task.user_id][0].isEmpty){ data[task.user_id][0] = task.updated_at.isEmpty; }
           }else{
-            DateTime dateCreate = DateTime.parse(task.deadline);
+            DateTime dateCreate = DateTime.parse(task.updated_at);
             Duration difDays = dateCreate.difference(DateTime.now());
 
             DateTime dateCreate2 = DateTime.parse(data[task.user_id][0]);
@@ -492,12 +493,12 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         }
         data[task.user_responsability_id][2].add(task);
         if(data[task.user_responsability_id][0] == ''){
-          data[task.user_responsability_id][0] = task.deadline;
+          data[task.user_responsability_id][0] = task.updated_at;
         }else{
-          if(task.deadline.isEmpty || data[task.user_responsability_id][0].isEmpty){
+          if(task.updated_at.isEmpty || data[task.user_responsability_id][0].isEmpty){
             if(data[task.user_responsability_id][0].isEmpty){ data[task.user_responsability_id][0] = task.deadline.isEmpty; }
           }else{
-            DateTime dateCreate = DateTime.parse(task.deadline);
+            DateTime dateCreate = DateTime.parse(task.updated_at);
             Duration difDays = dateCreate.difference(DateTime.now());
 
             DateTime dateCreate2 = DateTime.parse(data[task.user_responsability_id][0]);
