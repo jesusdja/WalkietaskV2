@@ -16,6 +16,7 @@ import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/textfield_generic_verific.dart';
 import 'package:walkietaskv2/utils/value_validators.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
+import 'package:walkietaskv2/utils/finish_app.dart';
 
 class FormRegister extends StatefulWidget {
   FormRegister({this.contextLogin});
@@ -457,6 +458,9 @@ class _FormRegisterState extends State<FormRegister> {
                   var response2 = await connectionHttp.httpIniciarSesion(body['email'], body['password']);
                   var value2 = jsonDecode(response2.body);
                   if(value2['access_token'] != null){
+
+                    await finishApp();
+
                     String token = value2['access_token'];
                     String tokenExp = value2['access_token'];
                     await SharedPrefe().setStringValue('unityToken','$token');

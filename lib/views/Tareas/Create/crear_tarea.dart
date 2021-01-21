@@ -247,6 +247,7 @@ class _CreateTaskState extends State<CreateTask> {
       child: CustomScrollView(
         slivers: <Widget>[
           new SliverAppBar(
+            automaticallyImplyLeading: false,
             backgroundColor: Colors.white,
             expandedHeight: alto * 0.1,
             title: Container(
@@ -436,7 +437,6 @@ class _CreateTaskState extends State<CreateTask> {
         int res = 0;
         user.fijo = user.fijo == 1 ? 0 : 1;
         res = await  UserDatabaseProvider.db.updateUser(user);
-        print('');
         if(res == 1){
           widget.blocUserRes.inList.add(true);
         }

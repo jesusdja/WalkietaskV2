@@ -28,10 +28,10 @@ import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
+import 'package:walkietaskv2/utils/finish_app.dart';
 import 'package:walkietaskv2/views/Tareas/Create/crear_tarea.dart';
 import 'package:walkietaskv2/views/Tareas/ListadoTareasRecibidas.dart';
 import 'package:walkietaskv2/views/Tareas/ListadoTareasEnviadas.dart';
-import 'package:walkietaskv2/views/Tareas/EnviarTarea.dart';
 import 'package:walkietaskv2/views/contact/contact.dart';
 import 'package:walkietaskv2/views/proyects/MyProyects.dart';
 
@@ -288,7 +288,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
         if((loadTaskRecived && loadTaskSend)){
           mapDataUserHome = _dataToMapDataUserHome();
-          print('');
         }
 
         return (loadTaskRecived && loadTaskSend && loadListUser && loadCasos && loadMyUser) ?
@@ -586,24 +585,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
               bool res = false;
               res = await alert(context);
               if(res != null && res){
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                await prefs.remove('unityToken');
-                await prefs.remove('unityTokenExp');
-                await prefs.remove('unityLogin');
-                await prefs.remove('unityIdMyUser');
-                await prefs.remove('WalListDocument');
-                await prefs.remove('unityEmail');
-                await prefs.remove('walkietaskIdNoti');
-                await prefs.remove('walkietaskFilterDate');
-                await prefs.remove('walkietaskFilterDate2');
-                await prefs.remove('notiRecived');
-                await prefs.remove('notiSend');
-                await prefs.remove('notiContacts');
-                await prefs.remove('notiContacts_received');
-                await prefs.remove('notiListTask');
-                await prefs.remove('notiListChat');
-
-                updateData.resetDB();
+                await finishApp();
                 Navigator.push(context, new MaterialPageRoute(
                     builder: (BuildContext context) => new App()));
               }

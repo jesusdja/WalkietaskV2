@@ -226,7 +226,6 @@ class _InvitationsSentState extends State<InvitationsSent> {
     try {
       // ignore: cancel_subscriptions
       streamSubscriptionInvitation = widget.blocInvitation.outList.listen((newVal) {
-        print('');
         if(newVal){
           _inicializarInvitation();
         }

@@ -17,6 +17,7 @@ import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
+import 'package:walkietaskv2/utils/finish_app.dart';
 import 'package:walkietaskv2/views/Login/widgets/recover_password.dart';
 import 'package:walkietaskv2/views/Register/register_page.dart';
 
@@ -270,6 +271,8 @@ class _LoginHomeState extends State<LoginHome> {
         var value = jsonDecode(response.body);
         if(value['access_token'] != null){
 
+          await finishApp();
+
           String token = value['access_token'];
           String tokenExp = value['access_token'];
           await prefs.setString('unityToken','$token');
@@ -296,6 +299,7 @@ class _LoginHomeState extends State<LoginHome> {
             await PermisoStore();
             await PermisoSonido();
             await PermisoPhotos();
+
             try{
               AuthService auth = Provider.of<AuthService>(context);
               auth.init();
