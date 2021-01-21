@@ -888,6 +888,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         if(argumento['idDoc'] != null){
 
           Tarea task = await TaskDatabaseProvider.db.getCodeId(argumento['idDoc']);
+          task.updated_at = DateTime.now().toString();
+          int res = await TaskDatabaseProvider.db.updateTask(task);
 
           List<dynamic> listTaskNew = await prefs.get('notiListChat');
           if (listTaskNew == null) {

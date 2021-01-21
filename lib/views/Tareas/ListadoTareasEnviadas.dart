@@ -1000,6 +1000,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
   Future<void> _checkListChat() async {
     try{
       listCheckChat = await prefs.get('notiListChat') ?? [];
+      blocTaskSend.inList.add(true);
       setState(() {});
     }catch(e){
       print(e.toString());

@@ -450,9 +450,12 @@ class _ChatForTareaState extends State<ChatForTarea> {
                       }
                       if (idSend != 0) {
                         Usuario userSendNoti = await UserDatabaseProvider.db.getCodeId(idSend.toString());
-                        if (userSendNoti.fcmToken != null &&
-                            userSendNoti.fcmToken.isNotEmpty) {
+                        if (userSendNoti.fcmToken != null && userSendNoti.fcmToken.isNotEmpty) {
                             await HttpPushNotifications().httpSendMessagero(userSendNoti.fcmToken, tarea.id.toString(), description: textChatSend,);
+                            tarea.updated_at = DateTime.now().toString();
+                            await TaskDatabaseProvider.db.updateTask(tarea);
+                            updateData.actualizarListaRecibidos(blocTaskSend, null);
+                            updateData.actualizarListaEnviados(blocTaskSend, null);
                         }
                       }
                     }catch(e){

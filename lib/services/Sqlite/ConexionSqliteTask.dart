@@ -81,6 +81,7 @@ class TaskDatabaseProvider{
   }
   //OBTENER TODAS LAS TAREAS RECIBIDAS
   Future<List<Tarea>> getAllRecevid() async {
+    List<Tarea> listTareaFav = new List<Tarea>();
     List<Tarea> listTarea = new List<Tarea>();
     String idUser = await SharedPrefe().getValue('unityIdMyUser');
     final db = await database;
@@ -88,38 +89,58 @@ class TaskDatabaseProvider{
       List<Map> list = await db.rawQuery('SELECT * FROM Tareas WHERE user_responsability_id = $idUser AND is_priority = 1 ORDER BY ord DESC');
       list.forEach((mapa){
         Tarea tarea = new Tarea.fromMap(mapa);
-        listTarea.add(tarea);
+        listTareaFav.add(tarea);
       });
       list = await db.rawQuery('SELECT * FROM Tareas WHERE user_responsability_id = $idUser AND is_priority = 0 ORDER BY ord DESC');
       list.forEach((mapa){
         Tarea tarea = new Tarea.fromMap(mapa);
         listTarea.add(tarea);
       });
+      listTareaFav.sort((item1, item2) => DateTime.parse(item1.updated_at).compareTo(DateTime.parse(item2.updated_at)));
+      listTarea.sort((item1, item2) => DateTime.parse(item1.updated_at).compareTo(DateTime.parse(item2.updated_at)));
     }catch(e){
       print(e.toString());
     }
-    return listTarea;
+    List<Tarea> listResult = [];
+    for(int x = listTareaFav.length; x > 0; x--){
+      listResult.add(listTareaFav[x - 1]);
+    }
+    for(int x = listTarea.length; x > 0; x--){
+      listResult.add(listTarea[x - 1]);
+    }
+    return listResult;
   }
   //OBTENER TODAS LAS TAREAS ENVIADAS
   Future<List<Tarea>> getAllSend() async {
     String myId = await SharedPrefe().getValue('unityIdMyUser');
-    List<Tarea> mapTarea = new List<Tarea>();
+    List<Tarea> listTareaFav = new List<Tarea>();
+    List<Tarea> listTarea = new List<Tarea>();
     final db = await database;
     try{
       List<Map> list = await db.rawQuery('SELECT * FROM Tareas WHERE user_id = $myId AND user_responsability_id != 0 AND is_priority = 1 ORDER BY ord DESC');
       list.forEach((mapa){
         Tarea tarea = new Tarea.fromMap(mapa);
-        mapTarea.add(tarea);
+        listTareaFav.add(tarea);
       });
       list = await db.rawQuery('SELECT * FROM Tareas WHERE user_id = $myId AND user_responsability_id != 0 AND is_priority = 0 ORDER BY ord DESC');
       list.forEach((mapa){
         Tarea tarea = new Tarea.fromMap(mapa);
-        mapTarea.add(tarea);
+        listTarea.add(tarea);
       });
+      listTareaFav.sort((item1, item2) => DateTime.parse(item1.updated_at).compareTo(DateTime.parse(item2.updated_at)));
+      listTarea.sort((item1, item2) => DateTime.parse(item1.updated_at).compareTo(DateTime.parse(item2.updated_at)));
     }catch(e){
       print(e.toString());
     }
-    return mapTarea;
+
+    List<Tarea> listResult = [];
+    for(int x = listTareaFav.length; x > 0; x--){
+      listResult.add(listTareaFav[x - 1]);
+    }
+    for(int x = listTarea.length; x > 0; x--){
+      listResult.add(listTarea[x - 1]);
+    }
+    return listResult;
   }
 
   // //OBTENER TODAS LAS TAREAS ENVIADAS
@@ -164,6 +185,17 @@ class TaskDatabaseProvider{
     int res = 0;
     try{
       res = await dbClient.update('Tareas', tarea.toMap(),where: 'id = ?', whereArgs: [tarea.id]);
+    }catch(e){
+      print(e.toString());
+    }
+    return res;
+  }
+  //MODIFICAR FECHA DE TAREA
+  Future<int> updateTaskDate(String id, String date) async {
+    var dbClient = await  database;
+    int res = 0;
+    try{
+      res = await dbClient.update('Tareas', {'updated_at' : date},where: 'id = ?', whereArgs: [id]);
     }catch(e){
       print(e.toString());
     }

@@ -141,6 +141,13 @@ class UpdateData{
         Tarea taskVery = await  TaskDatabaseProvider.db.getCodeId('${tarea.id}');
         if(taskVery == null || tarea != taskVery ) {
           entre = true;
+
+          if(taskVery != null){
+            Duration diff1 = DateTime.parse(tarea.updated_at).difference(DateTime.now());
+            Duration diff2 = DateTime.parse(taskVery.updated_at).difference(DateTime.now());
+            tarea.updated_at = diff1.inSeconds < diff2.inSeconds ? taskVery.updated_at : tarea.updated_at;
+          }
+
           if (taskVery == null) {
             await TaskDatabaseProvider.db.saveTask(tarea);
           } else {
@@ -191,6 +198,13 @@ class UpdateData{
 
         if(taskVery == null || tarea != taskVery ) {
           entre = true;
+
+          if(taskVery != null){
+            Duration diff1 = DateTime.parse(tarea.updated_at).difference(DateTime.now());
+            Duration diff2 = DateTime.parse(taskVery.updated_at).difference(DateTime.now());
+            tarea.updated_at = diff1.inSeconds < diff2.inSeconds ? taskVery.updated_at : tarea.updated_at;
+          }
+
           if (taskVery == null) {
             await TaskDatabaseProvider.db.saveTask(tarea);
           } else {
