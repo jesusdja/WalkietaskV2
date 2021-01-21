@@ -19,9 +19,9 @@ class UpdateData{
 
   resetDB() async {
     await UserDatabaseProvider.db.deleteDatabaseInstance();
-    await TaskDatabaseProvider.db.deleteDatabaseInstance();
-    await CasosDatabaseProvider.db.deleteDatabaseInstance();
-    await InvitationDatabaseProvider.db.deleteDatabaseInstance();
+    // await TaskDatabaseProvider.db.deleteDatabaseInstance();
+    // await CasosDatabaseProvider.db.deleteDatabaseInstance();
+    // await InvitationDatabaseProvider.db.deleteDatabaseInstance();
     print('BASE DE DATOS LIMPIAS');
   }
 

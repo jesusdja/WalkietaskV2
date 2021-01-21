@@ -1,6 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:path/path.dart';
 
 class UserDatabaseProvider{
   UserDatabaseProvider._();
@@ -15,35 +16,16 @@ class UserDatabaseProvider{
     return _database;
   }
 
-//  Future<Database> getDatabaseInstanace() async {
-//    Directory directory = await getApplicationDocumentsDirectory();
-//    String path = join(directory.path, "unity.db");
-//    return await openDatabase(path, version: 1,
-//        onCreate: (Database db, int version) async {
-//          await db.execute(
-//              "CREATE TABLE Usuarios("
-//                  "id INTEGER primary key,"
-//                  "username TEXT, "
-//                  "email TEXT, "
-//                  "name TEXT, "
-//                  "address TEXT, "
-//                  "avatar TEXT, "
-//                  "create_cases INT, "
-//                  "active INT, "
-//                  "system INT, "
-//                  "level_id INT, "
-//                  "company_id INT, "
-//                  "createdAt TEXT, "
-//                  "updatedAt TEXT, "
-//                  "deletedAt TEXT, "
-//                  "fijo INT"
-//              ")");
-//        });
-//  }
   //ELIMINAR INSTANCIA
   Future deleteDatabaseInstance() async {
-    final db = await database;
-    db.delete('Usuarios');
+    // final db = await database;
+    // db.delete('Usuarios');
+
+    // Get a location using getDatabasesPath
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, 'unity.db');
+    // Delete the database
+    await deleteDatabase(path);
   }
   //OBTENER USUARIO
   Future<Usuario> getCodeId(String codigo) async {
