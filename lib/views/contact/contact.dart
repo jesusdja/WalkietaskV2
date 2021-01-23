@@ -340,7 +340,10 @@ class _ContactsState extends State<Contacts> {
       mapIdUsers[listaUser[x].id] = listaUser[x];
       mapUserDelete[listaUser[x].id] = false;
     }
-    setState(() {});
+    if (this.mounted) {
+      setState(() {});
+    }
+
   }
 
   void _notificationListener(){

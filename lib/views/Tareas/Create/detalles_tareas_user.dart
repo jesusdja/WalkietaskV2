@@ -245,7 +245,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                                 ),
                               ),
                             ) : Container(),
-                            task.is_priority == 1 ?
+                            task.is_priority_responsability == 1 ?
                             Container(
                               margin: EdgeInsets.only(right: ancho * 0.02),
                               child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
@@ -594,73 +594,6 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       bottom: _indicatorProgress(),
     );
   }
-
-  // Widget _bottomNavigationBar(){
-  //   return Container(
-  //     color: Colors.grey[100],
-  //     padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01, left: ancho * 0.02, right: ancho * 0.04),
-  //     width: ancho,
-  //     child: Row(
-  //       children: [
-  //         Expanded(
-  //           child: Container(
-  //             child: Text('Nueva tarea para ${user.name}:', style: textStyleBlue,maxLines: 2,),
-  //           ),
-  //         ),
-  //         InkWell(
-  //           onTap: (){
-  //             Navigator.push(context, new MaterialPageRoute(
-  //                 builder: (BuildContext context) =>
-  //                 new NewTaskForUser(
-  //                   user: user,
-  //                   isPersonal: isPersonal,
-  //                   pathAudio: '',
-  //                   listaCasos: widget.listaCasos,
-  //                   blocIndicatorProgress: widget.blocIndicatorProgress,
-  //                 )));
-  //           },
-  //           child: Container(
-  //             margin: EdgeInsets.only(left: ancho * 0.02, right: ancho * 0.04),
-  //             child: Column(
-  //               mainAxisSize: MainAxisSize.min,
-  //               children: [
-  //                 Container(
-  //                   height: alto * 0.03,
-  //                   width: alto * 0.025,
-  //                   decoration: BoxDecoration(
-  //                     image: DecorationImage(
-  //                       image: ViewImage().assetsImage("assets/image/Icon_text.png", color: WalkieTaskColors.primary).image,
-  //                       fit: BoxFit.fitHeight,
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 Text('Texto', style: textStyleBlueLitle,)
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //         Container(
-  //           child: Column(
-  //             mainAxisSize: MainAxisSize.min,
-  //             children: [
-  //               Container(
-  //                 height: alto * 0.03,
-  //                 width: alto * 0.025,
-  //                 decoration: BoxDecoration(
-  //                   image: DecorationImage(
-  //                     image: ViewImage().assetsImage("assets/image/Icon_microphone_blue.png", color: WalkieTaskColors.primary).image,
-  //                     fit: BoxFit.fitHeight,
-  //                   ),
-  //                 ),
-  //               ),
-  //               Text('Audio', style: textStyleBlueLitle,)
-  //             ],
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   String getDayDiff(String deadLine){
     String daysLeft = '';

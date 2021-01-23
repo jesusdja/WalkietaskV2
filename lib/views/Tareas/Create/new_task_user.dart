@@ -233,6 +233,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
               width: ancho,
               margin: EdgeInsets.only(top: alto * 0.01),
               child: TextFildGeneric(
+                textInputType: TextInputType.multiline,
                 padding: EdgeInsets.all(5.0),
                 onChanged: (text) {
                   setState(() {
@@ -247,7 +248,8 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
                 sizeBorder: 1.2,
                 textAlign: TextAlign.left,
                 sizeHeight: alto * 0.2,
-                maxLines: 5,
+                maxLines: 8,
+                textInputAction: TextInputAction.done,
               ),
             ),
             Container(
