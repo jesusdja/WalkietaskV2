@@ -302,9 +302,13 @@ class _AddProyectsState extends State<AddProyects> {
         if(widget.proyect == null){
           jsonBody['name'] = controlleNewName.text;
         }
+
+        members.add(myUser.id);
+
         for(int x = 0; x < members.length; x++){
           jsonBody['users[$x]'] = '${members[x]}';
         }
+
         try{
           if(widget.proyect == null){
             //******************************
@@ -341,9 +345,6 @@ class _AddProyectsState extends State<AddProyects> {
           print(e.toString());
           showAlert('Error de conexión',WalkieTaskColors.color_E07676);
         }
-      // }else{
-      //   showAlert('Debe seleccionar al menos un contacto.',WalkieTaskColors.color_E07676);
-      // }
     }else{
       showAlert('Se debe agregar un nombre de proyecto.',WalkieTaskColors.color_E07676);
     }

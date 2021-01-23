@@ -186,7 +186,12 @@ class _MyProyectsState extends State<MyProyects> {
                           ),
                         ),
                         onTap: (){
-                          openProjectView[project.id] = !openProjectView[project.id];
+                          bool value = !openProjectView[project.id];
+                          Map<int,bool> open = openProjectView;
+                          open.forEach((key, value) {
+                            openProjectView[key] = false;
+                          });
+                          openProjectView[project.id] = value;
                           setState(() {});
                         },
                       ),
@@ -216,7 +221,14 @@ class _MyProyectsState extends State<MyProyects> {
                         backgroundColor: WalkieTaskColors.primary,
                         onPressed: () async {
                           bool res = await Navigator.push(context, new MaterialPageRoute(
-                              builder: (BuildContext context) => new AddProyects(myUserRes: myUser, listUserRes: listUser,blocPage: widget.blocPage,proyect: project,listUsersExist: projectsUser[project.id] ?? [],)));
+                              builder: (BuildContext context) =>
+                              new AddProyects(
+                                myUserRes: myUser,
+                                listUserRes: listUser,
+                                blocPage: widget.blocPage,
+                                proyect: project,
+                                listUsersExist: projectsUser[project.id] ?? [],
+                              )));
                           if(res){
                             await _getGuests();
                           }
