@@ -7,9 +7,6 @@ import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/models/invitation.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
-import 'package:walkietaskv2/services/Sqlite/ConexionSqliteCasos.dart';
-import 'package:walkietaskv2/services/Sqlite/ConexionSqliteInvitation.dart';
-import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 
@@ -18,10 +15,7 @@ class UpdateData{
   conexionHttp conexionHispanos = new conexionHttp();
 
   resetDB() async {
-    await UserDatabaseProvider.db.deleteDatabaseInstance();
-    // await TaskDatabaseProvider.db.deleteDatabaseInstance();
-    // await CasosDatabaseProvider.db.deleteDatabaseInstance();
-    // await InvitationDatabaseProvider.db.deleteDatabaseInstance();
+    await DatabaseProvider.db.deleteDatabaseInstance();
     print('BASE DE DATOS LIMPIAS');
   }
 
@@ -36,7 +30,7 @@ class UpdateData{
       for(int x = 0; x < usuarios.length; x++){
         Usuario usuario = Usuario.fromJson(usuarios[x]);
         //EXTRAER VARIABLE DE USUARIO FIJO
-        Usuario userVery = await  UserDatabaseProvider.db.getCodeId('${usuario.id}');
+        Usuario userVery = await  DatabaseProvider.db.getCodeIdUser('${usuario.id}');
         if(userVery != null){
           usuario.fijo = userVery.fijo;
           usuario.contact = userVery.contact;
@@ -44,9 +38,9 @@ class UpdateData{
         if(userVery == null || usuario != userVery ){
           entre = true;
           if(userVery == null){
-            await UserDatabaseProvider.db.saveUser(usuario);
+            await DatabaseProvider.db.saveUser(usuario);
           }else{
-            await UserDatabaseProvider.db.updateUser(usuario);
+            await DatabaseProvider.db.updateUser(usuario);
           }
         }
       }
@@ -70,12 +64,12 @@ class UpdateData{
     //ACTUALIZAR TABLA LOCAL
     Map<int,Usuario> mapContactsLocal = {};
     try{
-      List<Usuario> contactsLocal = await  UserDatabaseProvider.db.getContacts();
+      List<Usuario> contactsLocal = await  DatabaseProvider.db.getContactsUser();
       for(int x =0; x < contactsLocal.length; x++){
         Usuario contact = contactsLocal[x];
         contact.contact = 0;
         mapContactsLocal[contact.id] = contact;
-        await UserDatabaseProvider.db.updateUser(contact);
+        await DatabaseProvider.db.updateUser(contact);
       }
 
       var response = await conexionHispanos.httpListContacts();
@@ -94,7 +88,7 @@ class UpdateData{
       Usuario user = mapContactsLocal[mapContactsLocal.keys.elementAt(x)];
       if(user.contact == 1){
         entre = true;
-        await UserDatabaseProvider.db.updateUser(user);
+        await DatabaseProvider.db.updateUser(user);
       }
     }
     if(entre){
@@ -109,13 +103,13 @@ class UpdateData{
       for(int x = 0; x < lista.length; x++){
         Tarea tarea = Tarea.fromJson(lista[x].toJson());
         //EXTRAER VARIABLE DE USUARIO FIJO
-        Tarea taskVery = await  TaskDatabaseProvider.db.getCodeId('${tarea.id}');
+        Tarea taskVery = await  DatabaseProvider.db.getCodeIdTask('${tarea.id}');
         if(taskVery == null || tarea != taskVery ) {
           entre = true;
           if (taskVery == null) {
-            await TaskDatabaseProvider.db.saveTask(tarea);
+            await DatabaseProvider.db.saveTask(tarea);
           } else {
-            await TaskDatabaseProvider.db.updateTask(tarea);
+            await DatabaseProvider.db.updateTask(tarea);
           }
         }
       }
@@ -138,7 +132,7 @@ class UpdateData{
       for(int x = 0; x < tareas.length; x++){
         Tarea tarea = Tarea.fromJson(tareas[x]);
         //EXTRAER VARIABLE DE USUARIO FIJO
-        Tarea taskVery = await  TaskDatabaseProvider.db.getCodeId('${tarea.id}');
+        Tarea taskVery = await  DatabaseProvider.db.getCodeIdTask('${tarea.id}');
         if(taskVery == null || tarea != taskVery ) {
           entre = true;
 
@@ -149,15 +143,15 @@ class UpdateData{
           }
 
           if (taskVery == null) {
-            await TaskDatabaseProvider.db.saveTask(tarea);
+            await DatabaseProvider.db.saveTask(tarea);
           } else {
             tarea.order = taskVery.order;
-            await TaskDatabaseProvider.db.updateTask(tarea);
+            await DatabaseProvider.db.updateTask(tarea);
           }
         }
       }
 
-      List<Tarea> listRecibida = await TaskDatabaseProvider.db.getAllRecevid();
+      List<Tarea> listRecibida = await DatabaseProvider.db.getAllRecevidTask();
       for(int x = 0; x < listRecibida.length; x++){
         bool existTask = false;
         for(int xx = 0; xx < tareas.length; xx++){
@@ -169,7 +163,7 @@ class UpdateData{
           entre = true;
           Tarea taskUpdate = listRecibida[x];
           taskUpdate.finalized = 1;
-          await TaskDatabaseProvider.db.deleteTaskId(taskUpdate.id);
+          await DatabaseProvider.db.deleteTaskId(taskUpdate.id);
         }
       }
 
@@ -194,7 +188,7 @@ class UpdateData{
       for(int x = 0; x < tareas.length; x++){
         Tarea tarea = Tarea.fromJson(tareas[x]);
         //EXTRAER VARIABLE DE USUARIO FIJO
-        Tarea taskVery = await  TaskDatabaseProvider.db.getCodeId('${tarea.id}');
+        Tarea taskVery = await  DatabaseProvider.db.getCodeIdTask('${tarea.id}');
 
         if(taskVery == null || tarea != taskVery ) {
           entre = true;
@@ -206,14 +200,14 @@ class UpdateData{
           }
 
           if (taskVery == null) {
-            await TaskDatabaseProvider.db.saveTask(tarea);
+            await DatabaseProvider.db.saveTask(tarea);
           } else {
-            await TaskDatabaseProvider.db.updateTask(tarea);
+            await DatabaseProvider.db.updateTask(tarea);
           }
         }
       }
 
-      List<Tarea> listEnviados = await TaskDatabaseProvider.db.getAllSend();
+      List<Tarea> listEnviados = await DatabaseProvider.db.getAllSendTask();
       for(int x = 0; x < listEnviados.length; x++){
         bool existTask = false;
         for(int xx = 0; xx < tareas.length; xx++){
@@ -225,7 +219,7 @@ class UpdateData{
           entre = true;
           Tarea taskUpdate = listEnviados[x];
           taskUpdate.finalized = 1;
-          await TaskDatabaseProvider.db.deleteTaskId(taskUpdate.id);
+          await DatabaseProvider.db.deleteTaskId(taskUpdate.id);
         }
       }
 
@@ -254,14 +248,14 @@ class UpdateData{
       for(int x = 0; x < listcasos.length; x++){
         Caso caso = Caso.fromJson(listcasos[x]);
         //EXTRAER VARIABLE DE USUARIO FIJO
-        Caso casoVery = await  CasosDatabaseProvider.db.getCodeId('${caso.id}');
+        Caso casoVery = await  DatabaseProvider.db.getCodeIdCase('${caso.id}');
         caso.nameCompany = listcasos[x]['customers'] != null ? listcasos[x]['customers']['name'] : '';
         if(casoVery == null || caso != casoVery ) {
           entre = true;
           if (casoVery == null) {
-            await CasosDatabaseProvider.db.saveCaso(caso);
+            await DatabaseProvider.db.saveCase(caso);
           } else {
-            await CasosDatabaseProvider.db.updateCaso(caso);
+            await DatabaseProvider.db.updateCase(caso);
           }
         }
       }
@@ -273,7 +267,7 @@ class UpdateData{
     }
 
     try{
-      List<Caso> projectLocal = await CasosDatabaseProvider.db.getAll();
+      List<Caso> projectLocal = await DatabaseProvider.db.getAllCase();
       for(int x = 0; x < projectLocal.length; x++){
         bool exist = false;
         for(int x2 = 0; x2 < listcasos.length; x2++){
@@ -282,7 +276,7 @@ class UpdateData{
           }
         }
         if(!exist){
-          await CasosDatabaseProvider.db.deleteProject(projectLocal[x].id);
+          await DatabaseProvider.db.deleteProjectCase(projectLocal[x].id);
         }
       }
     }catch(e){
@@ -313,20 +307,20 @@ class UpdateData{
       for(int x = 0; x < invitations.length; x++){
         InvitationModel invitation = InvitationModel.fromJson(invitations[x]);
         //EXTRAER VARIABLE DE USUARIO FIJO
-        InvitationModel invitationVery = await  InvitationDatabaseProvider.db.getCodeId('${invitation.id}');
+        InvitationModel invitationVery = await  DatabaseProvider.db.getCodeIdInvitation('${invitation.id}');
         invitation.inv = 0;
         if(invitationVery == null || invitation != invitationVery ){
           entre = true;
           if(invitationVery == null){
-            await InvitationDatabaseProvider.db.saveInvitation(invitation);
+            await DatabaseProvider.db.saveInvitation(invitation);
           }else{
-            await InvitationDatabaseProvider.db.updateInvitation(invitation);
+            await DatabaseProvider.db.updateInvitation(invitation);
           }
         }
       }
 
       try{
-        List<InvitationModel> invitationsLocal = await  InvitationDatabaseProvider.db.getAll();
+        List<InvitationModel> invitationsLocal = await  DatabaseProvider.db.getAllInvitation();
         for(int x =0; x < invitationsLocal.length; x++){
           bool exist = false;
           for(int y =0; y < invitations.length; y++){
@@ -335,7 +329,7 @@ class UpdateData{
             }
           }
           if(!exist){
-            await  InvitationDatabaseProvider.db.deleteInvitation(invitationsLocal[x].id);
+            await  DatabaseProvider.db.deleteInvitation(invitationsLocal[x].id);
           }
         }
         if(blocConection != null){blocConection.inList.add(false);}
@@ -366,20 +360,20 @@ class UpdateData{
       for(int x = 0; x < invitations.length; x++){
         InvitationModel invitation = InvitationModel.fromJson(invitations[x]);
         //EXTRAER VARIABLE DE USUARIO FIJO
-        InvitationModel invitationVery = await  InvitationDatabaseProvider.db.getCodeId('${invitation.id}');
+        InvitationModel invitationVery = await  DatabaseProvider.db.getCodeIdInvitation('${invitation.id}');
         invitation.inv = 1;
         if(invitationVery == null || invitation != invitationVery ){
           entre = true;
           if(invitationVery == null){
-            await InvitationDatabaseProvider.db.saveInvitation(invitation);
+            await DatabaseProvider.db.saveInvitation(invitation);
           }else{
-            await InvitationDatabaseProvider.db.updateInvitation(invitation);
+            await DatabaseProvider.db.updateInvitation(invitation);
           }
         }
       }
 
       try{
-        List<InvitationModel> invitationsLocal = await  InvitationDatabaseProvider.db.getAll();
+        List<InvitationModel> invitationsLocal = await  DatabaseProvider.db.getAllInvitation();
         for(int x =0; x < invitationsLocal.length; x++){
           bool exist = false;
           for(int y =0; y < invitations.length; y++){
@@ -388,7 +382,7 @@ class UpdateData{
             }
           }
           if(!exist){
-            await  InvitationDatabaseProvider.db.deleteInvitation(invitationsLocal[x].id);
+            await  DatabaseProvider.db.deleteInvitation(invitationsLocal[x].id);
           }
         }
         if(blocConection != null){blocConection.inList.add(false);}

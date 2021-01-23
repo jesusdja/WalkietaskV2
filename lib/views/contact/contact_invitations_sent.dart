@@ -5,9 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/models/invitation.dart';
-import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
-import 'package:walkietaskv2/services/Sqlite/ConexionSqliteInvitation.dart';
+import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
@@ -190,7 +189,7 @@ class _InvitationsSentState extends State<InvitationsSent> {
                             var response = await connectionHttp.httpDeleteInvitationSent(invitation.userIdInvited);
                             var value = jsonDecode(response.body);
                             if(value['status_code'] == 200){
-                              int res = await InvitationDatabaseProvider.db.deleteInvitation(invitation.id);
+                              int res = await DatabaseProvider.db.deleteInvitation(invitation.id);
                               if(res != 0){
                                 widget.blocInvitation.inList.add(true);
                                 showAlert('Eliminada con exito.',WalkieTaskColors.color_89BD7D);
@@ -234,7 +233,7 @@ class _InvitationsSentState extends State<InvitationsSent> {
   }
 
   _inicializarInvitation() async {
-    listInvitation = await  InvitationDatabaseProvider.db.getAll();
+    listInvitation = await  DatabaseProvider.db.getAllInvitation();
     listInvitation.forEach((element) {
       mapInvitationReset[element.id] = false;
       mapInvitationDelete[element.id] = false;

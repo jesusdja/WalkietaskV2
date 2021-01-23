@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
-import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
+import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
@@ -163,7 +163,7 @@ class _AddNameTaskState extends State<AddNameTask> {
                       var response = await connectionHttp.httpUpdateNameTask(widget.tareaRes.id, titleTask);
                       var value = jsonDecode(response.body);
                       if(value['status_code'] == 200){
-                        await TaskDatabaseProvider.db.updateTaskName(widget.tareaRes.id,titleTask);
+                        await DatabaseProvider.db.updateTaskName(widget.tareaRes.id,titleTask);
                         Navigator.of(context).pop(true);
                         setState(() {});
                       }else{

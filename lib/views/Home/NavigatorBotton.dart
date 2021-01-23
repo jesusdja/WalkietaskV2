@@ -14,9 +14,6 @@ import 'package:walkietaskv2/models/invitation.dart';
 import 'package:walkietaskv2/services/Firebase/Notification/push_notifications_provider.dart';
 import 'package:walkietaskv2/services/Permisos.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
-import 'package:walkietaskv2/services/Sqlite/ConexionSqliteCasos.dart';
-import 'package:walkietaskv2/services/Sqlite/ConexionSqliteInvitation.dart';
-import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
@@ -225,7 +222,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     String idMyUser = prefs.getString('unityIdMyUser');
     bool listo = true;
     while(listo){
-      myUser = await UserDatabaseProvider.db.getCodeId(idMyUser);
+      myUser = await DatabaseProvider.db.getCodeIdUser(idMyUser);
       if(myUser != null){
         listo = false;
         loadMyUser = true;
@@ -694,21 +691,21 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   //*******************************************
 
   _inicializarTaskRecived() async {
-    listRecibidos = await TaskDatabaseProvider.db.getAllRecevid();
+    listRecibidos = await DatabaseProvider.db.getAllRecevidTask();
     loadTaskRecived = true;
-    listEnviados = await TaskDatabaseProvider.db.getAllSend();
+    listEnviados = await DatabaseProvider.db.getAllSendTask();
     loadTaskSend = true;
     setState(() {});
   }
   _inicializarTaskSend() async {
-    listEnviados = await TaskDatabaseProvider.db.getAllSend();
+    listEnviados = await DatabaseProvider.db.getAllSendTask();
     loadTaskSend = true;
-    listRecibidos = await TaskDatabaseProvider.db.getAllRecevid();
+    listRecibidos = await DatabaseProvider.db.getAllRecevidTask();
     loadTaskRecived = true;
     setState(() {});
   }
   _inicializarUser() async {
-    listaUser = await  UserDatabaseProvider.db.getAll();
+    listaUser = await  DatabaseProvider.db.getAllUser();
     mapIdUser = new Map();
     for(int x = 0; x < listaUser.length; x++){
       mapIdUser[listaUser[x].id] = listaUser[x];
@@ -717,12 +714,12 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     setState(() {});
   }
   _inicializarCasos() async {
-    listaCasos = await  CasosDatabaseProvider.db.getAll();
+    listaCasos = await  DatabaseProvider.db.getAllCase();
     loadCasos = true;
     setState(() {});
   }
   _inicializarInvitation() async {
-    listInvitation = await  InvitationDatabaseProvider.db.getAll();
+    listInvitation = await  DatabaseProvider.db.getAllInvitation();
     setState(() {});
   }
   //*******************************************
@@ -874,9 +871,9 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       if(argumento['table'] != null && argumento['table'].contains('sms')){
         if(argumento['idDoc'] != null){
 
-          Tarea task = await TaskDatabaseProvider.db.getCodeId(argumento['idDoc']);
+          Tarea task = await DatabaseProvider.db.getCodeIdTask(argumento['idDoc']);
           task.updated_at = DateTime.now().toString();
-          int res = await TaskDatabaseProvider.db.updateTask(task);
+          int res = await DatabaseProvider.db.updateTask(task);
 
           List<dynamic> listTaskNew = await prefs.get('notiListChat');
           if (listTaskNew == null) {

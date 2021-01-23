@@ -223,7 +223,7 @@ class _ContactsState extends State<Contacts> {
                   var value = jsonDecode(response.body);
                   if(value['status_code'] == 200){
                     user.contact = 0;
-                    int res = await UserDatabaseProvider.db.updateUser(user);
+                    int res = await DatabaseProvider.db.updateUser(user);
                     if(res != 0){
                       await updateData.actualizarListaContact(blocUser);
                       showAlert('Contacto eliminado.',WalkieTaskColors.color_89BD7D);
@@ -334,7 +334,7 @@ class _ContactsState extends State<Contacts> {
   }
 
   _inicializarUser() async {
-    List<Usuario> listaUser = await  UserDatabaseProvider.db.getAll();
+    List<Usuario> listaUser = await  DatabaseProvider.db.getAllUser();
     mapIdUsers = new Map();
     for(int x = 0; x < listaUser.length; x++){
       mapIdUsers[listaUser[x].id] = listaUser[x];

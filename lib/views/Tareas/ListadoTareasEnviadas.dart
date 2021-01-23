@@ -7,7 +7,7 @@ import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Firebase/Notification/push_notifications_provider.dart';
-import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
+import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
@@ -797,7 +797,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
           //CAMBIAR ESTADO DE DESTACAR 0 = FALSE, 1 = TRUE
           if(tarea.is_priority == 0){ tarea.is_priority = 1;}else{tarea.is_priority = 0;}
           //GUARDAR LOCALMENTE
-          if(await TaskDatabaseProvider.db.updateTask(tarea) == 1){
+          if(await DatabaseProvider.db.updateTask(tarea) == 1){
             //AVISAR A PATRONBLOC DE TAREAS ENVIADAS PARA QUE SE ACTUALICE
             blocTaskSend.inList.add(true);
             //ENVIAR A API
@@ -813,7 +813,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
             if(tarea.working == 0){
               showAlert('Tarea iniciada',WalkieTaskColors.color_89BD7D);
               tarea.working = 1;
-              if(await TaskDatabaseProvider.db.updateTask(tarea) == 1){
+              if(await DatabaseProvider.db.updateTask(tarea) == 1){
                 blocTaskSend.inList.add(true);
                 await conexionHispanos.httpTaskInit(tarea.id);
               }
@@ -829,7 +829,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
             showAlert('Tarea finalizada',WalkieTaskColors.color_89BD7D);
             try{
               tarea.finalized = 1;
-              if(await TaskDatabaseProvider.db.updateTask(tarea) == 1){
+              if(await DatabaseProvider.db.updateTask(tarea) == 1){
                 blocTaskSend.inList.add(true);
                 await conexionHispanos.httpTaskFinalized(tarea.id);
               }

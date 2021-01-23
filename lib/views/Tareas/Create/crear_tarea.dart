@@ -436,7 +436,7 @@ class _CreateTaskState extends State<CreateTask> {
       onTap: () async {
         int res = 0;
         user.fijo = user.fijo == 1 ? 0 : 1;
-        res = await  UserDatabaseProvider.db.updateUser(user);
+        res = await  DatabaseProvider.db.updateUser(user);
         if(res == 1){
           widget.blocUserRes.inList.add(true);
         }

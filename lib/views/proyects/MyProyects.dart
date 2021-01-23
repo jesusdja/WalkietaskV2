@@ -9,7 +9,7 @@ import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
-import 'package:walkietaskv2/services/Sqlite/ConexionSqliteCasos.dart';
+import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/DialogAlert.dart';
@@ -255,7 +255,7 @@ class _MyProyectsState extends State<MyProyects> {
                                 var response = await connectionHttp.httpDeleteProject(project.id);
                                 var value = jsonDecode(response.body);
                                 if(value['status_code'] == 200){
-                                  int res = await CasosDatabaseProvider.db.deleteProject(project.id);
+                                  int res = await DatabaseProvider.db.deleteProjectCase(project.id);
                                   if(res != 0){
                                     await _inicializarCasos();
                                     showAlert('Proyecto eliminado con exito.!',WalkieTaskColors.color_89BD7D);
@@ -420,7 +420,7 @@ class _MyProyectsState extends State<MyProyects> {
   }
 
   _inicializarCasos() async {
-    listaCasos = await  CasosDatabaseProvider.db.getAll() ?? [];
+    listaCasos = await  DatabaseProvider.db.getAllCase() ?? [];
     listaCasos.forEach((element) {
       openProjectView[element.id] = false;
       deleteProject[element.id] = false;

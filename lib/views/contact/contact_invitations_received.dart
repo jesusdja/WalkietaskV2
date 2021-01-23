@@ -8,7 +8,7 @@ import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/models/invitation.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
-import 'package:walkietaskv2/services/Sqlite/ConexionSqliteInvitation.dart';
+import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
@@ -144,7 +144,7 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
                             var response = await connectionHttp.httpAcceptedInvitationReceived(invitation.userId);
                             var value = jsonDecode(response.body);
                             if(value['status_code'] == 200){
-                              int res = await InvitationDatabaseProvider.db.deleteInvitation(invitation.id);
+                              int res = await DatabaseProvider.db.deleteInvitation(invitation.id);
                               if(res != 0){
                                 widget.blocInvitation.inList.add(true);
                                 UpdateData updateData = new UpdateData();
@@ -196,7 +196,7 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
                             var response = await connectionHttp.httpDeniedInvitationReceived(invitation.userId);
                             var value = jsonDecode(response.body);
                             if(value['status_code'] == 200){
-                              int res = await InvitationDatabaseProvider.db.deleteInvitation(invitation.id);
+                              int res = await DatabaseProvider.db.deleteInvitation(invitation.id);
                               if(res != 0){
                                 widget.blocInvitation.inList.add(true);
                                 showAlert('Invitación rechazada.',WalkieTaskColors.color_89BD7D);
@@ -242,7 +242,7 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
   }
 
   _inicializarInvitation() async {
-    listInvitation = await  InvitationDatabaseProvider.db.getAll();
+    listInvitation = await  DatabaseProvider.db.getAllInvitation();
     listInvitation.forEach((element) {
       mapInvitationAccepted[element.id] = false;
       mapInvitationDenied[element.id] = false;

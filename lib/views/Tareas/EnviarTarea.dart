@@ -489,7 +489,7 @@ class _MyHomePageState extends State<EnviarTarea> {
         }else{
           usuario.fijo = 1;
         }
-        res = await  UserDatabaseProvider.db.updateUser(usuario);
+        res = await  DatabaseProvider.db.updateUser(usuario);
         if(res == 1){
           blocUser.inList.add(true);
         }

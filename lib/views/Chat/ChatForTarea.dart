@@ -17,7 +17,6 @@ import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Firebase/Notification/http_notifications.dart';
 import 'package:walkietaskv2/services/Firebase/chatTareasFirebase.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
-import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -117,9 +116,9 @@ class _ChatForTareaState extends State<ChatForTarea> {
   inicializarUser() async {
     prefs = await SharedPreferences.getInstance();
     idMyUser = prefs.getString('unityIdMyUser');
-    listUser = await UserDatabaseProvider.db.getAll();
+    listUser = await DatabaseProvider.db.getAllUser();
     if(tarea.user_responsability_id != null){
-      usuarioResponsable = await UserDatabaseProvider.db.getCodeId(tarea.user_responsability_id.toString());
+      usuarioResponsable = await DatabaseProvider.db.getCodeIdUser(tarea.user_responsability_id.toString());
     }
     setState(() {});
   }
@@ -449,11 +448,11 @@ class _ChatForTareaState extends State<ChatForTarea> {
                         }
                       }
                       if (idSend != 0) {
-                        Usuario userSendNoti = await UserDatabaseProvider.db.getCodeId(idSend.toString());
+                        Usuario userSendNoti = await DatabaseProvider.db.getCodeIdUser(idSend.toString());
                         if (userSendNoti.fcmToken != null && userSendNoti.fcmToken.isNotEmpty) {
                             await HttpPushNotifications().httpSendMessagero(userSendNoti.fcmToken, tarea.id.toString(), description: textChatSend,);
                             tarea.updated_at = DateTime.now().toString();
-                            await TaskDatabaseProvider.db.updateTask(tarea);
+                            await DatabaseProvider.db.updateTask(tarea);
                             updateData.actualizarListaRecibidos(blocTaskSend, null);
                             updateData.actualizarListaEnviados(blocTaskSend, null);
                         }
@@ -894,7 +893,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
     } catch (e) {}
   }
   _inicializarTaskSend() async {
-    tarea = await TaskDatabaseProvider.db.getCodeId(tarea.id.toString());
+    tarea = await DatabaseProvider.db.getCodeIdTask(tarea.id.toString());
     setState(() {});
   }
 

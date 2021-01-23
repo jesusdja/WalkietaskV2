@@ -9,12 +9,11 @@ import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
-import 'package:walkietaskv2/services/Sqlite/ConexionSqliteTask.dart';
+import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/task_sound.dart';
-import 'package:walkietaskv2/utils/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Chat/ChatForTarea.dart';
@@ -746,8 +745,8 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
   }
 
   _updateTask() async {
-    List<Tarea> newListSend = await TaskDatabaseProvider.db.getAllSend();
-    List<Tarea> newListRecived = await TaskDatabaseProvider.db.getAllRecevid();
+    List<Tarea> newListSend = await DatabaseProvider.db.getAllSendTask();
+    List<Tarea> newListRecived = await DatabaseProvider.db.getAllRecevidTask();
     Map<int,List> mapList = _dataToMapDataUserHome(newListRecived, newListSend);
     if(mapList[user.id] != null && mapList[user.id][1] != null){
       List<Tarea> new1 = [];
@@ -896,7 +895,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
           //CAMBIAR ESTADO DE DESTACAR 0 = FALSE, 1 = TRUE
           if(tarea.is_priority == 0){tarea.is_priority = 1;}else{tarea.is_priority = 0;}
           //GUARDAR LOCALMENTE
-          if(await TaskDatabaseProvider.db.updateTask(tarea) == 1){
+          if(await DatabaseProvider.db.updateTask(tarea) == 1){
             //AVISAR A PATRONBLOC DE TAREAS ENVIADAS PARA QUE SE ACTUALICE
             widget.blocTaskReceived.inList.add(true);
             //ENVIAR A API
@@ -910,7 +909,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
             if(tarea.working == 0){
               showAlert('Tarea iniciada',WalkieTaskColors.color_89BD7D);
               tarea.working = 1;
-              if(await TaskDatabaseProvider.db.updateTask(tarea) == 1){
+              if(await DatabaseProvider.db.updateTask(tarea) == 1){
                 widget.blocTaskReceived.inList.add(true);
                 await conexionHispanos.httpTaskInit(tarea.id);
               }
@@ -926,7 +925,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
             showAlert('Tarea finalizada',WalkieTaskColors.color_89BD7D);
             try{
               tarea.finalized = 1;
-              if(await TaskDatabaseProvider.db.updateTask(tarea) == 1){
+              if(await DatabaseProvider.db.updateTask(tarea) == 1){
                 widget.blocTaskReceived.inList.add(true);
                 await conexionHispanos.httpTaskFinalized(tarea.id);
                 widget.updateData.actualizarListaRecibidos(widget.blocTaskReceived, null);
