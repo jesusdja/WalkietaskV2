@@ -184,7 +184,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
                     alignment: Alignment.bottomCenter,
                     child: Container(
                       color: colorFondoSend,
-                      height: alto * 0.07,
+                      //height: alto * 0.07,
+                      constraints: BoxConstraints(minHeight: alto * 0.07,maxHeight: alto * 0.15),
                       child: _textFieldSend(),
                     )
                 ),
@@ -373,6 +374,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
               margin: EdgeInsets.only(left: ancho * 0.02,right: ancho * 0.02,top: alto * 0.01, bottom: alto * 0.01),
               child: TextField(
                 controller: _controllerChatSms,
+                maxLines: null,
                 onTap: (){
                   setState(() {
                     buttonSend = true;
@@ -390,12 +392,13 @@ class _ChatForTareaState extends State<ChatForTarea> {
                 style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.color_4D4D4D,spacing: 1,fontWeight: FontWeight.bold),
                 textCapitalization: TextCapitalization.sentences,
                 decoration: new InputDecoration(
-                    focusedBorder: styleBorder,
-                    enabledBorder: styleBorder,
-                    border: styleBorder,
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding:EdgeInsets.symmetric(horizontal: ancho * 0.05, vertical: alto * 0.01)
+                  focusedBorder: styleBorder,
+                  enabledBorder: styleBorder,
+                  border: styleBorder,
+                  filled: true,
+                  fillColor: Colors.white,
+                  isDense: true,
+                  contentPadding:EdgeInsets.symmetric(horizontal: ancho * 0.05, vertical: alto * 0.013)
                 ),
               ),
             ),
