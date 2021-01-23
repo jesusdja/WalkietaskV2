@@ -83,7 +83,6 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     try{
       audioPlayer?.stop();
     }catch(_){}
-
   }
 
   _inicializar(){
@@ -330,6 +329,9 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     if(chatCont >= 10 && chatCont < 100){radiusChat = 0.014; }
     if(chatCont > 100){radiusChat = 0.018; }
 
+    bool activity = chatCont != 0;
+    if(!activity) { activity = isNew;}
+
     return InkWell(
       onTap: () =>clickTarea(tarea),
       child: Container(
@@ -376,9 +378,9 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text('$nameUser', style: favorite ? textStylePrimaryBold : textStylePrimary),
+                      Text('$nameUser', style: activity ? textStylePrimaryBold : textStylePrimary),
                       Text(tarea.name.isNotEmpty ? tarea.name : 'Tarea sin título. Tap para nombrarla',
-                        style: tarea.name.isNotEmpty ? (favorite ? textStylePrimaryBold : textStylePrimary) : textStyleNotTitle,),
+                        style: tarea.name.isNotEmpty ? (activity ? textStylePrimaryBold : textStylePrimary) : textStyleNotTitle,),
                       Text(proyectName,style: textStyleProject,),
                     ],
                   ),
@@ -977,17 +979,23 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
 
   void _notificationListener(){
     widget.push.mensajes.listen((argumento) async {
-      if(argumento['table'] != null && argumento['table'] == 'tasks') {
+      if(argumento['table'] != null && argumento['table'].contains('tasks')) {
         String idDoc = argumento['idDoc'];
-        List<String> listTaskNew = await prefs.get('notiListTask');
-        if (listTaskNew == null) {
-          listTaskNew = [];
+        bool isTask = argumento['table'].contains('tasks');
+
+        if (isTask) {
+          List listNew = await prefs.get('notiListTask');
+          if (listNew == null) {
+            listNew = [];
+          }
+          List<String> listTaskNew = [];
+          listNew.forEach((idDoc) { listTaskNew.add(idDoc);});
+          listTaskNew.add(idDoc);
+          await prefs.setStringList('notiListTask', listTaskNew);
+          _updateDataNewFirebase();
+          updateData.actualizarListaRecibidos(blocTaskReceived, null);
+          blocTaskReceived.inList.add(true);
         }
-        listTaskNew.add(idDoc);
-        await prefs.setStringList('notiListTask', listTaskNew);
-        listViewTaskNew.add(idDoc);
-        updateData.actualizarListaRecibidos(blocTaskReceived, null);
-        setState(() {});
       }
 
       if(argumento['table'] != null && argumento['table'].contains('sms')){

@@ -465,12 +465,12 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         }
         data[task.user_id][1].add(task);
         if(data[task.user_id][0] == ''){
-          data[task.user_id][0] = task.updated_at;
+          data[task.user_id][0] = task.deadline;
         }else{
-          if(task.updated_at.isEmpty || data[task.user_id][0].isEmpty){
-            if(data[task.user_id][0].isEmpty){ data[task.user_id][0] = task.updated_at.isEmpty; }
+          if(task.deadline.isEmpty || data[task.user_id][0].isEmpty){
+            if(data[task.user_id][0].isEmpty){ data[task.user_id][0] = task.deadline.isEmpty; }
           }else{
-            DateTime dateCreate = DateTime.parse(task.updated_at);
+            DateTime dateCreate = DateTime.parse(task.deadline);
             Duration difDays = dateCreate.difference(DateTime.now());
 
             DateTime dateCreate2 = DateTime.parse(data[task.user_id][0]);
@@ -489,12 +489,12 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         }
         data[task.user_responsability_id][2].add(task);
         if(data[task.user_responsability_id][0] == ''){
-          data[task.user_responsability_id][0] = task.updated_at;
+          data[task.user_responsability_id][0] = task.deadline;
         }else{
-          if(task.updated_at.isEmpty || data[task.user_responsability_id][0].isEmpty){
+          if(task.deadline.isEmpty || data[task.user_responsability_id][0].isEmpty){
             if(data[task.user_responsability_id][0].isEmpty){ data[task.user_responsability_id][0] = task.deadline.isEmpty; }
           }else{
-            DateTime dateCreate = DateTime.parse(task.updated_at);
+            DateTime dateCreate = DateTime.parse(task.deadline);
             Duration difDays = dateCreate.difference(DateTime.now());
 
             DateTime dateCreate2 = DateTime.parse(data[task.user_responsability_id][0]);
@@ -833,7 +833,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     push.mensajes.listen((argumento) async {
       if(argumento['table'] != null && (argumento['table'] == 'tasks' ||
           argumento['table'].contains('contacts'))) {
-        String idDoc = argumento['idDoc'];
         bool isTask = argumento['table'].contains('tasks');
         if (isTask) {
           try{

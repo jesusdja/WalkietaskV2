@@ -269,7 +269,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
               ],
               secondaryActions: <Widget>[
                 //_buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,tarea),
-                //_buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,tarea),
+                _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,tarea),
               ],
             ),
           );
@@ -317,6 +317,8 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     if(chatCont >= 10 && chatCont < 100){radiusChat = 0.014; }
     if(chatCont > 100){radiusChat = 0.018; }
 
+    bool activity = chatCont != 0;
+
     return InkWell(
       onTap: () =>clickTarea(tarea),
       child: IntrinsicHeight(
@@ -362,9 +364,9 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text('$nameUser', style: favorite ? textStylePrimaryBold : textStylePrimary),
+                    Text('$nameUser', style: activity ? textStylePrimaryBold : textStylePrimary),
                     Text(tarea.name.isNotEmpty ? tarea.name : 'Tarea sin título. Tap para nombrarla',
-                      style: tarea.name.isNotEmpty ? (favorite ? textStylePrimaryBold : textStylePrimary) : textStyleNotTitle,),
+                      style: tarea.name.isNotEmpty ? (activity ? textStylePrimaryBold : textStylePrimary) : textStyleNotTitle,),
                     Text(proyectName,style: textStyleProject,),
                   ],
                 ),
@@ -743,7 +745,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                 ],
                 secondaryActions: <Widget>[
                   //_buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
-                  //_buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,task),
+                  _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,task),
                 ],
               ),
             ),
@@ -931,10 +933,12 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
         bool isTask = argumento['table'].contains('tasks');
 
         if (isTask) {
-          List<String> listTaskNew = await prefs.get('notiListTask');
-          if (listTaskNew == null) {
-            listTaskNew = [];
+          List listNew = await prefs.get('notiListTask');
+          if (listNew == null) {
+            listNew = [];
           }
+          List<String> listTaskNew = [];
+          listNew.forEach((idDoc) { listTaskNew.add(idDoc);});
           listTaskNew.add(idDoc);
           await prefs.setStringList('notiListTask', listTaskNew);
           _updateDataNewFirebase();
