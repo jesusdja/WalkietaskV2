@@ -263,9 +263,9 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
               child: Slidable(
                 actionPane: SlidableDrawerActionPane(),
                 actionExtentRatio: 0.25,
-                child: _tareas(tarea, tarea.is_priority != 0),
+                child: _tareas(tarea),
                 actions: <Widget>[
-                  _buttonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1,tarea),
+                  _buttonSliderAction(tarea.is_priority_responsability == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1,tarea),
                   //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
                 ],
                 secondaryActions: <Widget>[
@@ -282,7 +282,10 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     );
   }
 
-  Widget _tareas(Tarea tarea, bool favorite,){
+  Widget _tareas(Tarea tarea, ){
+
+    bool favorite = tarea.is_priority_responsability == 1;
+
     bool isNew = false;
     listViewTaskNew.forEach((element) {
       if(element == tarea.id.toString()){
@@ -748,9 +751,9 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
               child: Slidable(
                 actionPane: SlidableDrawerActionPane(),
                 actionExtentRatio: 0.25,
-                child: _tareas(task, task.is_priority != 0),
+                child: _tareas(task),
                 actions: <Widget>[
-                  _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1,task),
+                  _buttonSliderAction(task.is_priority_responsability == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1,task),
                   //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,task),
                 ],
                 secondaryActions: <Widget>[
@@ -804,14 +807,15 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
       onTap: () async {
         if(accion == 1){
           //CAMBIAR ESTADO DE DESTACAR 0 = FALSE, 1 = TRUE
-          if(tarea.is_priority == 0){tarea.is_priority = 1;}else{tarea.is_priority = 0;}
+          if(tarea.is_priority_responsability == 0){tarea.is_priority_responsability = 1;}else{tarea.is_priority_responsability = 0;}
           //GUARDAR LOCALMENTE
           if(await DatabaseProvider.db.updateTask(tarea) == 1){
             //AVISAR A PATRONBLOC DE TAREAS ENVIADAS PARA QUE SE ACTUALICE
             blocTaskReceived.inList.add(true);
             //ENVIAR A API
             try{
-              await conexionHispanos.httpSendFavorite(tarea);
+              var res = await conexionHispanos.httpSendFavorite(tarea,tarea.is_priority_responsability);
+              print(res);
             }catch(e){}
           }
         }

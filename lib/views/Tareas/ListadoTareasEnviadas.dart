@@ -804,7 +804,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
             blocTaskSend.inList.add(true);
             //ENVIAR A API
             try{
-              await conexionHispanos.httpSendFavorite(tarea);
+              await conexionHispanos.httpSendFavorite(tarea,tarea.is_priority);
             }catch(e){
               //SI NO HAY CONEXION GUARDAR EN TABLA LOCAL
             }
@@ -827,19 +827,15 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
           }
         }
         if(accion == 4){
-          if(tarea.working == 1){
-            showAlert('Tarea finalizada',WalkieTaskColors.color_89BD7D);
-            try{
-              tarea.finalized = 1;
-              if(await DatabaseProvider.db.updateTask(tarea) == 1){
-                blocTaskSend.inList.add(true);
-                await conexionHispanos.httpTaskFinalized(tarea.id);
-              }
-            }catch(e){
-              print(e.toString());
+          showAlert('Tarea finalizada',WalkieTaskColors.color_89BD7D);
+          try{
+            tarea.finalized = 1;
+            if(await DatabaseProvider.db.updateTask(tarea) == 1){
+              blocTaskSend.inList.add(true);
+              await conexionHispanos.httpTaskFinalized(tarea.id);
             }
-          }else{
-            showAlert('La tarea debe estar iniciada para finalizarla.',WalkieTaskColors.color_E07676);
+          }catch(e){
+            print(e.toString());
           }
         }
       },

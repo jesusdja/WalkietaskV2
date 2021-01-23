@@ -8,6 +8,8 @@ class Tarea  extends Equatable{
   int working;
   // ignore: non_constant_identifier_names
   int is_priority;
+  // ignore: non_constant_identifier_names
+  int is_priority_responsability;
   int finalized;
   String deadline;
   // ignore: non_constant_identifier_names
@@ -52,6 +54,7 @@ class Tarea  extends Equatable{
         this.name,
         this.description,
         this.is_priority,
+        this.is_priority_responsability,
         this.working,
         this.finalized,
         this.deadline,
@@ -80,6 +83,7 @@ class Tarea  extends Equatable{
     name = isnullOrvacio(json['name']) ? '' : json['name'];
     description = isnullOrvacio(json['description']) ? '' : json['description'];
     is_priority = isnullOrvacio(json['is_priority']) ? 0 : json['is_priority'];
+    is_priority_responsability = isnullOrvacio(json['is_priority_responsability']) ? 0 : json['is_priority_responsability'];
     working = isnullOrvacio(json['working']) ? 0 : json['working'];
     finalized = isnullOrvacio(json['finalized']) ? 0 : json['finalized'];
     deadline = isnullOrvacio(json['deadline']) ? '' : json['deadline'];
@@ -133,6 +137,7 @@ class Tarea  extends Equatable{
     data['name'] = this.name;
     data['description'] = this.description;
     data['is_priority'] = this.is_priority;
+    data['is_priority_responsability'] = this.is_priority_responsability;
     data['working'] = this.working;
     data['finalized'] = this.finalized;
     data['deadline'] = this.deadline;
@@ -163,6 +168,7 @@ class Tarea  extends Equatable{
         name = snapshot['name'],
         description = snapshot['description'],
         is_priority = snapshot['is_priority'],
+        is_priority_responsability = snapshot['is_priority_responsability'],
         working = snapshot['working'],
         finalized = snapshot['finalized'],
         deadline = snapshot['deadline'],
@@ -191,6 +197,7 @@ class Tarea  extends Equatable{
     this.name = obj['name'];
     this.description = obj['description'];
     this.is_priority = obj['is_priority'];
+    this.is_priority_responsability = obj['is_priority_responsability'];
     this.working = obj['working'];
     this.finalized = obj['finalized'];
     this.deadline = obj['deadline'];
@@ -220,6 +227,7 @@ class Tarea  extends Equatable{
     'name' : name,
     'description' : description,
     'is_priority' : is_priority.toString(),
+    'is_priority_responsability' : is_priority_responsability.toString(),
     'working' : working.toString(),
     'finalized' : finalized,
     'deadline' : deadline.toString(),
@@ -249,6 +257,7 @@ class Tarea  extends Equatable{
     'name' : name,
     'description' : description,
     'is_priority' : is_priority,
+    'is_priority_responsability' : is_priority_responsability,
     'working' : working,
     'finalized' : finalized,
     'deadline' : deadline,
@@ -280,6 +289,7 @@ class Tarea  extends Equatable{
     name,
     description,
     is_priority,
+    is_priority_responsability,
     working,
     finalized,
     deadline,

@@ -900,7 +900,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
             widget.blocTaskReceived.inList.add(true);
             //ENVIAR A API
             try{
-              await conexionHispanos.httpSendFavorite(tarea);
+              await conexionHispanos.httpSendFavorite(tarea,tarea.is_priority);
             }catch(e){}
           }
         }

@@ -5,6 +5,9 @@ import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/models/invitation.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 class DatabaseProvider{
   DatabaseProvider._();
@@ -27,6 +30,13 @@ class DatabaseProvider{
     // String path = join(databasesPath, 'unity.db');
     // // Delete the database
     // await deleteDatabase(path);
+
+    // Get a location using getDatabasesPath
+    Directory directory = await getApplicationDocumentsDirectory();
+    String path = join(directory.path, 'unity.db');
+    // Delete the database
+    await deleteDatabase(path);
+    _database = null;
   }
 
   //**********************
