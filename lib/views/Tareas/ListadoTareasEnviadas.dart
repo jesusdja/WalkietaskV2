@@ -398,6 +398,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                         alto: alto * 0.03,
                         colorStop: WalkieTaskColors.color_E07676,
                         path: tarea.url_audio,
+                        idTask: tarea.id,
                       ) : Container(),
                     ],
                   )

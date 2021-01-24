@@ -4,6 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
+import 'package:walkietaskv2/utils/shared_preferences.dart';
 
 class SoundTask extends StatefulWidget {
 
@@ -12,6 +13,7 @@ class SoundTask extends StatefulWidget {
   final Color colorPlay;
   final Color colorStop;
   final String path;
+  final int idTask;
 
   SoundTask({
     this.status = false,
@@ -19,6 +21,7 @@ class SoundTask extends StatefulWidget {
     this.colorPlay = WalkieTaskColors.color_555555,
     this.colorStop = WalkieTaskColors.color_555555,
     this.path = '',
+    @required this.idTask,
   });
 
   @override
@@ -39,9 +42,14 @@ class _SoundTaskState extends State<SoundTask> {
   void initState() {
     super.initState();
     audioPlayer = new AudioPlayer();
-    _durationSubscription = audioPlayer.onDurationChanged.listen((duration) {
-      setState(() => _duration = duration);
-      print('$_duration');
+    _durationSubscription = audioPlayer.onDurationChanged.listen((duration) async {
+      //print('$_duration');
+      try{
+        int idSound = await SharedPrefe().getValue('idSoundWalkie');
+        if(idSound != null &&  idSound != widget.idTask && audioPlayer.state == AudioPlayerState.PLAYING){
+          audioPlayer.stop();
+        }
+      }catch(_){}
     });
     listenerAudio();
   }
@@ -64,8 +72,10 @@ class _SoundTaskState extends State<SoundTask> {
         if(widget.path.isNotEmpty){
           if(!sonando){
             audioPlayer.play(widget.path);
+            await SharedPrefe().setIntValue('idSoundWalkie',widget.idTask);
           }else{
             await audioPlayer.stop();
+            await SharedPrefe().setIntValue('idSoundWalkie',0);
           }
           setState(() {
             sonando = !sonando;
@@ -87,11 +97,11 @@ class _SoundTaskState extends State<SoundTask> {
 
   Future<void> listenerAudio() async {
     audioPlayer.onAudioPositionChanged.listen((Duration  p){
-      print('Current position: $p');
+      //print('Current position: $p');
     });
     AudioPlayerState oldState = AudioPlayerState.COMPLETED;
     audioPlayer.onPlayerStateChanged.listen((AudioPlayerState s){
-      print('Current player state: $s');
+      //print('Current player state: $s');
       if(AudioPlayerState.COMPLETED == s){
         setState(() {
           sonando = false;

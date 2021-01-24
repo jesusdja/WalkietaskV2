@@ -117,8 +117,16 @@ class _ChatForTareaState extends State<ChatForTarea> {
     prefs = await SharedPreferences.getInstance();
     idMyUser = prefs.getString('unityIdMyUser');
     listUser = await DatabaseProvider.db.getAllUser();
+
+    int idSearch;
+    if(tarea.user_id.toString() == idMyUser){
+      idSearch = tarea.user_responsability_id;
+    }else{
+      idSearch = tarea.user_id;
+    }
+
     if(tarea.user_responsability_id != null){
-      usuarioResponsable = await DatabaseProvider.db.getCodeIdUser(tarea.user_responsability_id.toString());
+      usuarioResponsable = await DatabaseProvider.db.getCodeIdUser(idSearch.toString());
     }
     setState(() {});
   }
@@ -170,7 +178,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
           child: Stack(
             children: <Widget>[
               Container(
-                padding: EdgeInsets.only(bottom: alto * 0.07),
+                padding: EdgeInsets.only(bottom: alto * 0.07, top: alto * 0.1),
                 child: _mensajes(),
               ),
               edit ? Container(
@@ -284,6 +292,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
           if(chatTarea != null){
             chatTarea.mensajes = snapshot.data.docs[0].data()["mensajes"];
           }
+
           return chatTarea != null ?
 
           ListView.builder(
@@ -403,7 +412,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
               ),
             ),
           ),
-          buttonSend ? Container(
+          // buttonSend ?
+          Container(
             child: IconButton(
               icon: Icon(Icons.send,color: WalkieTaskColors.color_4D9DFA,),
               onPressed: () async {
@@ -467,37 +477,38 @@ class _ChatForTareaState extends State<ChatForTarea> {
                 }
               },
             ),
-          )  :
-          Container(
-            child: Row(
-              children: [
-                Container(
-                  height: alto * 0.03,
-                  width: alto * 0.035,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: ViewImage().assetsImage("assets/image/Attachment.png").image,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-                //IconButton(icon: Icon(Icons.mic,color: Colors.grey,), onPressed: (){}),
-                SizedBox(width: ancho * 0.01,),
-                //IconButton(icon: Icon(Icons.camera_alt,color: Colors.grey,), onPressed: (){}),
-                Container(
-                  height: alto * 0.03,
-                  width: alto * 0.035,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: ViewImage().assetsImage("assets/image/chat_cam.png",color: Colors.black).image,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-                SizedBox(width: ancho * 0.03,),
-              ],
-            ),
           )
+              // :
+          // Container(
+          //   child: Row(
+          //     children: [
+          //       Container(
+          //         height: alto * 0.03,
+          //         width: alto * 0.035,
+          //         decoration: BoxDecoration(
+          //           image: DecorationImage(
+          //             image: ViewImage().assetsImage("assets/image/Attachment.png").image,
+          //             fit: BoxFit.contain,
+          //           ),
+          //         ),
+          //       ),
+          //       //IconButton(icon: Icon(Icons.mic,color: Colors.grey,), onPressed: (){}),
+          //       SizedBox(width: ancho * 0.01,),
+          //       //IconButton(icon: Icon(Icons.camera_alt,color: Colors.grey,), onPressed: (){}),
+          //       Container(
+          //         height: alto * 0.03,
+          //         width: alto * 0.035,
+          //         decoration: BoxDecoration(
+          //           image: DecorationImage(
+          //             image: ViewImage().assetsImage("assets/image/chat_cam.png",color: Colors.black).image,
+          //             fit: BoxFit.contain,
+          //           ),
+          //         ),
+          //       ),
+          //       SizedBox(width: ancho * 0.03,),
+          //     ],
+          //   ),
+          // )
         ],
       ),
     );

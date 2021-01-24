@@ -766,6 +766,7 @@ class _CreateTaskState extends State<CreateTask> {
                           alto: alto * 0.03,
                           colorStop: WalkieTaskColors.color_E07676,
                           path: task.url_audio,
+                          idTask: task.id,
                         ) : Container(),
                       ],
                     ),

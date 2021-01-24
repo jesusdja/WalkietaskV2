@@ -66,7 +66,7 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
       try{
         List data = listDocuments[x].split('|');
         String urlAdjunto = '';
-        if(data.length > 2 && data[2] != ''){ urlAdjunto = data[6]; }
+        if(data.length > 6 && data[6] != ''){ urlAdjunto = data[6]; }
         Map<String,String> result = await subirArchivo(urlAdjunto);
         if(result['subir'] == 'true'){
           String pathUrlAttachment = result['location'];

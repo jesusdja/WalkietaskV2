@@ -168,7 +168,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
           children: [
             SizedBox(height: alto * 0.1,),
             Container(
-              child: Text('Enviarás una tarea a ${user.name}', style: textStylePrimary,),
+              child: Text('Enviarás una tarea a ${user.name.split(' ')[0] ?? ''}', style: textStylePrimary,),
             ),
             Container(
               margin: EdgeInsets.only(top: alto * 0.01),
@@ -193,7 +193,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
             Container(
               margin: EdgeInsets.only(top: alto * 0.02,right: ancho * 0.05,bottom: alto * 0.01),
               width: ancho * 0.85,
-              child: Text('Titulo (opcional)',textAlign: TextAlign.left,
+              child: Text('Titulo',textAlign: TextAlign.left,
                   style: textStylePrimary),
             ),
             _tituloTarea(),
@@ -219,7 +219,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
             Container(
               margin: EdgeInsets.only(top: alto * 0.02,right: ancho * 0.05,bottom: alto * 0.01),
               width: ancho,
-              child: Text('Titulo (opcional)',textAlign: TextAlign.left,
+              child: Text('Titulo',textAlign: TextAlign.left,
                   style: textStylePrimary),
             ),
             _tituloTarea(),
