@@ -16,6 +16,8 @@ import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Tareas/Create/detalles_tareas_user.dart';
+import 'package:walkietaskv2/views/Chat/ChatForTarea.dart';
+import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
 
 
 class CreateTask extends StatefulWidget {
@@ -505,12 +507,7 @@ class _CreateTaskState extends State<CreateTask> {
                   child: iconBuscador ? Icon(Icons.clear) : Icon(Icons.search),
                   onTap: (){
                     if(iconBuscador){
-                      controlleBuscador.text = '';
-                      iconBuscador = false;
-                      controlleBuscador.clear();
-                      FocusScope.of(context).requestFocus(new FocusNode());
-                      //WidgetsBinding.instance.addPostFrameCallback((_) => controlleBuscador.clear());
-                      setState(() {});
+                      _closeSearch();
                     }
                   },
                 ),
@@ -580,6 +577,15 @@ class _CreateTaskState extends State<CreateTask> {
     );
   }
 
+  void _closeSearch(){
+    controlleBuscador.text = '';
+    iconBuscador = false;
+    controlleBuscador.clear();
+    FocusScope.of(context).requestFocus(new FocusNode());
+    //WidgetsBinding.instance.addPostFrameCallback((_) => controlleBuscador.clear());
+    setState(() {});
+  }
+
   List<Widget> resultSearchUsers(){
     List<Widget> users = [];
 
@@ -612,80 +618,86 @@ class _CreateTaskState extends State<CreateTask> {
       }
 
       users.add(
-        Slidable(
-          actionPane: SlidableDrawerActionPane(),
-          actionExtentRatio: 0.25,
-          child: Container(
-            width: ancho,
-            margin: EdgeInsets.only(bottom: alto * 0.01, right: ancho * 0.03),
-            child: Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(left: ancho * 0.03, right: ancho * 0.03),
-                  child: Stack(
-                    children: <Widget>[
-                      Center(
-                        child: Container(
-                          decoration: new BoxDecoration(
-                            color: bordeCirculeAvatar, // border color
-                            shape: BoxShape.circle,
-                          ),
-                          child: CircleAvatar(
-                            radius: alto * 0.03,
-                            backgroundImage: avatarUser.image,
-                            //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
+        InkWell(
+          onTap: (){
+            _onTapUser(user, false);
+            _closeSearch();
+          },
+          child: Slidable(
+            actionPane: SlidableDrawerActionPane(),
+            actionExtentRatio: 0.25,
+            child: Container(
+              width: ancho,
+              margin: EdgeInsets.only(bottom: alto * 0.01, right: ancho * 0.03),
+              child: Row(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: ancho * 0.03, right: ancho * 0.03),
+                    child: Stack(
+                      children: <Widget>[
+                        Center(
+                          child: Container(
+                            decoration: new BoxDecoration(
+                              color: bordeCirculeAvatar, // border color
+                              shape: BoxShape.circle,
+                            ),
+                            child: CircleAvatar(
+                              radius: alto * 0.03,
+                              backgroundImage: avatarUser.image,
+                              //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
+                            ),
                           ),
                         ),
-                      ),
-                      favorite ? Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          margin: EdgeInsets.only(top: alto * 0.035, left: ancho * 0.08),
-                          child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
-                        ),
-                      ) : Container(),
-                    ],
+                        favorite ? Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            margin: EdgeInsets.only(top: alto * 0.035, left: ancho * 0.08),
+                            child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
+                          ),
+                        ) : Container(),
+                      ],
+                    ),
                   ),
-                ),
-                Expanded(child: Text(user.name, style: textStylePrimaryBold,)),
-                Container(
-                  width: ancho * 0.3,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      redColor ?
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-                              height: alto * 0.02,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
-                                  fit: BoxFit.contain,
+                  Expanded(child: Text(user.name, style: textStylePrimaryBold,)),
+                  Container(
+                    width: ancho * 0.3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        redColor ?
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                                height: alto * 0.02,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                                    fit: BoxFit.contain,
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(width: ancho * 0.02),
-                            Text(dateDiff,style: textStylePrimaryLitleRed,)
-                          ],
-                        ),
-                      )
-                          :
-                      Text(dateDiff,style: textStylePrimaryLitleBold,),
-                      Text('Recibidas: $cantRecived',style: textStylePrimaryLitle,),
-                      Text('Enviadas: $cantSend',style: textStylePrimaryLitle,),
-                    ],
+                              SizedBox(width: ancho * 0.02),
+                              Text(dateDiff,style: textStylePrimaryLitleRed,)
+                            ],
+                          ),
+                        )
+                            :
+                        Text(dateDiff,style: textStylePrimaryLitleBold,),
+                        Text('Recibidas: $cantRecived',style: textStylePrimaryLitle,),
+                        Text('Enviadas: $cantSend',style: textStylePrimaryLitle,),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+            actions: <Widget>[
+              _buttonSliderAction(user.fijo == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1, user),
+            ],
           ),
-          actions: <Widget>[
-            _buttonSliderAction(user.fijo == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1, user),
-          ],
         ),
 
       );
@@ -737,41 +749,47 @@ class _CreateTaskState extends State<CreateTask> {
           }
 
           tasks.add(
-            Container(
-              width: ancho,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: ancho * 0.1,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(task.name, style: textStylePrimaryBold,),
-                        Text(nameUser, style: textStylePrimaryLitle,),
-                      ],
+            InkWell(
+              onTap: (){
+                clickTarea(task);
+                _closeSearch();
+              },
+              child: Container(
+                width: ancho,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: ancho * 0.1,
                     ),
-                  ),
-                  Container(
-                    width: ancho * 0.25,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(date, style: textStylePrimary,),
-                        task.url_audio.isNotEmpty ?
-                        SoundTask(
-                          alto: alto * 0.03,
-                          colorStop: WalkieTaskColors.color_E07676,
-                          path: task.url_audio,
-                          idTask: task.id,
-                        ) : Container(),
-                      ],
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(task.name, style: textStylePrimaryBold,),
+                          Text(nameUser, style: textStylePrimaryLitle,),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                    Container(
+                      width: ancho * 0.25,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(date, style: textStylePrimary,),
+                          task.url_audio.isNotEmpty ?
+                          SoundTask(
+                            alto: alto * 0.03,
+                            colorStop: WalkieTaskColors.color_E07676,
+                            path: task.url_audio,
+                            idTask: task.id,
+                          ) : Container(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -798,5 +816,33 @@ class _CreateTaskState extends State<CreateTask> {
 
     tasks.add(SizedBox(height: alto * 0.03,));
     return tasks;
+  }
+
+  void clickTarea(Tarea tarea) async {
+
+    try{
+      if(tarea.name.isEmpty){
+        var result  = await Navigator.push(context, new MaterialPageRoute(
+            builder: (BuildContext context) => new AddNameTask(tareaRes: tarea,)));
+        if(result){
+          try{
+            widget.updateData.actualizarListaEnviados(widget.blocTaskSend, null);
+            widget.updateData.actualizarListaRecibidos(widget.blocTaskReceived, null);
+          }catch(e){
+            print(e.toString());
+          }
+        }
+      }else{
+        Navigator.push(context, new MaterialPageRoute(
+            builder: (BuildContext context) =>
+            new ChatForTarea(
+              tareaRes: tarea,
+              listaCasosRes: listaCasos,
+              blocTaskSend: widget.blocTaskReceived,
+            )));
+      }
+    }catch(e){
+      print(e.toString());
+    }
   }
 }

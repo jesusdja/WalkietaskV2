@@ -169,11 +169,6 @@ class _ChatForTareaState extends State<ChatForTarea> {
       child: Scaffold(
         backgroundColor: colorChat,
         appBar: _appBarH(),
-        /*bottomNavigationBar: Container(
-          color: colorFondoSend,
-          height: alto * 0.08,
-          child: _textFieldSend(),
-        ),*/
         body: SafeArea(
           child: Stack(
             children: <Widget>[
@@ -302,17 +297,18 @@ class _ChatForTareaState extends State<ChatForTarea> {
             controller: listScrollController,
             itemBuilder: (context, index){
               bool izq = false;
-              if(chatTarea.mensajes['$index']['from'] != idMyUser){
+              int pos = chatTarea.mensajes.length - index - 1;
+              if(chatTarea.mensajes['$pos']['from'] != idMyUser){
                 izq = true;
               }
               Usuario userFrom;
               for(int x = 0; x < listUser.length; x++){
-                if(chatTarea.mensajes['$index']['from'] == listUser[x].id){
+                if(chatTarea.mensajes['$pos']['from'] == listUser[x].id){
                   userFrom = listUser[x];
                   x = listUser.length;
                 }
               }
-              return _cardSMS(Colors.red,'${chatTarea.mensajes['$index']['texto']}',izq,userFrom);
+              return _cardSMS(Colors.red,'${chatTarea.mensajes['$pos']['texto']}',izq,userFrom);
             },
           ) :
           Container();
@@ -433,23 +429,34 @@ class _ChatForTareaState extends State<ChatForTarea> {
                       from: idMyUser
                   );
 
-                  Map<dynamic,dynamic> maplista = Map<String,dynamic>();
-                  maplista['0'] = mensaje.toJson();
-                  int pos = 1;
-                  if(chatTarea.mensajes != null){
-                    chatTarea.mensajes.forEach((key,value){
-                      maplista[pos.toString()] = value;
-                      pos++;
-                    });
-                  }
+                  int pos = chatTarea.mensajes.length;
+                  // Map<dynamic,dynamic> maplista = Map<String,dynamic>();
+                  //   chatTarea.mensajes.forEach((key,value){
+                  //     maplista[pos.toString()] = value;
+                  //     pos++;
+                  //   });
+                  chatTarea.mensajes[pos.toString()] = mensaje.toJson();
 
-                  bool res = await tareaFB.agregarMensaje(chatTarea.id,maplista);
+                  // Map<dynamic,dynamic> maplista = Map<String,dynamic>();
+                  // maplista['0'] = mensaje.toJson();
+                  // int pos = 1;
+                  // if(chatTarea.mensajes != null){
+                  //   chatTarea.mensajes.forEach((key,value){
+                  //     maplista[pos.toString()] = value;
+                  //     pos++;
+                  //   });
+                  // }
+
+
+
+                  bool res = await tareaFB.agregarMensaje(chatTarea.id,chatTarea.mensajes);
                   if(res){
                     listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+                    String sms = textChatSend;
                     textChatSend = '';
                     _controllerChatSms.text = '';
                     buttonSend = false;
-                    FocusScope.of(context).requestFocus(new FocusNode());
+                    //FocusScope.of(context).requestFocus(new FocusNode());
                     setState(() {});
                     try {
                       int idSend = 0;
@@ -463,7 +470,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                       if (idSend != 0) {
                         Usuario userSendNoti = await DatabaseProvider.db.getCodeIdUser(idSend.toString());
                         if (userSendNoti.fcmToken != null && userSendNoti.fcmToken.isNotEmpty) {
-                            await HttpPushNotifications().httpSendMessagero(userSendNoti.fcmToken, tarea.id.toString(), description: textChatSend,);
+                            await HttpPushNotifications().httpSendMessagero(userSendNoti.fcmToken, tarea.id.toString(), description: sms,);
                             tarea.updated_at = DateTime.now().toString();
                             await DatabaseProvider.db.updateTask(tarea);
                             updateData.actualizarListaRecibidos(blocTaskSend, null);
