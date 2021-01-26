@@ -413,9 +413,33 @@ class _ChatForTareaState extends State<ChatForTarea> {
             child: IconButton(
               icon: Icon(Icons.send,color: WalkieTaskColors.color_4D9DFA,),
               onPressed: () async {
-                // String to = 'cfAlHPpkRdKFFtfmz_L_Yf:APA91bFADARPWoDrPrNYif-D0roZgH530MHxcmHCjHAGAdYoIyauFd5SOx2_Kv3mxPz6IvvIWNDOIdfmEoA_sF-NPtSuhCJ6fDx6aZzYklDo-S--5t-qfeJO1wrhgwFsUQT3E3G1xKg4';
-                // var res = await HttpPushNotifications().httpSendMessagero(to, description: textChatSend,);
-                // print(res);
+
+/*
+                try {
+                  int idSend = 0;
+                  if (idMyUser != tarea.user_id.toString()) {
+                    idSend = tarea.user_id;
+                  } else {
+                    if (idMyUser != tarea.user_responsability_id.toString()) {
+                      idSend = tarea.user_responsability_id;
+                    }
+                  }
+                  if (idSend != 0) {
+                    Usuario userSendNoti = await DatabaseProvider.db.getCodeIdUser(idSend.toString());
+                    if (userSendNoti.fcmToken != null && userSendNoti.fcmToken.isNotEmpty) {
+                      var rese = await HttpPushNotifications().httpSendMessagero(userSendNoti.fcmToken, tarea.id.toString(), description: 'Este es el sms',);
+                      tarea.updated_at = DateTime.now().toString();
+                      await DatabaseProvider.db.updateTask(tarea);
+                      updateData.actualizarListaRecibidos(blocTaskSend, null);
+                      updateData.actualizarListaEnviados(blocTaskSend, null);
+                    }
+                  }
+                }catch(e){
+                  print(e.toString());
+                }
+*/
+
+
                 if(textChatSend.isNotEmpty){
 
                   DateTime now = DateTime.now();
@@ -482,6 +506,9 @@ class _ChatForTareaState extends State<ChatForTarea> {
                     }
                   }
                 }
+
+
+
               },
             ),
           )

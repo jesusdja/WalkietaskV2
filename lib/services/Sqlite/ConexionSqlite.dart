@@ -283,12 +283,12 @@ class DatabaseProvider{
     String idUser = await SharedPrefe().getValue('unityIdMyUser');
     final db = await database;
     try{
-      List<Map> list = await db.rawQuery('SELECT * FROM Tareas WHERE user_responsability_id = $idUser AND is_priority = 1 ORDER BY ord DESC');
+      List<Map> list = await db.rawQuery('SELECT * FROM Tareas WHERE user_responsability_id = $idUser AND is_priority_responsability = 1 ORDER BY ord DESC');
       list.forEach((mapa){
         Tarea tarea = new Tarea.fromMap(mapa);
         listTareaFav.add(tarea);
       });
-      list = await db.rawQuery('SELECT * FROM Tareas WHERE user_responsability_id = $idUser AND is_priority = 0 ORDER BY ord DESC');
+      list = await db.rawQuery('SELECT * FROM Tareas WHERE user_responsability_id = $idUser AND is_priority_responsability = 0 ORDER BY ord DESC');
       list.forEach((mapa){
         Tarea tarea = new Tarea.fromMap(mapa);
         listTarea.add(tarea);

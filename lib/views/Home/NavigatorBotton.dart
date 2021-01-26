@@ -845,6 +845,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
             listTaskNewString.add(argumento['idDoc']);
             await prefs.setStringList('notiListTask', listTaskNewString);
           }catch(_){}
+          updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
+          updateData.actualizarListaEnviados(blocTaskSend, blocConection);
         }
 
         if (page == bottonSelect.opcion1 || page == bottonSelect.opcion3 ||
@@ -882,7 +884,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           listTaskNew.forEach((element) { listTaskNewString.add(element);});
           listTaskNewString.add(argumento['idDoc']);
           await prefs.setStringList('notiListChat', listTaskNewString);
-
+          blocTaskReceived.inList.add(true);
           if(task != null){
             //ENVIADO
             if(task.user_id == myUser.id && page != bottonSelect.opcion3){

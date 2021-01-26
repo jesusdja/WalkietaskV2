@@ -20,7 +20,7 @@ class AuthService with ChangeNotifier{
     //await Future.delayed(Duration(seconds: 3));
 
     int versiondb = prefs.getInt('unityInit');
-    if(versiondb == null || versiondb == 5){
+    if(versiondb == null || versiondb != 5){
       prefs.setInt('unityInit', 5);
       await DatabaseProvider.db.deleteDatabaseInstance();
     }

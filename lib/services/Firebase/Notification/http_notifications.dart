@@ -18,10 +18,11 @@ class HttpPushNotifications{
     }
 
     final msg = jsonEncode({
-      'notification': {
-        'body' : sms,
+      "notification": {
+        "body" : sms,
+        "sound":"default",
       },
-      "priority" : "high",
+      "priority":"high",
       "data" : {
         "click_action" : "FLUTTER_NOTIFICATION_CLICK",
         "table" : "sms",

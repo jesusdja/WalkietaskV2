@@ -13,6 +13,7 @@ import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
+import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/task_sound.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
@@ -93,6 +94,8 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       mapDataUserHome[user.id][2].forEach((element) { listSend.add(element); });
     }
 
+    _updateDataNewFirebase();
+
     _inicializarPatronBlocTaskSend();
     _inicializarPatronBlocTaskRecived();
     _inicializarPatronBlocProgress();
@@ -165,7 +168,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
             ),
             isPersonal ? Container() : Container(
               width: ancho,
-              height: h,
+              height: listRecived.isEmpty ? alto * 0.08 : h,
               //color: Colors.red,
               child: _listTaskRecived(h),
             ),
@@ -208,6 +211,13 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
   Widget _listTaskRecived(double h){
     List<Widget> data = [];
     listRecived.forEach((task) {
+
+      bool isNew = false;
+      listViewTaskNew.forEach((element) {
+        if(element == task.id.toString()){
+          isNew = true;
+        }
+      });
 
       String daysLeft = getDayDiff(task.deadline);
 
@@ -258,7 +268,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue :textStylePrimary),
+                            Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue : isNew ? textStylePrimaryBold : textStylePrimary),
                             Text(nameCase, style: textStylePrimaryLitle,)
                           ],
                         ),
@@ -633,6 +643,8 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
 
   void clickTarea(Tarea tarea) async {
 
+    _deleteDataNewFirebase(tarea.id.toString());
+
     try{
       if(tarea.name.isEmpty){
         var result  = await Navigator.push(context, new MaterialPageRoute(
@@ -693,6 +705,45 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       List<Tarea> new2 = [];
       mapList[user.id][2].forEach((element) { new2.add(element);});
       listSend = new2;
+    }
+    setState(() {});
+    _updateDataNewFirebase();
+  }
+
+  List<String> listViewTaskNew = [];
+  Future<void> _updateDataNewFirebase() async {
+    List listViewTaskNew2 = [];
+    List listViewTaskNew3 = [];
+    try{
+      listViewTaskNew3 = await SharedPrefe().getValue('notiListTask') ?? [];
+      listViewTaskNew3.forEach((element) {
+        listViewTaskNew.add(element);
+      });
+
+      listViewTaskNew2 = await SharedPrefe().getValue('notiListChat') ?? [];
+      listViewTaskNew2.forEach((element) {
+        listViewTaskNew.add(element);
+      });
+      setState(() {});
+    }catch(e){
+      print(e.toString());
+    }
+  }
+
+  Future<void> _deleteDataNewFirebase(String id) async {
+    List<String> list = [];
+    try{
+      listViewTaskNew = await SharedPrefe().getValue('notiListTask') ?? [];
+      listViewTaskNew.forEach((element) {
+        if(element != id){
+          list.add(element);
+        }
+      });
+      await SharedPrefe().setStringListValue('notiListTask', list);
+      listViewTaskNew = list;
+      setState(() {});
+    }catch(e){
+      print(e.toString());
     }
     setState(() {});
   }
