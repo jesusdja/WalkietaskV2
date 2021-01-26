@@ -48,6 +48,9 @@ class _SoundTaskState extends State<SoundTask> {
         int idSound = await SharedPrefe().getValue('idSoundWalkie');
         if(idSound != null &&  idSound != widget.idTask && audioPlayer.state == AudioPlayerState.PLAYING){
           audioPlayer.stop();
+          setState(() {
+            sonando = false;
+          });
         }
       }catch(_){}
     });
@@ -70,6 +73,7 @@ class _SoundTaskState extends State<SoundTask> {
     return InkWell(
       onTap: () async {
         if(widget.path.isNotEmpty){
+          print('Sonando = $sonando');
           if(!sonando){
             audioPlayer.play(widget.path);
             await SharedPrefe().setIntValue('idSoundWalkie',widget.idTask);
@@ -114,9 +118,6 @@ class _SoundTaskState extends State<SoundTask> {
       oldState = s;
       if(AudioPlayerState.STOPPED == s){
         oldState = AudioPlayerState.COMPLETED;
-        setState(() {
-          sonando = false;
-        });
       }
     });
   }
