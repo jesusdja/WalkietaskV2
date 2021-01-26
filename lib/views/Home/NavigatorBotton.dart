@@ -68,6 +68,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   BlocProgress blocIndicatorProgress;
   BlocPage blocPage;
   BlocCasos blocConection;
+  BlocProgress blocAudioChangePage = new BlocProgress();
 
   UpdateData updateData = new UpdateData();
 
@@ -311,6 +312,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           listaCasosRes: listaCasos,
           myUserRes: myUser,
           push: push,
+          blocAudioChangePage: blocAudioChangePage,
         ) :
         Center(child: Text('No existen tareas recibidas',style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
         Container(child: Cargando('Buscando tareas recibidas',context),) ;
@@ -324,6 +326,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           listaCasosRes: listaCasos,
           myUserRes: myUser,
           push: push,
+          blocAudioChangePage: blocAudioChangePage,
         ) :
         Center(child: Text('No existen tareas enviadas',style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
         Container(child: Cargando('Buscando tareas enviadas',context),);
@@ -418,7 +421,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       ],
     );
   }
-
   void _onTapNavigator(bottonSelect index, String tit){
     if(!mapNavigatorBotton[index]){
       mapNavigatorBotton[index] = true;
@@ -429,6 +431,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     }
     titulo = tit;
     page = index;
+    blocAudioChangePage.inList.add({'page' : index});
 
     if(page == bottonSelect.opcion1){
       updateData.actualizarListaUsuarios(blocUser, blocConection);
@@ -882,7 +885,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
           Tarea task = await DatabaseProvider.db.getCodeIdTask(argumento['idDoc']);
           task.updated_at = DateTime.now().toString();
-          int res = await DatabaseProvider.db.updateTask(task);
+          await DatabaseProvider.db.updateTask(task);
 
           List<dynamic> listTaskNew = await prefs.get('notiListChat');
           if (listTaskNew == null) {

@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
@@ -17,10 +18,11 @@ import 'package:walkietaskv2/utils/task_sound.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Chat/ChatForTarea.dart';
 import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
+import 'package:walkietaskv2/views/Home/NavigatorBotton.dart';
 
 class ListadoTareasEnviadas extends StatefulWidget {
 
-  ListadoTareasEnviadas({this.push,
+  ListadoTareasEnviadas({this.push, @required this.blocAudioChangePage,
     this.listEnviadosRes,this.mapIdUserRes,this.blocTaskSendRes,this.listaCasosRes, this.myUserRes});
   final List<Tarea> listEnviadosRes;
   final Map<int,Usuario> mapIdUserRes;
@@ -28,6 +30,7 @@ class ListadoTareasEnviadas extends StatefulWidget {
   final List<Caso> listaCasosRes;
   final Usuario myUserRes;
   final pushProvider push;
+  final BlocProgress blocAudioChangePage;
 
   @override
   _ListadoTareasState createState() => _ListadoTareasState();
@@ -399,6 +402,8 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                         colorStop: WalkieTaskColors.color_E07676,
                         path: tarea.url_audio,
                         idTask: tarea.id,
+                        blocAudioChangePage: widget.blocAudioChangePage,
+                        page: bottonSelect.opcion3,
                       ) : Container(),
                     ],
                   )

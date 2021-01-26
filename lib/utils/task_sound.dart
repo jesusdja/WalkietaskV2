@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
+import 'package:walkietaskv2/views/Home/NavigatorBotton.dart';
 
 class SoundTask extends StatefulWidget {
 
@@ -14,6 +16,8 @@ class SoundTask extends StatefulWidget {
   final Color colorStop;
   final String path;
   final int idTask;
+  final BlocProgress blocAudioChangePage;
+  final bottonSelect page;
 
   SoundTask({
     this.status = false,
@@ -22,6 +26,8 @@ class SoundTask extends StatefulWidget {
     this.colorStop = WalkieTaskColors.color_555555,
     this.path = '',
     @required this.idTask,
+    @required this.blocAudioChangePage,
+    @required this.page,
   });
 
   @override
@@ -37,6 +43,7 @@ class _SoundTaskState extends State<SoundTask> {
   AudioPlayer audioPlayer;
   StreamSubscription _durationSubscription;
   Duration _duration;
+  StreamSubscription streamSubscriptionPageAudio;
 
   @override
   void initState() {
@@ -55,6 +62,7 @@ class _SoundTaskState extends State<SoundTask> {
       }catch(_){}
     });
     listenerAudio();
+    _inicializarPatronBloc();
   }
 
   @override
@@ -62,6 +70,7 @@ class _SoundTaskState extends State<SoundTask> {
     super.dispose();
     audioPlayer?.dispose();
     _durationSubscription?.cancel();
+    streamSubscriptionPageAudio?.cancel();
   }
 
   @override
@@ -73,7 +82,6 @@ class _SoundTaskState extends State<SoundTask> {
     return InkWell(
       onTap: () async {
         if(widget.path.isNotEmpty){
-          print('Sonando = $sonando');
           if(!sonando){
             audioPlayer.play(widget.path);
             await SharedPrefe().setIntValue('idSoundWalkie',widget.idTask);
@@ -120,5 +128,18 @@ class _SoundTaskState extends State<SoundTask> {
         oldState = AudioPlayerState.COMPLETED;
       }
     });
+  }
+
+  _inicializarPatronBloc(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionPageAudio = widget.blocAudioChangePage.outList.listen((newVal) {
+        if(newVal['page'] != widget.page){
+          audioPlayer.stop();
+          sonando = false;
+          setState(() {});
+        }
+      });
+    } catch (e) {}
   }
 }

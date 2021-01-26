@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
@@ -17,12 +18,13 @@ import 'package:walkietaskv2/utils/switch_button.dart';
 import 'package:walkietaskv2/utils/task_sound.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
+import 'package:walkietaskv2/views/Home/NavigatorBotton.dart';
 
 import '../Chat/ChatForTarea.dart';
 
 class ListadoTareasRecibidas extends StatefulWidget {
 
-  ListadoTareasRecibidas({this.push,
+  ListadoTareasRecibidas({this.push,@required this.blocAudioChangePage,
     this.mapIdUserRes,this.listRecibidos,this.blocTaskReceivedRes,this.listaCasosRes,this.myUserRes});
   final Map<int,Usuario> mapIdUserRes;
   final List<Tarea> listRecibidos;
@@ -30,6 +32,7 @@ class ListadoTareasRecibidas extends StatefulWidget {
   final List<Caso> listaCasosRes;
   final Usuario myUserRes;
   final pushProvider push;
+  final BlocProgress blocAudioChangePage;
   @override
   _ListadoTareasState createState() => _ListadoTareasState();
 }
@@ -317,11 +320,6 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
       }
     }
 
-    bool reproTask = false;
-    if(taskReproduciendo == tarea.id){
-      reproTask = true;
-    }
-
     int chatCont = 0;
     listCheckChat.forEach((element) {
       if(tarea.id.toString() == element){
@@ -416,6 +414,8 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                           colorStop: WalkieTaskColors.color_E07676,
                           path: tarea.url_audio,
                           idTask: tarea.id,
+                          blocAudioChangePage: widget.blocAudioChangePage,
+                          page: bottonSelect.opcion2,
                         ) : Container(),
                       ],
                     )

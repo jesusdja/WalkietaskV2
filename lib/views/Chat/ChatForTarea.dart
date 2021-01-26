@@ -173,7 +173,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
           child: Stack(
             children: <Widget>[
               Container(
-                padding: EdgeInsets.only(bottom: alto * 0.07, top: alto * 0.1),
+                padding: EdgeInsets.only(bottom: alto * 0.07, top: alto * 0.13),
                 child: _mensajes(),
               ),
               edit ? Container(
@@ -582,7 +582,9 @@ class _ChatForTareaState extends State<ChatForTarea> {
     }
     if(tarea != null && tarea.project_id != null && widget.listaCasosRes != null){
       for(int x = 0; x < widget.listaCasosRes.length; x++){
-        caso = widget.listaCasosRes[x].name;
+        if(widget.listaCasosRes[x].id == tarea.project_id){
+          caso = widget.listaCasosRes[x].name;
+        }
       }
     }
     if(tarea != null && tarea.url_attachment != null && tarea.url_attachment.isNotEmpty){
