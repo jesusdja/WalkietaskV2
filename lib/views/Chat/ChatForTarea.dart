@@ -308,7 +308,21 @@ class _ChatForTareaState extends State<ChatForTarea> {
                   x = listUser.length;
                 }
               }
-              return _cardSMS(Colors.red,'${chatTarea.mensajes['$pos']['texto']}',izq,userFrom);
+
+              String dateStr = '';
+              if(chatTarea.mensajes['$pos'] != null && chatTarea.mensajes['$pos']['fecha'] != null && chatTarea.mensajes['$pos']['hora'] != null){
+                DateTime dateS = DateTime.parse('${chatTarea.mensajes['$pos']['fecha']} ${chatTarea.mensajes['$pos']['hora']}');
+                String horario = 'am';
+                if(dateS.hour > 11) {horario = 'pm'; }
+                String d = dateS.day.toString().length > 1 ? dateS.day.toString() : '0${dateS.day}';
+                String m = dateS.month.toString().length > 1 ? dateS.month.toString() : '0${dateS.month}';
+                String h = dateS.hour.toString().length > 1 ? dateS.hour.toString() : '0${dateS.hour}';
+                String min = dateS.minute.toString().length > 1 ? dateS.minute.toString() : '0${dateS.minute}';
+
+                dateStr = '$d/$m/${dateS.year} $h/$min $horario';
+              }
+
+              return _cardSMS(Colors.red,'${chatTarea.mensajes['$pos']['texto']}', dateStr,izq,userFrom);
             },
           ) :
           Container();
@@ -317,12 +331,14 @@ class _ChatForTareaState extends State<ChatForTarea> {
     );
   }
 
-  Widget _cardSMS(Color colorCard, String texto,bool lateralDer,Usuario userFrom){
+  Widget _cardSMS(Color colorCard, String texto, String dateSrt,bool lateralDer,Usuario userFrom){
 
     Image imagenAvatar = Image.network('$avatarImage');
     if(userFrom != null && userFrom.avatar != null && userFrom.avatar != ''){
       imagenAvatar = Image.network('$directorioImage${userFrom.avatar}');
     }
+
+    TextStyle style = WalkieTaskStyles().stylePrimary(size: alto * 0.016);
 
     return Container(
       margin: lateralDer ? EdgeInsets.only(right: ancho * 0.2) : EdgeInsets.only(left: ancho * 0.2),
@@ -331,30 +347,39 @@ class _ChatForTareaState extends State<ChatForTarea> {
         color: lateralDer ? Colors.white : colorfondotext,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              lateralDer ? Container(
-                child: CircleAvatar(
-                  radius: alto * 0.025,
-                  backgroundImage: imagenAvatar.image,
-                ),
-              ) : Container(),
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-                  child: Text(texto,
-                    style: WalkieTaskStyles().stylePrimary(size: alto * 0.018,color: WalkieTaskColors.color_555555,fontWeight: FontWeight.bold, spacing: 1)
-                    ,textAlign: TextAlign.left,),
-                ),
+          child: Column(
+            crossAxisAlignment: lateralDer ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  lateralDer ? Container(
+                    child: CircleAvatar(
+                      radius: alto * 0.025,
+                      backgroundImage: imagenAvatar.image,
+                    ),
+                  ) : Container(),
+                  Expanded(
+                    child: Container(
+                      margin: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                      child: Text(texto,
+                        style: WalkieTaskStyles().stylePrimary(size: alto * 0.018,color: WalkieTaskColors.color_555555,fontWeight: FontWeight.bold, spacing: 1)
+                        ,textAlign: TextAlign.left,),
+                    ),
+                  ),
+                  !lateralDer ? Container(
+                    child: CircleAvatar(
+                      radius: alto * 0.025,
+                      backgroundImage: imagenAvatar.image,
+                    ),
+                  ) : Container(),
+                ],
               ),
-              !lateralDer ? Container(
-                child: CircleAvatar(
-                  radius: alto * 0.025,
-                  backgroundImage: imagenAvatar.image,
-                ),
-              ) : Container(),
+              Container(
+                margin: EdgeInsets.only(top: alto * 0.01),
+                child: Text(dateSrt,style: style,),
+              )
             ],
           ),
         ),
