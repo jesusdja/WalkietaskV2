@@ -405,45 +405,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
             ),
           ),
           onTap: () async {
-            if(!mapNavigatorBotton[index]){
-              mapNavigatorBotton[index] = true;
-              Map<bottonSelect,bool> auxMap = mapNavigatorBotton;
-              auxMap.forEach((key,value){
-                if(key != index){mapNavigatorBotton[key] = false;}
-              });
-            }
-            titulo = tit;
-            page = index;
-
-            if(page == bottonSelect.opcion1){
-              updateData.actualizarListaUsuarios(blocUser, blocConection);
-              updateData.actualizarCasos(blocCasos);
-              updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
-              updateData.actualizarListaEnviados(blocTaskSend, blocConection);
-            }
-            if(page == bottonSelect.opcion2){
-              updateData.actualizarListaUsuarios(blocUser, blocConection);
-              updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
-              updateData.actualizarCasos(blocCasos);
-              updateNoti(0, false);
-            }
-            if(page == bottonSelect.opcion3){
-              updateData.actualizarListaUsuarios(blocUser, blocConection);
-              updateData.actualizarListaEnviados(blocTaskSend, blocConection);
-              updateData.actualizarCasos(blocCasos);
-              updateNoti(3, false);
-            }
-            if(page == bottonSelect.opcion4){
-              updateData.actualizarListaUsuarios(blocUser, blocConection);
-              updateData.actualizarCasos(blocCasos);
-            }
-            if(page == bottonSelect.opcion5){
-              updateData.actualizarListaUsuarios(blocUser, blocConection);
-              updateData.actualizarListaInvitationSent(blocInvitation, blocConection);
-              updateData.actualizarListaInvitationReceived(blocInvitation, blocConection);
-              updateNoti(1, false);
-            }
-            setState(() {});
+            _onTapNavigator(index, tit);
           },
         ),
         noti ? Container(
@@ -456,6 +418,49 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       ],
     );
   }
+
+  void _onTapNavigator(bottonSelect index, String tit){
+    if(!mapNavigatorBotton[index]){
+      mapNavigatorBotton[index] = true;
+      Map<bottonSelect,bool> auxMap = mapNavigatorBotton;
+      auxMap.forEach((key,value){
+        if(key != index){mapNavigatorBotton[key] = false;}
+      });
+    }
+    titulo = tit;
+    page = index;
+
+    if(page == bottonSelect.opcion1){
+      updateData.actualizarListaUsuarios(blocUser, blocConection);
+      updateData.actualizarCasos(blocCasos);
+      updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
+      updateData.actualizarListaEnviados(blocTaskSend, blocConection);
+    }
+    if(page == bottonSelect.opcion2){
+      updateData.actualizarListaUsuarios(blocUser, blocConection);
+      updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
+      updateData.actualizarCasos(blocCasos);
+      updateNoti(0, false);
+    }
+    if(page == bottonSelect.opcion3){
+      updateData.actualizarListaUsuarios(blocUser, blocConection);
+      updateData.actualizarListaEnviados(blocTaskSend, blocConection);
+      updateData.actualizarCasos(blocCasos);
+      updateNoti(3, false);
+    }
+    if(page == bottonSelect.opcion4){
+      updateData.actualizarListaUsuarios(blocUser, blocConection);
+      updateData.actualizarCasos(blocCasos);
+    }
+    if(page == bottonSelect.opcion5){
+      updateData.actualizarListaUsuarios(blocUser, blocConection);
+      updateData.actualizarListaInvitationSent(blocInvitation, blocConection);
+      updateData.actualizarListaInvitationReceived(blocInvitation, blocConection);
+      updateNoti(1, false);
+    }
+    setState(() {});
+  }
+
   Map<int,List> _dataToMapDataUserHome(){
     Map<int,List> data = {};
     try{
@@ -570,9 +575,13 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
             ),
             SizedBox(height: alto * 0.02,),
             _divider,
-            _textDrawer('Contactos', (){}),
+            _textDrawer('Contactos', (){
+              _onTapNavigator(bottonSelect.opcion5, 'Contactos');
+            }),
             _divider,
-            _textDrawer('Proyectos', (){}),
+            _textDrawer('Proyectos', (){
+              _onTapNavigator(bottonSelect.opcion4, 'Proyectos');
+            }),
             _divider,
             _textDrawer('Mi Cuenta', (){}),
             _divider,
@@ -621,7 +630,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       ),
     );
   }
-
   Widget _textDrawer(String text, Function onTap){
     return InkWell(
       onTap: (){
