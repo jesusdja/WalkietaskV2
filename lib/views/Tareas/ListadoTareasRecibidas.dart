@@ -828,6 +828,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
               if(await DatabaseProvider.db.updateTask(tarea) == 1){
                 blocTaskReceived.inList.add(true);
                 await conexionHispanos.httpTaskInit(tarea.id);
+                updateData.actualizarListaRecibidos(blocTaskReceived, null);
               }
             }else{
               showAlert('Tarea ya se encuentra iniciada',WalkieTaskColors.color_89BD7D);
