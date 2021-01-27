@@ -269,7 +269,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
               actionExtentRatio: 0.25,
               child: _tareas(tarea, tarea.is_priority != 0),
               actions: <Widget>[
-                _buttonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.04,),Colors.yellow[600],WalkieTaskColors.white,1,tarea),
+                _buttonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.04,),WalkieTaskColors.yellow,WalkieTaskColors.white,1,tarea),
                 //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
               ],
               secondaryActions: <Widget>[
@@ -357,7 +357,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                     alignment: Alignment.topRight,
                     child: Container(
                       margin: EdgeInsets.only(right: ancho * 0.02, top: alto * 0.04),
-                      child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
+                      child: Icon(Icons.star,color: WalkieTaskColors.yellow, size: alto * 0.03,),
                     ),
                   ) : Container(),
                 ],
@@ -538,6 +538,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
       if(task.finalized != 1){
 
         bool working = task.working == 1;
+        bool favorite = task.is_priority == 1;
 
         String proyectName = '(Sin proyecto asignado)';
         if(task.project_id != null && task.project_id != 0 && mapCasos[task.project_id] != null){
@@ -562,69 +563,90 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
         if(chatCont > 100){radiusChat = 0.018; }
 
         listTaskRes.add(
-            InkWell(
-              onTap: () =>clickTarea(task),
+            IntrinsicHeight(
               child: Container(
-                width: ancho,
-                padding: EdgeInsets.only(left: ancho * 0.02, right: ancho * 0.04,top: alto * 0.02),
-                child: IntrinsicHeight(
-                  child: Row(
-                    children: <Widget>[
-                      working ? Container(
-                        width: ancho * 0.015,
-                        color: WalkieTaskColors.color_89BD7D,
-                      ) : Container(width: ancho * 0.015,),
-                      Expanded(
-                        child: Container(
-                          padding: EdgeInsets.only(left: ancho * 0.01, ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(task.name.isEmpty ? 'Nombre no asignado' : task.name,
-                                  style: textStylePrimaryBold),
-                              Text(proyectName,
-                                style: textStylePrimary,),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(right: ancho * 0.03, left: ancho * 0.03),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                key: ValueKey("value${task.id}"),
+                padding: EdgeInsets.only(top: alto * 0.01,bottom: alto * 0.01),
+                color: Colors.white,
+                child: Slidable(
+                  actionPane: SlidableDrawerActionPane(),
+                  actionExtentRatio: 0.25,
+                  actions: <Widget>[
+                    _buttonSliderAction(task.is_priority_responsability == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.03,),WalkieTaskColors.yellow,WalkieTaskColors.white,1,task),
+                    //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
+                  ],
+                  secondaryActions: <Widget>[
+                    _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.03,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
+                    _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.03,),colorSliderListo,WalkieTaskColors.white,4,task),
+                  ],
+                  child: InkWell(
+                    onTap: () =>clickTarea(task),
+                    child: Container(
+                        width: ancho,
+                        padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.04),
+                        child: Row(
                           children: <Widget>[
-                            Text(daysLeft.replaceAll('-', ''),style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: daysLeft.contains('-') ? WalkieTaskColors.color_E07676 : Colors.grey[600]),),
-                            SizedBox(height: alto * 0.006,),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                chatCont != 0 ? Container(
-                                  margin: EdgeInsets.only(right: ancho * 0.002),
-                                  child: CircleAvatar(
-                                    backgroundColor: WalkieTaskColors.primary,
-                                    // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
-                                    radius: alto * radiusChat,
-                                    child: Text('$chatCont',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
-                                  ),
-                                ) : Container(),
-                                InkWell(
-                                  child: task.url_audio != '' ? Icon(Icons.volume_up,color: reproTask ? WalkieTaskColors.color_89BD7D : Colors.grey[600],size: alto * 0.03,) : Container(),
-                                  onTap: (){
-                                    audioPlayer.play(task.url_audio);
-                                    setState(() {
-                                      taskReproduciendo = task.id;
-                                    });
-                                  },
+                            working ? Container(
+                              width: ancho * 0.015,
+                              color: WalkieTaskColors.color_89BD7D,
+                            ) : Container(width: ancho * 0.015,),
+                            favorite ? Container(
+                              width: ancho * 0.055,
+                              child: Icon(Icons.star,color: WalkieTaskColors.yellow, size: alto * 0.03,),
+                            ) : Container(),
+                            Expanded(
+                              child: Container(
+                                padding: EdgeInsets.only(left: ancho * 0.01, ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(task.name.isEmpty ? 'Nombre no asignado' : task.name,
+                                        style: textStylePrimaryBold),
+                                    Text(proyectName,
+                                      style: textStylePrimary,),
+                                  ],
                                 ),
-                              ],
-                            )
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(right: ancho * 0.03, left: ancho * 0.03),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(daysLeft.replaceAll('-', ''),style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: daysLeft.contains('-') ? WalkieTaskColors.color_E07676 : Colors.grey[600]),),
+                                  SizedBox(height: alto * 0.006,),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: <Widget>[
+                                      chatCont != 0 ? Container(
+                                        margin: EdgeInsets.only(right: ancho * 0.002),
+                                        child: CircleAvatar(
+                                          backgroundColor: WalkieTaskColors.primary,
+                                          // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
+                                          radius: alto * radiusChat,
+                                          child: Text('$chatCont',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
+                                        ),
+                                      ) : Container(),
+                                      InkWell(
+                                        child: task.url_audio != '' ? Icon(Icons.volume_up,color: reproTask ? WalkieTaskColors.color_89BD7D : Colors.grey[600],size: alto * 0.03,) : Container(),
+                                        onTap: (){
+                                          audioPlayer.play(task.url_audio);
+                                          setState(() {
+                                            taskReproduciendo = task.id;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
                           ],
                         ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -748,7 +770,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                 actionExtentRatio: 0.25,
                 child: _tareas(task, task.is_priority != 0),
                 actions: <Widget>[
-                  _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1,task),
+                  _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),WalkieTaskColors.yellow,WalkieTaskColors.white,1,task),
                   //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,task),
                 ],
                 secondaryActions: <Widget>[

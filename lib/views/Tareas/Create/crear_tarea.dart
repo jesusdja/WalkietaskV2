@@ -8,9 +8,11 @@ import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
+import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/format_deadline.dart';
 import 'package:walkietaskv2/utils/task_sound.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
@@ -429,28 +431,6 @@ class _CreateTaskState extends State<CreateTask> {
         )));
   }
 
-  Widget _buttonSliderAction(String titulo,Icon icono,Color color,Color colorText,int accion, Usuario user){
-    return IconSlideAction(
-      color: color,
-      iconWidget: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          icono,
-          Text('$titulo',style: estiloLetras(alto * 0.013, Colors.white,fontFamily: 'helveticaneue2'),),
-        ],
-      ),
-      onTap: () async {
-        int res = 0;
-        user.fijo = user.fijo == 1 ? 0 : 1;
-        res = await  DatabaseProvider.db.updateUser(user);
-        if(res == 1){
-          widget.blocUserRes.inList.add(true);
-        }
-      },
-    );
-  }
-
   Widget buscador(){
     return Container(
       child: Row(
@@ -495,6 +475,9 @@ class _CreateTaskState extends State<CreateTask> {
   }
 
   Widget resultSearch(){
+
+    List<Widget> listW = resultSearchUsers();
+
     return Container(
       width: ancho,
       height: alto < 600 ? alto * 0.66 : alto * 0.7,
@@ -503,12 +486,12 @@ class _CreateTaskState extends State<CreateTask> {
         children: [
           Container(
             width: ancho,
-            height: alto * 0.32,
+            height: listW.length > 3 ? alto * 0.32 : alto * 0.1,
             //color: Colors.red,
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
-                children: resultSearchUsers(),
+                children: listW,
               ),
             ),
           ),
@@ -624,7 +607,7 @@ class _CreateTaskState extends State<CreateTask> {
                           alignment: Alignment.center,
                           child: Container(
                             margin: EdgeInsets.only(top: alto * 0.035, left: ancho * 0.08),
-                            child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
+                            child: Icon(Icons.star,color: WalkieTaskColors.yellow, size: alto * 0.03,),
                           ),
                         ) : Container(),
                       ],
@@ -667,7 +650,7 @@ class _CreateTaskState extends State<CreateTask> {
               ),
             ),
             actions: <Widget>[
-              _buttonSliderAction(user.fijo == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1, user),
+              _buttonSliderAction(user.fijo == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),WalkieTaskColors.yellow,WalkieTaskColors.white,1, user),
             ],
           ),
         ),
@@ -686,7 +669,7 @@ class _CreateTaskState extends State<CreateTask> {
         Container(
           width: ancho,
           margin: EdgeInsets.only(left: ancho * 0.1, right: ancho * 0.1),
-          child: Text('No se encontraron resultados', style: textStylePrimary,)
+          child: Text('No se encontraron coincidencias con usuarios.', style: textStylePrimary,)
         ),
       );
     }
@@ -707,7 +690,13 @@ class _CreateTaskState extends State<CreateTask> {
 
       listAll.forEach((task2) {
         Tarea task = task2;
-        if(task.name.toLowerCase().contains(controlleBuscador.text.toLowerCase())){
+        if(task.name.toLowerCase().contains(controlleBuscador.text.toLowerCase()) && task.finalized != 1){
+
+          bool isRecived = false;
+          if(task.user_responsability_id == widget.myUserRes.id){ isRecived = true;}
+
+          bool working = task.working == 1;
+          bool favorite = isRecived ? (task.is_priority_responsability == 1) : (task.is_priority == 1);
 
           String nameUser = '';
           if(mapIdUser != null && mapIdUser[task.user_id] != null){
@@ -721,48 +710,76 @@ class _CreateTaskState extends State<CreateTask> {
           }
 
           tasks.add(
-            InkWell(
-              onTap: (){
-                clickTarea(task);
-                _closeSearch();
-              },
+            IntrinsicHeight(
               child: Container(
-                width: ancho,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: ancho * 0.1,
-                    ),
-                    Expanded(
-                      child: Column(
+                constraints: BoxConstraints(minHeight: alto * 0.08),
+                key: ValueKey("value${task.id}"),
+                padding: EdgeInsets.only(top: alto * 0.01,bottom: alto * 0.01),
+                color: Colors.white,
+                child: Slidable(
+                  actionPane: SlidableDrawerActionPane(),
+                  actionExtentRatio: 0.25,
+                  actions: <Widget>[
+                    _buttonSliderActionTask(task.is_priority_responsability == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.03,),Colors.yellow[600],WalkieTaskColors.white,1,task, isRecived),
+                    //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
+                  ],
+                  secondaryActions: <Widget>[
+                    isRecived ? _buttonSliderActionTask('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.03,),colorSliderTrabajando,WalkieTaskColors.white,3,task, isRecived) : null,
+                    _buttonSliderActionTask('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.03,),colorSliderListo,WalkieTaskColors.white,4,task, isRecived),
+                  ],
+                  child: InkWell(
+                    onTap: (){
+                      clickTarea(task);
+                      _closeSearch();
+                    },
+                    child: Container(
+                      width: ancho,
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(task.name, style: textStylePrimaryBold,),
-                          Text(nameUser, style: textStylePrimaryLitle,),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: ancho * 0.25,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(date, style: textStylePrimary,),
-                          task.url_audio.isNotEmpty ?
-                          SoundTask(
-                            alto: alto * 0.03,
-                            colorStop: WalkieTaskColors.color_E07676,
-                            path: task.url_audio,
-                            idTask: task.id,
-                            page: bottonSelect.opcion1,
-                            blocAudioChangePage: widget.blocAudioChangePage,
+                          working ? Container(
+                            width: ancho * 0.015,
+                            color: WalkieTaskColors.color_89BD7D,
+                          ) : Container(width: ancho * 0.015,),
+                          favorite ? Container(
+                            width: ancho * 0.055,
+                            child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
                           ) : Container(),
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.only(left: ancho * 0.03, ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(task.name, style: textStylePrimaryBold,),
+                                  Text(nameUser, style: textStylePrimaryLitle,),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: ancho * 0.25,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(date, style: textStylePrimary,),
+                                task.url_audio.isNotEmpty ?
+                                SoundTask(
+                                  alto: alto * 0.03,
+                                  colorStop: WalkieTaskColors.color_E07676,
+                                  path: task.url_audio,
+                                  idTask: task.id,
+                                  page: bottonSelect.opcion1,
+                                  blocAudioChangePage: widget.blocAudioChangePage,
+                                ) : Container(),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -790,6 +807,103 @@ class _CreateTaskState extends State<CreateTask> {
 
     tasks.add(SizedBox(height: alto * 0.03,));
     return tasks;
+  }
+
+  Widget _buttonSliderAction(String titulo,Icon icono,Color color,Color colorText,int accion, Usuario user){
+    return IconSlideAction(
+      color: color,
+      iconWidget: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          icono,
+          Text('$titulo',style: estiloLetras(alto * 0.013, Colors.white,fontFamily: 'helveticaneue2'),),
+        ],
+      ),
+      onTap: () async {
+        int res = 0;
+        user.fijo = user.fijo == 1 ? 0 : 1;
+        res = await  DatabaseProvider.db.updateUser(user);
+        if(res == 1){
+          widget.blocUserRes.inList.add(true);
+        }
+      },
+    );
+  }
+
+  Widget _buttonSliderActionTask(String titulo,Icon icono,Color color,Color colorText,int accion,Tarea tarea, bool isRecived){
+    return IconSlideAction(
+      color: color,
+      iconWidget: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          icono,
+          Text('$titulo',style: estiloLetras(alto * 0.013, Colors.white,fontFamily: 'helveticaneue2'),),
+        ],
+      ),
+      onTap: () async {
+        if(accion == 1){
+          //CAMBIAR ESTADO DE DESTACAR 0 = FALSE, 1 = TRUE
+          if(isRecived){
+            if(tarea.is_priority_responsability == 0){ tarea.is_priority_responsability = 1;}else{tarea.is_priority_responsability = 0;}
+          }else{
+            if(tarea.is_priority == 0){ tarea.is_priority = 1;}else{tarea.is_priority = 0;}
+          }
+          //GUARDAR LOCALMENTE
+          if(await DatabaseProvider.db.updateTask(tarea) == 1){
+            //AVISAR A PATRONBLOC DE TAREAS ENVIADAS PARA QUE SE ACTUALICE
+            if(isRecived){
+              widget.blocTaskReceived.inList.add(true);
+            }else{
+              widget.blocTaskSend.inList.add(true);
+            }
+            //ENVIAR A API
+            try{
+              await conexionHttp().httpSendFavorite(tarea,tarea.is_priority);
+            }catch(e){
+              //SI NO HAY CONEXION GUARDAR EN TABLA LOCAL
+            }
+          }
+        }
+        if(accion == 3){
+          try{
+            if(tarea.working == 0){
+              showAlert('Tarea iniciada',WalkieTaskColors.color_89BD7D);
+              tarea.working = 1;
+              if(await DatabaseProvider.db.updateTask(tarea) == 1){
+                if(isRecived){
+                  widget.blocTaskReceived.inList.add(true);
+                }else{
+                  widget.blocTaskSend.inList.add(true);
+                }
+                await conexionHttp().httpTaskInit(tarea.id);
+              }
+            }else{
+              showAlert('Tarea ya se encuentra iniciada',WalkieTaskColors.color_89BD7D);
+            }
+          }catch(e){
+            print(e.toString());
+          }
+        }
+        if(accion == 4){
+          showAlert('Tarea finalizada',WalkieTaskColors.color_89BD7D);
+          try{
+            tarea.finalized = 1;
+            if(await DatabaseProvider.db.updateTask(tarea) == 1){
+              if(isRecived){
+                widget.blocTaskReceived.inList.add(true);
+              }else{
+                widget.blocTaskSend.inList.add(true);
+              }
+              await conexionHttp().httpTaskFinalized(tarea.id);
+            }
+          }catch(e){
+            print(e.toString());
+          }
+        }
+      },
+    );
   }
 
   void clickTarea(Tarea tarea) async {

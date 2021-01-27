@@ -6,6 +6,7 @@ class WalkieTaskColors {
   static const Color primary = Color(0xFF4EA0F0);
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF000000);
+  static const Color yellow = Color(0xFFFFD803);
 
   static const Color color_E2E2E2 = Color(0xFFE2E2E2);
   static const Color color_E3E3E3 = Color(0xFFE3E3E3);

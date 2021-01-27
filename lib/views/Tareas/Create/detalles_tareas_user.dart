@@ -215,103 +215,115 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
   Widget _listTaskRecived(double h){
     List<Widget> data = [];
     listRecived.forEach((task) {
+      if(task.finalized != 1){
+        bool isNew = false;
+        listViewTaskNew.forEach((element) {
+          if(element == task.id.toString()){
+            isNew = true;
+          }
+        });
 
-      bool isNew = false;
-      listViewTaskNew.forEach((element) {
-        if(element == task.id.toString()){
-          isNew = true;
+        String daysLeft = getDayDiff(task.deadline);
+
+        String nameCase = '(Sin proyecto asignado)';
+        if(task.project_id != null && task.project_id != 0 && mapCasos[task.project_id] != null){
+          nameCase = mapCasos[task.project_id].name;
         }
-      });
 
-      String daysLeft = getDayDiff(task.deadline);
+        data.add(
+            IntrinsicHeight(
+              child: Container(
+                key: ValueKey("value${task.id}"),
+                color: Colors.white,
+                child: Slidable(
+                  actionPane: SlidableDrawerActionPane(),
+                  actionExtentRatio: 0.25,
+                  child: InkWell(
+                    onTap: () => clickTarea(task),
+                    child: Container(
 
-      String nameCase = '(Sin proyecto asignado)';
-      if(task.project_id != null && task.project_id != 0 && mapCasos[task.project_id] != null){
-        nameCase = mapCasos[task.project_id].name;
-      }
+                      width: ancho,
+                      child: Row(
+                        children: [
+                          task.working == 1 ? Container(
+                            width: ancho * 0.015,
+                            color: WalkieTaskColors.color_89BD7D,
+                          ) : Container(width: ancho * 0.015,),
+                          Container(
+                            width: ancho * 0.06,
+                            padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
+                            child: Column(
+                              children: [
+                                daysLeft.contains('-') ?
+                                Container(
+                                  padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                                  height: alto * 0.02,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ) : Container(),
+                                task.is_priority_responsability == 1 ?
+                                Container(
+                                  margin: EdgeInsets.only(right: ancho * 0.02),
+                                  child: Icon(Icons.star,color: WalkieTaskColors.yellow, size: alto * 0.03,),
+                                ) : Container(),
 
-      data.add(
-          InkWell(
-            onTap: () => clickTarea(task),
-            child: Container(
-              key: ValueKey("value${task.id}"),
-              color: Colors.white,
-              child: Slidable(
-                actionPane: SlidableDrawerActionPane(),
-                actionExtentRatio: 0.25,
-                child: Container(
-                  padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
-                  width: ancho,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: ancho * 0.06,
-                        child: Column(
-                          children: [
-                            daysLeft.contains('-') ?
-                            Container(
-                              padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-                              height: alto * 0.02,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
-                                  fit: BoxFit.contain,
-                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue : isNew ? textStylePrimaryBold : textStylePrimary),
+                                  Text(nameCase, style: textStylePrimaryLitle,)
+                                ],
                               ),
-                            ) : Container(),
-                            task.is_priority_responsability == 1 ?
-                            Container(
-                              margin: EdgeInsets.only(right: ancho * 0.02),
-                              child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
-                            ) : Container(),
-
-                          ],
-                        ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
+                            width: ancho * 0.2,
+                            margin: EdgeInsets.only(right: ancho * 0.02),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
+                                task.url_audio.isNotEmpty ?
+                                SoundTask(
+                                  alto: alto * 0.03,
+                                  colorStop: WalkieTaskColors.color_E07676,
+                                  path: task.url_audio,
+                                  idTask: task.id,
+                                  page: bottonSelect.opcion1,
+                                  blocAudioChangePage: widget.blocAudioChangePage,
+                                ) : Container(),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue : isNew ? textStylePrimaryBold : textStylePrimary),
-                            Text(nameCase, style: textStylePrimaryLitle,)
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: ancho * 0.2,
-                        margin: EdgeInsets.only(right: ancho * 0.02),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
-                            task.url_audio.isNotEmpty ?
-                            SoundTask(
-                              alto: alto * 0.03,
-                              colorStop: WalkieTaskColors.color_E07676,
-                              path: task.url_audio,
-                              idTask: task.id,
-                              page: bottonSelect.opcion1,
-                              blocAudioChangePage: widget.blocAudioChangePage,
-                            ) : Container(),
-                          ],
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
+                  actions: <Widget>[
+                    _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.04,), WalkieTaskColors.yellow, WalkieTaskColors.white,1,task, true),
+                    //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
+                  ],
+                  secondaryActions: <Widget>[
+                    _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderTrabajando,WalkieTaskColors.white,3,task, true),
+                    _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderListo,WalkieTaskColors.white,4,task, true),
+                  ],
                 ),
-                actions: <Widget>[
-                  _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.04,),Colors.yellow[600],WalkieTaskColors.white,1,task),
-                  //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
-                ],
-                secondaryActions: <Widget>[
-                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
-                  _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderListo,WalkieTaskColors.white,4,task),
-                ],
               ),
-            ),
-          )
-      );
-      data.add(Divider());
+            )
+        );
+        data.add(Divider());
+      }
     });
 
 
@@ -339,98 +351,108 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
   Widget _listTaskSend(double h){
     List<Widget> data = [];
     listSend.forEach((task) {
+      if(task.finalized != 1){
+        String daysLeft = getDayDiff(task.deadline);
 
-      String daysLeft = getDayDiff(task.deadline);
+        String nameCase = '(Sin proyecto asignado)';
+        if(task.project_id != null && task.project_id != 0 && mapCasos[task.project_id] != null){
+          nameCase = mapCasos[task.project_id].name;
+        }
 
-      String nameCase = '(Sin proyecto asignado)';
-      if(task.project_id != null && task.project_id != 0 && mapCasos[task.project_id] != null){
-        nameCase = mapCasos[task.project_id].name;
-      }
+        data.add(
+            IntrinsicHeight(
+              child: Container(
+                key: ValueKey("value${task.id}"),
+                color: Colors.white,
+                child: Slidable(
+                  actionPane: SlidableDrawerActionPane(),
+                  actionExtentRatio: 0.25,
+                  child: InkWell(
+                    onTap: () => clickTarea(task),
+                    child: Container(
+                      width: ancho,
+                      child: Row(
+                        children: [
+                          task.working == 1 ? Container(
+                            width: ancho * 0.015,
+                            color: WalkieTaskColors.color_89BD7D,
+                          ) : Container(width: ancho * 0.015,),
+                          Container(
+                            width: ancho * 0.06,
+                            padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
+                            child: Column(
+                              children: [
+                                daysLeft.contains('-') ?
+                                Container(
+                                  padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                                  height: alto * 0.02,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ) : Container(),
+                                task.is_priority == 1 ?
+                                Container(
+                                  margin: EdgeInsets.only(right: ancho * 0.02),
+                                  child: Icon(Icons.star,color: WalkieTaskColors.yellow, size: alto * 0.03,),
+                                ) : Container(),
 
-      data.add(
-          InkWell(
-            onTap: () => clickTarea(task),
-            child: Container(
-              key: ValueKey("value${task.id}"),
-              color: Colors.white,
-              child: Slidable(
-                actionPane: SlidableDrawerActionPane(),
-                actionExtentRatio: 0.25,
-                child: Container(
-                  padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
-                  width: ancho,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: ancho * 0.06,
-                        child: Column(
-                          children: [
-                            daysLeft.contains('-') ?
-                            Container(
-                              padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-                              height: alto * 0.02,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
-                                  fit: BoxFit.contain,
-                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue :textStylePrimary),
+                                  Text(nameCase, style: textStylePrimaryLitle,)
+                                ],
                               ),
-                            ) : Container(),
-                            task.is_priority == 1 ?
-                            Container(
-                              margin: EdgeInsets.only(right: ancho * 0.02),
-                              child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
-                            ) : Container(),
-
-                          ],
-                        ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
+                            width: ancho * 0.2,
+                            margin: EdgeInsets.only(right: ancho * 0.02),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
+                                task.url_audio.isNotEmpty ?
+                                SoundTask(
+                                  alto: alto * 0.03,
+                                  colorStop: WalkieTaskColors.color_E07676,
+                                  path: task.url_audio,
+                                  idTask: task.id,
+                                  page: bottonSelect.opcion1,
+                                  blocAudioChangePage: widget.blocAudioChangePage,
+                                ) : Container(),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue :textStylePrimary),
-                            Text(nameCase, style: textStylePrimaryLitle,)
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: ancho * 0.2,
-                        margin: EdgeInsets.only(right: ancho * 0.02),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
-                            task.url_audio.isNotEmpty ?
-                            SoundTask(
-                              alto: alto * 0.03,
-                              colorStop: WalkieTaskColors.color_E07676,
-                              path: task.url_audio,
-                              idTask: task.id,
-                              page: bottonSelect.opcion1,
-                              blocAudioChangePage: widget.blocAudioChangePage,
-                            ) : Container(),
-                          ],
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
+                  actions: <Widget>[
+                    _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.04,),WalkieTaskColors.yellow,WalkieTaskColors.white,1,task, false),
+                    //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
+                  ],
+                  secondaryActions: <Widget>[
+                    //_buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
+                    _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderListo,WalkieTaskColors.white,4,task, false),
+                  ],
                 ),
-                actions: <Widget>[
-                  _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.04,),Colors.yellow[600],WalkieTaskColors.white,1,task),
-                  //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
-                ],
-                secondaryActions: <Widget>[
-                  //_buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
-                  //_buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderListo,WalkieTaskColors.white,4,task),
-                ],
               ),
-            ),
-          )
-      );
-      data.add(Divider());
+            )
+        );
+        data.add(Divider());
+      }
     });
-
 
     return Container(
       width: ancho,
@@ -456,96 +478,107 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
   Widget _listTaskPersonal(double he){
     List<Widget> data = [];
     listRecived.forEach((task) {
+      if(task.finalized != 1){
+        String daysLeft = getDayDiff(task.deadline);
 
-      String daysLeft = getDayDiff(task.deadline);
+        String nameCase = '(Sin proyecto asignado)';
+        if(task.project_id != null && task.project_id != 0 && mapCasos[task.project_id] != null){
+          nameCase = mapCasos[task.project_id].name;
+        }
 
-      String nameCase = '(Sin proyecto asignado)';
-      if(task.project_id != null && task.project_id != 0 && mapCasos[task.project_id] != null){
-        nameCase = mapCasos[task.project_id].name;
-      }
-
-      data.add(
-          InkWell(
-            onTap: () => clickTarea(task),
+        data.add(
+          IntrinsicHeight(
             child: Container(
               key: ValueKey("value${task.id}"),
               color: Colors.white,
               child: Slidable(
                 actionPane: SlidableDrawerActionPane(),
                 actionExtentRatio: 0.25,
-                child: Container(
-                  padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
-                  width: ancho,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: ancho * 0.06,
-                        child: Column(
-                          children: [
-                            daysLeft.contains('-') ?
-                            Container(
-                              padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-                              height: alto * 0.02,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
-                                  fit: BoxFit.contain,
+                child: InkWell(
+                  onTap: () => clickTarea(task),
+                  child: Container(
+                    width: ancho,
+                    child: Row(
+                      children: [
+                        task.working == 1 ? Container(
+                          width: ancho * 0.015,
+                          color: WalkieTaskColors.color_89BD7D,
+                        ) : Container(width: ancho * 0.015,),
+                        Container(
+                          padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
+                          width: ancho * 0.06,
+                          child: Column(
+                            children: [
+                              daysLeft.contains('-') ?
+                              Container(
+                                padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                                height: alto * 0.02,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                                    fit: BoxFit.contain,
+                                  ),
                                 ),
-                              ),
-                            ) : Container(),
-                            task.is_priority == 1 ?
-                            Container(
-                              margin: EdgeInsets.only(right: ancho * 0.02),
-                              child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
-                            ) : Container(),
+                              ) : Container(),
+                              task.is_priority == 1 ?
+                              Container(
+                                margin: EdgeInsets.only(right: ancho * 0.02),
+                                child: Icon(Icons.star,color: WalkieTaskColors.yellow, size: alto * 0.03,),
+                              ) : Container(),
 
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue :textStylePrimary),
-                            Text(nameCase, style: textStylePrimaryLitle,)
-                          ],
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue :textStylePrimary),
+                                Text(nameCase, style: textStylePrimaryLitle,)
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                      Container(
-                        width: ancho * 0.2,
-                        margin: EdgeInsets.only(right: ancho * 0.02),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
-                            task.url_audio.isNotEmpty ?
-                            SoundTask(
-                              alto: alto * 0.03,
-                              colorStop: WalkieTaskColors.color_E07676,
-                              path: task.url_audio,
-                              idTask: task.id,
-                              page: bottonSelect.opcion1,
-                              blocAudioChangePage: widget.blocAudioChangePage,
-                            ) : Container(),
-                          ],
+                        Container(
+                          width: ancho * 0.2,
+                          padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
+                          margin: EdgeInsets.only(right: ancho * 0.02),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
+                              task.url_audio.isNotEmpty ?
+                              SoundTask(
+                                alto: alto * 0.03,
+                                colorStop: WalkieTaskColors.color_E07676,
+                                path: task.url_audio,
+                                idTask: task.id,
+                                page: bottonSelect.opcion1,
+                                blocAudioChangePage: widget.blocAudioChangePage,
+                              ) : Container(),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 actions: <Widget>[
-                  _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.04,),Colors.yellow[600],WalkieTaskColors.white,1,task),
+                  _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.04,), WalkieTaskColors.yellow, WalkieTaskColors.white,1,task, false),
                   //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
                 ],
                 secondaryActions: <Widget>[
-                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
-                  _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderListo,WalkieTaskColors.white,4,task),
+                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderTrabajando,WalkieTaskColors.white,3,task, false),
+                  _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderListo,WalkieTaskColors.white,4,task, false),
                 ],
               ),
             ),
           ),
-      );
-      data.add(Divider());
+        );
+        data.add(Divider());
+      }
     });
 
 
@@ -846,7 +879,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
     } catch (e) {}
   }
 
-  Widget _buttonSliderAction(String titulo,Icon icono,Color color,Color colorText,int accion,Tarea tarea){
+  Widget _buttonSliderAction(String titulo,Icon icono,Color color,Color colorText,int accion,Tarea tarea, bool isRecived){
     return IconSlideAction(
       color: color,
       iconWidget: Column(
@@ -860,11 +893,19 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       onTap: () async {
         if(accion == 1){
           //CAMBIAR ESTADO DE DESTACAR 0 = FALSE, 1 = TRUE
-          if(tarea.is_priority == 0){tarea.is_priority = 1;}else{tarea.is_priority = 0;}
+          if(isRecived){
+            if(tarea.is_priority_responsability == 0){tarea.is_priority_responsability = 1;}else{tarea.is_priority_responsability = 0;}
+          }else{
+            if(tarea.is_priority == 0){tarea.is_priority = 1;}else{tarea.is_priority = 0;}
+          }
           //GUARDAR LOCALMENTE
           if(await DatabaseProvider.db.updateTask(tarea) == 1){
             //AVISAR A PATRONBLOC DE TAREAS ENVIADAS PARA QUE SE ACTUALICE
-            widget.blocTaskReceived.inList.add(true);
+            if(isRecived){
+              widget.blocTaskReceived.inList.add(true);
+            }else{
+              widget.blocTaskSend.inList.add(true);
+            }
             //ENVIAR A API
             try{
               await conexionHispanos.httpSendFavorite(tarea,tarea.is_priority);
@@ -877,7 +918,11 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
               showAlert('Tarea iniciada',WalkieTaskColors.color_89BD7D);
               tarea.working = 1;
               if(await DatabaseProvider.db.updateTask(tarea) == 1){
-                widget.blocTaskReceived.inList.add(true);
+                if(isRecived){
+                  widget.blocTaskReceived.inList.add(true);
+                }else{
+                  widget.blocTaskSend.inList.add(true);
+                }
                 await conexionHispanos.httpTaskInit(tarea.id);
               }
             }else{
@@ -893,7 +938,11 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
             try{
               tarea.finalized = 1;
               if(await DatabaseProvider.db.updateTask(tarea) == 1){
-                widget.blocTaskReceived.inList.add(true);
+                if(isRecived){
+                  widget.blocTaskReceived.inList.add(true);
+                }else{
+                  widget.blocTaskSend.inList.add(true);
+                }
                 await conexionHispanos.httpTaskFinalized(tarea.id);
                 widget.updateData.actualizarListaRecibidos(widget.blocTaskReceived, null);
               }
