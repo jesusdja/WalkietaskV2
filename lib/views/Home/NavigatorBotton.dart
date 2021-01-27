@@ -176,6 +176,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       blocConection.dispose();
       blocIndicatorProgress.dispose();
       blocPage.dispose();
+      blocAudioChangePage.dispose();
     }catch(e){
       print(e.toString());
     }

@@ -227,6 +227,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
         mapAppBar[1] = false;
         mapAppBar[2] = false;
         mapAppBar[index] = true;
+        widget.blocAudioChangePage.inList.add({'page' : bottonSelect.opcion1});
         setState(() {});
       },
       child: Column(
@@ -469,35 +470,42 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
       width: ancho,
       child: Column(
         children: <Widget>[
-          Container(
-            width: ancho,
-            padding: EdgeInsets.all(alto * 0.015),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  padding: const EdgeInsets.all(3.0), // borde width
-                  decoration: new BoxDecoration(
-                    color: bordeCirculeAvatar, // border color
-                    shape: BoxShape.circle,
+          InkWell(
+            onTap: (){
+              Map<int,bool> mapAux = openForUserTask;
+              bool res = openForUserTask[user.id];
+              mapAux.forEach((key, value) { openForUserTask[key] = false; });
+              openForUserTask[user.id] = !res;
+              setState(() {});
+            },
+            child: Container(
+              width: ancho,
+              padding: EdgeInsets.all(alto * 0.015),
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    padding: const EdgeInsets.all(3.0), // borde width
+                    decoration: new BoxDecoration(
+                      color: bordeCirculeAvatar, // border color
+                      shape: BoxShape.circle,
+                    ),
+                    child: CircleAvatar(
+                      radius: alto * 0.03,
+                      backgroundImage: avatarUser.image,
+                    ),
                   ),
-                  child: CircleAvatar(
-                    radius: alto * 0.03,
-                    backgroundImage: avatarUser.image,
+                  Expanded(
+                    child: Container(
+                      margin: EdgeInsets.only(left: ancho * 0.03,right: ancho * 0.03,),
+                      child: Text('$nameUser',
+                          style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.025, color: WalkieTaskColors.color_76ADE3)),
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.only(left: ancho * 0.03,right: ancho * 0.03,),
-                    child: Text('$nameUser',
-                        style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.025, color: WalkieTaskColors.color_76ADE3)),
+                  Container(
+                    child: Text('(${listTask.length} ${listTask.length < 1 ? 'tarea' : 'Tareas'})',
+                        style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 1)),
                   ),
-                ),
-                Container(
-                  child: Text('(${listTask.length} ${listTask.length < 1 ? 'tarea' : 'Tareas'})',
-                      style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 1)),
-                ),
-                InkWell(
-                  child: Container(
+                  Container(
                     child: !openForUserTask[user.id] ?
                     Container(
                       width: ancho * 0.12,
@@ -510,15 +518,8 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                       child: Image.asset('assets/image/icon_open_option.png',fit: BoxFit.fill,color: Colors.grey,),
                     ),
                   ),
-                  onTap: (){
-                    Map<int,bool> mapAux = openForUserTask;
-                    bool res = openForUserTask[user.id];
-                    mapAux.forEach((key, value) { openForUserTask[key] = false; });
-                    openForUserTask[user.id] = !res;
-                    setState(() {});
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           openForUserTask[user.id] ?
@@ -679,24 +680,31 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
       width: ancho,
       child: Column(
         children: <Widget>[
-          Container(
-            width: ancho,
-            padding: EdgeInsets.all(alto * 0.015),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.only(left: ancho * 0.03,right: ancho * 0.03,),
-                    child: Text(nameProyect,
-                        style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.025, color: WalkieTaskColors.color_76ADE3)),
+          InkWell(
+            onTap: (){
+              Map<int,bool> mapAux = openForProyectTask;
+              bool res = openForProyectTask[keyOpen];
+              mapAux.forEach((key, value) { openForProyectTask[key] = false; });
+              openForProyectTask[keyOpen] = !res;
+              setState(() {});
+            },
+            child: Container(
+              width: ancho,
+              padding: EdgeInsets.all(alto * 0.015),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      margin: EdgeInsets.only(left: ancho * 0.03,right: ancho * 0.03,),
+                      child: Text(nameProyect,
+                          style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.025, color: WalkieTaskColors.color_76ADE3)),
+                    ),
                   ),
-                ),
-                Container(
-                  child: Text('(${listTask.length} ${listTask.length < 1 ? 'tarea' : 'Tareas'})',
-                      style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 1)),
-                ),
-                InkWell(
-                  child: Container(
+                  Container(
+                    child: Text('(${listTask.length} ${listTask.length < 1 ? 'tarea' : 'Tareas'})',
+                        style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 1)),
+                  ),
+                  Container(
                     child: !openForProyectTask[keyOpen] ?
                     Container(
                       width: ancho * 0.12,
@@ -709,15 +717,8 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                       child: Image.asset('assets/image/icon_open_option.png',fit: BoxFit.fill,color: Colors.grey,),
                     ),
                   ),
-                  onTap: (){
-                    Map<int,bool> mapAux = openForProyectTask;
-                    bool res = openForProyectTask[keyOpen];
-                    mapAux.forEach((key, value) { openForProyectTask[key] = false; });
-                    openForProyectTask[keyOpen] = !res;
-                    setState(() {});
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           openForProyectTask[keyOpen] ?
@@ -773,6 +774,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
 
     _deleteDataNewFirebase(tarea.id.toString());
     _deleteDataNewChat(tarea.id.toString());
+    widget.blocAudioChangePage.inList.add({'page' : bottonSelect.opcion1});
     try{
       if(tarea.name.isEmpty){
         var result  = await Navigator.push(context, new MaterialPageRoute(
