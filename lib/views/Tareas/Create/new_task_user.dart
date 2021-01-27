@@ -317,7 +317,12 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
                     locale: Locale('es', 'ES')
                 );
                 if (newDateTime != null) {
-                  setState(() => fechaTask = newDateTime);
+                  Duration dif = newDateTime.difference(DateTime.now());
+                  if(dif.inDays >= 0){
+                    setState(() => fechaTask = newDateTime);
+                  }else{
+                    showAlert('Fecha debe ser mayor o igual a hoy.',Colors.red[400]);
+                  }
                 }
               },
             ),

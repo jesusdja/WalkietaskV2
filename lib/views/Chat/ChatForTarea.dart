@@ -822,15 +822,19 @@ class _ChatForTareaState extends State<ChatForTarea> {
                     child: InkWell(
                       onTap: () async {
                         DateTime newDateTime = await showDatePicker(
-                            context: context,
-                            initialDate: new DateTime.now(),
-                            firstDate: new DateTime(2018),
-                            lastDate: new DateTime(2025),
-                            locale: Locale('es', 'ES'),
-
+                          context: context,
+                          initialDate: new DateTime.now(),
+                          firstDate: new DateTime(2018),
+                          lastDate: new DateTime(2025),
+                          locale: Locale('es', 'ES'),
                         );
                         if (newDateTime != null) {
-                          setState(() => fechaTask = newDateTime);
+                          Duration dif = newDateTime.difference(DateTime.now());
+                          if(dif.inDays >= 0){
+                            setState(() => fechaTask = newDateTime);
+                          }else{
+                            showAlert('Fecha debe ser mayor o igual a hoy.',Colors.red[400]);
+                          }
                         }
                       },
                       child: Container(
