@@ -303,6 +303,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           blocIndicatorProgress: blocIndicatorProgress,
           mapDataUserHome: mapDataUserHome,
           updateData: updateData,
+          blocAudioChangePage: blocAudioChangePage,
         ) : Container(child: Cargando('Actualizando tareas.',context),);
       case bottonSelect.opcion2:
         return loadTaskSend ? listRecibidos.length != 0 ?

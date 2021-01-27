@@ -13,6 +13,7 @@ import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
+import 'package:walkietaskv2/utils/format_deadline.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/task_sound.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
@@ -20,6 +21,7 @@ import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Chat/ChatForTarea.dart';
 import 'package:walkietaskv2/views/Tareas/Create/detalles_tareas_user_bottom.dart';
 import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
+import 'package:walkietaskv2/views/Home/NavigatorBotton.dart';
 
 class DetailsTasksForUser extends StatefulWidget {
 
@@ -31,6 +33,7 @@ class DetailsTasksForUser extends StatefulWidget {
   final BlocTask blocTaskReceived;
   final BlocProgress blocIndicatorProgress;
   final UpdateData updateData;
+  final BlocProgress blocAudioChangePage;
 
   DetailsTasksForUser({
     @required this.user,
@@ -41,6 +44,7 @@ class DetailsTasksForUser extends StatefulWidget {
     @required this.blocTaskSend,
     @required this.blocIndicatorProgress,
     @required this.updateData,
+    @required this.blocAudioChangePage,
   });
 
   @override
@@ -286,6 +290,8 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                               colorStop: WalkieTaskColors.color_E07676,
                               path: task.url_audio,
                               idTask: task.id,
+                              page: bottonSelect.opcion1,
+                              blocAudioChangePage: widget.blocAudioChangePage,
                             ) : Container(),
                           ],
                         ),
@@ -401,6 +407,8 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                               colorStop: WalkieTaskColors.color_E07676,
                               path: task.url_audio,
                               idTask: task.id,
+                              page: bottonSelect.opcion1,
+                              blocAudioChangePage: widget.blocAudioChangePage,
                             ) : Container(),
                           ],
                         ),
@@ -516,6 +524,8 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                               colorStop: WalkieTaskColors.color_E07676,
                               path: task.url_audio,
                               idTask: task.id,
+                              page: bottonSelect.opcion1,
+                              blocAudioChangePage: widget.blocAudioChangePage,
                             ) : Container(),
                           ],
                         ),
@@ -599,46 +609,16 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
         ),
       ),
       leading: InkWell(
-        onTap: () => Navigator.of(context).pop(),
+        onTap: () {
+          widget.blocAudioChangePage.inList.add({'page' : bottonSelect.opcion1});
+          Navigator.of(context).pop();
+        },
         child: Container(
           child: Icon(Icons.arrow_back_ios, size: alto * 0.035, color: WalkieTaskColors.primary,),
         ),
       ),
       bottom: _indicatorProgress(),
     );
-  }
-
-  String getDayDiff(String deadLine){
-    String daysLeft = '';
-    if(deadLine.isNotEmpty){
-      daysLeft = 'Ahora';
-      DateTime dateCreate = DateTime.parse(deadLine);
-      Duration difDays = dateCreate.difference(DateTime.now());
-      if(difDays.inMinutes > 0){
-        if(difDays.inMinutes < 60){
-          daysLeft = '${difDays.inMinutes} min';
-        }else{
-          if(difDays.inHours < 24){
-            daysLeft = '${difDays.inHours} horas';
-          }else{
-            double days = difDays.inHours / 24;
-            daysLeft = '${days.toStringAsFixed(0)} días';
-          }
-        }
-      }else{
-        if((difDays.inMinutes * -1) < 60){
-          daysLeft = '-${difDays.inMinutes} min';
-        }else{
-          if((difDays.inHours * -1) < 24){
-            daysLeft = '-${difDays.inHours} horas';
-          }else{
-            double days = (difDays.inHours * -1) / 24;
-            daysLeft = '-${days.toStringAsFixed(0)} días';
-          }
-        }
-      }
-    }
-    return daysLeft;
   }
 
   void clickTarea(Tarea tarea) async {

@@ -11,6 +11,7 @@ import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/format_deadline.dart';
 import 'package:walkietaskv2/utils/task_sound.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
@@ -18,6 +19,7 @@ import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Tareas/Create/detalles_tareas_user.dart';
 import 'package:walkietaskv2/views/Chat/ChatForTarea.dart';
 import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
+import 'package:walkietaskv2/views/Home/NavigatorBotton.dart';
 
 
 class CreateTask extends StatefulWidget {
@@ -35,6 +37,7 @@ class CreateTask extends StatefulWidget {
     @required this.listEnviadosRes,
     @required this.mapDataUserHome,
     @required this.updateData,
+    @required this.blocAudioChangePage,
   });
 
   final Map<int,Usuario> mapIdUserRes;
@@ -49,6 +52,7 @@ class CreateTask extends StatefulWidget {
   final BlocProgress blocIndicatorProgress;
   final Map<int,List> mapDataUserHome;
   final UpdateData updateData;
+  final BlocProgress blocAudioChangePage;
 
   @override
   _CreateTaskState createState() => _CreateTaskState();
@@ -174,7 +178,7 @@ class _CreateTaskState extends State<CreateTask> {
     if(widget.myUserRes != null && mapDataUserHome[widget.myUserRes.id] != null){
       if(mapDataUserHome[widget.myUserRes.id][0] != ''){
         dateDiff = getDayDiff(mapDataUserHome[widget.myUserRes.id][0]);
-        redColor = dateDiff.contains('Hace');
+        redColor = dateDiff.contains('-');
       }
       cant = mapDataUserHome[widget.myUserRes.id][2].length;
     }
@@ -225,12 +229,12 @@ class _CreateTaskState extends State<CreateTask> {
                           ),
                         ),
                         SizedBox(width: ancho * 0.02),
-                        Text(dateDiff,style: textStylePrimaryLitleRed,)
+                        Text(dateDiff.replaceAll('-', ''),style: textStylePrimaryLitleRed,)
                       ],
                     ),
                   )
                       :
-                  Text(dateDiff,style: textStylePrimaryLitleBold,),
+                  Text(dateDiff.replaceAll('-', ''),style: textStylePrimaryLitleBold,),
                   Text('Recordatorio: $cant',style: textStylePrimaryLitle,),
                 ],
               ),
@@ -300,7 +304,7 @@ class _CreateTaskState extends State<CreateTask> {
       if(mapDataUserHome[user.id] != null){
         if(mapDataUserHome[user.id][0] != ''){
           dateDiff = getDayDiff(mapDataUserHome[user.id][0]);
-          redColor = dateDiff.contains('Hace');
+          redColor = dateDiff.contains('-');
           dateDiff = dateDiff.replaceAll('-', '');
         }
         cantRecived = mapDataUserHome[user.id][1].length;
@@ -421,6 +425,7 @@ class _CreateTaskState extends State<CreateTask> {
           blocTaskReceived: widget.blocTaskReceived,
           blocIndicatorProgress: widget.blocIndicatorProgress,
           updateData: widget.updateData,
+          blocAudioChangePage: widget.blocAudioChangePage,
         )));
   }
 
@@ -444,39 +449,6 @@ class _CreateTaskState extends State<CreateTask> {
         }
       },
     );
-  }
-
-  String getDayDiff(String deadLine){
-    String daysLeft = '';
-    if(deadLine.isNotEmpty){
-      daysLeft = 'Ahora';
-      DateTime dateCreate = DateTime.parse(deadLine);
-      Duration difDays = dateCreate.difference(DateTime.now());
-      if(difDays.inMinutes > 0){
-        if(difDays.inMinutes < 60){
-          daysLeft = 'Faltan ${difDays.inMinutes} min';
-        }else{
-          if(difDays.inHours < 24){
-            daysLeft = 'Faltan ${difDays.inHours} horas';
-          }else{
-            double days = difDays.inHours / 24;
-            daysLeft = 'Faltan ${days.toStringAsFixed(0)} días';
-          }
-        }
-      }else{
-        if((difDays.inMinutes * -1) < 60){
-          daysLeft = 'Hace ${difDays.inMinutes} min';
-        }else{
-          if((difDays.inHours * -1) < 24){
-            daysLeft = 'Hace ${difDays.inHours} horas';
-          }else{
-            double days = (difDays.inHours * -1) / 24;
-            daysLeft = 'Hace ${days.toStringAsFixed(0)} días';
-          }
-        }
-      }
-    }
-    return daysLeft;
   }
 
   Widget buscador(){
@@ -611,7 +583,7 @@ class _CreateTaskState extends State<CreateTask> {
       if(mapDataUserHome[user.id] != null){
         if(mapDataUserHome[user.id][0] != ''){
           dateDiff = getDayDiff(mapDataUserHome[user.id][0]);
-          redColor = dateDiff.contains('Hace');
+          redColor = dateDiff.contains('-');
         }
         cantRecived = mapDataUserHome[user.id][1].length;
         cantSend = mapDataUserHome[user.id][2].length;
@@ -680,12 +652,12 @@ class _CreateTaskState extends State<CreateTask> {
                                 ),
                               ),
                               SizedBox(width: ancho * 0.02),
-                              Text(dateDiff,style: textStylePrimaryLitleRed,)
+                              Text(dateDiff.replaceAll('-', ''),style: textStylePrimaryLitleRed,)
                             ],
                           ),
                         )
                             :
-                        Text(dateDiff,style: textStylePrimaryLitleBold,),
+                        Text(dateDiff.replaceAll('-', ''),style: textStylePrimaryLitleBold,),
                         Text('Recibidas: $cantRecived',style: textStylePrimaryLitle,),
                         Text('Enviadas: $cantSend',style: textStylePrimaryLitle,),
                       ],
@@ -784,6 +756,8 @@ class _CreateTaskState extends State<CreateTask> {
                             colorStop: WalkieTaskColors.color_E07676,
                             path: task.url_audio,
                             idTask: task.id,
+                            page: bottonSelect.opcion1,
+                            blocAudioChangePage: widget.blocAudioChangePage,
                           ) : Container(),
                         ],
                       ),
@@ -819,7 +793,7 @@ class _CreateTaskState extends State<CreateTask> {
   }
 
   void clickTarea(Tarea tarea) async {
-
+    widget.blocAudioChangePage.inList.add({'page' : bottonSelect.opcion1});
     try{
       if(tarea.name.isEmpty){
         var result  = await Navigator.push(context, new MaterialPageRoute(

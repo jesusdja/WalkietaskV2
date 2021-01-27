@@ -13,6 +13,7 @@ import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
+import 'package:walkietaskv2/utils/format_deadline.dart';
 import 'package:walkietaskv2/utils/switch_button.dart';
 import 'package:walkietaskv2/utils/task_sound.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
@@ -382,7 +383,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(daysLeft,style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: daysLeft.contains('-') ? WalkieTaskColors.color_E07676 : Colors.grey[600]),),
+                  Text(daysLeft.replaceAll('-', ''),style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: daysLeft.contains('-') ? WalkieTaskColors.color_E07676 : Colors.grey[600]),),
                   SizedBox(height: alto * 0.006,),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -594,7 +595,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Text(daysLeft,style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: daysLeft.contains('-') ? WalkieTaskColors.color_E07676 : Colors.grey[600]),),
+                            Text(daysLeft.replaceAll('-', ''),style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: daysLeft.contains('-') ? WalkieTaskColors.color_E07676 : Colors.grey[600]),),
                             SizedBox(height: alto * 0.006,),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -885,39 +886,6 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
       });
     }
     setState(() {});
-  }
-
-  String getDayDiff(String deadLine){
-    String daysLeft = '';
-    if(deadLine.isNotEmpty){
-      daysLeft = 'Ahora';
-      DateTime dateCreate = DateTime.parse(deadLine);
-      Duration difDays = dateCreate.difference(DateTime.now());
-      if(difDays.inMinutes > 0){
-        if(difDays.inMinutes < 60){
-          daysLeft = '${difDays.inMinutes} min';
-        }else{
-          if(difDays.inHours < 24){
-            daysLeft = '${difDays.inHours} horas';
-          }else{
-            double days = difDays.inHours / 24;
-            daysLeft = '${days.toStringAsFixed(0)} días';
-          }
-        }
-      }else{
-        if((difDays.inMinutes * -1) < 60){
-          daysLeft = '${difDays.inMinutes} min';
-        }else{
-          if((difDays.inHours * -1) < 24){
-            daysLeft = '${difDays.inHours} horas';
-          }else{
-            double days = (difDays.inHours * -1) / 24;
-            daysLeft = '-${days.toStringAsFixed(0)} días';
-          }
-        }
-      }
-    }
-    return daysLeft;
   }
 
   Future<void> listenerAudio() async {
