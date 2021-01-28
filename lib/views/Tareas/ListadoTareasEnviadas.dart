@@ -338,8 +338,8 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
               width: ancho * 0.18,
               child: Stack(
                 children: <Widget>[
-                  Align(
-                    alignment: Alignment.topCenter,
+                  Container(
+                    padding: EdgeInsets.only(left: ancho * 0.015),
                     child: Container(
                       padding: const EdgeInsets.all(3.0), // borde width
                       decoration: new BoxDecoration(
@@ -353,12 +353,9 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                       ),
                     ),
                   ),
-                  favorite ? Align(
-                    alignment: Alignment.topRight,
-                    child: Container(
-                      margin: EdgeInsets.only(right: ancho * 0.02, top: alto * 0.04),
-                      child: Icon(Icons.star,color: WalkieTaskColors.yellow, size: alto * 0.03,),
-                    ),
+                  favorite ? Container(
+                    margin: EdgeInsets.only(left: ancho * 0.1, top: alto * 0.04),
+                    child: Icon(Icons.star,color: WalkieTaskColors.yellow, size: alto * 0.03,),
                   ) : Container(),
                 ],
               ),

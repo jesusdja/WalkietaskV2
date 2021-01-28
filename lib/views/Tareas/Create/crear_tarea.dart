@@ -172,81 +172,6 @@ class _CreateTaskState extends State<CreateTask> {
     );
   }
 
-  Widget _reminderPersonal(){
-
-    String dateDiff = 'Sin fecha';
-    int cant = 0;
-    bool redColor = false;
-    if(widget.myUserRes != null && mapDataUserHome[widget.myUserRes.id] != null){
-      if(mapDataUserHome[widget.myUserRes.id][0] != ''){
-        dateDiff = getDayDiff(mapDataUserHome[widget.myUserRes.id][0]);
-        redColor = dateDiff.contains('-');
-      }
-      cant = mapDataUserHome[widget.myUserRes.id][2].length;
-    }
-
-    return InkWell(
-      onTap: () => _onTapUser(widget.myUserRes, true),
-      child: Container(
-        padding: EdgeInsets.only(left: ancho * 0.03, right: ancho * 0.03),
-        width: ancho,
-        child: Row(
-          children: [
-            Container(
-              height: alto * 0.06,
-              width: alto * 0.06,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: ViewImage().assetsImage("assets/image/icon_personal.png").image,
-                  fit: BoxFit.fill,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                margin: EdgeInsets.only(left: ancho * 0.02),
-                width: ancho,
-                child: Text('Yo (Recordatorios personales)',
-                  style: textStylePrimaryBoldName, textAlign: TextAlign.left,),
-              ),
-            ),
-            Container(
-              width: ancho * 0.26,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  redColor ?
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-                          height: alto * 0.02,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: ancho * 0.02),
-                        Text(dateDiff.replaceAll('-', ''),style: textStylePrimaryLitleRed,)
-                      ],
-                    ),
-                  )
-                      :
-                  Text(dateDiff.replaceAll('-', ''),style: textStylePrimaryLitleBold,),
-                  Text('Recordatorio: $cant',style: textStylePrimaryLitle,),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _taskForUsers(){
 
     return Container(
@@ -321,11 +246,11 @@ class _CreateTaskState extends State<CreateTask> {
             actionExtentRatio: 0.25,
             child: Container(
               width: ancho,
-              margin: EdgeInsets.only(bottom: alto * 0.01, right: ancho * 0.03),
+              margin: EdgeInsets.only(bottom: alto * 0.01, right: ancho * 0.03, left: ancho * 0.03),
               child: Row(
                 children: [
                   Container(
-                    margin: EdgeInsets.only(left: ancho * 0.03, right: ancho * 0.03),
+                    margin: EdgeInsets.only(right: ancho * 0.03),
                     child: Stack(
                       children: <Widget>[
                         Center(
@@ -410,6 +335,81 @@ class _CreateTaskState extends State<CreateTask> {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children:  users,
+        ),
+      ),
+    );
+  }
+
+  Widget _reminderPersonal(){
+
+    String dateDiff = 'Sin fecha';
+    int cant = 0;
+    bool redColor = false;
+    if(widget.myUserRes != null && mapDataUserHome[widget.myUserRes.id] != null){
+      if(mapDataUserHome[widget.myUserRes.id][0] != ''){
+        dateDiff = getDayDiff(mapDataUserHome[widget.myUserRes.id][0]);
+        redColor = dateDiff.contains('-');
+      }
+      cant = mapDataUserHome[widget.myUserRes.id][2].length;
+    }
+
+    return InkWell(
+      onTap: () => _onTapUser(widget.myUserRes, true),
+      child: Container(
+        padding: EdgeInsets.only(left: ancho * 0.03, right: ancho * 0.03),
+        width: ancho,
+        child: Row(
+          children: [
+            Container(
+              height: alto * 0.06,
+              width: alto * 0.06,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: ViewImage().assetsImage("assets/image/icon_personal.png").image,
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.only(left: ancho * 0.02),
+                width: ancho,
+                child: Text('Yo (Recordatorios personales)',
+                  style: textStylePrimaryBoldName, textAlign: TextAlign.left,),
+              ),
+            ),
+            Container(
+              width: ancho * 0.26,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  redColor ?
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                          height: alto * 0.02,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: ancho * 0.02),
+                        Text(dateDiff.replaceAll('-', ''),style: textStylePrimaryLitleRed,)
+                      ],
+                    ),
+                  )
+                      :
+                  Text(dateDiff.replaceAll('-', ''),style: textStylePrimaryLitleBold,),
+                  Text('Recordatorio: $cant',style: textStylePrimaryLitle,),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -171,14 +171,14 @@ class _ContactsState extends State<Contacts> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
-            margin: EdgeInsets.only(left: ancho * 0.04, right: ancho * 0.04),
+            margin: EdgeInsets.only(left: ancho * 0.04, right: ancho * 0.02),
             padding: const EdgeInsets.all(2.0), // borde width
             decoration: new BoxDecoration(
               color: bordeCirculeAvatar, // border color
               shape: BoxShape.circle,
             ),
             child: CircleAvatar(
-              radius: alto * 0.025,
+              radius: alto * 0.03,
               backgroundImage: avatarUser.image,
             ),
           ),
