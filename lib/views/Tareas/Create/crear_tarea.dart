@@ -114,13 +114,16 @@ class _CreateTaskState extends State<CreateTask> {
     mapIdUser = widget.mapIdUserRes;
     mapDataUserHome = widget.mapDataUserHome;
 
+    int cont = 0;
+    listUser.forEach((element) { if(element.contact == 1){ cont++; }});
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(new FocusNode());
       },
       child: Scaffold(
         backgroundColor: WalkieTaskColors.white,
-        body: listUser.isEmpty ? _taskIsEmpty() : _taskForUsers(),
+        body: cont == 0 ? _taskIsEmpty() : _taskForUsers(),
       ),
     );
   }
