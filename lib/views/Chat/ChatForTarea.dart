@@ -5,7 +5,6 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Chat/ChatMessenger.dart';
@@ -22,8 +21,8 @@ import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
+import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
-import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
 class ChatForTarea extends StatefulWidget {
@@ -111,11 +110,9 @@ class _ChatForTareaState extends State<ChatForTarea> {
     streamSubscriptionTaskSend?.cancel();
   }
 
-  SharedPreferences prefs;
   String idMyUser = '0';
   inicializarUser() async {
-    prefs = await SharedPreferences.getInstance();
-    idMyUser = prefs.getString('unityIdMyUser');
+    idMyUser = await SharedPrefe().getValue('unityIdMyUser');
     listUser = await DatabaseProvider.db.getAllUser();
 
     int idSearch;

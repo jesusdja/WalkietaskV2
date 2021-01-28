@@ -17,6 +17,11 @@ class SharedPrefe{
     prefs.setStringList(key, value);
   }
 
+  Future<void> setBoolValue(String key,bool value) async{
+    prefs = await SharedPreferences.getInstance();
+    prefs.setBool(key, value);
+  }
+
   Future<dynamic> getValue(String key) async{
     prefs = await SharedPreferences.getInstance();
     return prefs.get(key);

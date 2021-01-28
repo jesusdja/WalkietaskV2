@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/utils/shared_preferences.dart';
 
 class pushProvider{
 
@@ -20,10 +20,9 @@ class pushProvider{
   }
 
   getToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     _firebaseMessaging.requestNotificationPermissions();
     _firebaseMessaging.getToken().then((token) async {
-      await prefs.setString('walkietaskIdNoti',token);
+      await SharedPrefe().setStringValue('walkietaskIdNoti',token);
       print('======== TOKEN FIREBASE ========');
       print('======== TOKEN FIREBASE ========');
       print(token);

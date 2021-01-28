@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Permisos.dart';
@@ -34,7 +33,6 @@ class _LoginHomeState extends State<LoginHome> {
   String pasw = '';
   bool cargando = false;
   final formKey = GlobalKey<FormState>();
-  SharedPreferences prefs;
   TextEditingController _email = new TextEditingController();
   TextEditingController _pass = new TextEditingController();
 
@@ -42,17 +40,12 @@ class _LoginHomeState extends State<LoginHome> {
 
   @override
   void initState() {
-    inicializar();
     super.initState();
   }
 
   @override
   void dispose(){
     super.dispose();
-  }
-
-  inicializar() async {
-    prefs = await SharedPreferences.getInstance();
   }
 
   Future<bool> exit() async {
@@ -275,8 +268,8 @@ class _LoginHomeState extends State<LoginHome> {
 
           String token = value['access_token'];
           String tokenExp = value['access_token'];
-          await prefs.setString('unityToken','$token');
-          await prefs.setString('unityTokenExp','$tokenExp');
+          await SharedPrefe().setStringValue('unityToken','$token');
+          await SharedPrefe().setStringValue('unityTokenExp','$tokenExp');
 
           UpdateData updateData = new UpdateData();
           Usuario myUser = await updateData.getMyUser();
@@ -293,9 +286,9 @@ class _LoginHomeState extends State<LoginHome> {
               showAlert('Codigo vencido. Registrar nuevamente.',Colors.red[400]);
               await Future.delayed(Duration(seconds: 3));
             }
-            await prefs.setInt('unityLogin',userCheck);
+            await SharedPrefe().setIntValue('unityLogin',userCheck);
             await SharedPrefe().setStringValue('unityEmail',myUser.email);
-            await prefs.setString('unityIdMyUser','${myUser.id}');
+            await SharedPrefe().setStringValue('unityIdMyUser','${myUser.id}');
             await PermisoStore();
             await PermisoSonido();
             await PermisoPhotos();

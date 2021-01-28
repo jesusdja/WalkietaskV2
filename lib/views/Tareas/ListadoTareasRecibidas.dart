@@ -1,7 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
@@ -15,6 +14,7 @@ import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/format_deadline.dart';
+import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/switch_button.dart';
 import 'package:walkietaskv2/utils/task_sound.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
@@ -64,8 +64,6 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
   TextStyle textStylePrimaryBold = TextStyle();
   TextStyle textStyleProject = TextStyle();
   TextStyle textStyleNotTitle = TextStyle();
-
-  SharedPreferences prefs;
 
   @override
   void initState() {
@@ -118,8 +116,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
   }
 
   Future<void> _inicializarShared() async {
-    prefs = await SharedPreferences.getInstance();
-    valueSwitch = prefs.get('walkietaskFilterDate2') ?? false;
+    valueSwitch = await SharedPrefe().getValue('walkietaskFilterDate2') ?? false;
     setState(() {});
     _updateDataNewFirebase();
     _checkListChat();
@@ -185,7 +182,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
               sizeH: alto * 0.022,
               sizeW: ancho * 0.11,
               onChanged: (bool val) async {
-                await prefs.setBool('walkietaskFilterDate2',val);
+                await SharedPrefe().setBoolValue('walkietaskFilterDate2',val);
                 setState(() {
                   valueSwitch = !valueSwitch;
                 });
@@ -979,14 +976,14 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
         bool isTask = argumento['table'].contains('tasks');
 
         if (isTask) {
-          List listNew = await prefs.get('notiListTask');
+          List listNew = await SharedPrefe().getValue('notiListTask');
           if (listNew == null) {
             listNew = [];
           }
           List<String> listTaskNew = [];
           listNew.forEach((idDoc) { listTaskNew.add(idDoc);});
           listTaskNew.add(idDoc);
-          await prefs.setStringList('notiListTask', listTaskNew);
+          await SharedPrefe().setStringListValue('notiListTask', listTaskNew);
           _updateDataNewFirebase();
           updateData.actualizarListaRecibidos(blocTaskReceived, null);
           blocTaskReceived.inList.add(true);
@@ -1007,7 +1004,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
   List listViewTaskNew = [];
   Future<void> _updateDataNewFirebase() async {
     try{
-      listViewTaskNew = await prefs.get('notiListTask') ?? [];
+      listViewTaskNew = await SharedPrefe().getValue('notiListTask') ?? [];
       setState(() {});
     }catch(e){
       print(e.toString());
@@ -1017,13 +1014,13 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
   Future<void> _deleteDataNewFirebase(String id) async {
     List<String> list = [];
     try{
-      listViewTaskNew = await prefs.get('notiListTask') ?? [];
+      listViewTaskNew = await SharedPrefe().getValue('notiListTask') ?? [];
       listViewTaskNew.forEach((element) {
         if(element != id){
           list.add(element);
         }
       });
-      await prefs.setStringList('notiListTask', list);
+      await SharedPrefe().setStringListValue('notiListTask', list);
       listViewTaskNew = list;
       setState(() {});
     }catch(e){
@@ -1034,7 +1031,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
 
   Future<void> _deleteDataNewChat(String id) async {
     try{
-      List<dynamic> listTaskNew = await prefs.get('notiListChat');
+      List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListChat');
       if (listTaskNew == null) {
         listTaskNew = [];
       }
@@ -1044,7 +1041,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
           listTaskNewString.add(element);
         }
       });
-      await prefs.setStringList('notiListChat', listTaskNewString);
+      await SharedPrefe().setStringListValue('notiListChat', listTaskNewString);
       await _checkListChat();
     }catch(_){}
   }
@@ -1052,7 +1049,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
   List listCheckChat = [];
   Future<void> _checkListChat() async {
     try{
-      listCheckChat = await prefs.get('notiListChat') ?? [];
+      listCheckChat = await SharedPrefe().getValue('notiListChat') ?? [];
       setState(() {});
     }catch(e){
       print(e.toString());

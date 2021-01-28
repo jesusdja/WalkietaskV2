@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'package:path/path.dart';
+import 'package:walkietaskv2/utils/shared_preferences.dart';
 
 
 //String directorioImage = 'http://www.unitydbm.com.php73-37.phx1-1.websitetestlink.com/uploads/photo/';
@@ -15,9 +15,7 @@ String versionApp = '1.2.2';
 
 Future<String> obtenerToken() async {
 
-  SharedPreferences prefs;
-  prefs = await SharedPreferences.getInstance();
-  String token  = prefs.getString('unityToken');
+  String token  = await SharedPrefe().getValue('unityToken');
   return token;
 }
 

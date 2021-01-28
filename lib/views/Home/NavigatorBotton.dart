@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkietaskv2/App.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/bloc/blocPage.dart';
@@ -218,10 +217,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     await PermisoPhotos();
   }
 
-  SharedPreferences prefs;
   buscarMyUser() async {
-    prefs = await SharedPreferences.getInstance();
-    String idMyUser = prefs.getString('unityIdMyUser');
+    String idMyUser = await SharedPrefe().getValue('unityIdMyUser');
     bool listo = true;
     while(listo){
       myUser = await DatabaseProvider.db.getCodeIdUser(idMyUser);
@@ -234,9 +231,9 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     }
 
     try{
-      notiRecived = await prefs.get('notiRecived') ?? false;
-      notiContacts = await prefs.get('notiContacts') ?? false;
-      notiSend = await prefs.get('notiSend') ?? false;
+      notiRecived = await SharedPrefe().getValue('notiRecived') ?? false;
+      notiContacts = await SharedPrefe().getValue('notiContacts') ?? false;
+      notiSend = await SharedPrefe().getValue('notiSend') ?? false;
     } catch (e) {
       print(e.toString());
     }
@@ -849,14 +846,14 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         bool isTask = argumento['table'].contains('tasks');
         if (isTask) {
           try{
-            List<dynamic> listTaskNew = await prefs.get('notiListTask');
+            List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListTask');
             if (listTaskNew == null) {
               listTaskNew = [];
             }
             List<String> listTaskNewString = [];
             listTaskNew.forEach((element) { listTaskNewString.add(element);});
             listTaskNewString.add(argumento['idDoc']);
-            await prefs.setStringList('notiListTask', listTaskNewString);
+            await SharedPrefe().setStringListValue('notiListTask', listTaskNewString);
           }catch(_){}
           updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
           updateData.actualizarListaEnviados(blocTaskSend, blocConection);
@@ -889,14 +886,14 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           task.updated_at = DateTime.now().toString();
           await DatabaseProvider.db.updateTask(task);
 
-          List<dynamic> listTaskNew = await prefs.get('notiListChat');
+          List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListChat');
           if (listTaskNew == null) {
             listTaskNew = [];
           }
           List<String> listTaskNewString = [];
           listTaskNew.forEach((element) { listTaskNewString.add(element);});
           listTaskNewString.add(argumento['idDoc']);
-          await prefs.setStringList('notiListChat', listTaskNewString);
+          await SharedPrefe().setStringListValue('notiListChat', listTaskNewString);
           blocTaskReceived.inList.add(true);
           if(task != null){
             //ENVIADO
@@ -917,19 +914,19 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   Future<void> updateNoti(int index, bool value) async {
     if(index == 0){
       notiRecived = value;
-      await prefs.setBool('notiRecived', value);
+      await SharedPrefe().setBoolValue('notiRecived', value);
       setState(() {});
     }
     if(index == 1){
       notiContacts = value;
-      await prefs.setBool('notiContacts', value);
+      await SharedPrefe().setBoolValue('notiContacts', value);
     }
     if(index == 2){
-      await prefs.setBool('notiContacts_received', value);
+      await SharedPrefe().setBoolValue('notiContacts_received', value);
     }
     if(index == 3){
       notiSend = value;
-      await prefs.setBool('notiSend', value);
+      await SharedPrefe().setBoolValue('notiSend', value);
     }
     setState(() {});
   }

@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/bloc/blocUser.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
@@ -16,6 +15,7 @@ import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
+import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/contact/contact_invitations_received.dart';
 import 'package:walkietaskv2/views/contact/contact_invitations_sent.dart';
@@ -77,10 +77,8 @@ class _ContactsState extends State<Contacts> {
     setState(() {});
   }
 
-  SharedPreferences prefs;
   _initializarActive() async {
-    prefs = await SharedPreferences.getInstance();
-    activeRecived = await prefs.get('notiContacts_received');
+    activeRecived = await SharedPrefe().getValue('notiContacts_received');
     activeRecived = activeRecived ?? false;
   }
 
@@ -299,7 +297,7 @@ class _ContactsState extends State<Contacts> {
         }
         if(index == 2){
           updateData.actualizarListaInvitationReceived(blocInvitation, null);
-          await prefs.setBool('notiContacts_received', false);
+          await SharedPrefe().setBoolValue('notiContacts_received', false);
           activeRecived = false;
           inInvitedRecived = true;
         }

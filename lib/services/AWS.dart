@@ -3,15 +3,14 @@ import 'package:path/path.dart' as path;
 import 'package:async/async.dart';
 import 'package:http/http.dart' as http;
 import 'package:amazon_cognito_identity_dart/sig_v4.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkietaskv2/models/Policy.dart';
+import 'package:walkietaskv2/utils/shared_preferences.dart';
 
 Future<Map<String,String>> subirAudio(String ruta) async{
 
   Map<String,String> mapRes = new Map<String,String>();
   mapRes['subir'] = 'false';
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String idMyUser = prefs.getString('unityIdMyUser');
+  String idMyUser = await SharedPrefe().getValue('unityIdMyUser');
   DateTime f = DateTime.now();
   String nombreSubido = '${f.day}${f.month}${f.year}${f.hour}${f.minute}${f.second}U$idMyUser';
 
@@ -64,8 +63,7 @@ Future<Map<String,String>> subirArchivo(String ruta) async{
   Map<String,String> mapRes = new Map<String,String>();
   mapRes['subir'] = 'false';
 
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String idMyUser = prefs.getString('unityIdMyUser');
+  String idMyUser = await SharedPrefe().getValue('unityIdMyUser');
   DateTime f = DateTime.now();
   String nombre = ruta.split('/').last;
   String nombreSubido = '${f.day}${f.month}${f.year}${f.hour}${f.minute}${f.second}U$idMyUser$nombre';
