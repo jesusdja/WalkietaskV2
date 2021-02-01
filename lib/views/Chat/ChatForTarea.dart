@@ -435,8 +435,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
             child: IconButton(
               icon: Icon(Icons.send,color: WalkieTaskColors.color_4D9DFA,),
               onPressed: () async {
-
 /*
+
                 try {
                   int idSend = 0;
                   if (idMyUser != tarea.user_id.toString()) {
@@ -476,24 +476,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                   );
 
                   int pos = chatTarea.mensajes.length;
-                  // Map<dynamic,dynamic> maplista = Map<String,dynamic>();
-                  //   chatTarea.mensajes.forEach((key,value){
-                  //     maplista[pos.toString()] = value;
-                  //     pos++;
-                  //   });
                   chatTarea.mensajes[pos.toString()] = mensaje.toJson();
-
-                  // Map<dynamic,dynamic> maplista = Map<String,dynamic>();
-                  // maplista['0'] = mensaje.toJson();
-                  // int pos = 1;
-                  // if(chatTarea.mensajes != null){
-                  //   chatTarea.mensajes.forEach((key,value){
-                  //     maplista[pos.toString()] = value;
-                  //     pos++;
-                  //   });
-                  // }
-
-
 
                   bool res = await tareaFB.agregarMensaje(chatTarea.id,chatTarea.mensajes);
                   if(res){
@@ -528,9 +511,6 @@ class _ChatForTareaState extends State<ChatForTarea> {
                     }
                   }
                 }
-
-
-
               },
             ),
           )
