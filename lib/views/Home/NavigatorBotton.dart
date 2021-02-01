@@ -20,6 +20,7 @@ import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/DialogAlert.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/avatar_widget.dart';
+import 'package:walkietaskv2/utils/flushbar_notification.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
@@ -214,6 +215,9 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   }
 
   verificarPermisos()async{
+
+    await SharedPrefe().setIntValue('openTask', 0);
+
     String token = await obtenerToken();
     print('******** TOKEN SERVER ********');
     print('******** TOKEN SERVER ********');
@@ -941,6 +945,22 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
             }
           }
         }
+
+        if(argumento['type'] == '1'){
+          int idOpenTask = await SharedPrefe().getValue('openTask');
+          int idTaskPush = 0;
+          if(argumento['idDoc'] != null){
+            idTaskPush = int.parse(argumento['idDoc']);
+          }
+          if(idOpenTask != idTaskPush){
+            bool isTask = argumento['table'] == 'tasks';
+            Tarea task;
+            while(task == null){
+              task = await DatabaseProvider.db.getCodeIdTask(idTaskPush.toString());
+            }
+            viewNotiLocal(task, isTask, isTask ? task.name : argumento['description']);
+          }
+        }
       }
     });
   }
@@ -1014,5 +1034,57 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         }catch(_){}
       }
     }
+  }
+
+  void viewNotiLocal(Tarea task, bool isTask, String sms){
+    bool isRecived = true;
+    if(myUser.id == task.user_id){
+      isRecived = false;
+    }
+
+    Image avatarUser = Image.network(avatarImage);
+    String nameUser = '';
+    if(isRecived){
+      if(mapIdUser[task.user_id] != null){
+        if(mapIdUser[task.user_id].avatar != ''){
+          avatarUser = Image.network('$directorioImage${mapIdUser[task.user_id].avatar}');
+        }
+        nameUser = mapIdUser[task.user_id].name;
+      }
+    }else{
+      if(mapIdUser[task.user_responsability_id] != null){
+        if(mapIdUser[task.user_responsability_id].avatar != ''){
+          avatarUser = Image.network('$directorioImage${mapIdUser[task.user_responsability_id].avatar}');
+        }
+        nameUser = mapIdUser[task.user_responsability_id].name;
+      }
+    }
+
+    String meType = isTask ? 'Nueva tarea: ' : 'Nuevo mensaje: ';
+
+    Widget imageAvatar = Container(
+      margin: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+      padding: const EdgeInsets.all(1.5), // borde width
+      decoration: new BoxDecoration(
+        color: WalkieTaskColors.primary, // border color
+        shape: BoxShape.circle,
+      ),
+      child: CircleAvatar(
+        radius: alto * 0.025,
+        backgroundImage: avatarUser.image,
+      ),
+    );
+    Widget messageText = Container(
+      child: RichText(
+        text: TextSpan(children: [
+          TextSpan(text: meType, style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, fontWeight: FontWeight.bold, color: WalkieTaskColors.yellow, spacing: 0.5),),
+          TextSpan(text: sms,style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, color: WalkieTaskColors.white, spacing: 0.5)),
+        ]),
+      ),
+    );
+    Widget titleText = Container(
+      child: Text(nameUser,style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.white, spacing: 0.5, fontWeight: FontWeight.bold),),
+    );
+    flushBarNotification(context: context, avatar: imageAvatar, titleText: titleText, messageText: messageText);
   }
 }

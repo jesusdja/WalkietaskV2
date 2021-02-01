@@ -54,10 +54,12 @@ class PushProvider{
         argumento['type'] = '1';
         if(Platform.isAndroid){
           argumento['idDoc'] = info['data']['idDoc'];
-          argumento['table'] = info['data']['table']; // contacts - tasks
+          argumento['table'] = info['data']['table'];// contacts - tasks
+          argumento['description'] = info['data']['description'];
         }else{
           argumento['idDoc'] = info['idDoc'];
           argumento['table'] = info['table'];
+          argumento['description'] = info['description'];
         }
         _mensajesStreamController.sink.add(argumento);
       },
@@ -70,10 +72,12 @@ class PushProvider{
         argumento['type'] = '2';
         if(Platform.isAndroid){
           argumento['idDoc'] = info['data']['idDoc'];
-          argumento['table'] = info['data']['table']; // contacts - tasks
+          argumento['table'] = info['data']['table'];// contacts - tasks
+          argumento['description'] = info['data']['description'];
         }else{
           argumento['idDoc'] = info['idDoc'];
           argumento['table'] = info['table'];
+          argumento['description'] = info['description'];
         }
         _mensajesStreamController.sink.add(argumento);
       },
@@ -86,10 +90,12 @@ class PushProvider{
         argumento['type'] = '3';
         if(Platform.isAndroid){
           argumento['idDoc'] = info['data']['idDoc'];
-          argumento['table'] = info['data']['table']; // contacts - tasks
+          argumento['table'] = info['data']['table'];// contacts - tasks
+          argumento['description'] = info['data']['description'];
         }else{
           argumento['idDoc'] = info['idDoc'];
           argumento['table'] = info['table'];
+          argumento['description'] = info['description'];
         }
         _mensajesStreamController.sink.add(argumento);
       },

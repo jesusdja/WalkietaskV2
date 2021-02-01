@@ -35,6 +35,7 @@ Future<void> finishApp() async{
     await SharedPrefe().deleteValue('notiListTask');
     await SharedPrefe().deleteValue('notiNewInvitation');
     await SharedPrefe().deleteValue('first');
+    await SharedPrefe().deleteValue('openTask');
 
     await DatabaseProvider.db.deleteDatabaseInstance();
 

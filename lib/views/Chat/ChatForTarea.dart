@@ -129,6 +129,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
   }
 
   inicializar() async {
+    await SharedPrefe().setIntValue('openTask', tarea.id);
+
     try{
       ChatTareas chatTareaVery = await chatTareasdb.verificarExistencia(tarea.id.toString());
       if(chatTareaVery != null){
@@ -253,7 +255,10 @@ class _ChatForTareaState extends State<ChatForTarea> {
       elevation: 0,
       backgroundColor: colorFondoChat,
       leading: InkWell(
-        onTap: () => Navigator.of(context).pop(),
+        onTap: () async {
+          await SharedPrefe().setIntValue('openTask', 0);
+          Navigator.of(context).pop();
+        },
         child: Container(
           child: Center(
             child: Container(
