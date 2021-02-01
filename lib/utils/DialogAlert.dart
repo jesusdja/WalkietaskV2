@@ -9,7 +9,7 @@ Future<bool> alert(BuildContext context) async{
       builder: ( context ) {
         return AlertDialog(
           title: Text(''),
-          content: Text('¿Esta seguro que desea cerrar sesión?',textAlign: TextAlign.center,
+          content: Text('¿Estás seguro que desea cerrar sesión?',textAlign: TextAlign.center,
             style: WalkieTaskStyles().stylePrimary(size: size.height * 0.025, color: WalkieTaskColors.color_969696,spacing: 0.5,fontWeight: FontWeight.bold),),
           actions: <Widget>[
             FlatButton(

@@ -10,7 +10,7 @@ import 'package:walkietaskv2/utils/shared_preferences.dart';
 String directorioImage = 'http://www.unitydbm.com/uploads/photo/';
 String avatarImage = 'http://www.nabu.me.php72-7.phx1-1.websitetestlink.com/uploads/system/avatar.png';
 
-String versionApp = '1.2.2';
+String versionApp = '1.2.3';
 
 
 Future<String> obtenerToken() async {

@@ -25,6 +25,8 @@ import 'package:walkietaskv2/utils/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/utils/finish_app.dart';
+import 'package:walkietaskv2/views/Chat/ChatForTarea.dart';
+import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
 import 'package:walkietaskv2/views/Tareas/Create/crear_tarea.dart';
 import 'package:walkietaskv2/views/Tareas/ListadoTareasRecibidas.dart';
 import 'package:walkietaskv2/views/Tareas/ListadoTareasEnviadas.dart';
@@ -881,31 +883,41 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
       if(argumento['table'] != null && argumento['table'].contains('sms')){
         if(argumento['idDoc'] != null){
-
           Tarea task = await DatabaseProvider.db.getCodeIdTask(argumento['idDoc']);
           task.updated_at = DateTime.now().toString();
           await DatabaseProvider.db.updateTask(task);
+          bool isSend = task.user_id == myUser.id;
 
-          List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListChat');
-          if (listTaskNew == null) {
-            listTaskNew = [];
-          }
-          List<String> listTaskNewString = [];
-          listTaskNew.forEach((element) { listTaskNewString.add(element);});
-          listTaskNewString.add(argumento['idDoc']);
-          await SharedPrefe().setStringListValue('notiListChat', listTaskNewString);
-          blocTaskReceived.inList.add(true);
-          if(task != null){
-            //ENVIADO
-            if(task.user_id == myUser.id && page != bottonSelect.opcion3){
-              updateNoti(3, true);
+          if(argumento['type'] == '1'){
+            List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListChat');
+            if (listTaskNew == null) {
+              listTaskNew = [];
             }
-            //RECIBIDO
-            if(task.user_responsability_id == myUser.id && page != bottonSelect.opcion2){
-              updateNoti(0, true);
+            List<String> listTaskNewString = [];
+            listTaskNew.forEach((element) { listTaskNewString.add(element);});
+            listTaskNewString.add(argumento['idDoc']);
+            await SharedPrefe().setStringListValue('notiListChat', listTaskNewString);
+            blocTaskReceived.inList.add(true);
+            if(task != null){
+              //ENVIADO
+              if(isSend && page != bottonSelect.opcion3){
+                updateNoti(3, true);
+              }
+              //RECIBIDO
+              if(!isSend && page != bottonSelect.opcion2){
+                updateNoti(0, true);
+              }
+            }
+          }else{
+            //ENVIADO O RECIBIDO
+            if(isSend){
+              _onTapNavigator(bottonSelect.opcion3, 'Tareas enviadas');
+              clickTarea(task);
+            }else{
+              _onTapNavigator(bottonSelect.opcion2, 'Tareas recibidas');
+              clickTarea(task);
             }
           }
-
         }
       }
     });
@@ -929,5 +941,27 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       await SharedPrefe().setBoolValue('notiSend', value);
     }
     setState(() {});
+  }
+
+  void clickTarea(Tarea tarea) async {
+    try{
+      if(tarea.name.isEmpty){
+        var result  = await Navigator.push(context, new MaterialPageRoute(
+            builder: (BuildContext context) => new AddNameTask(tareaRes: tarea,)));
+        if(result){
+          blocTaskSend.inList.add(true);
+        }
+      }else{
+        Navigator.push(context, new MaterialPageRoute(
+            builder: (BuildContext context) =>
+            new ChatForTarea(
+              tareaRes: tarea,
+              listaCasosRes: listaCasos,
+              blocTaskSend: blocTaskSend,
+            )));
+      }
+    }catch(e){
+      print(e.toString());
+    }
   }
 }

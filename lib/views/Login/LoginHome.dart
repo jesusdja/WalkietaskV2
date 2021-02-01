@@ -90,7 +90,7 @@ class _LoginHomeState extends State<LoginHome> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text(
-            '¿No tenés cuenta?',
+            '¿No tienes cuenta?',
             style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02,spacing: 0.5),
           ),
           InkWell(
