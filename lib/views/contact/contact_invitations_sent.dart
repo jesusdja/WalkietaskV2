@@ -238,6 +238,8 @@ class _InvitationsSentState extends State<InvitationsSent> {
       mapInvitationReset[element.id] = false;
       mapInvitationDelete[element.id] = false;
     });
-    setState(() {});
+    if(mounted){
+      setState(() {});
+    }
   }
 }

@@ -964,4 +964,11 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       print(e.toString());
     }
   }
+
+  Future<void> verifyNewTask() async {
+    List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListTask');
+    if(listTaskNew.isNotEmpty){
+      updateNoti(0, true);
+    }
+  }
 }

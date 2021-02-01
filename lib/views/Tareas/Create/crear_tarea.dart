@@ -118,7 +118,6 @@ class _CreateTaskState extends State<CreateTask> {
     int cont = 0;
     listUser.forEach((element) { if(element.contact == 1){ cont++; }});
 
-
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(new FocusNode());

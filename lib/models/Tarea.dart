@@ -29,6 +29,7 @@ class Tarea  extends Equatable{
   // ignore: non_constant_identifier_names
   String url_attachment;
   int order;
+  int read;
   // ignore: non_constant_identifier_names
   int reminder_type_id;
   // ignore: non_constant_identifier_names
@@ -51,6 +52,7 @@ class Tarea  extends Equatable{
   Tarea(
       {this.id,
         this.order,
+        this.read,
         this.name,
         this.description,
         this.is_priority,
@@ -80,6 +82,7 @@ class Tarea  extends Equatable{
   Tarea.fromJson(Map<String, dynamic> json) {
     id = isnullOrvacio(json['id']) ? 0 : json['id'];
     order = isnullOrvacio(json['order'])? 0 : json['order'];
+    read = isnullOrvacio(json['read'])? 0 : json['read'];
     name = isnullOrvacio(json['name']) ? '' : json['name'];
     description = isnullOrvacio(json['description']) ? '' : json['description'];
     is_priority = isnullOrvacio(json['is_priority']) ? 0 : json['is_priority'];
@@ -114,26 +117,11 @@ class Tarea  extends Equatable{
     return false;
   }
 
-  Map<String, dynamic> toJson2() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['name'] = this.name == null ? '""' : this.name;
-    data['description'] = this.description == null ? '""' : this.description;
-    data['deadline'] = this.deadline == null ? '""' : this.deadline;
-    data['url_audio'] = this.url_audio == null ? '""' : this.url_audio;
-    data['url_attachment'] = this.url_attachment == null ? '""' : this.url_attachment;
-    data['reminder_type_id'] = this.reminder_type_id == null ? '""' : this.reminder_type_id.toString();
-    data['user_id'] = this.user_id == null ? '""' : this.user_id.toString();
-    data['user_responsability_id'] = this.user_responsability_id == null ? '""' : this.user_responsability_id.toString();
-    data['company_id'] = this.company_id == null ? '""' : this.company_id.toString();
-    data['project_id'] = this.project_id == null ? '""' : this.project_id.toString();
-    data['status_id'] = this.status_id == null ? '""' : this.status_id.toString();
-    return data;
-  }
-
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['order'] = this.order;
+    data['read'] = this.read;
     data['name'] = this.name;
     data['description'] = this.description;
     data['is_priority'] = this.is_priority;
@@ -165,6 +153,7 @@ class Tarea  extends Equatable{
   Tarea.fromMap(Map snapshot) :
         id = snapshot['id'],
         order = snapshot['ord'],
+        read = snapshot['read'],
         name = snapshot['name'],
         description = snapshot['description'],
         is_priority = snapshot['is_priority'],
@@ -194,6 +183,7 @@ class Tarea  extends Equatable{
   Tarea.map(dynamic obj) {
     this.id = obj['id'];
     this.order = obj['order'];
+    this.read = obj['read'];
     this.name = obj['name'];
     this.description = obj['description'];
     this.is_priority = obj['is_priority'];
@@ -224,6 +214,7 @@ class Tarea  extends Equatable{
   Map<String, dynamic> toMap2() => {
     'id' : id.toString(),
     'ord' : order,
+    'read' : read,
     'name' : name,
     'description' : description,
     'is_priority' : is_priority.toString(),
@@ -254,6 +245,7 @@ class Tarea  extends Equatable{
   Map<String, dynamic> toMap() => {
     'id' : id,
     'ord' : order,
+    'read' : read,
     'name' : name,
     'description' : description,
     'is_priority' : is_priority,
@@ -286,6 +278,7 @@ class Tarea  extends Equatable{
   List<Object> get props => [
     id,
     order,
+    read,
     name,
     description,
     is_priority,

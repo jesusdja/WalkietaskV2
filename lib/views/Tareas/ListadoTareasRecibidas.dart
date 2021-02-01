@@ -792,6 +792,9 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     _deleteDataNewFirebase(tarea.id.toString());
     _deleteDataNewChat(tarea.id.toString());
     widget.blocAudioChangePage.inList.add({'page' : bottonSelect.opcion1});
+
+    readTask(tarea);
+
     try{
       if(tarea.name.isEmpty){
         var result  = await Navigator.push(context, new MaterialPageRoute(
@@ -1053,6 +1056,20 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
       setState(() {});
     }catch(e){
       print(e.toString());
+    }
+  }
+
+  Future<void> readTask(Tarea task) async {
+
+    //CAMBIAR ESTADO DE DESTACAR 0 = FALSE, 1 = TRUE
+    if(task.read == 0){
+      task.read = 1;
+      if(await DatabaseProvider.db.updateTask(task) == 1){
+        blocTaskReceived.inList.add(true);
+        try{
+          await conexionHispanos.httpReadTask(task.id);
+        }catch(_){}
+      }
     }
   }
 }

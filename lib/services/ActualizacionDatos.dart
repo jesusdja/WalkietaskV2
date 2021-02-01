@@ -9,6 +9,7 @@ import 'package:walkietaskv2/models/invitation.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/shared_preferences.dart';
 
 class UpdateData{
 
@@ -147,6 +148,23 @@ class UpdateData{
           } else {
             tarea.order = taskVery.order;
             await DatabaseProvider.db.updateTask(tarea);
+          }
+        }
+
+        //******************************
+        //VERIFICAR TAREAS NUEVAS
+        if(tareas[x]['read'] != null && tareas[x]['read'] == 0){
+          try{
+            List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListTask');
+            if (listTaskNew == null) {
+              listTaskNew = [];
+            }
+            List<String> listTaskNewString = [];
+            listTaskNew.forEach((element) { listTaskNewString.add(element);});
+            listTaskNewString.add(tareas[x]['id'].toString());
+            await SharedPrefe().setStringListValue('notiListTask', listTaskNewString);
+          }catch(e){
+            print(e.toString());
           }
         }
       }

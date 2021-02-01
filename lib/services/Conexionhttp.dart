@@ -213,6 +213,25 @@ class conexionHttp{
     return response;
   }
 
+  Future<http.Response> httpReadTask(int idTask) async {
+
+    String token  = await obtenerToken();
+    Map<String,String> headers = {
+      'Content-Type':'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Authorization': 'Bearer $token'
+    };
+
+    var response;
+
+    try{
+      response = await http.put('$enlace/api/auth/tasks/markasread/$idTask',headers: headers,);
+    }catch(e){
+      print(e.toString());
+    }
+    return response;
+  }
+
   Future<http.Response> httpSendFavorite2(Tarea tarea) async {
 
     String token  = await obtenerToken();
