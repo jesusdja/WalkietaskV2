@@ -218,7 +218,47 @@ class _RegisterCodeState extends State<RegisterCode> {
         textEditingController: controller,
         textInputType: TextInputType.number,
         onTap: () => onTapCode(index),
-        onChanged: (String value) => onChange(index, value),
+        onChanged: (String value){
+          if(value.length > 1){
+            String v = value.substring(0,1);
+            if(index == 1){ controller_1 = TextEditingController(text: v);}
+            if(index == 2){ controller_2 = TextEditingController(text: v); }
+            if(index == 3){ controller_3 = TextEditingController(text: v); }
+            if(index == 4){ controller_4 = TextEditingController(text: v); }
+            FocusScope.of(context).requestFocus(new FocusNode());
+          }else{
+            if(value.isEmpty){
+              mapCode[index] = false;
+              if(index == 1){
+                FocusScope.of(context).requestFocus(new FocusNode());
+              }
+              if(index == 2){
+                focusNode_1.requestFocus();
+              }
+              if(index == 3){
+                focusNode_2.requestFocus();
+              }
+              if(index == 4){
+                focusNode_3.requestFocus();
+              }
+            }else{
+              mapCode[index] = true;
+              if(index == 1){
+                focusNode_2.requestFocus();
+              }
+              if(index == 2){
+                focusNode_3.requestFocus();
+              }
+              if(index == 3){
+                focusNode_4.requestFocus();
+              }
+              if(index == 4){
+                FocusScope.of(context).requestFocus(new FocusNode());
+              }
+            }
+          }
+          setState(() {});
+        },
         sizeW: sizeW,
         sizeH: sizeH,
         sizeHeight: sizeH * 0.045,
@@ -236,45 +276,7 @@ class _RegisterCodeState extends State<RegisterCode> {
   }
 
   void onChange(int index, String value){
-    if(value.length > 1){
-      FocusScope.of(context).requestFocus(new FocusNode());
-      if(index == 1){ controller_1.text = value.substring(0,1); }
-      if(index == 2){ controller_2.text = value.substring(0,1); }
-      if(index == 3){ controller_3.text = value.substring(0,1); }
-      if(index == 4){ controller_4.text = value.substring(0,1); }
 
-    }else{
-      if(value.isEmpty){
-        mapCode[index] = false;
-        if(index == 1){
-          FocusScope.of(context).requestFocus(new FocusNode());
-        }
-        if(index == 2){
-          focusNode_1.requestFocus();
-        }
-        if(index == 3){
-          focusNode_2.requestFocus();
-        }
-        if(index == 4){
-          focusNode_3.requestFocus();
-        }
-      }else{
-        mapCode[index] = true;
-        if(index == 1){
-          focusNode_2.requestFocus();
-        }
-        if(index == 2){
-          focusNode_3.requestFocus();
-        }
-        if(index == 3){
-          focusNode_4.requestFocus();
-        }
-        if(index == 4){
-          FocusScope.of(context).requestFocus(new FocusNode());
-        }
-      }
-    }
-    setState(() {});
   }
 
   void onTapCode(int index){

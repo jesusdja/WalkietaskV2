@@ -17,11 +17,7 @@ class AuthService with ChangeNotifier{
   Future init() async {
     int counter = await SharedPrefe().getValue('unityLogin');
 
-    int versiondb = await SharedPrefe().getValue('unityInit');
-    if(versiondb == null || versiondb != 5){
-      await SharedPrefe().setIntValue('unityInit', 5);
-      await DatabaseProvider.db.deleteDatabaseInstance();
-    }
+
 
     if(counter != null){
       if(counter == 0){

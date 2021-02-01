@@ -10,6 +10,7 @@ import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
+import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
@@ -116,6 +117,7 @@ class _CreateTaskState extends State<CreateTask> {
 
     int cont = 0;
     listUser.forEach((element) { if(element.contact == 1){ cont++; }});
+
 
     return GestureDetector(
       onTap: () {

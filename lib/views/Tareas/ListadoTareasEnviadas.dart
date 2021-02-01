@@ -106,7 +106,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
   }
 
   Future<void> _inicializarShared() async {
-    valueSwitch = SharedPrefe().getValue('walkietaskFilterDate') ?? false;
+    valueSwitch = await SharedPrefe().getValue('walkietaskFilterDate') ?? false;
     setState(() {});
     _updateDataNewFirebase();
     _checkListChat();

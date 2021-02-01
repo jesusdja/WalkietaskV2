@@ -15,15 +15,23 @@ class DatabaseProvider{
   Database _database;
 
   Future<Database> get database async {
-    if(_database != null) return _database;
+    if(_database != null){
+      int versiondb = await SharedPrefe().getValue('unityInit');
+      if(versiondb == null || versiondb != 6){
+        await SharedPrefe().setIntValue('unityInit', 6);
+        await deleteDatabaseInstance();
+      }else{
+        return _database;
+      }
+    }
     _database = await getDatabaseInstanace();
     return _database;
   }
 
   //ELIMINAR INSTANCIA
   Future deleteDatabaseInstance() async {
-    // final db = await database;
-    // await db.close();
+    final db = await database;
+    await db.close();
     //
     // // Get a location using getDatabasesPath
     // var databasesPath = await getDatabasesPath();
@@ -32,11 +40,11 @@ class DatabaseProvider{
     // await deleteDatabase(path);
 
     // Get a location using getDatabasesPath
-    Directory directory = await getApplicationDocumentsDirectory();
-    String path = join(directory.path, 'unity.db');
-    // Delete the database
-    await deleteDatabase(path);
-    _database = null;
+    // Directory directory = await getApplicationDocumentsDirectory();
+    // String path = join(directory.path, 'unity.db');
+    // // Delete the database
+    // await deleteDatabase(path);
+    // _database = null;
   }
 
   //**********************

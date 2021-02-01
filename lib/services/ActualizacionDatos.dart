@@ -15,7 +15,7 @@ class UpdateData{
   conexionHttp conexionHispanos = new conexionHttp();
 
   resetDB() async {
-    await DatabaseProvider.db.deleteDatabaseInstance();
+    //await DatabaseProvider.db.deleteDatabaseInstance();
     print('BASE DE DATOS LIMPIAS');
   }
 

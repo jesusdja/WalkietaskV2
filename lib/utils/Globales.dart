@@ -22,7 +22,7 @@ Future<String> obtenerToken() async {
 Future<Database> getDatabaseInstanace() async {
   Directory directory = await getApplicationDocumentsDirectory();
   String path = join(directory.path, "unity.db");
-  return await openDatabase(path, version: 5,
+  return await openDatabase(path, version: 6,
       onCreate: (Database db, int version) async {
         await db.execute(
             "CREATE TABLE Usuarios("
