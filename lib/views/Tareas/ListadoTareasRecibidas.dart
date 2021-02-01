@@ -32,7 +32,7 @@ class ListadoTareasRecibidas extends StatefulWidget {
   final BlocTask blocTaskReceivedRes;
   final List<Caso> listaCasosRes;
   final Usuario myUserRes;
-  final pushProvider push;
+  final PushProvider push;
   final BlocProgress blocAudioChangePage;
   @override
   _ListadoTareasState createState() => _ListadoTareasState();
@@ -974,31 +974,34 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
 
   void _notificationListener(){
     widget.push.mensajes.listen((argumento) async {
-      if(argumento['table'] != null && argumento['table'].contains('tasks')) {
-        String idDoc = argumento['idDoc'];
-        bool isTask = argumento['table'].contains('tasks');
+      int counter = await SharedPrefe().getValue('unityLogin');
+      if(counter == 1){
+        if(argumento['table'] != null && argumento['table'].contains('tasks')) {
+          String idDoc = argumento['idDoc'];
+          bool isTask = argumento['table'].contains('tasks');
 
-        if (isTask) {
-          List listNew = await SharedPrefe().getValue('notiListTask');
-          if (listNew == null) {
-            listNew = [];
+          if (isTask) {
+            List listNew = await SharedPrefe().getValue('notiListTask');
+            if (listNew == null) {
+              listNew = [];
+            }
+            List<String> listTaskNew = [];
+            listNew.forEach((idDoc) { listTaskNew.add(idDoc);});
+            listTaskNew.add(idDoc);
+            await SharedPrefe().setStringListValue('notiListTask', listTaskNew);
+            _updateDataNewFirebase();
+            updateData.actualizarListaRecibidos(blocTaskReceived, null);
+            blocTaskReceived.inList.add(true);
           }
-          List<String> listTaskNew = [];
-          listNew.forEach((idDoc) { listTaskNew.add(idDoc);});
-          listTaskNew.add(idDoc);
-          await SharedPrefe().setStringListValue('notiListTask', listTaskNew);
-          _updateDataNewFirebase();
-          updateData.actualizarListaRecibidos(blocTaskReceived, null);
-          blocTaskReceived.inList.add(true);
         }
-      }
 
-      if(argumento['table'] != null && argumento['table'].contains('sms')){
-        if(argumento['idDoc'] != null){
-          try{
-            await Future.delayed(Duration(seconds: 2));
-            await _checkListChat();
-          }catch(_){}
+        if(argumento['table'] != null && argumento['table'].contains('sms')){
+          if(argumento['idDoc'] != null){
+            try{
+              await Future.delayed(Duration(seconds: 2));
+              await _checkListChat();
+            }catch(_){}
+          }
         }
       }
     });

@@ -17,8 +17,6 @@ class AuthService with ChangeNotifier{
   Future init() async {
     int counter = await SharedPrefe().getValue('unityLogin');
 
-
-
     if(counter != null){
       if(counter == 0){
         _status = Status.Login;

@@ -49,6 +49,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   double alto = 0;
   double ancho = 0;
   double progressIndicator = 0;
+  int posVery = 0;
 
   Map<bottonSelect,bool> mapNavigatorBotton = new Map<bottonSelect,bool>();
   Map<int,Usuario> mapIdUser;
@@ -70,6 +71,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   BlocPage blocPage;
   BlocCasos blocConection;
   BlocProgress blocAudioChangePage = new BlocProgress();
+  BlocPage blocVerifyFirst = BlocPage();
 
   UpdateData updateData = new UpdateData();
 
@@ -81,6 +83,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   StreamSubscription streamSubscriptionConection;
   StreamSubscription streamSubscriptionProgress;
   StreamSubscription streamSubscriptionPage;
+  StreamSubscription streamSubscriptionVerify;
 
   bool viewIndicatorProgress = false;
   bool cargadoUsuarios = false;
@@ -131,6 +134,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     _inicializarPatronBlocProgress();
     _inicializarPatronBlocPage();
     _inicializarPatronBlocConection();
+    _inicializarPatronBlocVerify();
 
     _inicializarUser();
     _inicializarTaskRecived();
@@ -139,11 +143,11 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     _inicializarInvitation();
 
     updateData.actualizarListaUsuarios(blocUser, blocConection);
-    updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
+    updateData.actualizarListaRecibidos(blocTaskReceived, blocConection, blocVerifyFirst: blocVerifyFirst);
     updateData.actualizarListaEnviados(blocTaskSend, blocConection);
     updateData.actualizarCasos(blocCasos);
     updateData.actualizarListaInvitationSent(blocInvitation, blocConection);
-    updateData.actualizarListaInvitationReceived(blocInvitation, blocConection);
+    updateData.actualizarListaInvitationReceived(blocInvitation, blocConection, blocVerifyFirst: blocVerifyFirst);
 
     mapNavigatorBotton[bottonSelect.opcion1] = true;
     mapNavigatorBotton[bottonSelect.opcion2] = false;
@@ -169,6 +173,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       streamSubscriptionConection?.cancel();
       streamSubscriptionProgress?.cancel();
       streamSubscriptionPage?.cancel();
+      streamSubscriptionVerify?.cancel();
       blocUser.dispose();
       blocTaskSend.dispose();
       blocTaskReceived.dispose();
@@ -178,6 +183,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       blocIndicatorProgress.dispose();
       blocPage.dispose();
       blocAudioChangePage.dispose();
+      blocVerifyFirst.dispose();
     }catch(e){
       print(e.toString());
     }
@@ -733,6 +739,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   _inicializarInvitation() async {
     listInvitation = await  DatabaseProvider.db.getAllInvitation();
     setState(() {});
+    validateInvitation(listInvitation);
   }
   //*******************************************
   //*******************************************
@@ -835,87 +842,102 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       });
     } catch (e) {}
   }
+  _inicializarPatronBlocVerify(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionVerify = blocVerifyFirst.outList.listen((newVal) {
+        posVery = posVery + newVal;
+        if(posVery == 2){
+          verifyNewTaskInvitation();
+        }
+        setState(() {});
+      });
+    } catch (e) {}
+  }
 
 
-  pushProvider push;
+  PushProvider push;
   void _notificationListener(){
-    push = new pushProvider();
+    push = new PushProvider();
     push.getToken();
     push.initNotificaciones();
     push.mensajes.listen((argumento) async {
-      if(argumento['table'] != null && (argumento['table'] == 'tasks' ||
-          argumento['table'].contains('contacts'))) {
-        bool isTask = argumento['table'].contains('tasks');
-        if (isTask) {
-          try{
-            List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListTask');
-            if (listTaskNew == null) {
-              listTaskNew = [];
-            }
-            List<String> listTaskNewString = [];
-            listTaskNew.forEach((element) { listTaskNewString.add(element);});
-            listTaskNewString.add(argumento['idDoc']);
-            await SharedPrefe().setStringListValue('notiListTask', listTaskNewString);
-          }catch(_){}
-          updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
-          updateData.actualizarListaEnviados(blocTaskSend, blocConection);
-        }
-
-        if (page == bottonSelect.opcion1 || page == bottonSelect.opcion3 ||
-            page == bottonSelect.opcion4) {
+      int counter = await SharedPrefe().getValue('unityLogin');
+      if(counter == 1){
+        if(argumento['table'] != null && (argumento['table'] == 'tasks' ||
+            argumento['table'].contains('contacts'))) {
+          bool isTask = argumento['table'].contains('tasks');
           if (isTask) {
-            updateNoti(0, true);
-          } else {
-            updateNoti(1, true);
-            updateNoti(2, true);
+            try{
+              List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListTask');
+              if (listTaskNew == null) {
+                listTaskNew = [];
+              }
+              List<String> listTaskNewString = [];
+              listTaskNew.forEach((element) { listTaskNewString.add(element);});
+              listTaskNewString.add(argumento['idDoc']);
+              await SharedPrefe().setStringListValue('notiListTask', listTaskNewString);
+            }catch(_){}
+            updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
+            updateData.actualizarListaEnviados(blocTaskSend, blocConection);
+          }
+
+          if (page == bottonSelect.opcion1 || page == bottonSelect.opcion3 ||
+              page == bottonSelect.opcion4) {
+            if (isTask) {
+              updateNoti(0, true);
+            } else {
+              updateNoti(1, true);
+              updateNoti(2, true);
+            }
+          }
+          if (page == bottonSelect.opcion2) {
+            if (!isTask) {
+              updateNoti(1, true);
+              updateNoti(2, true);
+            }
+          }
+          if (page == bottonSelect.opcion5) {
+            updateNoti(isTask ? 0 : 2, true);
           }
         }
-        if (page == bottonSelect.opcion2) {
-          if (!isTask) {
-            updateNoti(1, true);
-            updateNoti(2, true);
-          }
-        }
-        if (page == bottonSelect.opcion5) {
-          updateNoti(isTask ? 0 : 2, true);
-        }
-      }
 
-      if(argumento['table'] != null && argumento['table'].contains('sms')){
-        if(argumento['idDoc'] != null){
-          Tarea task = await DatabaseProvider.db.getCodeIdTask(argumento['idDoc']);
-          task.updated_at = DateTime.now().toString();
-          await DatabaseProvider.db.updateTask(task);
-          bool isSend = task.user_id == myUser.id;
+        if(argumento['table'] != null && argumento['table'].contains('sms')){
+          if(argumento['idDoc'] != null){
+            Tarea task = await DatabaseProvider.db.getCodeIdTask(argumento['idDoc']);
+            task.updated_at = DateTime.now().toString();
+            await DatabaseProvider.db.updateTask(task);
+            bool isSend = task.user_id == myUser.id;
 
-          if(argumento['type'] == '1'){
-            List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListChat');
-            if (listTaskNew == null) {
-              listTaskNew = [];
-            }
-            List<String> listTaskNewString = [];
-            listTaskNew.forEach((element) { listTaskNewString.add(element);});
-            listTaskNewString.add(argumento['idDoc']);
-            await SharedPrefe().setStringListValue('notiListChat', listTaskNewString);
-            blocTaskReceived.inList.add(true);
-            if(task != null){
-              //ENVIADO
-              if(isSend && page != bottonSelect.opcion3){
-                updateNoti(3, true);
+            if(argumento['type'] == '1'){
+              List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListChat');
+              if (listTaskNew == null) {
+                listTaskNew = [];
               }
-              //RECIBIDO
-              if(!isSend && page != bottonSelect.opcion2){
-                updateNoti(0, true);
+              List<String> listTaskNewString = [];
+              listTaskNew.forEach((element) { listTaskNewString.add(element);});
+              listTaskNewString.add(argumento['idDoc']);
+              await SharedPrefe().setStringListValue('notiListChat', listTaskNewString);
+              blocTaskReceived.inList.add(true);
+              if(task != null){
+                //ENVIADO
+                if(isSend && page != bottonSelect.opcion3){
+                  updateNoti(3, true);
+                }
+                //RECIBIDO
+                if(!isSend && page != bottonSelect.opcion2){
+                  updateNoti(0, true);
+                }
               }
-            }
-          }else{
-            //ENVIADO O RECIBIDO
-            if(isSend){
-              _onTapNavigator(bottonSelect.opcion3, 'Tareas enviadas');
-              clickTarea(task);
             }else{
-              _onTapNavigator(bottonSelect.opcion2, 'Tareas recibidas');
-              clickTarea(task);
+              //ENVIADO O RECIBIDO
+              if(isSend){
+                _onTapNavigator(bottonSelect.opcion3, 'Tareas enviadas');
+                clickTarea(task);
+              }else{
+                _onTapNavigator(bottonSelect.opcion2, 'Tareas recibidas');
+                clickTarea(task);
+              }
             }
           }
         }
@@ -965,10 +987,32 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     }
   }
 
-  Future<void> verifyNewTask() async {
-    List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListTask');
-    if(listTaskNew.isNotEmpty){
-      updateNoti(0, true);
+  Future<void> verifyNewTaskInvitation() async {
+    int first = await SharedPrefe().getValue('first');
+    if(first == null || first == 0){
+      await SharedPrefe().setIntValue('first', 1);
+      //TAREAS
+      List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListTask') ?? [];
+      if(listTaskNew.isNotEmpty){
+        updateNoti(0, true);
+      }
+      //INVITACIONES
+      bool yesVery = await SharedPrefe().getValue('notiContacts') ?? false;
+      if(yesVery){
+        updateNoti(1, true);
+        updateNoti(2, true);
+      }
+    }
+  }
+
+  validateInvitation(List<InvitationModel> list) async {
+    for(int x = 0; x < list.length; x++){
+      if(list[x].read == 0){
+        try{
+          var res = await conexionHispanos.httpReadInvitation(list[x].id);
+          print(res);
+        }catch(_){}
+      }
     }
   }
 }

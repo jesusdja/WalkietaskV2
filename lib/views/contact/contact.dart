@@ -29,7 +29,7 @@ class Contacts extends StatefulWidget {
   final List<InvitationModel> listInvitation;
   final BlocCasos blocInvitation;
   final BlocUser blocUser;
-  final pushProvider push;
+  final PushProvider push;
   @override
   _ContactsState createState() => _ContactsState();
 }
@@ -346,13 +346,16 @@ class _ContactsState extends State<Contacts> {
 
   void _notificationListener(){
     widget.push.mensajes.listen((argumento) async {
-      if(argumento['table'] != null && argumento['table'].contains('contacts')) {
-        String idDoc = argumento['idDoc'];
-        if(!inInvitedRecived){
-          activeRecived = true;
-          setState(() {});
-        }else{
-          updateData.actualizarListaInvitationReceived(blocInvitation, null);
+      int counter = await SharedPrefe().getValue('unityLogin');
+      if(counter == 1){
+        if(argumento['table'] != null && argumento['table'].contains('contacts')) {
+          String idDoc = argumento['idDoc'];
+          if(!inInvitedRecived){
+            activeRecived = true;
+            setState(() {});
+          }else{
+            updateData.actualizarListaInvitationReceived(blocInvitation, null);
+          }
         }
       }
     });

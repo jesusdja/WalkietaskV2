@@ -8,6 +8,7 @@ class InvitationModel extends Equatable {
   int sent;
   int resent;
   int accepted;
+  int read;
   String createdAt;
   String updatedAt;
   int inv;
@@ -22,6 +23,7 @@ class InvitationModel extends Equatable {
         this.sent,
         this.resent,
         this.accepted,
+        this.read,
         this.createdAt,
         this.updatedAt,
         this.inv,
@@ -36,6 +38,7 @@ class InvitationModel extends Equatable {
     sent = json['sent']== null ? 0 :json['sent'];
     resent = json['resent']== null ? 0 :json['resent'];
     accepted = json['accepted']== null ? 0 : json['accepted'];
+    read = json['read']== null ? 0 : json['read'];
     createdAt = json['created_at']== null ? '' : json['created_at'];
     updatedAt = json['updated_at']== null ? '' : json['updated_at'];
     inv = json['inv']== null ? 0 : json['inv'];
@@ -51,6 +54,8 @@ class InvitationModel extends Equatable {
     data['sent'] = this.sent;
     data['resent'] = this.resent;
     data['accepted'] = this.accepted;
+    data['read'] = this.read;
+    data['read'] = this.read;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['inv'] = this.inv;
@@ -65,6 +70,7 @@ class InvitationModel extends Equatable {
         sent = snapshot['sent']== null ? 0 :snapshot['sent'],
         resent = snapshot['resent']== null ? 0 :snapshot['resent'],
         accepted = snapshot['accepted']== null ? 0 :snapshot['accepted'],
+        read = snapshot['read']== null ? 0 :snapshot['read'],
         createdAt = snapshot['created_at']== null ? '' :snapshot['created_at'],
         updatedAt = snapshot['updated_at']== null ? '' :snapshot['updated_at'],
         inv = snapshot['inv']== null ? 0 :snapshot['inv'],
@@ -79,6 +85,7 @@ class InvitationModel extends Equatable {
     'sent' : sent,
     'resent' : resent,
     'accepted' : accepted,
+    'read' : read,
     'created_at' : createdAt,
     'updated_at' : updatedAt,
     'inv' : inv,
@@ -93,6 +100,7 @@ class InvitationModel extends Equatable {
     this.sent = obj['sent'];
     this.resent = obj['resent'];
     this.accepted = obj['accepted'];
+    this.read = obj['read'];
     this.createdAt = obj['created_at'];
     this.updatedAt = obj['updated_at'];
     this.inv = obj['active'];
@@ -108,6 +116,7 @@ class InvitationModel extends Equatable {
     sent ,
     resent ,
     accepted ,
+    read ,
     createdAt ,
     updatedAt ,
     inv,

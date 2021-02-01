@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
+import 'package:walkietaskv2/bloc/blocPage.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/bloc/blocUser.dart';
 import 'package:walkietaskv2/models/Caso.dart';
@@ -123,7 +124,7 @@ class UpdateData{
 
   }
 
-  actualizarListaRecibidos(BlocTask blocTaskReceived, BlocCasos blocConection) async {
+  actualizarListaRecibidos(BlocTask blocTaskReceived, BlocCasos blocConection, {BlocPage blocVerifyFirst}) async {
     print('actualizarListaRecibidos');
     try{
       var response = await conexionHispanos.httpListTareasRecibidas();
@@ -189,6 +190,9 @@ class UpdateData{
         blocTaskReceived.inList.add(true);
       }
       blocConection.inList.add(false);
+      if(blocVerifyFirst != null){
+        blocVerifyFirst.inList.add(1);
+      }
     }catch(e){
       bool conect = await checkConectivity();
       if(blocConection != null){blocConection.inList.add(!conect);}
@@ -367,7 +371,7 @@ class UpdateData{
     }
   }
 
-  actualizarListaInvitationReceived(BlocCasos blocInvitation, BlocCasos blocConection) async {
+  actualizarListaInvitationReceived(BlocCasos blocInvitation, BlocCasos blocConection, {BlocPage blocVerifyFirst}) async {
     print('actualizarListaInvitationReceived');
     bool entre = false;
     //ACTUALIZAR TABLA LOCAL
@@ -387,6 +391,9 @@ class UpdateData{
           }else{
             await DatabaseProvider.db.updateInvitation(invitation);
           }
+        }
+        if(invitations[x]['read'] == 0){
+          await SharedPrefe().setBoolValue('notiContacts', true);
         }
       }
 
@@ -417,6 +424,9 @@ class UpdateData{
     }
     if(entre){
       blocInvitation.inList.add(true);
+    }
+    if(blocVerifyFirst != null){
+      blocVerifyFirst.inList.add(1);
     }
   }
 }

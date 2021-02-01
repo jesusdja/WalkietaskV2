@@ -17,8 +17,8 @@ class DatabaseProvider{
   Future<Database> get database async {
     if(_database != null){
       int versiondb = await SharedPrefe().getValue('unityInit');
-      if(versiondb == null || versiondb != 8){
-        await SharedPrefe().setIntValue('unityInit', 8);
+      if(versiondb == null || versiondb != 10){
+        await SharedPrefe().setIntValue('unityInit', 10);
         await deleteDatabaseInstance();
       }else{
         return _database;
@@ -30,8 +30,8 @@ class DatabaseProvider{
 
   //ELIMINAR INSTANCIA
   Future deleteDatabaseInstance() async {
-    final db = await database;
-    await db.close();
+    // final db = await database;
+    // await db.close();
     //
     // // Get a location using getDatabasesPath
     // var databasesPath = await getDatabasesPath();
@@ -45,6 +45,18 @@ class DatabaseProvider{
     // // Delete the database
     // await deleteDatabase(path);
     // _database = null;
+
+    try{
+      final db  = await database;
+      await db.rawDelete('DELETE FROM Usuarios');
+      await db.rawDelete('DELETE FROM Tareas');
+      await db.rawDelete('DELETE FROM Casos');
+      await db.rawDelete('DELETE FROM Invitation');
+    }catch(e){
+      print(e.toString());
+      print('ERROR AL BORRAR DB');
+    }
+
   }
 
   //**********************

@@ -8,7 +8,7 @@ import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 
-class pushProvider{
+class PushProvider{
 
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
