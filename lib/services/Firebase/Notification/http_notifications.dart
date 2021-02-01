@@ -17,10 +17,27 @@ class HttpPushNotifications{
       sms = 'Nuevo mensaje: ${description.substring(0,19)}...';
     }
 
+    // final msg = jsonEncode({
+    //   "title": "Este es el titulo",
+    //   "body": "Este es el body",
+    //   "color": "#4EA0F0",
+    //   "sound": "default",
+    //   "tag": "noti1",
+    //   "click_action": "FLUTTER_NOTIFICATION_CLICK",
+    //   "channel_id": "1",
+    //   "local_only": true,
+    //   "notification_priority": "PRIORITY_MAX",
+    //   "default_sound": true,
+    //   "default_vibrate_timings": true,
+    //   "default_light_settings": true,
+    //   "notification_count": 1,
+    // });
+
     final msg = jsonEncode({
       "notification": {
         "body" : sms,
         "sound":"default",
+        "channel_id" : "CHAT_MESSAGES",
       },
       "priority":"high",
       "data" : {

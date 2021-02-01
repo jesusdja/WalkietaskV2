@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'App.dart';
@@ -11,8 +12,36 @@ void main() async {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  static const platform = const MethodChannel('com.imprevia.walkietaskv2/battery');
+  String _batteryLevel = 'Unknown battery level.';
+  Future<void> _getBatteryLevel() async {
+    String batteryLevel;
+    try {
+      final int result = await platform.invokeMethod('getBatteryLevel');
+      batteryLevel = 'Battery level at $result % .';
+      print('');
+    } catch (e) {
+      batteryLevel = "Failed to get battery level: '${e.message}'.";
+      print('');
+    }
+
+    setState(() {
+      _batteryLevel = batteryLevel;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    //_getBatteryLevel();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

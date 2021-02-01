@@ -81,18 +81,23 @@ class _SoundTaskState extends State<SoundTask> {
 
     return InkWell(
       onTap: () async {
-        if(widget.path.isNotEmpty){
-          if(!sonando){
-            audioPlayer.play(widget.path);
-            await SharedPrefe().setIntValue('idSoundWalkie',widget.idTask);
+        try{
+          if(widget.path.isNotEmpty){
+            if(!sonando){
+              audioPlayer.play(widget.path);
+              await SharedPrefe().setIntValue('idSoundWalkie',widget.idTask);
+            }else{
+              await audioPlayer.stop();
+              await SharedPrefe().setIntValue('idSoundWalkie',0);
+            }
+            setState(() {
+              sonando = !sonando;
+            });
           }else{
-            await audioPlayer.stop();
-            await SharedPrefe().setIntValue('idSoundWalkie',0);
+            showAlert('No existe sonido alojado.',WalkieTaskColors.color_E07676);
           }
-          setState(() {
-            sonando = !sonando;
-          });
-        }else{
+        }catch(e){
+          print(e.toString());
           showAlert('Problemas para reproducir audio.',WalkieTaskColors.color_E07676);
         }
       },
