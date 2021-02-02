@@ -103,6 +103,8 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
     _inicializarPatronBlocTaskSend();
     _inicializarPatronBlocTaskRecived();
     _inicializarPatronBlocProgress();
+
+    addPop(1);
   }
 
   @override
@@ -115,6 +117,10 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
     }catch(e){
       print(e.toString());
     }
+  }
+
+  addPop(int num) async{
+    await addPopTask(num);
   }
 
   @override
@@ -644,6 +650,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       leading: InkWell(
         onTap: () {
           widget.blocAudioChangePage.inList.add({'page' : bottonSelect.opcion1});
+          addPop((-1));
           Navigator.of(context).pop();
         },
         child: Container(

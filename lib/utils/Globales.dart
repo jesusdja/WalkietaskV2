@@ -126,6 +126,16 @@ Future<bool> checkConectivity() async {
   return false;
 }
 
+Future<void> addPopTask(int num) async {
+  try{
+    int pop = await SharedPrefe().getValue('popValueTask') ?? 0;
+    pop = pop + num;
+    await SharedPrefe().setIntValue('popValueTask', pop);
+  }catch(e){
+    print(e.toString());
+  }
+}
+
 
 
 

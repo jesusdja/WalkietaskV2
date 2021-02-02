@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/App.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
@@ -103,6 +104,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
 
   bottonSelect page = bottonSelect.opcion1;
+  BuildContext contextHome;
 
   @override
   void initState() {
@@ -217,6 +219,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   verificarPermisos()async{
 
     await SharedPrefe().setIntValue('openTask', 0);
+    await SharedPrefe().setIntValue('popValueTask', 0);
 
     String token = await obtenerToken();
     print('******** TOKEN SERVER ********');
@@ -261,6 +264,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   Widget build(BuildContext context) {
     alto = MediaQuery.of(context).size.height;
     ancho = MediaQuery.of(context).size.width;
+    contextHome = context;
     reconection();
     return WillPopScope(
       onWillPop: exit,
@@ -1085,6 +1089,50 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     Widget titleText = Container(
       child: Text(nameUser,style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.white, spacing: 0.5, fontWeight: FontWeight.bold),),
     );
-    flushBarNotification(context: context, avatar: imageAvatar, titleText: titleText, messageText: messageText);
+    flushBarNotification(
+      context: context,
+      avatar: imageAvatar,
+      titleText: titleText,
+      messageText: messageText,
+      onTap: (flushbar) {
+        clickTarea(task);
+        _deleteDataNewFirebase(task.id.toString());
+        _deleteDataNewChat(task.id.toString());
+      }
+    );
+  }
+
+  Future<void> _deleteDataNewFirebase(String id) async {
+    List<String> list = [];
+    try{
+      List<String> listViewTaskNew = await SharedPrefe().getValue('notiListTask') ?? [];
+      listViewTaskNew.forEach((element) {
+        if(element != id){
+          list.add(element);
+        }
+      });
+      await SharedPrefe().setStringListValue('notiListTask', list);
+      listViewTaskNew = list;
+      setState(() {});
+    }catch(e){
+      print(e.toString());
+    }
+    setState(() {});
+  }
+
+  Future<void> _deleteDataNewChat(String id) async {
+    try{
+      List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListChat');
+      if (listTaskNew == null) {
+        listTaskNew = [];
+      }
+      List<String> listTaskNewString = [];
+      listTaskNew.forEach((element) {
+        if(element != id){
+          listTaskNewString.add(element);
+        }
+      });
+      await SharedPrefe().setStringListValue('notiListChat', listTaskNewString);
+    }catch(_){}
   }
 }

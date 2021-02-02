@@ -6,6 +6,7 @@ Future<void> flushBarNotification({
   Widget messageText,
   Widget avatar,
   Widget titleText,
+  @required Function onTap,
 }) async{
   Flushbar(
     titleText: titleText,
@@ -15,5 +16,6 @@ Future<void> flushBarNotification({
     flushbarStyle: FlushbarStyle.FLOATING,
     backgroundColor: Colors.black.withOpacity(0.6),
     icon: avatar,
+    onTap: onTap,
   )..show(context);
 }
