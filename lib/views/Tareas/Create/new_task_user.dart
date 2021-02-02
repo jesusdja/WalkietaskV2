@@ -93,6 +93,8 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
 
   conexionHttp connectionHttp = new conexionHttp();
 
+  ScrollController controller = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -209,184 +211,185 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
   }
 
   Widget _taskSendOpen(){
-    return Container(
+    List<Widget> widgets = [];
+
+    widgets.add(SizedBox(height: alto * 0.01,));
+    widgets.add(
+        Container(
+          margin: EdgeInsets.only(top: alto * 0.02,right: ancho * 0.05,bottom: alto * 0.01),
+          width: ancho,
+          child: Text('Titulo',textAlign: TextAlign.left,
+              style: textStylePrimary),
+        )
+    );
+    widgets.add(_tituloTarea());
+    widgets.add(Container(
+          width: ancho,
+          margin: EdgeInsets.only(top: alto * 0.02,right: ancho * 0.05,bottom: alto * 0.01),
+          child: Text('Descripción adicional',textAlign: TextAlign.left,
+              style: textStylePrimary),
+        ));
+    widgets.add(Container(
+          width: ancho,
+          margin: EdgeInsets.only(top: alto * 0.01),
+          child: TextFildGeneric(
+            textInputType: TextInputType.multiline,
+            padding: EdgeInsets.all(5.0),
+            onChanged: (text) {
+              setState(() {
+                descriptionTask = text;
+              });
+              //blocIndicatorProgress.inList.add({'progressIndicator' : double.parse(text), 'viewIndicatorProgress' : true});
+            },
+            labelStyle: textStylePrimary,
+            sizeH: alto,
+            sizeW: ancho,
+            borderColor: WalkieTaskColors.color_E2E2E2,
+            sizeBorder: 1.2,
+            textAlign: TextAlign.left,
+            sizeHeight: alto * 0.2,
+            maxLines: 8,
+            textInputAction: TextInputAction.done,
+          ),
+        ));
+    widgets.add(Container(
       width: ancho,
-      padding: EdgeInsets.only(right: ancho * 0.05,left: ancho * 0.05),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: alto * 0.01,),
-            Container(
-              margin: EdgeInsets.only(top: alto * 0.02,right: ancho * 0.05,bottom: alto * 0.01),
-              width: ancho,
-              child: Text('Titulo',textAlign: TextAlign.left,
-                  style: textStylePrimary),
-            ),
-            _tituloTarea(),
-            Container(
-              width: ancho,
-              margin: EdgeInsets.only(top: alto * 0.02,right: ancho * 0.05,bottom: alto * 0.01),
-              child: Text('Descripción adicional',textAlign: TextAlign.left,
-                  style: textStylePrimary),
-            ),
-            Container(
-              width: ancho,
-              margin: EdgeInsets.only(top: alto * 0.01),
-              child: TextFildGeneric(
-                textInputType: TextInputType.multiline,
-                padding: EdgeInsets.all(5.0),
-                onChanged: (text) {
-                  setState(() {
-                    descriptionTask = text;
-                  });
-                  //blocIndicatorProgress.inList.add({'progressIndicator' : double.parse(text), 'viewIndicatorProgress' : true});
-                },
-                labelStyle: textStylePrimary,
-                sizeH: alto,
-                sizeW: ancho,
-                borderColor: WalkieTaskColors.color_E2E2E2,
-                sizeBorder: 1.2,
-                textAlign: TextAlign.left,
-                sizeHeight: alto * 0.2,
-                maxLines: 8,
-                textInputAction: TextInputAction.done,
+      margin: EdgeInsets.only(top: alto * 0.01),
+      child: _buscadorCasos(),
+    ));
+    widgets.add(Container(
+      width: ancho,
+      margin: EdgeInsets.only(top: alto * 0.01),
+      child: _listadocasos(),
+    ));
+    widgets.add(SizedBox(height: alto * 0.02,));
+    widgets.add(InkWell(
+      child: Container(
+        width: ancho,
+        margin: EdgeInsets.only(top: alto * 0.01,left: ancho * 0.05,right: ancho * 0.05),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              flex: 1,
+              child: Container(
+                margin: EdgeInsets.only(right: ancho * 0.03),
+                child: Text('Fecha',textAlign: TextAlign.right,
+                    style: textStylePrimary),
               ),
             ),
-            Container(
-              width: ancho,
-              margin: EdgeInsets.only(top: alto * 0.01),
-              child: _buscadorCasos(),
-            ),
-            Container(
-              width: ancho,
-              margin: EdgeInsets.only(top: alto * 0.01),
-              child: _listadocasos(),
-            ),
-            SizedBox(height: alto * 0.02,),
-            //FECHA
-            InkWell(
+            Expanded(
+              flex: 1,
               child: Container(
-                width: ancho,
-                margin: EdgeInsets.only(top: alto * 0.01,left: ancho * 0.05,right: ancho * 0.05),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        margin: EdgeInsets.only(right: ancho * 0.03),
-                        child: Text('Fecha',textAlign: TextAlign.right,
-                            style: textStylePrimary),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        height: alto * 0.045,
-                        decoration: new BoxDecoration(
-                          border: Border.all(width: 1.2,color: colorBordeOpc),
-                          borderRadius: BorderRadius.all(Radius.circular(5.0),),
-                        ),
-                        child: fechaTask != null ?
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text('${fechaTask.day}-${fechaTask.month}-${fechaTask.year}',
-                                style: textStylePrimary),
-                            InkWell(
-                              child: Icon(Icons.clear),
-                              onTap: (){
-                                setState(() {
-                                  fechaTask = null;
-                                });
-                              },
-                            ),
-                          ],
-                        ) : Container(),
-                      ),
-                    )
-                  ],
+                height: alto * 0.045,
+                decoration: new BoxDecoration(
+                  border: Border.all(width: 1.2,color: colorBordeOpc),
+                  borderRadius: BorderRadius.all(Radius.circular(5.0),),
                 ),
+                child: fechaTask != null ?
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text('${fechaTask.day}-${fechaTask.month}-${fechaTask.year}',
+                        style: textStylePrimary),
+                    InkWell(
+                      child: Icon(Icons.clear),
+                      onTap: (){
+                        setState(() {
+                          fechaTask = null;
+                        });
+                      },
+                    ),
+                  ],
+                ) : Container(),
+              ),
+            )
+          ],
+        ),
+      ),
+      onTap: () async {
+        DateTime newDateTime = await showDatePicker(
+            context: context,
+            initialDate: new DateTime.now(),
+            firstDate: new DateTime(2018),
+            lastDate: new DateTime(2025),
+            locale: Locale('es', 'ES')
+        );
+        if (newDateTime != null) {
+          Duration dif = newDateTime.difference(DateTime.now());
+          if(dif.inDays >= 0){
+            setState(() => fechaTask = newDateTime);
+          }else{
+            showAlert('Fecha debe ser mayor o igual a hoy.',Colors.red[400]);
+          }
+        }
+      },
+    ));
+    widgets.add(SizedBox(height: alto * 0.02,));
+    widgets.add(Container(
+      width: ancho,
+      margin: EdgeInsets.only(top: alto * 0.01,left: ancho * 0.05,right: ancho * 0.05),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 1,
+            child: Container(
+              margin: EdgeInsets.only(right: ancho * 0.03),
+              child: Text('Adjuntos',textAlign: TextAlign.right,
+                  style: textStylePrimary),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: InkWell(
+              child: Container(
+                height: alto * 0.045,
+                decoration: new BoxDecoration(
+                  border: Border.all(width: 1.2,color: colorBordeOpc),
+                  borderRadius: BorderRadius.all(Radius.circular(5.0),),
+                ),
+                child:_pathAdjunto != null ?
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(_fileNameAdjunto.length > 10 ? '${_fileNameAdjunto.substring(0,10)}...' : '$_fileNameAdjunto',
+                        style: estiloLetras(alto * 0.022,colortitulo)),
+                    InkWell(
+                      child: Icon(Icons.clear),
+                      onTap: (){
+                        setState(() {
+                          _pathAdjunto = null;
+                        });
+                      },
+                    ),
+                  ],
+                ) : Container(),
               ),
               onTap: () async {
-                DateTime newDateTime = await showDatePicker(
-                    context: context,
-                    initialDate: new DateTime.now(),
-                    firstDate: new DateTime(2018),
-                    lastDate: new DateTime(2025),
-                    locale: Locale('es', 'ES')
-                );
-                if (newDateTime != null) {
-                  Duration dif = newDateTime.difference(DateTime.now());
-                  if(dif.inDays >= 0){
-                    setState(() => fechaTask = newDateTime);
-                  }else{
-                    showAlert('Fecha debe ser mayor o igual a hoy.',Colors.red[400]);
+                try{
+                  _pathAdjunto = await FilePicker.getFilePath(type: FileType.ANY, fileExtension: '');
+                  if(_pathAdjunto != null){
+                    _fileNameAdjunto = _pathAdjunto.split('/').last;
+                    setState(() {});
                   }
+                }catch(e){
+                  print(e.toString());
                 }
               },
             ),
-            SizedBox(height: alto * 0.02,),
-            //ADJUNTO
-            Container(
-              width: ancho,
-              margin: EdgeInsets.only(top: alto * 0.01,left: ancho * 0.05,right: ancho * 0.05),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      margin: EdgeInsets.only(right: ancho * 0.03),
-                      child: Text('Adjuntos',textAlign: TextAlign.right,
-                          style: textStylePrimary),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: InkWell(
-                      child: Container(
-                        height: alto * 0.045,
-                        decoration: new BoxDecoration(
-                          border: Border.all(width: 1.2,color: colorBordeOpc),
-                          borderRadius: BorderRadius.all(Radius.circular(5.0),),
-                        ),
-                        child:_pathAdjunto != null ?
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text(_fileNameAdjunto.length > 10 ? '${_fileNameAdjunto.substring(0,10)}...' : '$_fileNameAdjunto',
-                                style: estiloLetras(alto * 0.022,colortitulo)),
-                            InkWell(
-                              child: Icon(Icons.clear),
-                              onTap: (){
-                                setState(() {
-                                  _pathAdjunto = null;
-                                });
-                              },
-                            ),
-                          ],
-                        ) : Container(),
-                      ),
-                      onTap: () async {
-                        try{
-                          _pathAdjunto = await FilePicker.getFilePath(type: FileType.ANY, fileExtension: '');
-                          if(_pathAdjunto != null){
-                            _fileNameAdjunto = _pathAdjunto.split('/').last;
-                            setState(() {});
-                          }
-                        }catch(e){
-                          print(e.toString());
-                        }
-                      },
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(height: alto * 0.02,),
-          ],
-        ),
+          )
+        ],
+      ),
+    ));
+    widgets.add(SizedBox(height: alto * 0.02,));
+
+    return Container(
+      width: ancho,
+      padding: EdgeInsets.only(right: ancho * 0.05,left: ancho * 0.05),
+      child: ListView(
+        controller: controller,
+        children: widgets,
       ),
     );
   }
@@ -457,14 +460,51 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
     );
   }
 
+  FixedExtentScrollController fixedExtentScrollController =
+  new FixedExtentScrollController();
+
   Widget _listadocasos(){
     bool seleccionado = false;
     if((mapcasoSelect[0] != null && mapcasoSelect[0])){
       seleccionado = true;
     }
+    List<Widget> list = [InkWell(
+      child: Container(
+        height: alto * 0.05,
+        width: ancho,
+        color:   seleccionado ? colorfondoSelectUser : Colors.white,
+        child: Center(
+          child: Container(
+            width: ancho,
+            child: Text('No asignar a ningunos',textAlign: TextAlign.left,
+              style: seleccionado ? textStylePrimaryBold : textStylePrimary,
+            ),
+          ),
+        ),
+      ),
+      onTap: (){
+        Caso caso = Caso(id: 0);
+        if(mapcasoSelect[caso.id] == null){mapcasoSelect[caso.id] = false;}
+
+        mapcasoSelect.forEach((key,value){
+          if(key == caso.id){
+            mapcasoSelect[caso.id] = !mapcasoSelect[caso.id];
+            if(mapcasoSelect[caso.id]){casoSeleccionado = caso;}else{casoSeleccionado = null;}
+          }else{
+            mapcasoSelect[key] = false;
+          }
+        });
+        setState(() {});
+      },
+    ),SizedBox(height: alto * 0.01,)];
+    listaCasos.forEach((element) {
+      list.add(widgetCase(element));
+    });
+
 
     return Container(
       padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0),
+      height: alto * 0.25,
       decoration: new BoxDecoration(
         shape: BoxShape.rectangle,
         color: Colors.white,
@@ -474,85 +514,61 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
           color: WalkieTaskColors.color_E2E2E2,
         ),
       ),
-      child: Column(
-        children: <Widget>[
-          InkWell(
-            child: Container(
-              height: alto * 0.05,
-              width: ancho,
-              color:   seleccionado ? colorfondoSelectUser : Colors.white,
-              child: Center(
-                child: Container(
-                  width: ancho,
-                  child: Text('No asignar a ninguno',textAlign: TextAlign.left,
-                    style: seleccionado ? textStylePrimaryBold : textStylePrimary,
-                  ),
-                ),
-              ),
-            ),
-            onTap: (){
-              Caso caso = Caso(id: 0);
-              if(mapcasoSelect[caso.id] == null){mapcasoSelect[caso.id] = false;}
+      child: NotificationListener<OverscrollNotification>(
+        onNotification: (OverscrollNotification value) {
+          if (value.overscroll < 0 && controller.offset + value.overscroll <= 0) {
+            if (controller.offset != 0) controller.jumpTo(0);
+            return true;
+          }
+          if (controller.offset + value.overscroll >= controller.position.maxScrollExtent) {
+            if (controller.offset != controller.position.maxScrollExtent) controller.jumpTo(controller.position.maxScrollExtent);
+            return true;
+          }
+          controller.jumpTo(controller.offset + value.overscroll);
+          return true;
+        },
+        child: ListView(
+          children: list,
+        ),
+      ),
+    );
+  }
 
-              mapcasoSelect.forEach((key,value){
-                if(key == caso.id){
-                  mapcasoSelect[caso.id] = !mapcasoSelect[caso.id];
-                  if(mapcasoSelect[caso.id]){casoSeleccionado = caso;}else{casoSeleccionado = null;}
-                }else{
-                  mapcasoSelect[key] = false;
-                }
-              });
-              setState(() {});
-            },
-          ),
-          SizedBox(height: alto * 0.01,),
-          Container(
-            height: alto * 0.23,
-            child: listaCasos == null ? Container() :
-            ListView.builder(
-              itemCount: listaCasos.length,
-              itemBuilder: (context,index){
-                Caso caso = listaCasos[index];
-                if(controlleBuscadorCasos.text.length != 0 && !caso.name.toLowerCase().contains(controlleBuscadorCasos.text.toLowerCase())){
-                  return Container();
-                }
+  Widget widgetCase( Caso caso){
+    if(controlleBuscadorCasos.text.length != 0 && !caso.name.toLowerCase().contains(controlleBuscadorCasos.text.toLowerCase())){
+      return Container();
+    }
 
-                bool isAccepted = false;
-                projectAccepted.forEach((element) { if(element == caso.id){ isAccepted = true;}});
-                if(!isAccepted){ return Container();}
+    bool isAccepted = false;
+    projectAccepted.forEach((element) { if(element == caso.id){ isAccepted = true;}});
+    if(!isAccepted){ return Container();}
 
-                bool userSelect = false;
-                if(mapcasoSelect[caso.id] != null && mapcasoSelect[caso.id]){
-                  userSelect = true;
-                }
-                return Container(
+    bool userSelect = false;
+    if(mapcasoSelect[caso.id] != null && mapcasoSelect[caso.id]){
+      userSelect = true;
+    }
+    return Container(
 
-                  margin: EdgeInsets.only(bottom: alto * 0.02),
-                  color: userSelect ? colorfondoSelectUser : Colors.white,
-                  child: InkWell(
-                    onTap: (){
-                      if(mapcasoSelect[caso.id] == null){mapcasoSelect[caso.id] = false;}
+      margin: EdgeInsets.only(bottom: alto * 0.02),
+      color: userSelect ? colorfondoSelectUser : Colors.white,
+      child: InkWell(
+        onTap: (){
+          if(mapcasoSelect[caso.id] == null){mapcasoSelect[caso.id] = false;}
 
-                      mapcasoSelect.forEach((key,value){
-                        if(key == caso.id){
-                          mapcasoSelect[caso.id] = !mapcasoSelect[caso.id];
-                          if(mapcasoSelect[caso.id]){casoSeleccionado = caso;}else{casoSeleccionado = null;}
-                        }else{
-                          mapcasoSelect[key] = false;
-                        }
-                      });
-                      setState(() {});
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(top: alto * 0.005, bottom: alto * 0.01),
-                      child: Text('${caso.name}',style: userSelect ? textStylePrimaryBold : textStylePrimary),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
+          mapcasoSelect.forEach((key,value){
+            if(key == caso.id){
+              mapcasoSelect[caso.id] = !mapcasoSelect[caso.id];
+              if(mapcasoSelect[caso.id]){casoSeleccionado = caso;}else{casoSeleccionado = null;}
+            }else{
+              mapcasoSelect[key] = false;
+            }
+          });
+          setState(() {});
+        },
+        child: Container(
+          margin: EdgeInsets.only(top: alto * 0.005, bottom: alto * 0.01),
+          child: Text('${caso.name}',style: userSelect ? textStylePrimaryBold : textStylePrimary),
+        ),
       ),
     );
   }

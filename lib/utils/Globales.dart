@@ -10,7 +10,7 @@ import 'package:walkietaskv2/utils/shared_preferences.dart';
 String directorioImage = 'http://www.unitydbm.com/uploads/photo/';
 String avatarImage = 'http://www.nabu.me.php72-7.phx1-1.websitetestlink.com/uploads/system/avatar.png';
 
-String versionApp = '1.2.3';
+String versionApp = '1.2.4';
 
 
 Future<String> obtenerToken() async {
@@ -21,9 +21,9 @@ Future<String> obtenerToken() async {
 
 Future<Database> getDatabaseInstanace() async {
   Directory directory = await getApplicationDocumentsDirectory();
-  String path = join(directory.path, "unity11.db");
+  String path = join(directory.path, "unity12.db");
   print(path);
-  return await openDatabase(path, version: 11,
+  return await openDatabase(path, version: 12,
       onCreate: (Database db, int version) async {
         await db.execute(
             "CREATE TABLE Usuarios("

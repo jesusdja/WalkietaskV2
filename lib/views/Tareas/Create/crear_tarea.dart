@@ -308,8 +308,8 @@ class _CreateTaskState extends State<CreateTask> {
                         )
                             :
                         Text(dateDiff,style: textStylePrimaryLitleBold,),
-                        Text('Recibidas: $cantRecived',style: textStylePrimaryLitle,),
-                        Text('Enviadas: $cantSend',style: textStylePrimaryLitle,),
+                        Text('Recibidas: $cantRecived',style: textStylePrimaryLitle,textAlign: TextAlign.right,),
+                        Text('Enviadas: $cantSend',style: textStylePrimaryLitle, textAlign: TextAlign.right,),
                       ],
                     ),
                   ),
