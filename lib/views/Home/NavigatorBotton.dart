@@ -950,7 +950,9 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           }
         }
 
-        if(argumento['type'] == '1'){
+        if(argumento['type'] == '1' &&
+          (argumento['table']  ==  'sms' || argumento['table'] == 'tasks')
+        ){
           int idOpenTask = await SharedPrefe().getValue('openTask');
           int idTaskPush = 0;
           if(argumento['idDoc'] != null){
