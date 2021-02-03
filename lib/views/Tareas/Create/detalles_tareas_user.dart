@@ -56,6 +56,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
   double alto = 0;
   double ancho = 0;
   double progressIndicator = 0;
+
   int cant = 0;
 
   TextStyle textStylePrimary;
@@ -67,6 +68,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
 
   bool isPersonal = false;
   bool viewIndicatorProgress = false;
+  bool tagReceived = true;
 
   Usuario user;
 
@@ -160,47 +162,36 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
   Widget _body(){
 
     double h = alto < 600 ? alto * 0.32 : alto * 0.34;
+    double h2 = alto < 600 ? alto * 0.72 : alto * 0.75;
 
-    return SingleChildScrollView(
-      child: Container(
-        width: ancho,
+    return Container(
+      width: ancho,
+      color: Colors.grey[100],
+      child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            isPersonal ? Container() : Container(
+            isPersonal ? Container() :
+            Container(
               width: ancho,
-              height: alto * 0.06,
-              //color: Colors.orange,
-              child: Container(
-                margin: EdgeInsets.only(top: alto * 0.02, left: ancho * 0.03),
-                child: Text('Tareas recibidas', style: textStylePrimaryBold,),
+              child: Row(
+                children: [
+                  tag(0),
+                  tag(1),
+                ],
               ),
             ),
-            isPersonal ? Container() : Container(
+            isPersonal ? Container() :
+            Container(
+              height: h2,
               width: ancho,
-              height: listRecived.isEmpty ? alto * 0.08 : h,
-              //color: Colors.red,
-              child: _listTaskRecived(h),
-            ),
-            isPersonal ? Container() : Container(
-              width: ancho,
-              height: alto * 0.06,
-              //color: Colors.blue,
-              child: Container(
-                margin: EdgeInsets.only(top: alto * 0.02, left: ancho * 0.03),
-                child: Text('Tareas enviadas', style: textStylePrimaryBold,),
-              ),
-            ),
-            isPersonal ? Container() : Container(
-              width: ancho,
-              height: h,
-              //color: Colors.grey,
-              child: _listTaskSend(h),
+              color: WalkieTaskColors.white,
+              child: tagReceived ? _listTaskRecived() : _listTaskSend(),
             ),
             isPersonal ? Container(
               width: ancho,
               height: alto * 0.06,
-              //color: Colors.blue,
+              color: WalkieTaskColors.white,
               child: Container(
                 margin: EdgeInsets.only(top: alto * 0.02, left: ancho * 0.03),
                 child: Text('Mis Recordatorios', style: textStylePrimaryBold,),
@@ -208,7 +199,8 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
             ) : Container(),
             isPersonal ? Container(
               width: ancho,
-              height: h * 2.1,
+              color: WalkieTaskColors.white,
+              height: h2,
               //color: Colors.grey,
               child: _listTaskPersonal(h),
             ) : Container(),
@@ -218,8 +210,41 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
     );
   }
 
-  Widget _listTaskRecived(double h){
-    List<Widget> data = [];
+  Widget tag(int type){
+    String name = 'Recibidas';
+    bool activo = tagReceived;
+
+    if(type == 1){
+      name = 'Enviadas';
+      activo = !tagReceived;
+    }
+
+    TextStyle style = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.021, color: WalkieTaskColors.white, spacing: 0.5);
+    TextStyle style2 = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.021, color: WalkieTaskColors.color_969696, spacing: 0.5);
+
+    return Expanded(
+      child: InkWell(
+        onTap: (){
+          if(type == 0){
+            tagReceived = true;
+          }else{
+            tagReceived = false;
+          }
+          setState(() {});
+        },
+        child: Container(
+          padding: EdgeInsets.all(alto * 0.012),
+          color: activo ? WalkieTaskColors.primary : WalkieTaskColors.white,
+          child: Text(name, textAlign: TextAlign.center, style: activo ? style : style2,),
+        ),
+      ),
+    );
+  }
+
+  Widget _listTaskRecived(){
+    List<Widget> data = [
+      SizedBox(height: alto * 0.02,)
+    ];
     listRecived.forEach((task) {
       if(task.finalized != 1){
         bool isNew = false;
@@ -337,13 +362,12 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       width: ancho,
       child: listRecived.isEmpty ?
       Container(
-        margin: EdgeInsets.only(top: alto * 0.02),
+        margin: EdgeInsets.only(top: alto * 0.15),
         width: ancho,
         child: Text('No has recibido tareas de ${user.name}', style: textStylePrimary, textAlign: TextAlign.center,),
       ) :
       Container(
         width: ancho,
-        height: h,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.max,
@@ -354,8 +378,10 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
     );
   }
 
-  Widget _listTaskSend(double h){
-    List<Widget> data = [];
+  Widget _listTaskSend(){
+    List<Widget> data = [
+      SizedBox(height: alto * 0.02,)
+    ];
     listSend.forEach((task) {
       if(task.finalized != 1){
         String daysLeft = getDayDiff(task.deadline);
@@ -464,13 +490,12 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       width: ancho,
       child: listSend.isEmpty ?
       Container(
-        margin: EdgeInsets.only(top: alto * 0.02),
+        margin: EdgeInsets.only(top: alto * 0.15),
         width: ancho,
         child: Text('No has enviado tareas a ${user.name}', style: textStylePrimary, textAlign: TextAlign.center,),
       ) :
       Container(
         width: ancho,
-        height: h,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.max,

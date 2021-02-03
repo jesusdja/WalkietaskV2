@@ -130,48 +130,50 @@ class _CreateTaskState extends State<CreateTask> {
   }
 
   Widget _taskIsEmpty(){
-    return Container(
-      width: ancho,
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.only(top: alto * 0.05, left: ancho * 0.06, right: ancho * 0.06),
-            width: ancho,
-            child: Text('Aquí aparecerán los usuarios a los que podrás enviar tareas o de los que las recibirás.',style: textStylePrimary, textAlign: TextAlign.left,),
-          ),
-          SizedBox(height: alto * 0.02,),
-          Container(
-            padding: EdgeInsets.only(left: ancho * 0.06, right: ancho * 0.06),
-            width: ancho,
-            child: Text('Comienza invitando gente aquí',
-              style: textStylePrimary, textAlign: TextAlign.left,),
-          ),
-          SizedBox(height: alto * 0.04,),
-          Container(
-            padding: EdgeInsets.only(left: ancho * 0.06, right: ancho * 0.06),
-            height: alto * 0.25,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: ViewImage().assetsImage("assets/image/image_home_empty.png").image,
-                fit: BoxFit.contain,
+    return SingleChildScrollView(
+      child: Container(
+        width: ancho,
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.only(top: alto * 0.05, left: ancho * 0.06, right: ancho * 0.06),
+              width: ancho,
+              child: Text('Aquí aparecerán los usuarios a los que podrás enviar tareas o de los que las recibirás.',style: textStylePrimary, textAlign: TextAlign.left,),
+            ),
+            SizedBox(height: alto * 0.02,),
+            Container(
+              padding: EdgeInsets.only(left: ancho * 0.06, right: ancho * 0.06),
+              width: ancho,
+              child: Text('Comienza invitando gente aquí',
+                style: textStylePrimary, textAlign: TextAlign.left,),
+            ),
+            SizedBox(height: alto * 0.04,),
+            Container(
+              padding: EdgeInsets.only(left: ancho * 0.06, right: ancho * 0.06),
+              height: alto * 0.25,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: ViewImage().assetsImage("assets/image/image_home_empty.png").image,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
-          ),
-          SizedBox(height: alto * 0.04,),
-          Container(
-            padding: EdgeInsets.only(left: ancho * 0.06, right: ancho * 0.06),
-            child: Divider(),
-          ),
-          SizedBox(height: alto * 0.04,),
-          Container(
-            padding: EdgeInsets.only(left: ancho * 0.06, right: ancho * 0.06),
-            width: ancho,
-            child: Text('También puedes enviarte recordatorios personales, ya sea de audio o texto:',
-              style: textStylePrimary, textAlign: TextAlign.left,),
-          ),
-          SizedBox(height: alto * 0.02,),
-          _reminderPersonal(),
-        ],
+            SizedBox(height: alto * 0.04,),
+            Container(
+              padding: EdgeInsets.only(left: ancho * 0.06, right: ancho * 0.06),
+              child: Divider(),
+            ),
+            SizedBox(height: alto * 0.04,),
+            Container(
+              padding: EdgeInsets.only(left: ancho * 0.06, right: ancho * 0.06),
+              width: ancho,
+              child: Text('También puedes enviarte recordatorios personales, ya sea de audio o texto:',
+                style: textStylePrimary, textAlign: TextAlign.left,),
+            ),
+            SizedBox(height: alto * 0.02,),
+            _reminderPersonal(),
+          ],
+        ),
       ),
     );
   }
