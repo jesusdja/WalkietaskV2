@@ -42,7 +42,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
   Map<int,bool> mapAppBar = {0:true,1:false,2:false};
   bool valueSwitch = false;
 
-  List<Tarea> listEnviados;
+  List<Tarea> listEnviados = [];
   Map<int,Usuario> mapIdUser;
   Map<int,Caso> mapCasos = {};
   Map<int,bool> openForUserTask = {};
@@ -83,7 +83,8 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     if(valueSwitch){
       orderListTaskDeadLine();
     }else{
-      listEnviados = widget.listEnviadosRes;
+      //listEnviados = widget.listEnviadosRes;
+      orderListRecived(widget.listEnviadosRes);
     }
   }
 
@@ -277,7 +278,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
           );
         }),
         onReorder: (int oldIndex, int newIndex) {
-          //_updateMyItems(oldIndex, newIndex);
+          _updateMyItems(oldIndex, newIndex);
         },
       ),
     );
@@ -566,11 +567,11 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                   actionPane: SlidableDrawerActionPane(),
                   actionExtentRatio: 0.25,
                   actions: <Widget>[
-                    _buttonSliderAction(task.is_priority_responsability == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.03,),WalkieTaskColors.yellow,WalkieTaskColors.white,1,task),
+                    _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.03,),WalkieTaskColors.yellow,WalkieTaskColors.white,1,task),
                     //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
                   ],
                   secondaryActions: <Widget>[
-                    _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.03,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
+                    //_buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.03,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
                     _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.03,),colorSliderListo,WalkieTaskColors.white,4,task),
                   ],
                   child: InkWell(
@@ -865,6 +866,123 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
         }
       },
     );
+  }
+
+  Future<void> _updateMyItems(int oldIndex, int newIndex) async {
+    print('oldIndex: $oldIndex -- newIndex: $newIndex');
+    List<Tarea> auxList = new List<Tarea>();
+    List<Tarea> listRecibidosRecorrer = listEnviados.map((e) => e).toList();
+    Tarea tareaOrder = listRecibidosRecorrer[oldIndex];
+    listRecibidosRecorrer.removeAt(oldIndex);
+    List<Tarea> listNew = [];
+    try{
+      if(newIndex == 0){
+        auxList.add(tareaOrder);
+      }
+
+      bool entrar = false;
+      if(listRecibidosRecorrer.length == newIndex){
+        entrar = true;
+      }
+
+      for(int x = 0; x < listRecibidosRecorrer.length; x++){
+        if(x == newIndex && newIndex != 0){
+          auxList.add(tareaOrder);
+        }
+        if((x+1) == newIndex && entrar){
+          auxList.add(tareaOrder);
+        }
+        auxList.add(listRecibidosRecorrer[x]);
+      }
+      if(newIndex > listRecibidosRecorrer.length){
+        auxList.add(tareaOrder);
+      }
+
+      for(int x = 0; x < auxList.length; x++){
+        listNew.add(auxList[x]);
+      }
+    }catch(e){
+      print(e.toString());
+    }
+
+    List<String> listOrderFavorite = [];
+    List<String> listOrderDate = [];
+    listNew.forEach((element) {
+      if(element.is_priority == 1){
+        listOrderFavorite.add(element.id.toString());
+        listOrderDate.add(element.updated_at);
+      }
+    });
+    listNew.forEach((element) {
+      if(element.is_priority == 0){
+        listOrderFavorite.add(element.id.toString());
+        listOrderDate.add(element.updated_at);
+      }
+    });
+    await SharedPrefe().setStringListValue('listOrderSend', listOrderFavorite);
+    await SharedPrefe().setStringListValue('listOrderSendDate', listOrderDate);
+    setState(() {});
+  }
+
+  Future<void> orderListRecived(List<Tarea> listTask) async {
+    List listStringIdOrder = await SharedPrefe().getValue('listOrderSend');
+    List listStringIdOrderDate = await SharedPrefe().getValue('listOrderSendDate');
+    Map<int,int> noEstanGuardarPosicion = {};
+
+    if(listStringIdOrder == null || listStringIdOrderDate == null){
+      listEnviados = listTask;
+      return;
+    }
+
+    Map<int,Tarea> tasksMap = {};
+
+    for(int x = 0; x < listTask.length; x++){
+      tasksMap[listTask[x].id] = listTask[x];
+      bool entre = false;
+      for(int xy = 0; xy < listStringIdOrder.length; xy++){
+        if(listStringIdOrder[xy] == listTask[x].id.toString()){
+          if(listStringIdOrderDate[xy] == listTask[x].updated_at){
+            entre = true;
+          }
+        }
+      }
+      if(!entre){
+        noEstanGuardarPosicion[listTask[x].id] = x;
+      }
+    }
+
+    List<Tarea> listOrder = [];
+    noEstanGuardarPosicion.forEach((key, value) {
+      listOrder.add(tasksMap[key]);
+    });
+
+    for(int x = 0; x < listStringIdOrder.length; x++){
+      if(noEstanGuardarPosicion[int.parse(listStringIdOrder[x])] == null){
+        listOrder.add(tasksMap[int.parse(listStringIdOrder[x])]);
+      }
+    }
+
+    List<String> listOrderFavorite = [];
+    List<String> listOrderDate = [];
+    List<Tarea> listDefinitive = [];
+    listOrder.forEach((element) {
+      if(element.is_priority == 1){
+        listDefinitive.add(element);
+        listOrderFavorite.add(element.id.toString());
+        listOrderDate.add(element.updated_at);
+      }
+    });
+    listOrder.forEach((element) {
+      if(element.is_priority == 0){
+        listDefinitive.add(element);
+        listOrderFavorite.add(element.id.toString());
+        listOrderDate.add(element.updated_at);
+      }
+    });
+    await SharedPrefe().setStringListValue('listOrderSend', listOrderFavorite);
+    await SharedPrefe().setStringListValue('listOrderSendDate', listOrderDate);
+    listEnviados = listDefinitive;
+    setState(() {});
   }
 
   void orderListTaskDeadLine(){

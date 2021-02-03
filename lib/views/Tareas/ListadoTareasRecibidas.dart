@@ -43,7 +43,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
   List<Tarea> listaTareas = new List<Tarea>();
   double alto = 0;
   double ancho = 0;
-  List<Tarea> listRecibidos;
+  List<Tarea> listRecibidos = [];
 
   Map<int,Usuario> mapIdUser;
   BlocTask blocTaskReceived;
@@ -92,9 +92,9 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     if(valueSwitch){
       orderListTaskDeadLine();
     }else{
-      listRecibidos = widget.listRecibidos;
+      //listRecibidos = widget.listRecibidos;
+      orderListRecived(widget.listRecibidos);
     }
-    setState(() {});
   }
 
   _inicializar2(){
@@ -880,49 +880,122 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     );
   }
 
-  void _updateMyItems(int oldIndex, int newIndex) {
-
+  Future<void> _updateMyItems(int oldIndex, int newIndex) async {
+    print('oldIndex: $oldIndex -- newIndex: $newIndex');
     List<Tarea> auxList = new List<Tarea>();
-    List<Tarea> listRecibidosRecorrer = listRecibidos;
+    List<Tarea> listRecibidosRecorrer = listRecibidos.map((e) => e).toList();
     Tarea tareaOrder = listRecibidosRecorrer[oldIndex];
     listRecibidosRecorrer.removeAt(oldIndex);
-    int y = 0;
-    if(newIndex == 0){
-      tareaOrder.order = 0;
-      auxList.add(tareaOrder);
-      y++;
+    List<Tarea> listNew = [];
+    try{
+      if(newIndex == 0){
+        auxList.add(tareaOrder);
+      }
+
+      bool entrar = false;
+      if(listRecibidosRecorrer.length == newIndex){
+        entrar = true;
+      }
+
+      for(int x = 0; x < listRecibidosRecorrer.length; x++){
+        if(x == newIndex && newIndex != 0){
+          auxList.add(tareaOrder);
+        }
+        if((x+1) == newIndex && entrar){
+          auxList.add(tareaOrder);
+        }
+        auxList.add(listRecibidosRecorrer[x]);
+      }
+      if(newIndex > listRecibidosRecorrer.length){
+        auxList.add(tareaOrder);
+      }
+
+      for(int x = 0; x < auxList.length; x++){
+        listNew.add(auxList[x]);
+      }
+    }catch(e){
+      print(e.toString());
     }
 
-    bool entrar = false;
-    if(listRecibidosRecorrer.length == newIndex){
-      entrar = true;
-    }
-
-    for(int x = 0; x < listRecibidosRecorrer.length; x++){
-      if(x == newIndex && newIndex != 0){
-        tareaOrder.order = y;
-        auxList.add(tareaOrder);
-        y++;
+    List<String> listOrderFavorite = [];
+    List<String> listOrderDate = [];
+    listNew.forEach((element) {
+      if(element.is_priority_responsability == 1){
+        listOrderFavorite.add(element.id.toString());
+        listOrderDate.add(element.updated_at);
       }
-      if((x+1) == newIndex && entrar){
-        tareaOrder.order = y;
-        auxList.add(tareaOrder);
-        y++;
+    });
+    listNew.forEach((element) {
+      if(element.is_priority_responsability == 0){
+        listOrderFavorite.add(element.id.toString());
+        listOrderDate.add(element.updated_at);
       }
-      listRecibidosRecorrer[x].order = y;
-      auxList.add(listRecibidosRecorrer[x]);
-      y++;
-    }
-    if(newIndex > listRecibidosRecorrer.length){
-      tareaOrder.order = y;
-      auxList.add(tareaOrder);
-    }
-    listRecibidos.clear();
-    for(int x = 0; x < auxList.length; x++){
-      listRecibidos.add(auxList[x]);
-    }
+    });
+    await SharedPrefe().setStringListValue('listOrderRecived', listOrderFavorite);
+    await SharedPrefe().setStringListValue('listOrderRecivedDate', listOrderDate);
     setState(() {});
-    updateData.organizarTareas(auxList,blocTaskReceived);
+  }
+
+  Future<void> orderListRecived(List<Tarea> listTask) async {
+    List listStringIdOrder = await SharedPrefe().getValue('listOrderRecived');
+    List listStringIdOrderDate = await SharedPrefe().getValue('listOrderRecivedDate');
+    Map<int,int> noEstanGuardarPosicion = {};
+
+    if(listStringIdOrder == null || listStringIdOrderDate == null){
+      listRecibidos = listTask;
+      return;
+    }
+
+    Map<int,Tarea> tasksMap = {};
+
+    for(int x = 0; x < listTask.length; x++){
+      tasksMap[listTask[x].id] = listTask[x];
+      bool entre = false;
+      for(int xy = 0; xy < listStringIdOrder.length; xy++){
+        if(listStringIdOrder[xy] == listTask[x].id.toString()){
+          if(listStringIdOrderDate[xy] == listTask[x].updated_at){
+            entre = true;
+          }
+        }
+      }
+      if(!entre){
+        noEstanGuardarPosicion[listTask[x].id] = x;
+      }
+    }
+
+    List<Tarea> listOrder = [];
+    noEstanGuardarPosicion.forEach((key, value) {
+      listOrder.add(tasksMap[key]);
+    });
+
+    for(int x = 0; x < listStringIdOrder.length; x++){
+      if(noEstanGuardarPosicion[int.parse(listStringIdOrder[x])] == null){
+        listOrder.add(tasksMap[int.parse(listStringIdOrder[x])]);
+      }
+    }
+
+    List<String> listOrderFavorite = [];
+    List<String> listOrderDate = [];
+    List<Tarea> listDefinitive = [];
+    listOrder.forEach((element) {
+      if(element.is_priority_responsability == 1){
+        listDefinitive.add(element);
+        listOrderFavorite.add(element.id.toString());
+        listOrderDate.add(element.updated_at);
+      }
+    });
+    listOrder.forEach((element) {
+      if(element.is_priority_responsability == 0){
+        listDefinitive.add(element);
+        listOrderFavorite.add(element.id.toString());
+        listOrderDate.add(element.updated_at);
+      }
+    });
+    await SharedPrefe().setStringListValue('listOrderRecived', listOrderFavorite);
+    await SharedPrefe().setStringListValue('listOrderRecivedDate', listOrderDate);
+
+    listRecibidos = listDefinitive;
+    setState(() {});
   }
 
   void orderListTaskDeadLine(){

@@ -951,7 +951,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         }
 
         if(argumento['type'] == '1' &&
-          (argumento['table']  ==  'sms' || argumento['table'] == 'tasks')
+          (argumento['table']  ==  'sms' || argumento['table'] == 'tasks' || argumento['table'] == 'tasksFinalized')
         ){
           int idOpenTask = await SharedPrefe().getValue('openTask');
           int idTaskPush = 0;
@@ -959,12 +959,23 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
             idTaskPush = int.parse(argumento['idDoc']);
           }
           if(idOpenTask != idTaskPush){
-            bool isTask = argumento['table'] == 'tasks';
             Tarea task;
             while(task == null){
               task = await DatabaseProvider.db.getCodeIdTask(idTaskPush.toString());
             }
-            viewNotiLocal(task, isTask, isTask ? task.name : argumento['description']);
+            String meType = 'Nueva tarea: ';
+            String description = task.name;
+            bool isFinalized = false;
+            if(argumento['table'] == 'sms'){
+              meType = 'Nueva mensaje: ';
+              description = argumento['description'];
+            }
+            if(argumento['table'] == 'tasksFinalized'){
+              meType = 'Tarea finalizada';
+              description = '';
+              isFinalized = true;
+            }
+            viewNotiLocal(task, meType, description, isFinalized);
           }
         }
       }
@@ -1042,7 +1053,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     }
   }
 
-  void viewNotiLocal(Tarea task, bool isTask, String sms){
+  void viewNotiLocal(Tarea task, String meType, String sms, bool isFinalized){
     bool isRecived = true;
     if(myUser.id == task.user_id){
       isRecived = false;
@@ -1065,8 +1076,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         nameUser = mapIdUser[task.user_responsability_id].name;
       }
     }
-
-    String meType = isTask ? 'Nueva tarea: ' : 'Nuevo mensaje: ';
 
     Widget imageAvatar = Container(
       margin: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
@@ -1097,9 +1106,11 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       titleText: titleText,
       messageText: messageText,
       onTap: (flushbar) {
-        clickTarea(task);
-        _deleteDataNewFirebase(task.id.toString());
-        _deleteDataNewChat(task.id.toString());
+        if(!isFinalized){
+          clickTarea(task);
+          _deleteDataNewFirebase(task.id.toString());
+          _deleteDataNewChat(task.id.toString());
+        }
       }
     );
   }

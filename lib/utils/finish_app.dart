@@ -37,6 +37,10 @@ Future<void> finishApp() async{
     await SharedPrefe().deleteValue('first');
     await SharedPrefe().deleteValue('openTask');
     await SharedPrefe().deleteValue('popValueTask');
+    await SharedPrefe().deleteValue('listOrderRecived');
+    await SharedPrefe().deleteValue('listOrderSend');
+    await SharedPrefe().deleteValue('listOrderRecivedDate');
+    await SharedPrefe().deleteValue('listOrderSendDate');
 
     await DatabaseProvider.db.deleteDatabaseInstance();
 
