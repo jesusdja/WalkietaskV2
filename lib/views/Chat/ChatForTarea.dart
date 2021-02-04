@@ -606,8 +606,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
                     child: Container(
                         child: Center(
                           child: CircleAvatar(
-                            child: Icon(Icons.volume_up,size: alto * 0.03,),
-                            foregroundColor: reproduciendo ? Colors.green : WalkieTaskColors.color_969696,
+                            child: reproduciendo ? Icon(Icons.stop ,size: alto * 0.03,) : Icon(Icons.volume_up,size: alto * 0.03,),
+                            foregroundColor: reproduciendo ? WalkieTaskColors.color_E07676 : WalkieTaskColors.color_969696,
                             backgroundColor: Colors.white,
                           ),
                         ),
@@ -615,12 +615,19 @@ class _ChatForTareaState extends State<ChatForTarea> {
                         height: ancho * 0.07,
                         padding: const EdgeInsets.all(2.0), // borde width
                         decoration: new BoxDecoration(
-                          color: reproduciendo ? Colors.green : WalkieTaskColors.color_969696, // border color
+                          color: WalkieTaskColors.color_969696, // border color
                           shape: BoxShape.circle,
                         )
                     ),
                     onTap: (){
-                      audioPlayer.play(tarea.url_audio);
+                      if(reproduciendo){
+                        if(audioPlayer != null){
+                          audioPlayer.stop();
+                        }
+                      }else{
+                        audioPlayer.play(tarea.url_audio);
+                      }
+
                     },
                   ) : Container(),
                   verDetalle ? Container() : SizedBox(width: ancho * 0.02,),
@@ -987,6 +994,11 @@ class _ChatForTareaState extends State<ChatForTarea> {
       oldState = s;
       if(AudioPlayerState.STOPPED == s){
         oldState = AudioPlayerState.COMPLETED;
+        if(mounted){
+          setState(() {
+            reproduciendo = false;
+          });
+        }
       }
     });
   }

@@ -846,13 +846,13 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
           if(tarea.is_priority_responsability == 0){tarea.is_priority_responsability = 1;}else{tarea.is_priority_responsability = 0;}
           tarea.updated_at = DateTime.now().toString();
           //GUARDAR LOCALMENTE
-          if(await DatabaseProvider.db.updateTask(tarea) == 1){
+          int result = await DatabaseProvider.db.updateTask(tarea);
+          if(result == 1){
             //AVISAR A PATRONBLOC DE TAREAS ENVIADAS PARA QUE SE ACTUALICE
             blocTaskReceived.inList.add(true);
             //ENVIAR A API
             try{
-              var res = await conexionHispanos.httpSendFavorite(tarea,tarea.is_priority_responsability);
-              print(res.statusCode);
+              await conexionHispanos.httpSendFavorite(tarea,tarea.is_priority_responsability);
             }catch(e){
               print(e.toString());
             }
