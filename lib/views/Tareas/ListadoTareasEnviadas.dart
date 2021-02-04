@@ -842,6 +842,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
             }catch(e){
               //SI NO HAY CONEXION GUARDAR EN TABLA LOCAL
             }
+            blocTaskSend.inList.add(true);
           }
         }
         if(accion == 3){
@@ -860,6 +861,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
           }catch(e){
             print(e.toString());
           }
+          blocTaskSend.inList.add(true);
         }
         if(accion == 4){
           showAlert('Tarea finalizada',WalkieTaskColors.color_89BD7D);
@@ -873,6 +875,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
           }catch(e){
             print(e.toString());
           }
+          blocTaskSend.inList.add(true);
         }
       },
     );

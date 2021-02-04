@@ -852,8 +852,11 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
             //ENVIAR A API
             try{
               var res = await conexionHispanos.httpSendFavorite(tarea,tarea.is_priority_responsability);
-              print(res);
-            }catch(e){}
+              print(res.statusCode);
+            }catch(e){
+              print(e.toString());
+            }
+            blocTaskReceived.inList.add(true);
           }
         }
         if(accion == 3){
@@ -873,6 +876,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
           }catch(e){
             print(e.toString());
           }
+          blocTaskReceived.inList.add(true);
         }
         if(accion == 4){
           if(tarea.working == 1 || tarea.working == 0){
@@ -888,6 +892,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
             }catch(e){
               print(e.toString());
             }
+            blocTaskReceived.inList.add(true);
           }else{
             showAlert('La tarea debe estar iniciada para finalizarla.',WalkieTaskColors.color_E07676);
           }
