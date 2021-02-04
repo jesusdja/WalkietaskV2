@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -65,6 +67,8 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
   TextStyle textStyleProject = TextStyle();
   TextStyle textStyleNotTitle = TextStyle();
 
+  StreamSubscription streamSubscriptionTaskRecived;
+
   @override
   void initState() {
     super.initState();
@@ -77,11 +81,13 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     _inicializar3();
     _inicializarShared();
     _notificationListener();
+    //_inicializarPatronBlocTaskRecived();
   }
 
   @override
   void dispose() {
     super.dispose();
+    streamSubscriptionTaskRecived?.cancel();
     try{
       audioPlayer?.stop();
     }catch(_){}
@@ -831,6 +837,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
         if(accion == 1){
           //CAMBIAR ESTADO DE DESTACAR 0 = FALSE, 1 = TRUE
           if(tarea.is_priority_responsability == 0){tarea.is_priority_responsability = 1;}else{tarea.is_priority_responsability = 0;}
+          tarea.updated_at = DateTime.now().toString();
           //GUARDAR LOCALMENTE
           if(await DatabaseProvider.db.updateTask(tarea) == 1){
             //AVISAR A PATRONBLOC DE TAREAS ENVIADAS PARA QUE SE ACTUALICE
@@ -847,6 +854,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
             if(tarea.working == 0){
               showAlert('Tarea iniciada',WalkieTaskColors.color_89BD7D);
               tarea.working = 1;
+              tarea.updated_at = DateTime.now().toString();
               if(await DatabaseProvider.db.updateTask(tarea) == 1){
                 blocTaskReceived.inList.add(true);
                 await conexionHispanos.httpTaskInit(tarea.id);
@@ -864,6 +872,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
             showAlert('Tarea finalizada',WalkieTaskColors.color_89BD7D);
             try{
               tarea.finalized = 1;
+              tarea.updated_at = DateTime.now().toString();
               if(await DatabaseProvider.db.updateTask(tarea) == 1){
                 blocTaskReceived.inList.add(true);
                 await conexionHispanos.httpTaskFinalized(tarea.id);
@@ -920,13 +929,13 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     List<String> listOrderFavorite = [];
     List<String> listOrderDate = [];
     listNew.forEach((element) {
-      if(element.is_priority_responsability == 1){
+      if(element != null && element.is_priority_responsability == 1){
         listOrderFavorite.add(element.id.toString());
         listOrderDate.add(element.updated_at);
       }
     });
     listNew.forEach((element) {
-      if(element.is_priority_responsability == 0){
+      if(element != null && element.is_priority_responsability == 0){
         listOrderFavorite.add(element.id.toString());
         listOrderDate.add(element.updated_at);
       }
@@ -978,14 +987,14 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     List<String> listOrderDate = [];
     List<Tarea> listDefinitive = [];
     listOrder.forEach((element) {
-      if(element.is_priority_responsability == 1){
+      if(element != null && element.is_priority_responsability == 1){
         listDefinitive.add(element);
         listOrderFavorite.add(element.id.toString());
         listOrderDate.add(element.updated_at);
       }
     });
     listOrder.forEach((element) {
-      if(element.is_priority_responsability == 0){
+      if(element != null && element.is_priority_responsability == 0){
         listDefinitive.add(element);
         listOrderFavorite.add(element.id.toString());
         listOrderDate.add(element.updated_at);
@@ -1147,5 +1156,16 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
         }catch(_){}
       }
     }
+  }
+
+  _inicializarPatronBlocTaskRecived(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionTaskRecived = blocTaskReceived.outList.listen((newVal) {
+        if(newVal){
+          _inicializar();
+        }
+      });
+    } catch (e) {}
   }
 }

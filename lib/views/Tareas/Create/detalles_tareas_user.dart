@@ -176,8 +176,8 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
               width: ancho,
               child: Row(
                 children: [
-                  tag(0),
-                  tag(1),
+                  tag(0, containReceived),
+                  tag(1, containSend),
                 ],
               ),
             ),
@@ -210,13 +210,13 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
     );
   }
 
-  Widget tag(int type){
+  Widget tag(int type, bool viewCircule ){
     String name = 'Recibidas';
     bool activo = tagReceived;
-
-    if(type == 1){
+     if(type == 1){
       name = 'Enviadas';
       activo = !tagReceived;
+      viewCircule = containSend;
     }
 
     TextStyle style = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.021, color: WalkieTaskColors.white, spacing: 0.5);
@@ -227,15 +227,26 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
         onTap: (){
           if(type == 0){
             tagReceived = true;
+            containReceived = false;
           }else{
             tagReceived = false;
+            containSend = false;
           }
           setState(() {});
         },
         child: Container(
           padding: EdgeInsets.all(alto * 0.012),
           color: activo ? WalkieTaskColors.primary : WalkieTaskColors.white,
-          child: Text(name, textAlign: TextAlign.center, style: activo ? style : style2,),
+          child: Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                !viewCircule ? Container() : Icon(Icons.circle, size: alto * 0.012,color: !activo ? WalkieTaskColors.primary : WalkieTaskColors.white,),
+                SizedBox(width: ancho * 0.01,),
+                Text(name, textAlign: TextAlign.center, style: activo ? style : style2,),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -248,11 +259,22 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
     listRecived.forEach((task) {
       if(task.finalized != 1){
         bool isNew = false;
+        int cantChat = 0;
         listViewTaskNew.forEach((element) {
           if(element == task.id.toString()){
             isNew = true;
           }
         });
+        listViewTaskNewChat.forEach((element) {
+          if(element == task.id.toString()){
+            isNew = true;
+            cantChat++;
+          }
+        });
+
+        double radiusChat = 0.012;
+        if(cantChat >= 10 && cantChat < 100){radiusChat = 0.014; }
+        if(cantChat > 100){radiusChat = 0.018; }
 
         String daysLeft = getDayDiff(task.deadline);
 
@@ -270,7 +292,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                   actionPane: SlidableDrawerActionPane(),
                   actionExtentRatio: 0.25,
                   child: InkWell(
-                    onTap: () => clickTarea(task),
+                    onTap: () => clickTarea(task, true),
                     child: Container(
 
                       width: ancho,
@@ -324,7 +346,23 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
+                                Container(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      cantChat != 0 ? Container(
+                                        margin: EdgeInsets.only(right: ancho * 0.02),
+                                        child: CircleAvatar(
+                                          backgroundColor: WalkieTaskColors.primary,
+                                          // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
+                                          radius: alto * radiusChat,
+                                          child: Text('$cantChat',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
+                                        ),
+                                      ) : Container(),
+                                      daysLeft.isEmpty ? Container() : Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
+                                    ],
+                                  ),
+                                ),
                                 task.url_audio.isNotEmpty ?
                                 SoundTask(
                                   alto: alto * 0.03,
@@ -391,6 +429,24 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
           nameCase = mapCasos[task.project_id].name;
         }
 
+        bool isNew = false;
+        int cantChat = 0;
+        listViewTaskNew.forEach((element) {
+          if(element == task.id.toString()){
+            isNew = true;
+          }
+        });
+        listViewTaskNewChat.forEach((element) {
+          if(element == task.id.toString()){
+            isNew = true;
+            cantChat++;
+          }
+        });
+
+        double radiusChat = 0.012;
+        if(cantChat >= 10 && cantChat < 100){radiusChat = 0.014; }
+        if(cantChat > 100){radiusChat = 0.018; }
+
         data.add(
             IntrinsicHeight(
               child: Container(
@@ -400,7 +456,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                   actionPane: SlidableDrawerActionPane(),
                   actionExtentRatio: 0.25,
                   child: InkWell(
-                    onTap: () => clickTarea(task),
+                    onTap: () => clickTarea(task, false),
                     child: Container(
                       width: ancho,
                       child: Row(
@@ -440,7 +496,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue :textStylePrimary),
+                                  Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue : isNew ? textStylePrimaryBold : textStylePrimary),
                                   Text(nameCase, style: textStylePrimaryLitle,)
                                 ],
                               ),
@@ -453,7 +509,23 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
+                                Container(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      cantChat != 0 ? Container(
+                                        margin: EdgeInsets.only(right: ancho * 0.02),
+                                        child: CircleAvatar(
+                                          backgroundColor: WalkieTaskColors.primary,
+                                          // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
+                                          radius: alto * radiusChat,
+                                          child: Text('$cantChat',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
+                                        ),
+                                      ) : Container(),
+                                      daysLeft.isEmpty ? Container() : Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
+                                    ],
+                                  ),
+                                ),
                                 task.url_audio.isNotEmpty ?
                                 SoundTask(
                                   alto: alto * 0.03,
@@ -526,7 +598,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                 actionPane: SlidableDrawerActionPane(),
                 actionExtentRatio: 0.25,
                 child: InkWell(
-                  onTap: () => clickTarea(task),
+                  onTap: () => clickTarea(task, true),
                   child: Container(
                     width: ancho,
                     child: Row(
@@ -686,9 +758,14 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
     );
   }
 
-  void clickTarea(Tarea tarea) async {
+  void clickTarea(Tarea tarea, isReceived) async {
 
     _deleteDataNewFirebase(tarea.id.toString());
+    _deleteDataNewChat(tarea.id.toString());
+
+    if(isReceived){
+      readTask(tarea);
+    }
 
     try{
       if(tarea.name.isEmpty){
@@ -713,6 +790,20 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       }
     }catch(e){
       print(e.toString());
+    }
+  }
+
+  Future<void> readTask(Tarea task) async {
+
+    //CAMBIAR ESTADO DE DESTACAR 0 = FALSE, 1 = TRUE
+    if(task.read == 0){
+      task.read = 1;
+      if(await DatabaseProvider.db.updateTask(task) == 1){
+        widget.blocTaskReceived.inList.add(true);
+        try{
+          await conexionHispanos.httpReadTask(task.id);
+        }catch(_){}
+      }
     }
   }
 
@@ -756,18 +847,26 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
   }
 
   List<String> listViewTaskNew = [];
+  List<String> listViewTaskNewChat = [];
+  bool containReceived = false;
+  bool containSend = false;
   Future<void> _updateDataNewFirebase() async {
     List listViewTaskNew2 = [];
     List listViewTaskNew3 = [];
     try{
       listViewTaskNew3 = await SharedPrefe().getValue('notiListTask') ?? [];
+      listViewTaskNew = [];
       listViewTaskNew3.forEach((element) {
         listViewTaskNew.add(element);
+        listRecived.forEach((task) { if(task.id.toString() == element){ containReceived = true;} });
+        listSend.forEach((task) { if(task.id.toString() == element){ containSend = true;} });
       });
-
       listViewTaskNew2 = await SharedPrefe().getValue('notiListChat') ?? [];
+      listViewTaskNewChat = [];
       listViewTaskNew2.forEach((element) {
-        listViewTaskNew.add(element);
+        listViewTaskNewChat.add(element);
+        listRecived.forEach((task) { if(task.id.toString() == element){ containReceived = true;} });
+        listSend.forEach((task) { if(task.id.toString() == element){ containSend = true;} });
       });
       setState(() {});
     }catch(e){
@@ -791,6 +890,24 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       print(e.toString());
     }
     setState(() {});
+  }
+
+  Future<void> _deleteDataNewChat(String id) async {
+    try{
+      List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListChat');
+      if (listTaskNew == null) {
+        listTaskNew = [];
+      }
+      List<String> listTaskNewString = [];
+      listTaskNew.forEach((element) {
+        if(element != id){
+          listTaskNewString.add(element);
+        }
+      });
+      await SharedPrefe().setStringListValue('notiListChat', listTaskNewString);
+      listViewTaskNewChat = listTaskNewString;
+      setState(() {});
+    }catch(_){}
   }
 
   Map<int,List> _dataToMapDataUserHome(List<Tarea> listRecibidos,List<Tarea> listEnviados, ){

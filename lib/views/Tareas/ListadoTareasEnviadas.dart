@@ -824,6 +824,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
         if(accion == 1){
           //CAMBIAR ESTADO DE DESTACAR 0 = FALSE, 1 = TRUE
           if(tarea.is_priority == 0){ tarea.is_priority = 1;}else{tarea.is_priority = 0;}
+          tarea.updated_at = DateTime.now().toString();
           //GUARDAR LOCALMENTE
           if(await DatabaseProvider.db.updateTask(tarea) == 1){
             //AVISAR A PATRONBLOC DE TAREAS ENVIADAS PARA QUE SE ACTUALICE
@@ -841,6 +842,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
             if(tarea.working == 0){
               showAlert('Tarea iniciada',WalkieTaskColors.color_89BD7D);
               tarea.working = 1;
+              tarea.updated_at = DateTime.now().toString();
               if(await DatabaseProvider.db.updateTask(tarea) == 1){
                 blocTaskSend.inList.add(true);
                 await conexionHispanos.httpTaskInit(tarea.id);
@@ -856,6 +858,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
           showAlert('Tarea finalizada',WalkieTaskColors.color_89BD7D);
           try{
             tarea.finalized = 1;
+            tarea.updated_at = DateTime.now().toString();
             if(await DatabaseProvider.db.updateTask(tarea) == 1){
               blocTaskSend.inList.add(true);
               await conexionHispanos.httpTaskFinalized(tarea.id);
@@ -908,13 +911,13 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     List<String> listOrderFavorite = [];
     List<String> listOrderDate = [];
     listNew.forEach((element) {
-      if(element.is_priority == 1){
+      if(element != null && element.is_priority == 1){
         listOrderFavorite.add(element.id.toString());
         listOrderDate.add(element.updated_at);
       }
     });
     listNew.forEach((element) {
-      if(element.is_priority == 0){
+      if(element != null && element.is_priority == 0){
         listOrderFavorite.add(element.id.toString());
         listOrderDate.add(element.updated_at);
       }
@@ -966,14 +969,14 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     List<String> listOrderDate = [];
     List<Tarea> listDefinitive = [];
     listOrder.forEach((element) {
-      if(element.is_priority == 1){
+      if(element != null && element.is_priority == 1){
         listDefinitive.add(element);
         listOrderFavorite.add(element.id.toString());
         listOrderDate.add(element.updated_at);
       }
     });
     listOrder.forEach((element) {
-      if(element.is_priority == 0){
+      if(element != null && element.is_priority == 0){
         listDefinitive.add(element);
         listOrderFavorite.add(element.id.toString());
         listOrderDate.add(element.updated_at);
