@@ -448,6 +448,9 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
 
     List<Widget> listTaskWidget = listTaskGet(user, listTask);
 
+    int cantTask = 0;
+    listTask.forEach((element) {  if(element.finalized == 0){ cantTask++; } });
+
     String nameUser = user.name;
     if(widget.myUserRes.id == user.id){
       nameUser = 'Recordatorio personal';
@@ -489,7 +492,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                     ),
                   ),
                   Container(
-                    child: Text('(${listTask.length} ${listTask.length < 1 ? 'tarea' : 'Tareas'})',
+                    child: Text('($cantTask ${cantTask < 1 ? 'tarea' : 'Tareas'})',
                         style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 1)),
                   ),
                   Container(
@@ -686,6 +689,9 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
 
     List<Widget> listTaskWidget = listTaskGetProyect(proyect, listTask);
 
+    int cantTask = 0;
+    listTask.forEach((element) {  if(element.finalized == 0){ cantTask++; } });
+
     return Container(
       width: ancho,
       child: Column(
@@ -711,7 +717,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                     ),
                   ),
                   Container(
-                    child: Text('(${listTask.length} ${listTask.length < 1 ? 'tarea' : 'Tareas'})',
+                    child: Text('($cantTask ${cantTask < 1 ? 'tarea' : 'Tareas'})',
                         style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 1)),
                   ),
                   Container(
@@ -752,30 +758,31 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     List<Widget> listTaskRes = [];
     for(int index = 0; index < listTask.length; index++) {
       Tarea task = listTask[index];
-
-      listTaskRes.add(
-          InkWell(
-            onTap: () =>clickTarea(task),
-            child: Container(
-              key: ValueKey("value$index"),
-              padding: EdgeInsets.only(top: alto * 0.01,bottom: alto * 0.01),
-              color: Colors.white,
-              child: Slidable(
-                actionPane: SlidableDrawerActionPane(),
-                actionExtentRatio: 0.25,
-                child: _tareas(task, task.is_priority != 0),
-                actions: <Widget>[
-                  _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),WalkieTaskColors.yellow,WalkieTaskColors.white,1,task),
-                  //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,task),
-                ],
-                secondaryActions: <Widget>[
-                  //_buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
-                  _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,task),
-                ],
+      if(task.finalized == 0){
+        listTaskRes.add(
+            InkWell(
+              onTap: () =>clickTarea(task),
+              child: Container(
+                key: ValueKey("value$index"),
+                padding: EdgeInsets.only(top: alto * 0.01,bottom: alto * 0.01),
+                color: Colors.white,
+                child: Slidable(
+                  actionPane: SlidableDrawerActionPane(),
+                  actionExtentRatio: 0.25,
+                  child: _tareas(task, task.is_priority != 0),
+                  actions: <Widget>[
+                    _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),WalkieTaskColors.yellow,WalkieTaskColors.white,1,task),
+                    //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,task),
+                  ],
+                  secondaryActions: <Widget>[
+                    _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
+                    _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,task),
+                  ],
+                ),
               ),
-            ),
-          )
-      );
+            )
+        );
+      }
     }
     return listTaskRes;
   }
