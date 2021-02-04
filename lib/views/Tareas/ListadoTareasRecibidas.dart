@@ -601,7 +601,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                           favorite ? Container(
                             width: ancho * 0.055,
                             child: Icon(Icons.star,color: WalkieTaskColors.yellow, size: alto * 0.03,),
-                          ) : Container(),
+                          ) : Container(width: ancho * 0.055,),
                           Expanded(
                             child: Container(
                               padding: EdgeInsets.only(left: ancho * 0.01, ),

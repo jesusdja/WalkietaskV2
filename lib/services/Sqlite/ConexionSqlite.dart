@@ -3,11 +3,8 @@ import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/models/invitation.dart';
-import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/services/Sqlite/sqlite_instance.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 
 class DatabaseProvider{
   DatabaseProvider._();
@@ -17,14 +14,14 @@ class DatabaseProvider{
   Future<Database> get database async {
     if(_database != null){
       int versiondb = await SharedPrefe().getValue('unityInit');
-      if(versiondb == null || versiondb != 12){
-        await SharedPrefe().setIntValue('unityInit', 12);
+      if(versiondb == null || versiondb != 13){
+        await SharedPrefe().setIntValue('unityInit', 13);
         await deleteDatabaseInstance();
       }else{
         return _database;
       }
     }
-    _database = await getDatabaseInstanace();
+    _database = await getDatabaseInstance();
     return _database;
   }
 

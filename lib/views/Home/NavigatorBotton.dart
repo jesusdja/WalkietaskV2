@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/App.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
@@ -16,6 +15,7 @@ import 'package:walkietaskv2/services/Permisos.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
+import 'package:walkietaskv2/services/Sqlite/sqlite_instance.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/DialogAlert.dart';
