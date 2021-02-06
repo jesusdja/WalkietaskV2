@@ -10,7 +10,6 @@ import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
-import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
@@ -213,15 +212,70 @@ class _CreateTaskState extends State<CreateTask> {
     );
   }
 
+  List<Usuario> orderUserForDate(){
+    List<Usuario> users = [];
+    Map<int,Usuario> contacts = {};
+    Map<int,Usuario> contacts2 = {};
+
+    listUser.forEach((element) {
+      if(element.contact == 1){ contacts[element.id] = element; contacts2[element.id] = element; }
+    });
+
+    for(int x = 1; x < contacts.length; x++){
+      int idMax = 0;
+      String dateMax = '';
+
+      contacts2.forEach((key, value) {
+        if(value.updatedAt.isNotEmpty){
+          if(dateMax.isEmpty){
+            idMax = key;
+            dateMax = value.updatedAt;
+          }else{
+            DateTime dateCreate = DateTime.parse(dateMax);
+            Duration difDays = dateCreate.difference(DateTime.now());
+
+            DateTime dateCreate2 = DateTime.parse(value.updatedAt);
+            Duration difDays2 = dateCreate2.difference(DateTime.now());
+
+            if(difDays2.inSeconds > difDays.inSeconds){
+              idMax = key;
+              dateMax = value.updatedAt;
+            }
+          }
+        }
+      });
+
+      contacts2.remove(idMax);
+      if(contacts[idMax] != null){
+        users.add(contacts[idMax]);
+      }
+    }
+
+    contacts.forEach((key, value) {
+      bool isHere = false;
+      users.forEach((element) {
+        if(element.id == key){
+          isHere = true;
+        }
+      });
+      if(!isHere){
+        users.add(value);
+      }
+    });
+    return users;
+  }
+
   Widget _users(){
 
     List<Widget> users = [];
 
     users.add(SizedBox(height: alto * 0.03,));
 
-    listUser.forEach((user) {
+    List<Usuario> usersOrder = orderUserForDate();
 
-      if(widget.myUserRes.id == null || user.id == widget.myUserRes.id || user.contact == 0) return Container();
+    usersOrder.forEach((user) {
+
+      if(widget.myUserRes == null || widget.myUserRes.id == null || user.id == widget.myUserRes.id || user.contact == 0) return Container();
 
       Image avatarUser = Image.network(avatarImage);
       if(user.avatar.isNotEmpty){
