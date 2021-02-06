@@ -529,6 +529,21 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           }
         }
       });
+
+      listaUser.forEach((user) {
+        if(user.contact == 1){
+          bool hereIam = false;
+          data.forEach((key, value) {
+            if(key == user.id){
+              hereIam = true;
+            }
+          });
+          if(!hereIam){
+            data[user.id] = ['',[],[]];
+          }
+        }
+      });
+
     }catch(e){
       print('ERROR AL ORDENAR DATA DE HOME');
     }
@@ -721,6 +736,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     loadTaskRecived = true;
     listEnviados = await DatabaseProvider.db.getAllSendTask();
     loadTaskSend = true;
+    _inicializarUser();
     setState(() {});
   }
   _inicializarTaskSend() async {
@@ -728,6 +744,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     loadTaskSend = true;
     listRecibidos = await DatabaseProvider.db.getAllRecevidTask();
     loadTaskRecived = true;
+    _inicializarUser();
     setState(() {});
   }
   _inicializarUser() async {

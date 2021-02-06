@@ -139,7 +139,7 @@ class _SoundTaskState extends State<SoundTask> {
     try {
       // ignore: cancel_subscriptions
       streamSubscriptionPageAudio = widget.blocAudioChangePage.outList.listen((newVal) {
-        if(newVal['page'] != widget.page){
+        if(newVal['page'] != widget.page && audioPlayer.state != null){
           audioPlayer.stop();
           sonando = false;
           setState(() {});

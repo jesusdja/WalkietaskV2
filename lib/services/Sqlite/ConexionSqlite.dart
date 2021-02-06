@@ -122,11 +122,36 @@ class DatabaseProvider{
   Future<int> updateUser(Usuario user) async {
     var dbClient = await  database;
     int res = 0;
+    updateUserDate(user.id, 1);
     try{
       res = await dbClient.update('Usuarios', user.toMap(),where: 'id = ?', whereArgs: [user.id]);
     }catch(e){
       print(e.toString());
     }
+    return res;
+  }
+  //MODIFICAR SOLO PARA CONTACTO
+  Future<int> updateUserContact(int idUser, int changeContact) async {
+    var dbClient = await  database;
+    int res = 0;
+    try{
+      res = await dbClient.update('Usuarios', {'contact' : '$changeContact'},where: 'id = ?', whereArgs: [idUser]);
+    }catch(e){
+      print(e.toString());
+    }
+    return res;
+  }
+  //MODIFICAR FECHA UPDATE
+  Future<int> updateUserDate(int idUser, int type) async {
+    var dbClient = await  database;
+    int res = 0;
+    String date = DateTime.now().toString();
+    try{
+      res = await dbClient.update('Usuarios',{'updatedAt' : date},where: 'id = ?', whereArgs: [idUser]);
+    }catch(e){
+      print(e.toString());
+    }
+    print('$type');
     return res;
   }
 
@@ -359,6 +384,8 @@ class DatabaseProvider{
   //INSERTAR TAREA
   Future<int> saveTask(Tarea tarea) async {
     int res = 0;
+    updateUserDate(tarea.user_id, 2);
+    updateUserDate(tarea.user_responsability_id, 2);
     try{
       var dbClient = await database;
       res = await dbClient.insert("Tareas", tarea.toMap());
@@ -372,6 +399,8 @@ class DatabaseProvider{
   Future<int> updateTask(Tarea tarea) async {
     var dbClient = await  database;
     int res = 0;
+    updateUserDate(tarea.user_id, 3);
+    updateUserDate(tarea.user_responsability_id, 3);
     try{
       res = await dbClient.update('Tareas', tarea.toMap(),where: 'id = ?', whereArgs: [tarea.id]);
     }catch(e){

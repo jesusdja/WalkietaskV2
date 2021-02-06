@@ -301,8 +301,6 @@ class Tarea  extends Equatable{
     company_id,
     project_id,
     status_id,
-    created_at,
-    updated_at,
     deleted_at
   ];
 
