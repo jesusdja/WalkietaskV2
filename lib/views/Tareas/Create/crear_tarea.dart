@@ -294,8 +294,13 @@ class _CreateTaskState extends State<CreateTask> {
           redColor = dateDiff.contains('-');
           dateDiff = dateDiff.replaceAll('-', '');
         }
-        cantRecived = mapDataUserHome[user.id][1].length;
-        cantSend = mapDataUserHome[user.id][2].length;
+
+        mapDataUserHome[user.id][1].forEach((task){
+          if(task.finalized != 1){ cantRecived++; }
+        });
+        mapDataUserHome[user.id][2].forEach((task){
+          if(task.finalized != 1){ cantSend++; }
+        });
       }
 
       users.add(

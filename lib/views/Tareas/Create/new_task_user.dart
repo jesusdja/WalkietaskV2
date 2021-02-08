@@ -927,12 +927,16 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
               }
             }catch(e){
               print(e.toString());
+              showAlert('Error : ${e.toString()}', WalkieTaskColors.color_E07676);
             }
           });
         }
+      }else{
+        showAlert('Error al actualizar lista de proyectos, verificar conexión e intentar nuevamente.', WalkieTaskColors.color_E07676);
       }
     }catch(e){
       print(e.toString());
+      showAlert('Error al actualizar lista de proyectos, verificar conexión e intentar nuevamente.', WalkieTaskColors.color_E07676);
     }
     setState(() {});
   }

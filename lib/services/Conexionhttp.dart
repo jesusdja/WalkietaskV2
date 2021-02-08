@@ -593,6 +593,10 @@ class conexionHttp{
     Map<String, String> requestHeaders = {
       'Authorization': 'Bearer $token'
     };
+    bool _connectivity = await checkConectivity();
+    if(!_connectivity){
+      return null;
+    }
     var response;
     try{
       response = http.get('$enlace/api/auth/projects/myProjects',

@@ -397,10 +397,14 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       }
     });
 
+    int cont = 0;
+    listRecived.forEach((element) {
+      if(element.finalized != 1){ cont++; }
+    });
 
     return Container(
       width: ancho,
-      child: listRecived.isEmpty ?
+      child: (cont < 1 || listRecived.isEmpty) ?
       Container(
         margin: EdgeInsets.only(top: alto * 0.15),
         width: ancho,
@@ -560,9 +564,14 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       }
     });
 
+    int cont = 0;
+    listSend.forEach((element) {
+      if(element.finalized != 1){ cont++; }
+    });
+
     return Container(
       width: ancho,
-      child: listSend.isEmpty ?
+      child: (cont < 1 || listSend.isEmpty) ?
       Container(
         margin: EdgeInsets.only(top: alto * 0.15),
         width: ancho,
