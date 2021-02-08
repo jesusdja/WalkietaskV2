@@ -256,8 +256,9 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
   }
 
   Widget _listado(){
+    double h = alto > 600 ? alto * 0.74 : alto * 0.7;
     return Container(
-      height: alto * 0.8,
+      height: h,
       child: ReorderableListView(
         children: List.generate(listEnviados.length, (index) {
           Tarea tarea = listEnviados[index];
@@ -428,9 +429,11 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
       mapTask[element.user_responsability_id].add(element);
     });
 
+    double h = alto > 600 ? alto * 0.8 : alto * 0.75;
+
     return Container(
       width: ancho,
-      height: alto * 0.7,
+      height: h,
       child: ListView.builder(
         itemCount: mapTask.length,
         itemBuilder: (context, index){
@@ -673,9 +676,12 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
       if(mapTask[idProyect] == null){ mapTask[idProyect] = [];}
       mapTask[idProyect].add(element);
     });
+
+    double h = alto > 600 ? alto * 0.8 : alto * 0.75;
+
     return Container(
       width: ancho,
-      height: alto * 0.7,
+      height: h,
       child: ListView.builder(
         itemCount: mapTask.length,
         itemBuilder: (context, index){
