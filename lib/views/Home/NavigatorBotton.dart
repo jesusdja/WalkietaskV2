@@ -22,6 +22,7 @@ import 'package:walkietaskv2/utils/DialogAlert.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/avatar_widget.dart';
 import 'package:walkietaskv2/utils/flushbar_notification.dart';
+import 'package:walkietaskv2/utils/order_tasks.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
@@ -732,17 +733,23 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   //*******************************************
 
   _inicializarTaskRecived() async {
-    listRecibidos = await DatabaseProvider.db.getAllRecevidTask();
+    List<Tarea> listR = await DatabaseProvider.db.getAllRecevidTask();
+    listRecibidos = await OrderTask().orderListReceived(listR);
     loadTaskRecived = true;
-    listEnviados = await DatabaseProvider.db.getAllSendTask();
+
+    List<Tarea> listS = await DatabaseProvider.db.getAllSendTask();
+    listEnviados = await OrderTask().orderListSend(listS);
     loadTaskSend = true;
     _inicializarUser();
     setState(() {});
   }
   _inicializarTaskSend() async {
-    listEnviados = await DatabaseProvider.db.getAllSendTask();
+    List<Tarea> listS = await DatabaseProvider.db.getAllSendTask();
+    listEnviados = await OrderTask().orderListSend(listS);
     loadTaskSend = true;
-    listRecibidos = await DatabaseProvider.db.getAllRecevidTask();
+
+    List<Tarea> listR = await DatabaseProvider.db.getAllRecevidTask();
+    listRecibidos = await OrderTask().orderListReceived(listR);
     loadTaskRecived = true;
     _inicializarUser();
     setState(() {});

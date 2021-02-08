@@ -12,6 +12,7 @@ import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Firebase/Notification/push_notifications_provider.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
@@ -98,8 +99,8 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     if(valueSwitch){
       orderListTaskDeadLine();
     }else{
-      //listRecibidos = widget.listRecibidos;
-      orderListRecived(widget.listRecibidos);
+      listRecibidos = widget.listRecibidos;
+      //orderListRecived(widget.listRecibidos);
     }
   }
 
@@ -159,6 +160,14 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
             color: WalkieTaskColors.white,
             child: _filterForDate(),
           ) : Container(),
+          listRecibidos.isEmpty ?
+          Container(
+            width: ancho,
+            height: alto * 0.8,
+            child: Center(
+              child: Cargando('Actualizando tareas.',context),
+            ),
+          ) :
           SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -954,7 +963,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     });
     await SharedPrefe().setStringListValue('listOrderRecived', listOrderFavorite);
     await SharedPrefe().setStringListValue('listOrderRecivedDate', listOrderDate);
-    setState(() {});
+    blocTaskReceived.inList.add(true);
   }
 
   Future<void> orderListRecived(List<Tarea> listTask) async {

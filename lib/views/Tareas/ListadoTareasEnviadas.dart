@@ -9,6 +9,7 @@ import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Firebase/Notification/push_notifications_provider.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
@@ -83,8 +84,8 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     if(valueSwitch){
       orderListTaskDeadLine();
     }else{
-      //listEnviados = widget.listEnviadosRes;
-      orderListRecived(widget.listEnviadosRes);
+      listEnviados = widget.listEnviadosRes;
+      //orderListRecived(widget.listEnviadosRes);
     }
   }
 
@@ -202,7 +203,14 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
             color: WalkieTaskColors.white,
             child: _filterForDate(),
           ) : Container(),
-          SingleChildScrollView(
+          listEnviados.isEmpty ?
+          Container(
+            width: ancho,
+            height: alto * 0.8,
+            child: Center(
+              child: Cargando('Actualizando tareas.',context),
+            ),
+          ) :SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -934,68 +942,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     });
     await SharedPrefe().setStringListValue('listOrderSend', listOrderFavorite);
     await SharedPrefe().setStringListValue('listOrderSendDate', listOrderDate);
-    setState(() {});
-  }
-
-  Future<void> orderListRecived(List<Tarea> listTask) async {
-    List listStringIdOrder = await SharedPrefe().getValue('listOrderSend');
-    List listStringIdOrderDate = await SharedPrefe().getValue('listOrderSendDate');
-    Map<int,int> noEstanGuardarPosicion = {};
-
-    if(listStringIdOrder == null || listStringIdOrderDate == null){
-      listEnviados = listTask;
-      return;
-    }
-
-    Map<int,Tarea> tasksMap = {};
-
-    for(int x = 0; x < listTask.length; x++){
-      tasksMap[listTask[x].id] = listTask[x];
-      bool entre = false;
-      for(int xy = 0; xy < listStringIdOrder.length; xy++){
-        if(listStringIdOrder[xy] == listTask[x].id.toString()){
-          if(listStringIdOrderDate[xy] == listTask[x].updated_at){
-            entre = true;
-          }
-        }
-      }
-      if(!entre){
-        noEstanGuardarPosicion[listTask[x].id] = x;
-      }
-    }
-
-    List<Tarea> listOrder = [];
-    noEstanGuardarPosicion.forEach((key, value) {
-      listOrder.add(tasksMap[key]);
-    });
-
-    for(int x = 0; x < listStringIdOrder.length; x++){
-      if(noEstanGuardarPosicion[int.parse(listStringIdOrder[x])] == null){
-        listOrder.add(tasksMap[int.parse(listStringIdOrder[x])]);
-      }
-    }
-
-    List<String> listOrderFavorite = [];
-    List<String> listOrderDate = [];
-    List<Tarea> listDefinitive = [];
-    listOrder.forEach((element) {
-      if(element != null && element.is_priority == 1){
-        listDefinitive.add(element);
-        listOrderFavorite.add(element.id.toString());
-        listOrderDate.add(element.updated_at);
-      }
-    });
-    listOrder.forEach((element) {
-      if(element != null && element.is_priority == 0){
-        listDefinitive.add(element);
-        listOrderFavorite.add(element.id.toString());
-        listOrderDate.add(element.updated_at);
-      }
-    });
-    await SharedPrefe().setStringListValue('listOrderSend', listOrderFavorite);
-    await SharedPrefe().setStringListValue('listOrderSendDate', listOrderDate);
-    listEnviados = listDefinitive;
-    setState(() {});
+    blocTaskSend.inList.add(true);
   }
 
   void orderListTaskDeadLine(){
