@@ -65,6 +65,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
   TextStyle textStyleBlueLitle;
   TextStyle textStylePrimaryLitle;
   TextStyle textStylePrimaryLitleRed;
+  TextStyle textStylePrimaryTextCenter;
 
   bool isPersonal = false;
   bool viewIndicatorProgress = false;
@@ -137,6 +138,8 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
     textStyleBlueLitle = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.016, color: WalkieTaskColors.primary, spacing: 0.5, fontWeight: FontWeight.bold);
     textStylePrimaryLitle = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: WalkieTaskColors.black, spacing: 1);
     textStylePrimaryLitleRed = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: WalkieTaskColors.color_DD7777, spacing: 1);
+
+    textStylePrimaryTextCenter = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.022, color: WalkieTaskColors.black, spacing: 0.5);
 
     return GestureDetector(
       onTap: () {
@@ -402,7 +405,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       Container(
         margin: EdgeInsets.only(top: alto * 0.15),
         width: ancho,
-        child: Text('No has recibido tareas de ${user.name}', style: textStylePrimary, textAlign: TextAlign.center,),
+        child: Text('No has recibido tareas de ${user.name}', style: textStylePrimaryTextCenter, textAlign: TextAlign.center,),
       ) :
       Container(
         width: ancho,
@@ -564,7 +567,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       Container(
         margin: EdgeInsets.only(top: alto * 0.15),
         width: ancho,
-        child: Text('No has enviado tareas a ${user.name}', style: textStylePrimary, textAlign: TextAlign.center,),
+        child: Text('No has enviado tareas a ${user.name}', style: textStylePrimaryTextCenter, textAlign: TextAlign.center,),
       ) :
       Container(
         width: ancho,
