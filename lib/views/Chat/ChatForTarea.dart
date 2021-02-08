@@ -677,7 +677,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
               )),
             ) : Container(),
             //Adjunto
-            !verDetalle ? Container() : SizedBox(height: alto * 0.02,),
+            SizedBox(height: alto * 0.01,),
             Container(
               width: ancho,
               child: Row(
@@ -706,11 +706,11 @@ class _ChatForTareaState extends State<ChatForTarea> {
                   ),
                   Container(
                     width: ancho * 0.1,
-                    height: alto * 0.02,
+                    height: alto * 0.05,
                     child: FittedBox(
                         fit: BoxFit.fill,
                         child: InkWell(
-                          child: verDetalle ? Image.asset('assets/image/tri1.png') : Image.asset('assets/image/tri1.1.png'),
+                          child: verDetalle ? Image.asset('assets/image/icon_open_option.png',color: Colors.grey,) : Image.asset('assets/image/icon_open_option_up.png',color: Colors.grey,),
                           onTap: (){
                             verDetalle = !verDetalle;
                             setState(() {});
