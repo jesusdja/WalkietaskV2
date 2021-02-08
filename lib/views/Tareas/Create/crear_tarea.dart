@@ -470,7 +470,7 @@ class _CreateTaskState extends State<CreateTask> {
                   )
                       :
                   Text(dateDiff.replaceAll('-', ''),style: textStylePrimaryLitleBold,),
-                  Text('Recordatorio: $cant',style: textStylePrimaryLitle,),
+                  Text('Recordatorios: $cant',style: textStylePrimaryLitle,),
                 ],
               ),
             ),
