@@ -73,7 +73,7 @@ class _AddProyectsState extends State<AddProyects> {
       appBar: AppBar(
         title: Container(
           width: ancho,
-          child: Text('Nuevo proyecto',
+          child: Text(widget.proyect != null ? '' : 'Nuevo proyecto',
             style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.03, color: WalkieTaskColors.color_969696), textAlign: TextAlign.right,),
         ),
         elevation: 0,
