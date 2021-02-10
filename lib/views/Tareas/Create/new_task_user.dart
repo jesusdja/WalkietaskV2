@@ -14,6 +14,7 @@ import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
+import 'package:walkietaskv2/utils/textfield_constraints.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
@@ -396,8 +397,11 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
 
   Widget _tituloTarea(){
     return Container(
-      height: alto * 0.04,
-      child: TextFildGeneric(
+      child: TextFieldConstraints(
+        minHeight: alto * 0.04,
+        maxHeight: alto * 0.15,
+        sizeHeight: alto * 0.03,
+        maxLines: null,
         autofocus: true,
         initialValue: titleTask,
         onChanged: (text) {
