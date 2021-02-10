@@ -151,7 +151,6 @@ class DatabaseProvider{
     }catch(e){
       print(e.toString());
     }
-    print('$type');
     return res;
   }
 

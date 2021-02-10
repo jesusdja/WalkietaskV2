@@ -634,7 +634,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                                   ),
                                 ),
                               ) : Container(),
-                              task.is_priority == 1 ?
+                              task.is_priority_responsability == 1 ?
                               Container(
                                 margin: EdgeInsets.only(right: ancho * 0.02),
                                 child: Icon(Icons.star,color: WalkieTaskColors.yellow, size: alto * 0.03,),
@@ -680,12 +680,12 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                   ),
                 ),
                 actions: <Widget>[
-                  _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.04,), WalkieTaskColors.yellow, WalkieTaskColors.white,1,task, false),
+                  _buttonSliderAction(task.is_priority_responsability == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.04,), WalkieTaskColors.yellow, WalkieTaskColors.white,1,task, true),
                   //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
                 ],
                 secondaryActions: <Widget>[
-                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderTrabajando,WalkieTaskColors.white,3,task, false),
-                  _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderListo,WalkieTaskColors.white,4,task, false),
+                  _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderTrabajando,WalkieTaskColors.white,3,task, true),
+                  _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderListo,WalkieTaskColors.white,4,task, true),
                 ],
               ),
             ),
