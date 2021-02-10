@@ -270,7 +270,7 @@ class _MyProyectsState extends State<MyProyects> {
                                   int res = await DatabaseProvider.db.deleteProjectCase(project.id);
                                   if(res != 0){
                                     await _inicializarCasos();
-                                    showAlert('Proyecto eliminado con exito.!',WalkieTaskColors.color_89BD7D);
+                                    showAlert('Proyecto eliminado.',WalkieTaskColors.color_89BD7D);
                                   }
                                 }else{
                                   showAlert('Error de conexión',WalkieTaskColors.color_E07676);
