@@ -979,7 +979,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
               (   argumento['table']  ==  'sms' ||
                   argumento['table'] == 'tasks' ||
                   argumento['table'] == 'tasksFinalized'||
-                  argumento['table'] == 'workingTask'
+                  argumento['table'] == 'workingTask'||
+                  argumento['table'] == 'updateTask'
               )
           ){
             int idOpenTask = await SharedPrefe().getValue('openTask');
@@ -1004,11 +1005,14 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                 description = argumento['description'];
               }
               if(argumento['table'] == 'sms'){
-                subTitle = 'Nueva mensaje: ';
+                subTitle = 'Nueva mensaje:  ';
                 description = argumento['description'];
               }
               if(argumento['table'] == 'workingTask'){
                 subTitle = 'Comenzó a trabajar en la tarea:  ';
+              }
+              if(argumento['table'] == 'updateTask'){
+                subTitle = 'Editó la tarea:  ';
               }
               viewNotiLocal(task, subTitle, description, isOnTap);
             }
