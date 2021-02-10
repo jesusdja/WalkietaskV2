@@ -480,7 +480,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
         child: Center(
           child: Container(
             width: ancho,
-            child: Text('No asignar a ningunos',textAlign: TextAlign.left,
+            child: Text('No asignar a ninguno',textAlign: TextAlign.left,
               style: seleccionado ? textStylePrimaryBold : textStylePrimary,
             ),
           ),
