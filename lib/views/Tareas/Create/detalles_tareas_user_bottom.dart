@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
+import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
@@ -24,6 +25,7 @@ class BottomDetailsTask extends StatefulWidget {
   final UpdateData updateData;
   final BlocTask blocTaskSend;
   final BlocTask blocTaskReceived;
+  final BlocCasos blocTab;
 
   BottomDetailsTask({
     @required this.user,
@@ -33,6 +35,7 @@ class BottomDetailsTask extends StatefulWidget {
     @required this.updateData,
     @required this.blocTaskSend,
     @required this.blocTaskReceived,
+    this.blocTab,
   });
 
   @override
@@ -108,7 +111,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
   Widget _buttonText(){
     return InkWell(
       onTap: () async {
-        Navigator.push(context, new MaterialPageRoute(
+        var result = await Navigator.push(context, new MaterialPageRoute(
             builder: (BuildContext context) =>
             new NewTaskForUser(
               user: user,
@@ -118,6 +121,11 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
               blocIndicatorProgress: widget.blocIndicatorProgress,
               mapMinSeg: {},
             )));
+        if(result){
+          updateData.actualizarListaEnviados(widget.blocTaskSend, null);
+          updateData.actualizarListaRecibidos(widget.blocTaskReceived, null);
+          widget.blocTab.inList.add(true);
+        }
       },
       child: Container(
         margin: EdgeInsets.only(left: ancho * 0.02, right: ancho * 0.04),
@@ -222,7 +230,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
         String ss = segundos;
         String path = audioPath;
 
-        var result = await Navigator.push(context, new MaterialPageRoute(
+        var result2 = await Navigator.push(context, new MaterialPageRoute(
             builder: (BuildContext context) =>
             new NewTaskForUser(
               user: user,
@@ -237,9 +245,10 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
                 'segundoEspera' : s,
               },
             )));
-        if(result){
+        if(result2){
           updateData.actualizarListaEnviados(widget.blocTaskSend, null);
           updateData.actualizarListaRecibidos(widget.blocTaskReceived, null);
+          widget.blocTab.inList.add(true);
         }
       }else{
         showAlert('El mensaje es muy corto o no contiene audio.',WalkieTaskColors.color_E07676);

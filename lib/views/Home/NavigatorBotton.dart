@@ -419,7 +419,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                     fit: BoxFit.fitHeight,
                   ),
                 ),
-                Text(subTitle, style: WalkieTaskStyles().styleNunitoBold(size: alto * 0.016,color: !mapNavigatorBotton[index] ? WalkieTaskColors.color_ACACAC : WalkieTaskColors.primary),)
+                Text(subTitle, style: WalkieTaskStyles().stylePrimary(size: alto * 0.016,color: !mapNavigatorBotton[index] ? WalkieTaskColors.color_ACACAC : WalkieTaskColors.primary, fontWeight: FontWeight.bold),)
               ],
             ),
           ),

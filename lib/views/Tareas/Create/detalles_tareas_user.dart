@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
@@ -82,8 +83,11 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
   StreamSubscription streamSubscriptionTaskSend;
   StreamSubscription streamSubscriptionTaskRecived;
   StreamSubscription streamSubscriptionProgress;
+  StreamSubscription streamSubscriptionTab;
 
   conexionHttp conexionHispanos = new conexionHttp();
+
+  BlocCasos blocTab;
 
   @override
   void initState() {
@@ -91,6 +95,9 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
     isPersonal = widget.isPersonal;
     user = widget.user;
     mapDataUserHome = widget.mapDataUserHome;
+
+    blocTab = new BlocCasos();
+    _inicializarPatronBlocTab();
 
     widget.listaCasos.forEach((element) { mapCasos[element.id] = element;});
 
@@ -117,6 +124,8 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       streamSubscriptionTaskSend?.cancel();
       streamSubscriptionTaskRecived?.cancel();
       streamSubscriptionProgress?.cancel();
+      blocTab?.dispose();
+      streamSubscriptionTab?.cancel();
     }catch(e){
       print(e.toString());
     }
@@ -155,6 +164,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
           blocTaskReceived: widget.blocTaskReceived,
           blocTaskSend: widget.blocTaskSend,
           updateData: widget.updateData,
+          blocTab: blocTab,
         ),
         body: _body(),
       ),
@@ -163,8 +173,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
 
   Widget _body(){
 
-    double h = alto < 600 ? alto * 0.32 : alto * 0.34;
-    double h2 = alto < 600 ? alto * 0.72 : alto * 0.75;
+    double h2 = alto < 600 ? alto * 0.72 : alto * 0.74;
 
     return Container(
       width: ancho,
@@ -204,7 +213,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
               color: WalkieTaskColors.white,
               height: h2,
               //color: Colors.grey,
-              child: _listTaskPersonal(h),
+              child: _listTaskPersonal(h2),
             ) : Container(),
           ],
         ),
@@ -706,7 +715,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       ) :
       Container(
         width: ancho,
-        height: he * 2.1,
+        height: he,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.max,
@@ -1115,5 +1124,18 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
         }
       },
     );
+  }
+
+  _inicializarPatronBlocTab(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionTab = blocTab.outList.listen((newVal) {
+        if(newVal){
+          setState(() {
+            tagReceived = false;
+          });
+        }
+      });
+    } catch (e) {}
   }
 }

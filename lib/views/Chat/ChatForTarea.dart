@@ -203,7 +203,6 @@ class _ChatForTareaState extends State<ChatForTarea> {
                 top: _one,
                 height: alto,
                 child: GestureDetector(
-                  //onTap: _toggleTop,
                   onPanEnd: (details){
                     if(_one > (-alto + 400)){
                       _one = -0.1;
@@ -222,7 +221,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                       }
                       if(_one < (-alto + 400)){
                         _one = 0;
-                        _top = true;
+                        _top = false;
                       }
                       setState(() {});
                     }
@@ -755,6 +754,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                         }else{
                           _one = -alto;
                           _oneFixed = -alto;
+                          _top = true;
                           setState(() {});
                           _toggleTop();
                         }
@@ -1101,10 +1101,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
   double _one = 0;
   double _oneFixed = 0;
   void _toggleTop() {
-    _top = !_top;
     Timer.periodic(_duration, (timer) {
       if (_top) _one += 20;
-      else _one -= 20;
 
       if (_one >= 0) {
         _one = -0.1;

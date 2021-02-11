@@ -305,7 +305,7 @@ class _ContactsState extends State<Contacts> {
       },
       child: Column(
         children: <Widget>[
-          Text(text, style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.016, color: WalkieTaskColors.primary),),
+          Text(text, style: WalkieTaskStyles().stylePrimary(size: alto * 0.015, color: WalkieTaskColors.primary),),
           mapAppBar[index] ? Container(
             width: ancho * 0.2,
             height: alto * 0.007,
