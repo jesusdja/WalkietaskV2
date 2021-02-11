@@ -1037,7 +1037,9 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     }catch(e){
       print(e.toString());
     }
-    setState(() {});
+    if(mounted){
+      setState(() {});
+    }
   }
 
   Future<void> _deleteDataNewFirebase(String id) async {

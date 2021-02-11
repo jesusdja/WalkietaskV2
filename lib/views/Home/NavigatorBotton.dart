@@ -889,10 +889,10 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
 
   PushProvider push;
-  void _notificationListener(){
+  void _notificationListener() async{
     push = new PushProvider();
     push.getToken();
-    push.initNotificaciones();
+    await push.initNotificaciones();
     push.mensajes.listen((argumento) async {
       try{
         int counter = await SharedPrefe().getValue('unityLogin');
@@ -997,8 +997,9 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
               String description = task.name;
               bool isOnTap = true;
               if(argumento['table'] == 'tasksFinalized'){
-                subTitle = 'Terminó la tarea';
+                subTitle = 'Terminó la tarea ';
                 isOnTap = false;
+                description = '"$description"';
               }
               if(argumento['table'] == 'sms'){
                 subTitle = 'Chat en "${task.name}": ';
@@ -1018,7 +1019,9 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
             }
           }
 
-          if(argumento['type'] == '1' && argumento['table'] == 'projects'){
+          if(argumento['type'] == '1' &&
+              (argumento['table'] == 'projects' ||
+               argumento['table'] == 'addToProject')){
             String subTitle = 'Te agregó a un proyecto: ';
             viewNotiLocalProjects(subTitle, argumento['idDoc']);
           }
