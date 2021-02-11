@@ -147,7 +147,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
     textStyleBlueLitle = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.016, color: WalkieTaskColors.primary, spacing: 0.5, fontWeight: FontWeight.bold);
     textStylePrimaryLitle = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: WalkieTaskColors.black, spacing: 1);
     textStylePrimaryLitleRed = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: WalkieTaskColors.color_DD7777, spacing: 1);
-    textStylePrimaryTextCenter = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.022, color: WalkieTaskColors.black, spacing: 0.5);
+    textStylePrimaryTextCenter = WalkieTaskStyles().stylePrimary(size: alto * 0.022, color: WalkieTaskColors.color_BCBCBC, spacing: 0.5);
 
     return GestureDetector(
       onTap: () {
@@ -711,11 +711,11 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
 
     return Container(
       width: ancho,
-      child: listRecived.isEmpty ?
+      child: data.isEmpty ?
       Container(
         margin: EdgeInsets.only(top: alto * 0.02),
         width: ancho,
-        child: Text('Sin recordatorio personal', style: textStylePrimary, textAlign: TextAlign.center,),
+        child: Text('Sin recordatorio personal', style: textStylePrimaryTextCenter, textAlign: TextAlign.center,),
       ) :
       Container(
         width: ancho,
@@ -1066,8 +1066,6 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
         ],
       ),
       onTap: () async {
-        widget.blocAudioChangePage.inList.add({'page' : bottonSelect.opcion1});
-
         if(accion == 1){
           //CAMBIAR ESTADO DE DESTACAR 0 = FALSE, 1 = TRUE
           if(isRecived){
