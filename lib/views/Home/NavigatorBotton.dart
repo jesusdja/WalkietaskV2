@@ -983,6 +983,12 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                   argumento['table'] == 'updateTask'
               )
           ){
+
+            updateData.actualizarListaUsuarios(blocUser, blocConection);
+            updateData.actualizarListaRecibidos(blocTaskReceived, blocConection, blocVerifyFirst: blocVerifyFirst);
+            updateData.actualizarListaEnviados(blocTaskSend, blocConection);
+            updateData.actualizarCasos(blocCasos);
+
             int idOpenTask = await SharedPrefe().getValue('openTask');
             int idTaskPush = 0;
             if(argumento['idDoc'] != null){

@@ -236,6 +236,10 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
     return Expanded(
       child: InkWell(
         onTap: (){
+          if((type == 0 && !tagReceived) || (type == 1 && tagReceived)){
+            widget.blocAudioChangePage.inList.add({'page' : bottonSelect.opcion1});
+          }
+
           if(type == 0){
             tagReceived = true;
             containReceived = false;
@@ -380,7 +384,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                                   colorStop: WalkieTaskColors.color_E07676,
                                   path: task.url_audio,
                                   idTask: task.id,
-                                  page: bottonSelect.opcion1,
+                                  page: bottonSelect.opcion2,
                                   blocAudioChangePage: widget.blocAudioChangePage,
                                 ) : Container(),
                               ],
@@ -547,7 +551,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                                   colorStop: WalkieTaskColors.color_E07676,
                                   path: task.url_audio,
                                   idTask: task.id,
-                                  page: bottonSelect.opcion1,
+                                  page: bottonSelect.opcion2,
                                   blocAudioChangePage: widget.blocAudioChangePage,
                                 ) : Container(),
                               ],
@@ -678,7 +682,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                                 colorStop: WalkieTaskColors.color_E07676,
                                 path: task.url_audio,
                                 idTask: task.id,
-                                page: bottonSelect.opcion1,
+                                page: bottonSelect.opcion2,
                                 blocAudioChangePage: widget.blocAudioChangePage,
                               ) : Container(),
                             ],
@@ -782,6 +786,8 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
 
     _deleteDataNewFirebase(tarea.id.toString());
     _deleteDataNewChat(tarea.id.toString());
+
+    widget.blocAudioChangePage.inList.add({'page' : bottonSelect.opcion1});
 
     if(isReceived){
       readTask(tarea);
