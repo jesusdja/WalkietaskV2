@@ -663,7 +663,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                         height: ancho * 0.07,
                         padding: const EdgeInsets.all(2.0), // borde width
                         decoration: new BoxDecoration(
-                          color: WalkieTaskColors.color_969696, // border color
+                          color: reproduciendo ? WalkieTaskColors.color_E07676 : WalkieTaskColors.color_969696, // border color
                           shape: BoxShape.circle,
                         )
                     ),
