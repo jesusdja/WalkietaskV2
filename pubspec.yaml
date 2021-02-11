@@ -3,7 +3,7 @@ description: A new Flutter application.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.2.6+1
+version: 1.2.7+1
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -40,6 +40,7 @@ dependencies:
   url_launcher: 5.2.7
   flutter_launcher_icons: ^0.8.1
   flushbar: ^1.10.4
+  transparent_image: ^1.0.0
 
 dev_dependencies:
   flutter_test:

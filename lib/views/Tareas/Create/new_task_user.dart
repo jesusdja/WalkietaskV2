@@ -96,6 +96,8 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
 
   ScrollController controller = ScrollController();
 
+  TextEditingController controllerTitle = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -403,7 +405,8 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
         sizeHeight: alto * 0.03,
         maxLines: null,
         autofocus: true,
-        initialValue: titleTask,
+        textEditingController: controllerTitle,
+        initialValue: null,
         onChanged: (text) {
           setState(() {
             titleTask = text;

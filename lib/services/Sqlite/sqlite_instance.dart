@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 
-String versionApp = '1.2.6';
+String versionApp = '1.2.7';
 
 Future<Database> getDatabaseInstance() async {
   Directory directory = await getApplicationDocumentsDirectory();

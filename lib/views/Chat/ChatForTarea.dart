@@ -5,6 +5,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:transparent_image/transparent_image.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Chat/ChatMessenger.dart';
@@ -17,12 +18,15 @@ import 'package:walkietaskv2/services/Firebase/Notification/http_notifications.d
 import 'package:walkietaskv2/services/Firebase/chatTareasFirebase.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/DialogAlert.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
+import 'package:walkietaskv2/utils/view_image.dart';
+import 'package:walkietaskv2/utils/view_image_attachment.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
 class ChatForTarea extends StatefulWidget {
@@ -63,6 +67,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
   StreamSubscription streamSubscriptionTaskSend;
 
   bool edit = false;
+
   DateTime fechaTask;
   DateTime fechaTaskOld;
   TextEditingController _controllerChatSms;
@@ -192,6 +197,39 @@ class _ChatForTareaState extends State<ChatForTarea> {
                     )
                 ),
               ),
+              _one == 0 ? Container() : Positioned(
+                left: 0,
+                right: 0,
+                top: _one,
+                height: alto,
+                child: GestureDetector(
+                  //onTap: _toggleTop,
+                  onPanEnd: (details){
+                    if(_one > (-alto + 400)){
+                      _one = -0.1;
+                      _oneFixed = -alto;
+                      setState(() {});
+                    }
+                  },
+                  onPanUpdate: (details) {
+                    if(_one != 0){
+                      _one += details.delta.dy;
+                      if (_one > 0){
+                        _one = 0.1;
+                      }
+                      if (_one <= _oneFixed){
+                        _one = _oneFixed;
+                      }
+                      if(_one < (-alto + 400)){
+                        _one = 0;
+                        _top = true;
+                      }
+                      setState(() {});
+                    }
+                  },
+                  child: _myContainer(),
+                ),
+              ),
             ],
           ),
         ),
@@ -256,8 +294,14 @@ class _ChatForTareaState extends State<ChatForTarea> {
       backgroundColor: colorFondoChat,
       leading: InkWell(
         onTap: () async {
-          await SharedPrefe().setIntValue('openTask', 0);
-          Navigator.of(context).pop();
+          if(_one != 0){
+            setState(() {
+              _one = 0;
+            });
+          }else{
+            await SharedPrefe().setIntValue('openTask', 0);
+            Navigator.of(context).pop();
+          }
         },
         child: Container(
           child: Center(
@@ -569,11 +613,16 @@ class _ChatForTareaState extends State<ChatForTarea> {
         }
       }
     }
+    bool viewImage = false;
     if(tarea != null && tarea.url_attachment != null && tarea.url_attachment.isNotEmpty){
       adjunto = tarea.url_attachment.replaceAll('%', '/');
       adjunto = adjunto.split('/').last;
       int pos = adjunto.indexOf('U$idMyUser');
       adjunto = adjunto.substring(pos + 3, adjunto.length);
+      String format = adjunto.split('.').last;
+      if(format == 'png' || format == 'jpg' || format == 'jpeg'){
+        viewImage = true;
+      }
     }
     return Container(
       margin: EdgeInsets.only(left: ancho * 0.02,right: ancho * 0.02,top: alto * 0.01),
@@ -686,20 +735,28 @@ class _ChatForTareaState extends State<ChatForTarea> {
                 children: <Widget>[
                   (!verDetalle && adjunto != '') ? Icon(Icons.attach_file,size: alto * 0.02,) : Container(),
                   Expanded(
-                    child: (!verDetalle && adjunto != '') ? InkWell(
+                    child: (!verDetalle && adjunto != '') ?
+                    GestureDetector(
                       child: Text(adjunto,style: WalkieTaskStyles().stylePrimary(
                           size: alto * 0.018, color: WalkieTaskColors.color_969696, spacing: 0.5,
                           fontWeight: FontWeight.bold
                       )),
                       onTap: () async {
-                        try{
-                          if (await canLaunch(tarea.url_attachment)) {
-                            await launch(tarea.url_attachment);
-                          } else {
-                            throw 'Could not launch ${tarea.url_attachment}';
+                        if(!viewImage){
+                          try{
+                            if (await canLaunch(tarea.url_attachment)) {
+                              await launch(tarea.url_attachment);
+                            } else {
+                              throw 'Could not launch ${tarea.url_attachment}';
+                            }
+                          }catch(e){
+                            print(e.toString());
                           }
-                        }catch(e){
-                          print(e.toString());
+                        }else{
+                          _one = -alto;
+                          _oneFixed = -alto;
+                          setState(() {});
+                          _toggleTop();
                         }
                       },
                     ) : Container(),
@@ -1039,4 +1096,93 @@ class _ChatForTareaState extends State<ChatForTarea> {
     }
   }
 
+  bool _top = false;
+  Duration _duration = Duration(milliseconds: 5);
+  double _one = 0;
+  double _oneFixed = 0;
+  void _toggleTop() {
+    _top = !_top;
+    Timer.periodic(_duration, (timer) {
+      if (_top) _one += 20;
+      else _one -= 20;
+
+      if (_one >= 0) {
+        _one = -0.1;
+        timer.cancel();
+      }
+      if (_one <= _oneFixed) {
+        _one = _oneFixed;
+        timer.cancel();
+      }
+      setState(() {});
+    });
+  }
+
+  Widget _myContainer() {
+    return Stack(
+      children: [
+        Container(
+          color: colorFondoChat,
+          height: alto * 0.9,
+          width: ancho,
+          child: Center(
+            child: Container(
+              height: alto * 0.1,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: Image.asset('assets/image/loading2.gif').image,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          ),
+        ),
+        Container(
+          //color: colorFondoChat,
+          height: alto * 0.9,
+          width: ancho,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: Image.network(tarea.url_attachment).image,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+        // Container(
+        //   width: ancho,
+        //   child: FadeInImage.memoryNetwork(
+        //     placeholder: kTransparentImage,
+        //     image: tarea.url_attachment,
+        //     fit: BoxFit.fitWidth,
+        //   ),
+        // ),
+        Align(
+          alignment: Alignment.topRight,
+          child: Container(
+            margin: EdgeInsets.only(top: alto * 0.02, right: ancho * 0.08),
+            child: CircleAvatar(
+              backgroundColor: WalkieTaskColors.primary,
+              child: InkWell(
+                child: Icon(Icons.download_sharp, color: WalkieTaskColors.white,size: alto * 0.05,),
+                onTap: () async{
+                  try{
+                    if (await canLaunch(tarea.url_attachment)) {
+                      await launch(tarea.url_attachment);
+                    } else {
+                      throw 'Could not launch ${tarea.url_attachment}';
+                    }
+                  }catch(e){
+                    print(e.toString());
+                    showAlert('Error al descargar imagen, verifique su conexión.',WalkieTaskColors.color_89BD7D);
+                  }
+                },
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
 }
+

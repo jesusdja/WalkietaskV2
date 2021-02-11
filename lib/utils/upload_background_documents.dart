@@ -93,10 +93,10 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
         if(value['status_code'] == 201){
           //ELIMINAR AUDIO
           final file = File(data[2]);
-          var h = file.openRead();
+          file.openRead();
           bool exist = await file.exists();
           if(exist){
-            var res = await File(data[2]).delete();
+            await File(data[2]).delete();
             print('SE ELIMINO EL AUDIO');
           }
           //ELIMINAR TAREA DE LISTA
