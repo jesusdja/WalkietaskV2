@@ -12,6 +12,7 @@ import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Firebase/Notification/push_notifications_provider.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/DialogAlert.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
@@ -216,27 +217,32 @@ class _ContactsState extends State<Contacts> {
               onPressed: () async {
                 mapUserDelete[user.id] = true;
                 setState(() {});
-                try{
-                  var response = await connectionHttp.httpDeleteContact(user.id);
-                  var value = jsonDecode(response.body);
-                  if(value['status_code'] == 200){
-                    user.contact = 0;
-                    int res = await DatabaseProvider.db.updateUser(user);
-                    if(res != 0){
-                      await updateData.actualizarListaContact(blocUser);
-                      showAlert('Contacto eliminado.',WalkieTaskColors.color_89BD7D);
-                      setState(() {});
-                    }
-                  }else{
-                    if(value['message'] != null){
-                      showAlert(value['message'],WalkieTaskColors.color_E07676);
+
+                bool res = false;
+                res = await alertDeleteElement(context,'¿Estas segudo que deseas eliminar tu contacto ${user.name}');
+                if(res != null && res){
+                  try{
+                    var response = await connectionHttp.httpDeleteContact(user.id);
+                    var value = jsonDecode(response.body);
+                    if(value['status_code'] == 200){
+                      user.contact = 0;
+                      int res = await DatabaseProvider.db.updateUser(user);
+                      if(res != 0){
+                        await updateData.actualizarListaContact(blocUser);
+                        showAlert('Contacto eliminado.',WalkieTaskColors.color_89BD7D);
+                        setState(() {});
+                      }
                     }else{
-                      showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                      if(value['message'] != null){
+                        showAlert(value['message'],WalkieTaskColors.color_E07676);
+                      }else{
+                        showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                      }
                     }
+                  }catch(e){
+                    print(e.toString());
+                    showAlert('Error de conexión',WalkieTaskColors.color_E07676);
                   }
-                }catch(e){
-                  print(e.toString());
-                  showAlert('Error de conexión',WalkieTaskColors.color_E07676);
                 }
                 mapUserDelete[user.id] = false;
                 setState(() {});

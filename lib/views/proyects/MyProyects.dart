@@ -261,7 +261,7 @@ class _MyProyectsState extends State<MyProyects> {
                             setState(() {});
 
                             bool res = false;
-                            res = await alertDeleteProject(context, project.name);
+                            res = await alertDeleteElement(context, '¿Esta seguro que desea Eliminar el proyecto "${project.name}"?');
                             if(res != null && res){
                               try{
                                 var response = await connectionHttp.httpDeleteProject(project.id);
@@ -362,20 +362,24 @@ class _MyProyectsState extends State<MyProyects> {
                   onPressed: () async {
                     deleteProjectUser['$idProjects-${mapUserProject['users']['id']}'] = true;
                     setState(() {});
-                    try{
-                      var response = await connectionHttp.httpDeleteUserForProject(idProjects,mapUserProject['users']['id']);
-                      var value = jsonDecode(response.body);
-                      if(value['status_code'] == 200){
-                        await _getGuests();
-                        showAlert('Usuario eliminado del proyecto con exito.!',WalkieTaskColors.color_89BD7D);
-                      }else{
+
+                    bool res = false;
+                    res = await alertDeleteElement(context,'¿Estas segudo que deseas eliminar el usuario ${mapUserProject['users']['name']}');
+                    if(res != null && res){
+                      try{
+                        var response = await connectionHttp.httpDeleteUserForProject(idProjects,mapUserProject['users']['id']);
+                        var value = jsonDecode(response.body);
+                        if(value['status_code'] == 200){
+                          await _getGuests();
+                          showAlert('Usuario eliminado del proyecto con exito.!',WalkieTaskColors.color_89BD7D);
+                        }else{
+                          showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                        }
+                      }catch(e){
+                        print(e.toString());
                         showAlert('Error de conexión',WalkieTaskColors.color_E07676);
                       }
-                    }catch(e){
-                      print(e.toString());
-                      showAlert('Error de conexión',WalkieTaskColors.color_E07676);
                     }
-
                     deleteProjectUser['$idProjects-${mapUserProject['users']['id']}'] = false;
                     setState(() {});
                   },

@@ -36,7 +36,7 @@ Future<bool> alert(BuildContext context) async{
   return res;
 }
 
-Future<bool> alertDeleteProject(BuildContext context, String name) async{
+Future<bool> alertDeleteElement(BuildContext context, String question) async{
 
   Size size = MediaQuery.of(context).size;
 
@@ -45,7 +45,7 @@ Future<bool> alertDeleteProject(BuildContext context, String name) async{
       builder: ( context ) {
         return AlertDialog(
           title: Text(''),
-          content: Text('¿Esta seguro que desea Eliminar el proyecto "$name"?',
+          content: Text(question,
             textAlign: TextAlign.center,
             style: WalkieTaskStyles().stylePrimary(size: size.height * 0.025, color: WalkieTaskColors.color_969696,spacing: 0.5,fontWeight: FontWeight.bold),
           ),
