@@ -1031,6 +1031,11 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
             String subTitle = 'Te agregó a un proyecto: ';
             viewNotiLocalProjects(subTitle, argumento['idDoc']);
           }
+
+          if(argumento['type'] == '1' &&
+             argumento['table'] == 'reminderTask') {
+            viewNotiLocalPersonal('Genial', 'Sigue así. ', 'Lo estás haciendo bien.');
+          }
         }
       }catch(e){
         print(e.toString());
@@ -1152,6 +1157,47 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     );
     Widget titleText = Container(
       child: Text(nameUser,style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.white, spacing: 0.5, fontWeight: FontWeight.bold),),
+    );
+    flushBarNotification(
+        context: context,
+        avatar: imageAvatar,
+        titleText: titleText,
+        messageText: messageText,
+        onTap: (flushbar) {}
+    );
+  }
+
+  Future<void> viewNotiLocalPersonal(String title, String subTitle, String description) async {
+
+    Image avatarUser = Image.network(avatarImage);
+    if(myUser != null){
+      if(myUser.avatar != ''){
+        avatarUser = Image.network('$directorioImage${myUser.avatar}');
+      }
+    }
+
+    Widget imageAvatar = Container(
+      margin: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+      padding: const EdgeInsets.all(1.5), // borde width
+      decoration: new BoxDecoration(
+        color: WalkieTaskColors.primary, // border color
+        shape: BoxShape.circle,
+      ),
+      child: CircleAvatar(
+        radius: alto * 0.025,
+        backgroundImage: avatarUser.image,
+      ),
+    );
+    Widget titleText = Container(
+      child: Text(title,style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.white, spacing: 0.5, fontWeight: FontWeight.bold),),
+    );
+    Widget messageText = Container(
+      child: RichText(
+        text: TextSpan(children: [
+          TextSpan(text: subTitle, style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, fontWeight: FontWeight.bold, color: WalkieTaskColors.yellow, spacing: 0.5),),
+          TextSpan(text: description,style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, color: WalkieTaskColors.white, spacing: 0.5)),
+        ]),
+      ),
     );
     flushBarNotification(
         context: context,
