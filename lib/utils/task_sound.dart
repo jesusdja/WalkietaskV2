@@ -42,7 +42,6 @@ class _SoundTaskState extends State<SoundTask> {
 
   AudioPlayer audioPlayer;
   StreamSubscription _durationSubscription;
-  Duration _duration;
   StreamSubscription streamSubscriptionPageAudio;
 
   @override
@@ -68,9 +67,15 @@ class _SoundTaskState extends State<SoundTask> {
   @override
   void dispose() {
     super.dispose();
-    audioPlayer?.dispose();
-    _durationSubscription?.cancel();
-    streamSubscriptionPageAudio?.cancel();
+    try{
+      if(AudioPlayerState.PLAYING == audioPlayer.state){
+        audioPlayer?.stop();
+      }
+      _durationSubscription?.cancel();
+      streamSubscriptionPageAudio?.cancel();
+    }catch(e){
+      print(e.toString());
+    }
   }
 
   @override
@@ -118,19 +123,20 @@ class _SoundTaskState extends State<SoundTask> {
     });
     AudioPlayerState oldState = AudioPlayerState.COMPLETED;
     audioPlayer.onPlayerStateChanged.listen((AudioPlayerState s){
-      //print('Current player state: $s');
-      if(AudioPlayerState.COMPLETED == s){
-        setState(() {
-          sonando = false;
-        });
-      }
-      if(AudioPlayerState.PLAYING == s){
-        sonando = true;
-        setState(() {});
-      }
-      oldState = s;
-      if(AudioPlayerState.STOPPED == s){
-        oldState = AudioPlayerState.COMPLETED;
+      if(mounted){
+        if(AudioPlayerState.COMPLETED == s){
+          setState(() {
+            sonando = false;
+          });
+        }
+        if(AudioPlayerState.PLAYING == s){
+          sonando = true;
+          setState(() {});
+        }
+        oldState = s;
+        if(AudioPlayerState.STOPPED == s){
+          oldState = AudioPlayerState.COMPLETED;
+        }
       }
     });
   }

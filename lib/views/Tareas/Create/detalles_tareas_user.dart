@@ -1066,6 +1066,8 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
         ],
       ),
       onTap: () async {
+        widget.blocAudioChangePage.inList.add({'page' : bottonSelect.opcion1});
+
         if(accion == 1){
           //CAMBIAR ESTADO DE DESTACAR 0 = FALSE, 1 = TRUE
           if(isRecived){
