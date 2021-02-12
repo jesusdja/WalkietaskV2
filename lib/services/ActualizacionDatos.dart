@@ -394,6 +394,7 @@ class UpdateData{
         }
         if(invitations[x]['read'] == 0){
           await SharedPrefe().setBoolValue('notiContacts', true);
+          await SharedPrefe().setBoolValue('notiContacts_received', true);
         }
       }
 

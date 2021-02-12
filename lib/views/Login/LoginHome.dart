@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart' as provider;
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Permisos.dart';
@@ -294,7 +294,7 @@ class _LoginHomeState extends State<LoginHome> {
             await PermisoPhotos();
 
             try{
-              AuthService auth = Provider.of<AuthService>(context);
+              AuthService auth = provider.Provider.of<AuthService>(context);
               auth.init();
             }catch(ex){
               print(ex);

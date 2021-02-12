@@ -15,7 +15,7 @@ dependencies:
     sdk: flutter
 
   #LOGUERS
-  provider: 2.0.1
+  provider: ^4.3.3
   shared_preferences: ^0.5.4+3
   permission_handler: ^4.0.0
 
@@ -30,7 +30,7 @@ dependencies:
   #UTILS
   flutter_slidable: ^0.5.4
   cupertino_icons: ^0.1.2
-  flutter_sound: 1.0.6
+  flutter_sound: ^7.6.3+2
   audioplayers: 0.13.5
   equatable: ^1.1.0
   amazon_cognito_identity_dart: ^0.0.22

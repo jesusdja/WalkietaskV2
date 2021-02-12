@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart' as provider;
 import 'package:walkietaskv2/services/auth.dart';
 import 'package:walkietaskv2/views/Home/NavigatorBotton.dart';
 import 'package:walkietaskv2/views/Login/LoginHome.dart';
@@ -24,9 +24,9 @@ class _AppState extends State<App>{
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      builder: (_) => AuthService.instance(),
-      child: Consumer(
+    return provider.ChangeNotifierProvider(
+      create: (_) => AuthService.instance(),
+      child: provider.Consumer(
         // ignore: missing_return
         builder: (context, AuthService auth, _){
           switch (auth.status) {

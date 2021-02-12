@@ -66,6 +66,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
   Usuario user;
 
   FlutterSound flutterSound = new FlutterSound();
+  FlutterSoundRecorder flutterSoundRecorder = FlutterSoundRecorder();
 
   UpdateData updateData;
 
@@ -75,6 +76,12 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
     user = widget.user;
     updateData = widget.updateData;
     pathinicial();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    flutterSoundRecorder?.closeAudioSession();
   }
 
   @override
@@ -203,9 +210,10 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
       DateTime date = DateTime.now();
       audioName = 'audioplay${date.year}${date.month}${date.day}${date.hour}${date.minute}${date.second}';
       audioPath = '$appDocPath/$audioName.mp4';
-      String path = await flutterSound.startRecorder('$appDocPath/$audioName.mp4');
-      print('startRecorder: $path');
-      setState(() {});
+      await flutterSoundRecorder.startRecorder(toFile: '$appDocPath/$audioName.mp4').then((value) {
+        print('startRecorder');
+        setState(() {});
+      });
     } catch (err) {
       print('startRecorder error: $err');
     }
@@ -213,9 +221,10 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
 
   _detenergrabar() async {
     try{
-      String result = '';
       try{
-        result = await flutterSound.stopRecorder();
+        await flutterSoundRecorder.stopRecorder().then((value) {
+          setState(() {});
+        });
       }catch(ex){
         print('ERROR EN STOP ${ex.toString()}');
       }
@@ -295,6 +304,13 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
   }
 
   pathinicial() async{
+
+    try{
+      await flutterSoundRecorder.openAudioSession();
+    }catch(e){
+      print(e.toString());
+    }
+
     Directory appDocDi25 = await getExternalStorageDirectory();
     appDocPath = appDocDi25.path;
     setState(() {});

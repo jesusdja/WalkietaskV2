@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart' as provider;
 import 'package:walkietaskv2/services/auth.dart';
 
 class StartLogo extends StatefulWidget {
@@ -15,7 +15,7 @@ class _StarLogoState extends State<StartLogo> with SingleTickerProviderStateMixi
 
   @override
   Widget build(BuildContext context) {
-    auth = Provider.of<AuthService>(context);
+    auth = provider.Provider.of<AuthService>(context);
 
     return WillPopScope(
         child: FutureBuilder(

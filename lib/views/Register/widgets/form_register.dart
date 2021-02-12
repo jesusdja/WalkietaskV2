@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart' as provider;
 import 'package:walkietaskv2/bloc/blocUserCheck.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
@@ -475,7 +475,7 @@ class _FormRegisterState extends State<FormRegister> {
                       await PermisoSonido();
                       await PermisoPhotos();
                       try{
-                        AuthService auth = Provider.of<AuthService>(widget.contextLogin);
+                        AuthService auth = provider.Provider.of<AuthService>(widget.contextLogin);
                         auth.init();
                         Navigator.of(context).pop();
                       }catch(ex){

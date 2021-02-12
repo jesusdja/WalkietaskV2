@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart' as provider;
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/auth.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
@@ -166,7 +166,7 @@ class _RegisterCodeState extends State<RegisterCode> {
                   }
                   try{
                     await SharedPrefe().setIntValue('unityLogin',statusCode);
-                    AuthService auth = Provider.of<AuthService>(widget.contextLogin);
+                    AuthService auth = provider.Provider.of<AuthService>(widget.contextLogin);
                     auth.init();
                   }catch(ex){
                     print(ex);
