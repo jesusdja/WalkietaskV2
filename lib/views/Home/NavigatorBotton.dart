@@ -35,6 +35,7 @@ import 'package:walkietaskv2/views/Tareas/Create/crear_tarea.dart';
 import 'package:walkietaskv2/views/Tareas/ListadoTareasRecibidas.dart';
 import 'package:walkietaskv2/views/Tareas/ListadoTareasEnviadas.dart';
 import 'package:walkietaskv2/views/contact/contact.dart';
+import 'package:walkietaskv2/views/profile/profile_home.dart';
 import 'package:walkietaskv2/views/proyects/MyProyects.dart';
 
 enum bottonSelect {opcion1,opcion2,opcion3,opcion4,opcion5}
@@ -617,7 +618,12 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
               _onTapNavigator(bottonSelect.opcion4, 'Proyectos');
             }),
             _divider,
-            _textDrawer('Mi Cuenta', (){}),
+            _textDrawer('Mi Cuenta', (){
+              Navigator.push(context, new MaterialPageRoute(
+                  builder: (BuildContext context) => ProfileHome(
+                    myUser: myUser,
+                  )));
+            }),
             _divider,
             _textDrawer('Acerca de', (){}),
             _divider,
