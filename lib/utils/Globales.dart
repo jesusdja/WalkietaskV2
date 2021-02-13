@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 
 String directorioImage = 'http://www.unitydbm.com/uploads/photo/';
@@ -31,6 +32,15 @@ Future<void> addPopTask(int num) async {
   }catch(e){
     print(e.toString());
   }
+}
+
+Future<Image> getPhotoUser() async {
+  String pathPhoto = await SharedPrefe().getValue('WalkiephotoUser') ?? '';
+  Image photo;
+  if(pathPhoto != null && pathPhoto.isNotEmpty){
+    photo = Image.file(File(pathPhoto));
+  }
+  return photo;
 }
 
 

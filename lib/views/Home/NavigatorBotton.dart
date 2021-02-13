@@ -109,6 +109,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   bottonSelect page = bottonSelect.opcion1;
   BuildContext contextHome;
 
+  Image avatarUser;
+
   @override
   void initState() {
     super.initState();
@@ -255,6 +257,13 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       print(e.toString());
     }
 
+    getPhoto();
+
+    setState(() {});
+  }
+
+  Future<void> getPhoto() async {
+    avatarUser = await getPhotoUser();
     setState(() {});
   }
 
@@ -554,7 +563,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
   Widget _drawerMenu(){
 
-    Image avatarUser = Image.network(avatarImage);
+    avatarUser = avatarUser ?? Image.network(avatarImage);
     if(myUser != null){
       if(myUser.avatar != null && myUser.avatar != ''){
         avatarUser = Image.network('$directorioImage${myUser.avatar}');
@@ -618,11 +627,12 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
               _onTapNavigator(bottonSelect.opcion4, 'Proyectos');
             }),
             _divider,
-            _textDrawer('Mi Cuenta', (){
-              Navigator.push(context, new MaterialPageRoute(
+            _textDrawer('Mi Cuenta', () async {
+              await Navigator.push(context, new MaterialPageRoute(
                   builder: (BuildContext context) => ProfileHome(
                     myUser: myUser,
                   )));
+              getPhoto();
             }),
             _divider,
             _textDrawer('Acerca de', (){}),

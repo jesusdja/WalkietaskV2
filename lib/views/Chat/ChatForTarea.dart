@@ -48,6 +48,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
   ChatTareaFirebase chatTareasdb;
   Usuario usuarioResponsable;
   Image imagenUser;
+  Image avatarUser;
 
   List<Usuario> listUser = new List<Usuario>();
 
@@ -129,7 +130,18 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
     if(tarea.user_responsability_id != null){
       usuarioResponsable = await DatabaseProvider.db.getCodeIdUser(idSearch.toString());
+      if(usuarioResponsable != null && usuarioResponsable.avatar != null && usuarioResponsable.avatar.isNotEmpty){
+        imagenUser = Image.network(usuarioResponsable.avatar);
+      }
     }
+
+    getPhoto();
+
+    setState(() {});
+  }
+
+  Future<void> getPhoto() async {
+    avatarUser = await getPhotoUser();
     setState(() {});
   }
 
@@ -377,8 +389,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
   }
 
   Widget _cardSMS(Color colorCard, String texto, String dateSrt,bool lateralDer,Usuario userFrom){
-
-    Image imagenAvatar = Image.network('$avatarImage');
+    Image imagenAvatar = avatarUser ?? Image.network('$avatarImage');
     if(userFrom != null && userFrom.avatar != null && userFrom.avatar != ''){
       imagenAvatar = Image.network('$directorioImage${userFrom.avatar}');
     }
