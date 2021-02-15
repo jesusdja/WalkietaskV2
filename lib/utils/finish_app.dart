@@ -42,6 +42,7 @@ Future<void> finishApp() async{
     await SharedPrefe().deleteValue('listOrderRecivedDate');
     await SharedPrefe().deleteValue('listOrderSendDate');
     await SharedPrefe().deleteValue('WalkiephotoUser');
+    await SharedPrefe().deleteValue('WalListUpdateAvatar');
 
     await DatabaseProvider.db.deleteDatabaseInstance();
 

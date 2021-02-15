@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/gallery_camera_dialog.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
+import 'package:walkietaskv2/utils/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 
@@ -95,8 +97,15 @@ class _ProfilePhotoState extends State<ProfilePhoto> {
           File croppedImage = await ViewImage().croppedImageView(_imageFile.path, cropStyle: CropStyle.circle);
           if(croppedImage != null){
             avatarUser = Image.file(croppedImage);
-            await SharedPrefe().setStringValue('WalkiephotoUser', croppedImage.path);
             setState(() {});
+            await SharedPrefe().setStringValue('WalkiephotoUser', croppedImage.path);
+
+            List<dynamic> listDocuments = await SharedPrefe().getValue('WalListUpdateAvatar') ?? [];
+            List<String> listNew = [];
+            listDocuments.forEach((element) { listNew.add(element);});
+            listNew.add(croppedImage.path);
+            await SharedPrefe().setStringListValue('WalListUpdateAvatar', listNew);
+            uploadUpdateUser();
           }
         }
       },

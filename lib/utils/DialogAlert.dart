@@ -36,7 +36,7 @@ Future<bool> alert(BuildContext context) async{
   return res;
 }
 
-Future<bool> alertDeleteElement(BuildContext context, String question) async{
+Future<bool> alertDeleteElement(BuildContext context, String question, {String button1 = 'Ok', String button2 = 'Cancelar'}) async{
 
   Size size = MediaQuery.of(context).size;
 
@@ -51,7 +51,7 @@ Future<bool> alertDeleteElement(BuildContext context, String question) async{
           ),
           actions: <Widget>[
             FlatButton(
-              child: Text('Ok',
+              child: Text(button1,
                 style: WalkieTaskStyles().stylePrimary(size: size.height * 0.02, color: WalkieTaskColors.primary,fontWeight: FontWeight.bold),),
               onPressed: ()  {
                 Navigator.of(context).pop(true);
@@ -60,7 +60,7 @@ Future<bool> alertDeleteElement(BuildContext context, String question) async{
             ),
             SizedBox(width: MediaQuery.of(context).size.width * 0.02,),
             FlatButton(
-              child: Text('Cancelar',
+              child: Text(button2,
                 style: WalkieTaskStyles().stylePrimary(size: size.height * 0.02, color: WalkieTaskColors.primary,fontWeight: FontWeight.bold),),
               onPressed: (){
                 Navigator.of(context).pop(false);

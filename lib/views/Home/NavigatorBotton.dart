@@ -201,6 +201,11 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     if(listDocuments.isNotEmpty){
       uploadBackDocuments(blocIndicatorProgress);
     }
+
+    List<dynamic> listDocuments2 = await SharedPrefe().getValue('WalListUpdateAvatar') ?? [];
+    if(listDocuments2.isNotEmpty){
+      uploadUpdateUser();
+    }
   }
 
   Future<void> reconection() async {

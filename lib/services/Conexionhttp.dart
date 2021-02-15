@@ -305,6 +305,26 @@ class conexionHttp{
     return response;
   }
 
+  Future<http.Response> httpUpdateUser(Map<String,dynamic> body) async {
+
+    String token  = await obtenerToken();
+    Map<String,String> headers = {
+      'Content-Type':'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Authorization': 'Bearer $token'
+    };
+    var response;
+    try{
+      response = await http.put('$enlace/api/auth/profile/edit',
+        headers: headers,
+        body: body,
+      );
+    }catch(e){
+      print(e.toString());
+    }
+    return response;
+  }
+
   Future<http.Response> httpMyUser() async{
     String token  = await obtenerToken();
     Map<String, String> requestHeaders = {
