@@ -79,7 +79,7 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
         if(invitation.inv == 1 && userInvited != null){
           Image avatarUser = Image.network(avatarImage);
           if(userInvited.avatar.isNotEmpty){
-            avatarUser = Image.network('$directorioImage${userInvited.avatar}');
+            avatarUser = Image.network(userInvited.avatar);
           }
 
           DateTime date = DateTime.parse(invitation.createdAt);
@@ -111,7 +111,7 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text('${userInvited.name}',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.color_4D4D4D),),
+                          Text('${userInvited.name} ${userInvited.surname}',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.color_4D4D4D),),
                           Text('$dateInvited', style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: WalkieTaskColors.color_ACACAC, fontWeight: FontWeight.bold,spacing: 0.5,),),
                         ],
                       ),

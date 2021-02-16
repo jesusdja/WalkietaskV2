@@ -317,7 +317,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     Image avatarUser = Image.network(avatarImage);
     if(mapIdUser != null){
       if(mapIdUser[tarea.user_id] != null && mapIdUser[tarea.user_id].avatar != ''){
-        avatarUser = Image.network('$directorioImage${mapIdUser[tarea.user_id].avatar}');
+        avatarUser = Image.network(mapIdUser[tarea.user_id].avatar);
       }
     }
 
@@ -330,7 +330,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
 
     String nameUser = '';
     if(mapIdUser[tarea.user_id] != null){
-      nameUser = mapIdUser[tarea.user_id].name;
+      nameUser = '${mapIdUser[tarea.user_id].name} ${mapIdUser[tarea.user_id].surname}';
       if(widget.myUserRes.id == mapIdUser[tarea.user_id].id){
         nameUser = 'Recordatorio personal';
       }
@@ -469,13 +469,13 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     Image avatarUser = Image.network(avatarImage);
     if(mapIdUser != null){
       if(user != null && user.avatar != ''){
-        avatarUser = Image.network('$directorioImage${user.avatar}');
+        avatarUser = Image.network(user.avatar);
       }
     }
 
     List<Widget> listTaskWidget = listTaskGet(user, listTask);
 
-    String nameUser = user.name;
+    String nameUser = '${user.name} ${user.surname}';
     if(widget.myUserRes.id == user.id){
       nameUser = 'Recordatorio personal';
     }

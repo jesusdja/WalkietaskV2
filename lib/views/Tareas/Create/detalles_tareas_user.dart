@@ -734,7 +734,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
 
     Image avatarUser = Image.network(avatarImage);
     if(user.avatar.isNotEmpty){
-      avatarUser = Image.network('$directorioImage${user.avatar}');
+      avatarUser = Image.network(user.avatar);
     }
 
     return AppBar(
@@ -764,7 +764,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                 ],
               ),
             ),
-            Text(isPersonal ? 'Recordatorio personal' : user.name, style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.025, color: WalkieTaskColors.black, spacing: 0.5, ),)
+            Text(isPersonal ? 'Recordatorio personal' : '${user.name} ${user.surname}', style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.025, color: WalkieTaskColors.black, spacing: 0.5, ),)
           ],
         ),
       ),

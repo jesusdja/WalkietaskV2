@@ -235,7 +235,11 @@ class _AddProyectsState extends State<AddProyects> {
 
     if(user.contact == 0 ){ return Container();}
 
-    if(!user.name.toLowerCase().contains(controlleBuscador.text.toLowerCase()) && controlleBuscador.text.isNotEmpty){ return Container();}
+    if((!user.name.toLowerCase().contains(controlleBuscador.text.toLowerCase()) &&
+        !user.surname.toLowerCase().contains(controlleBuscador.text.toLowerCase())) &&
+        controlleBuscador.text.isNotEmpty){
+      return Container();
+    }
 
     if(widget.listUsersExist != null && widget.listUsersExist.isNotEmpty){
       bool exist = false;
@@ -252,7 +256,7 @@ class _AddProyectsState extends State<AddProyects> {
 
     Image avatarUser = Image.network(avatarImage);
     if(user.avatar != ''){
-      avatarUser = Image.network('$directorioImage${user.avatar}');
+      avatarUser = Image.network(user.avatar);
     }
     return Container(
       width: ancho,
@@ -268,7 +272,7 @@ class _AddProyectsState extends State<AddProyects> {
             ),
           ),
           Expanded(
-            child: Text('${user.name}', style: textStylePrimary,),
+            child: Text('${user.name} ${user.surname}', style: textStylePrimary,),
           ),
           Checkbox(
               value: checkUser[user.id] ?? false,

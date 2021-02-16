@@ -49,7 +49,7 @@ class _ProfilePhotoState extends State<ProfilePhoto> {
     avatarUser = avatarUser ?? Image.network(avatarImage);
     if(myUser != null){
       if(myUser != null && myUser.avatar != ''){
-        avatarUser = Image.network('$directorioImage${myUser.avatar}');
+        avatarUser = Image.network(myUser.avatar);
       }
     }
 

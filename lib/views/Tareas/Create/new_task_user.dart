@@ -158,7 +158,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
 
     Image avatarUser = Image.network(avatarImage);
     if(user.avatar.isNotEmpty){
-      avatarUser = Image.network('$directorioImage${user.avatar}');
+      avatarUser = Image.network(user.avatar);
     }
 
     return opcionesOpen ? _taskSendOpen() : _taskSendOut(avatarUser);
@@ -173,7 +173,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
           children: [
             SizedBox(height: alto * 0.1,),
             Container(
-              child: Text('Enviarás una tarea a ${user.name.split(' ')[0] ?? ''}', style: textStylePrimary,),
+              child: Text('Enviarás una tarea a ${user.name}', style: textStylePrimary,),
             ),
             Container(
               margin: EdgeInsets.only(top: alto * 0.01),
@@ -627,7 +627,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
 
     Image avatarUser = Image.network(avatarImage);
     if(user.avatar.isNotEmpty){
-      avatarUser = Image.network('$directorioImage${user.avatar}');
+      avatarUser = Image.network(user.avatar);
     }
 
     return AppBar(
@@ -657,7 +657,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
                 ],
               ),
             ) : Container(),
-            Text(opcionesOpen ? '${user.name}' : 'Todo listo para enviar tarea', style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.025, color: WalkieTaskColors.black, spacing: 0.5, ),)
+            Text(opcionesOpen ? '${user.name} ${user.surname}' : 'Todo listo para enviar tarea', style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.025, color: WalkieTaskColors.black, spacing: 0.5, ),)
           ],
         ),
       ),

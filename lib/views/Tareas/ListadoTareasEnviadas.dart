@@ -298,7 +298,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     Image avatarUser = Image.network(avatarImage);
     if(mapIdUser != null){
       if(mapIdUser[tarea.user_responsability_id] != null && mapIdUser[tarea.user_responsability_id].avatar != ''){
-        avatarUser = Image.network('$directorioImage${mapIdUser[tarea.user_responsability_id].avatar}');
+        avatarUser = Image.network(mapIdUser[tarea.user_responsability_id].avatar);
       }
     }
 
@@ -313,7 +313,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
 
     String nameUser = '';
     if(mapIdUser[tarea.user_responsability_id] != null){
-      nameUser = mapIdUser[tarea.user_responsability_id].name;
+      nameUser = '${mapIdUser[tarea.user_responsability_id].name} ${mapIdUser[tarea.user_responsability_id].surname}';
       if(widget.myUserRes.id == mapIdUser[tarea.user_responsability_id].id){
         nameUser = 'Recordatorio personal';
       }
@@ -453,7 +453,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     Image avatarUser = Image.network(avatarImage);
     if(mapIdUser != null){
       if(user != null && user.avatar != ''){
-        avatarUser = Image.network('$directorioImage${user.avatar}');
+        avatarUser = Image.network(user.avatar);
       }
     }
 
@@ -462,7 +462,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     int cantTask = 0;
     listTask.forEach((element) {  if(element.finalized == 0){ cantTask++; } });
 
-    String nameUser = user.name;
+    String nameUser = '${user.name} ${user.surname}';
     if(widget.myUserRes.id == user.id){
       nameUser = 'Recordatorio personal';
     }

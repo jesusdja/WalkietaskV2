@@ -571,7 +571,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     avatarUser = avatarUser ?? Image.network(avatarImage);
     if(myUser != null){
       if(myUser.avatar != null && myUser.avatar != ''){
-        avatarUser = Image.network('$directorioImage${myUser.avatar}');
+        avatarUser = Image.network(myUser.avatar);
       }
     }
 
@@ -1080,14 +1080,14 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     if(isRecived){
       if(mapIdUser[task.user_id] != null){
         if(mapIdUser[task.user_id].avatar != ''){
-          avatarUser = Image.network('$directorioImage${mapIdUser[task.user_id].avatar}');
+          avatarUser = Image.network(mapIdUser[task.user_id].avatar);
         }
         nameUser = mapIdUser[task.user_id].name;
       }
     }else{
       if(mapIdUser[task.user_responsability_id] != null){
         if(mapIdUser[task.user_responsability_id].avatar != ''){
-          avatarUser = Image.network('$directorioImage${mapIdUser[task.user_responsability_id].avatar}');
+          avatarUser = Image.network(mapIdUser[task.user_responsability_id].avatar);
         }
         nameUser = mapIdUser[task.user_responsability_id].name;
       }
@@ -1156,7 +1156,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
     if(mapIdUser[idUser] != null){
       if(mapIdUser[idUser].avatar != ''){
-        avatarUser = Image.network('$directorioImage${mapIdUser[idUser].avatar}');
+        avatarUser = Image.network(mapIdUser[idUser].avatar);
       }
       nameUser = mapIdUser[idUser].name;
     }
@@ -1198,7 +1198,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     Image avatarUser = Image.network(avatarImage);
     if(myUser != null){
       if(myUser.avatar != ''){
-        avatarUser = Image.network('$directorioImage${myUser.avatar}');
+        avatarUser = Image.network(myUser.avatar);
       }
     }
 

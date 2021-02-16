@@ -160,7 +160,7 @@ class _ContactsState extends State<Contacts> {
   Widget _cardMyContacts(Usuario user){
     Image avatarUser = Image.network(avatarImage);
     if(user.avatar.isNotEmpty){
-      avatarUser = Image.network('$directorioImage${user.avatar}');
+      avatarUser = Image.network(user.avatar);
     }
     return Container(
       width: ancho,
@@ -187,7 +187,7 @@ class _ContactsState extends State<Contacts> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text('${user.name}',style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_4D4D4D, fontWeight: FontWeight.bold,spacing: 1),),
+                  Text('${user.name} ${user.surname}',style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_4D4D4D, fontWeight: FontWeight.bold,spacing: 1),),
                   Text('${user.email}',style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: WalkieTaskColors.color_ACACAC, fontWeight: FontWeight.bold,spacing: 1.5),maxLines: 1,),
                 ],
               ),
@@ -219,7 +219,7 @@ class _ContactsState extends State<Contacts> {
                 setState(() {});
 
                 bool res = false;
-                res = await alertDeleteElement(context,'¿Estas segudo que deseas eliminar tu contacto ${user.name}');
+                res = await alertDeleteElement(context,'¿Estas segudo que deseas eliminar tu contacto ${user.name} ${user.surname}');
                 if(res != null && res){
                   try{
                     var response = await connectionHttp.httpDeleteContact(user.id);

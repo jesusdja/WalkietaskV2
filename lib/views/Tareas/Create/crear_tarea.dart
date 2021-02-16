@@ -279,7 +279,7 @@ class _CreateTaskState extends State<CreateTask> {
 
       Image avatarUser = Image.network(avatarImage);
       if(user.avatar.isNotEmpty){
-        avatarUser = Image.network('$directorioImage${user.avatar}');
+        avatarUser = Image.network(user.avatar);
       }
 
       bool favorite = user.fijo == 1;
@@ -341,7 +341,7 @@ class _CreateTaskState extends State<CreateTask> {
                       ],
                     ),
                   ),
-                  Expanded(child: Text(user.name, style: textStylePrimaryBoldName,)),
+                  Expanded(child: Text('${user.name} ${user.surname}', style: textStylePrimaryBoldName,)),
                   Container(
                     width: ancho * 0.3,
                     child: Column(
@@ -615,11 +615,12 @@ class _CreateTaskState extends State<CreateTask> {
 
       if(widget.myUserRes.id == null || user.id == widget.myUserRes.id || user.contact == 0) return Container();
 
-      if(!user.name.toLowerCase().contains(controlleBuscador.text.toLowerCase())) return Container();
+      if((!user.name.toLowerCase().contains(controlleBuscador.text.toLowerCase())) &&
+          (!user.surname.toLowerCase().contains(controlleBuscador.text.toLowerCase()))) return Container();
 
       Image avatarUser = Image.network(avatarImage);
       if(user.avatar.isNotEmpty){
-        avatarUser = Image.network('$directorioImage${user.avatar}');
+        avatarUser = Image.network(user.avatar);
       }
 
       bool favorite = user.fijo == 1;
@@ -678,7 +679,7 @@ class _CreateTaskState extends State<CreateTask> {
                       ],
                     ),
                   ),
-                  Expanded(child: Text(user.name, style: textStylePrimaryBold,)),
+                  Expanded(child: Text('${user.name} ${user.surname}', style: textStylePrimaryBold,)),
                   Container(
                     width: ancho * 0.3,
                     child: Column(

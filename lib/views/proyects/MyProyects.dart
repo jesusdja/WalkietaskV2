@@ -306,12 +306,12 @@ class _MyProyectsState extends State<MyProyects> {
     listUsers.forEach((mapUserProject) {
       if(mapUserProject['users']['id'] != myUser.id){
         String avatar = mapUserProject['users']['avatar'];
-        String name = mapUserProject['users']['name'];
+        String name = '${mapUserProject['users']['name']} ${mapUserProject['users']['surname']}';
         String email = mapUserProject['users']['email'];
 
         Image avatarUser = Image.network(avatarImage);
         if(avatar != null){
-          avatarUser = Image.network('$directorioImage$avatar');
+          avatarUser = Image.network(avatar);
         }
 
         users.add(

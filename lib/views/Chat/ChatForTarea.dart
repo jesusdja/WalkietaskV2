@@ -5,7 +5,6 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Chat/ChatMessenger.dart';
@@ -18,15 +17,12 @@ import 'package:walkietaskv2/services/Firebase/Notification/http_notifications.d
 import 'package:walkietaskv2/services/Firebase/chatTareasFirebase.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
-import 'package:walkietaskv2/utils/DialogAlert.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
-import 'package:walkietaskv2/utils/view_image.dart';
-import 'package:walkietaskv2/utils/view_image_attachment.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
 class ChatForTarea extends StatefulWidget {
@@ -255,10 +251,10 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
     if(usuarioResponsable != null){
       if(usuarioResponsable.avatar != null && usuarioResponsable.avatar != ''){
-        imagenUser = Image.network('$directorioImage${usuarioResponsable.avatar}');
+        imagenUser = Image.network(usuarioResponsable.avatar);
       }
       if(usuarioResponsable.name != null && usuarioResponsable.name != ''){
-        nombreUser = '${usuarioResponsable.name}';
+        nombreUser = '${usuarioResponsable.name} ${usuarioResponsable.surname}';
       }
       if(usuarioResponsable.email != null && usuarioResponsable.email != ''){
         correoUSer = '${usuarioResponsable.email}';
@@ -360,7 +356,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
               }
               Usuario userFrom;
               for(int x = 0; x < listUser.length; x++){
-                if(chatTarea.mensajes['$pos']['from'] == listUser[x].id){
+                if(chatTarea.mensajes['$pos']['from'] == listUser[x].id.toString()){
                   userFrom = listUser[x];
                   x = listUser.length;
                 }
@@ -391,7 +387,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
   Widget _cardSMS(Color colorCard, String texto, String dateSrt,bool lateralDer,Usuario userFrom){
     Image imagenAvatar = avatarUser ?? Image.network('$avatarImage');
     if(userFrom != null && userFrom.avatar != null && userFrom.avatar != ''){
-      imagenAvatar = Image.network('$directorioImage${userFrom.avatar}');
+      imagenAvatar = Image.network(userFrom.avatar);
     }
 
     TextStyle style = WalkieTaskStyles().stylePrimary(size: alto * 0.016);

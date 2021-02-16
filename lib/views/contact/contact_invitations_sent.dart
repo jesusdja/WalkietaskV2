@@ -74,7 +74,7 @@ class _InvitationsSentState extends State<InvitationsSent> {
         if(invitation.inv == 0 && userInvited != null){
           Image avatarUser = Image.network(avatarImage);
           if(userInvited.avatar.isNotEmpty){
-            avatarUser = Image.network('$directorioImage${userInvited.avatar}');
+            avatarUser = Image.network(userInvited.avatar);
           }
 
           DateTime date = DateTime.parse(invitation.createdAt);
@@ -82,7 +82,7 @@ class _InvitationsSentState extends State<InvitationsSent> {
           String dia = date.day.toString(); if(dia.length < 2){ dia = '0$mes'; }
           String dateInvited = 'Enviada el $dia-$mes-${date.year}';
 
-          String nameUser = '${userInvited.name}';
+          String nameUser = '${userInvited.name} ${userInvited.surname}';
           if(invitation.external == 1){
             nameUser = invitation.contact;
           }
