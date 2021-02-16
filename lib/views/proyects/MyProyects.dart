@@ -394,9 +394,6 @@ class _MyProyectsState extends State<MyProyects> {
   }
 
   Future<void> _getGuests() async {
-    // setState(() {
-    //   loadGuests = true;
-    // });
     try{
       var response = await connectionHttp.httpGetListGuestsForProjects();
       var value = jsonDecode(response.body);

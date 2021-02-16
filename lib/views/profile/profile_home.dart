@@ -347,7 +347,9 @@ class _ProfileHomeState extends State<ProfileHome> {
               value: true,
               sizeH: alto * 0.025,
               sizeW: ancho * 0.11,
-              onChanged: (bool val) async {},
+              onChanged: (bool val) async {
+                showAlert('Por los momentos esta función se encuentra bloqueada.',WalkieTaskColors.color_E07676);
+              },
               colorBgOff: WalkieTaskColors.color_DD7777,
               colorBgOn: WalkieTaskColors.color_89BD7D,
               sizeCircule: alto * 0.025,
