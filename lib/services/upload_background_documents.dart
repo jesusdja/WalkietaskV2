@@ -140,42 +140,38 @@ Future<void> uploadUpdateUser() async {
   for(int x = 0; x < listDocuments.length; x++){
 
     //url path image |
-    // String data = listDocuments[x];
-    // Map<String,dynamic> jsonBody = {};
-    //
-    // try{
-    //   Map<String,String> result = await subirArchivo(data);
-    //   if(result['subir'] == 'true'){
-    //     String pathUrlAttachment = result['location'];
-    //     jsonBody['avatar'] = pathUrlAttachment;
-    //   }
-    // }catch(e){
-    //   print(e.toString());
-    // }
+    String data = listDocuments[x];
+    Map<String,dynamic> jsonBody = {};
 
-    Map<String,dynamic> jsonBody = {
-      'avatar' : 'https://awswalkietask.s3-us-east-2.amazonaws.com/attached%2F152202112304U24image_cropper_1613406510154.png'
-    };
+    try{
+      Map<String,String> result = await subirArchivo(data);
+      if(result['subir'] == 'true'){
+        String pathUrlAttachment = result['location'];
+        jsonBody['avatar'] = pathUrlAttachment;
+      }
+    }catch(e){
+      print(e.toString());
+    }
 
     try{
       var response = await conexionHttp().httpUpdateUser(jsonBody);
       var value = jsonDecode(response.body);
       if(value['status_code'] == 200){
         //ELIMINAR AUDIO
-        // final file = File(data[0]);
-        // file.openRead();
-        // bool exist = await file.exists();
-        // if(exist){
-        //   await File(data[0]).delete();
-        //   print('SE ELIMINO AVATAR DE USUARIO');
-        // }
-        // //ELIMINAR TAREA DE LISTA
-        // List<String> listDocumentsNoSend = [];
-        // for(int x1 = 0; x1 < listDocuments.length; x1++){
-        //   if(x != x1){ listDocumentsNoSend.add(listDocuments[x]); }
-        // }
-        // await SharedPrefe().setStringListValue('WalListDocument',listDocumentsNoSend);
-        // print('CREADO - ${data[1]}');
+        final file = File(data[0]);
+        file.openRead();
+        bool exist = await file.exists();
+        if(exist){
+          await File(data[0]).delete();
+          print('SE ELIMINO AVATAR DE USUARIO');
+        }
+        //ELIMINAR TAREA DE LISTA
+        List<String> listDocumentsNoSend = [];
+        for(int x1 = 0; x1 < listDocuments.length; x1++){
+          if(x != x1){ listDocumentsNoSend.add(listDocuments[x]); }
+        }
+        await SharedPrefe().setStringListValue('WalListUpdateAvatar',listDocumentsNoSend);
+        print('USUARIO MODIFICADO');
       }else{
         print('NO MODIFICADO');
       }

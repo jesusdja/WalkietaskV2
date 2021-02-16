@@ -10,6 +10,7 @@ import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/DialogAlert.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
+import 'package:walkietaskv2/utils/switch_button.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/value_validators.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
@@ -134,12 +135,11 @@ class _ProfileHomeState extends State<ProfileHome> {
               ),
               SizedBox(height: alto * 0.05,),
               _textTitle('Recibir notificaciones:'),
+              SizedBox(height: alto * 0.02,),
+              columnSwitchRN(),
               SizedBox(height: alto * 0.1,),
-
-              SizedBox(height: alto * 0.1,),
-              _textTitle('Posición de botón de recordatorio:'),
-              SizedBox(height: alto * 0.1,),
-
+              //_textTitle('Posición de botón de recordatorio:'),
+              //SizedBox(height: alto * 0.1,),
               SizedBox(height: alto * 0.1,),
             ],
           ),
@@ -192,7 +192,7 @@ class _ProfileHomeState extends State<ProfileHome> {
         children: [
           Container(
             width: ancho * 0.32,
-            child: Text(title, style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.022, spacing: 0.5),textAlign: TextAlign.right,),
+            child: Text(title, style: WalkieTaskStyles().stylePrimary(size: alto * 0.022, spacing: 0.5),textAlign: TextAlign.right,),
           ),
           SizedBox(width: ancho * 0.02,),
           Expanded(
@@ -316,6 +316,46 @@ class _ProfileHomeState extends State<ProfileHome> {
     setState(() {
       loadSave = false;
     });
+  }
+
+  Widget columnSwitchRN(){
+    return Container(
+      width: ancho,
+      margin: EdgeInsets.symmetric(horizontal: ancho * 0.1),
+      child: Column(
+        children: [
+          receivedNotification('Nuevas tareas'),
+          receivedNotification('Invitación a proyectos'),
+          receivedNotification('Recordatorios diarios'),
+        ],
+      ),
+    );
+  }
+
+  Widget receivedNotification(String title){
+    return Container(
+      width: ancho,
+      margin: EdgeInsets.only(right: ancho * 0.03, top: alto * 0.01, bottom: alto * 0.01),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Text(title, style: WalkieTaskStyles().stylePrimary(color: WalkieTaskColors.color_969696, size: alto * 0.02, fontWeight: FontWeight.bold, spacing: 0.5),),
+          SizedBox(width: ancho * 0.02,),
+          Container(
+            margin: EdgeInsets.only(right: ancho * 0.02),
+            child: CustomSwitchLocal(
+              value: true,
+              sizeH: alto * 0.025,
+              sizeW: ancho * 0.11,
+              onChanged: (bool val) async {},
+              colorBgOff: WalkieTaskColors.color_DD7777,
+              colorBgOn: WalkieTaskColors.color_89BD7D,
+              sizeCircule: alto * 0.025,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
 }

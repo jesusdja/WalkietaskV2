@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
-import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/services/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/gallery_camera_dialog.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
-import 'package:walkietaskv2/utils/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 
