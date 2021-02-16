@@ -9,9 +9,9 @@ String versionApp = '1.2.8';
 
 Future<Database> getDatabaseInstance() async {
   Directory directory = await getApplicationDocumentsDirectory();
-  String path = join(directory.path, "unity13.db");
+  String path = join(directory.path, "unity14.db");
   print(path);
-  return await openDatabase(path, version: 13,
+  return await openDatabase(path, version: 14,
       onCreate: (Database db, int version) async {
         await db.execute(
             "CREATE TABLE Usuarios("
@@ -19,6 +19,7 @@ Future<Database> getDatabaseInstance() async {
                 "username TEXT, "
                 "email TEXT, "
                 "name TEXT, "
+                "surname TEXT, "
                 "address TEXT, "
                 "avatar TEXT, "
                 "create_cases INT, "

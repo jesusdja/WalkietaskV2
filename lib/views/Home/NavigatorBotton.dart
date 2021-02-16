@@ -633,11 +633,16 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
             }),
             _divider,
             _textDrawer('Mi Cuenta', () async {
-              await Navigator.push(context, new MaterialPageRoute(
+              var res = await Navigator.push(context, new MaterialPageRoute(
                   builder: (BuildContext context) => ProfileHome(
                     myUser: myUser,
                   )));
               getPhoto();
+              if(res){
+                myUser = await updateData.getMyUser();
+                setState(() {});
+                updateData.actualizarListaUsuarios(blocUser, blocConection);
+              }
             }),
             _divider,
             _textDrawer('Acerca de', (){}),

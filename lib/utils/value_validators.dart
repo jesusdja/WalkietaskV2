@@ -57,7 +57,7 @@ Map<String, dynamic> validatePassword(String input) {
     return result;
   } else if (!RegExp(oneLowerCase).hasMatch(input)) {
     result['valid'] = false;
-    result['sms'] = 'Debe contener al menor una minúscula';
+    result['sms'] = 'Debe contener al menos una minúscula';
     return result;
   } else if (!RegExp(oneUpperCase).hasMatch(input)) {
     result['valid'] = false;

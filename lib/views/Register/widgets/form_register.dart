@@ -445,7 +445,8 @@ class _FormRegisterState extends State<FormRegister> {
               conexionHttp connectionHttp = new conexionHttp();
               try{
                 Map<String,dynamic> body = {
-                  'name' : '$name $surname',
+                  'name' : name,
+                  'surname' : surname,
                   'username' : user,
                   'email' : email,
                   'password' : pass,

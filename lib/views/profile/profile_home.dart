@@ -47,6 +47,7 @@ class _ProfileHomeState extends State<ProfileHome> {
     super.initState();
     myUser = widget.myUser;
     controllerName.text = myUser.name;
+    controllerLastName.text = myUser.surname;
     controllerEmail.text = myUser.email;
 
     mapData = {
@@ -94,10 +95,10 @@ class _ProfileHomeState extends State<ProfileHome> {
                 bool res = false;
                 res = await alertDeleteElement(context, '¿Descartar cambios realizados?', button1: 'Descartar',);
                 if(res != null && res){
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(false);
                 }
               }else{
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(false);
               }
             },
           ),
@@ -226,6 +227,7 @@ class _ProfileHomeState extends State<ProfileHome> {
     setState(() {
       loadSave = true;
     });
+    bool notError = true;
 
     Map<String,dynamic> body = {
       'email' : myUser.email,
@@ -235,14 +237,16 @@ class _ProfileHomeState extends State<ProfileHome> {
         body['name'] = controllerName.text;
       }else{
         showAlert('El nombre no puede estar vacio',WalkieTaskColors.color_E07676);
+        notError = false;
       }
     }
 
     if(mapData[1]){
       if(controllerLastName.text.isNotEmpty){
-        body['name'] = controllerLastName.text;
+        body['surname'] = controllerLastName.text;
       }else{
         showAlert('El apellido no puede estar vacio',WalkieTaskColors.color_E07676);
+        notError = false;
       }
     }
 
@@ -252,41 +256,57 @@ class _ProfileHomeState extends State<ProfileHome> {
           body['email'] = controllerEmail.text;
         }else{
           showAlert(validateEmailAddress(controllerEmail.text)['sms'],WalkieTaskColors.color_E07676);
+          notError = false;
         }
       }else{
         showAlert('El correo no puede estar vacio',WalkieTaskColors.color_E07676);
+        notError = false;
       }
     }
 
     if(mapData[3] && !mapData[4]){
       showAlert('Debe agregar una nueva clave',WalkieTaskColors.color_E07676);
+      notError = false;
     }
 
     if(!mapData[3] && mapData[4]){
       showAlert('Debe agregar clave anterior',WalkieTaskColors.color_E07676);
+      notError = false;
     }
 
     if(mapData[3] && mapData[4]){
       if(controllerPass.text.isNotEmpty){
         if(controllerPass2.text.isNotEmpty){
-          body['old_password'] = controllerPass.text;
-          body['password'] = controllerPass2.text;
+          if(validatePassword(controllerPass2.text)['valid']){
+            body['old_password'] = controllerPass.text;
+            body['password'] = controllerPass2.text;
+          }else{
+            showAlert(validatePassword(controllerPass2.text)['sms'],WalkieTaskColors.color_E07676);
+            notError = false;
+          }
         }else{
           showAlert('Nueva clave no puede estar vacio',WalkieTaskColors.color_E07676);
+          notError = false;
         }
       }else{
         showAlert('Clave anterior no puede estar vacio',WalkieTaskColors.color_E07676);
+        notError = false;
       }
     }
 
-    if(body.length > 1 || validateEmailAddress(controllerEmail.text)['valid']){
+    if((body.length > 1 || validateEmailAddress(controllerEmail.text)['valid']) && notError){
       try{
         var response = await conexionHttp().httpUpdateUser(body);
         var value = jsonDecode(response.body);
         if(response.statusCode == 200){
-
+          Navigator.of(context).pop(true);
+          showAlert('Usuario editado con exito',WalkieTaskColors.color_89BD7D);
         }else{
-          showAlert('Error al enviar los datos.',WalkieTaskColors.color_E07676);
+          String error = 'Error al enviar los datos.';
+          if(value['message'] != null){
+            error = value['message'];
+          }
+          showAlert(error,WalkieTaskColors.color_E07676);
         }
       }catch(e){
         print(e.toString());

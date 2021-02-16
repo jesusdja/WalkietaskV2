@@ -7,6 +7,7 @@ class Usuario extends Equatable {
   String username;
   String email;
   String name;
+  String surname;
   String address;
   String avatar;
   int createCases;
@@ -26,6 +27,7 @@ class Usuario extends Equatable {
         this.username = '',
         this.email = '',
         this.name = '',
+        this.surname = '',
         this.address = '',
         this.avatar = '',
         this.createCases = 0,
@@ -46,6 +48,7 @@ class Usuario extends Equatable {
     username = json['username'] ?? '';
     email = json['email'] ?? '';
     name = json['name'] ?? '';
+    surname = json['surname'] ?? '';
     address = json['address'] ?? '';
     avatar = json['avatar'] ?? '';
     createCases = json['create_cases'] ?? 0;
@@ -67,6 +70,7 @@ class Usuario extends Equatable {
     data['username'] = this.username;
     data['email'] = this.email;
     data['name'] = this.name;
+    data['surname'] = this.surname;
     data['address'] = this.address;
     data['avatar'] = this.avatar;
     data['create_cases'] = this.createCases;
@@ -87,6 +91,7 @@ class Usuario extends Equatable {
         username = snapshot['username'] ?? '',
         email = snapshot['email'] ?? '',
         name = snapshot['name'] ?? '',
+        surname = snapshot['surname'] ?? '',
         address = snapshot['address'] ?? '',
         avatar = snapshot['avatar'] ?? '',
         createCases = snapshot['create_cases'] ?? 0,
@@ -107,6 +112,7 @@ class Usuario extends Equatable {
     this.username = obj['username'];
     this.email = obj['email'];
     this.name = obj['name'];
+    this.surname = obj['surname'];
     this.address = obj['address'];
     this.avatar = obj['avatar'];
     this.createCases = obj['create_cases'];
@@ -127,6 +133,7 @@ class Usuario extends Equatable {
     'username' :      username== null ? '' :username,
     'email' :         email== null ? '' :email,
     'name' :          name== null ? '' :name,
+    'surname' :       surname == null ? '' : surname,
     'address' :       address== null ? '' :address,
     'avatar' :        avatar== null ? '' :avatar,
     'create_cases' :  createCases== null ? 0 :createCases,
@@ -148,6 +155,7 @@ class Usuario extends Equatable {
     username ,
     email ,
     name ,
+    surname,
     address ,
     avatar ,
     createCases ,
