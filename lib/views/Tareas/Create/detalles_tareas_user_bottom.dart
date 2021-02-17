@@ -90,14 +90,14 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
     alto = MediaQuery.of(context).size.height;
     ancho = MediaQuery.of(context).size.width;
 
-    textStyleBlue = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.024, color: WalkieTaskColors.primary, spacing: 1, fontWeight: FontWeight.bold);
+    textStyleBlue = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022, color: WalkieTaskColors.primary, spacing: 1, fontWeight: FontWeight.bold);
     textStyleBlueLitle = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.016, color: WalkieTaskColors.primary, spacing: 0.5, fontWeight: FontWeight.bold);
     textStyleRed = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.024, color: WalkieTaskColors.color_DD7777, spacing: 1, fontWeight: FontWeight.bold);
     textStyleRedLitle = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.016, color: WalkieTaskColors.color_DD7777, spacing: 0.5, fontWeight: FontWeight.bold);
 
     return Container(
       color: Colors.grey[100],
-      padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01, left: ancho * 0.02, right: ancho * 0.04),
+      padding: EdgeInsets.only(left: ancho * 0.02),
       width: ancho,
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -135,22 +135,28 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
         }
       },
       child: Container(
-        margin: EdgeInsets.only(left: ancho * 0.02, right: ancho * 0.04),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              height: alto * 0.03,
-              width: alto * 0.025,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: ViewImage().assetsImage("assets/image/Icon_text.png", color: WalkieTaskColors.primary).image,
-                  fit: BoxFit.fitHeight,
+        height: alto * 0.08,
+        color: Colors.transparent,
+        child: Center(
+          child: Container(
+            margin: EdgeInsets.only(left: ancho * 0.02, right: ancho * 0.04),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  height: alto * 0.03,
+                  width: alto * 0.025,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: ViewImage().assetsImage("assets/image/Icon_text.png", color: WalkieTaskColors.primary).image,
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ),
                 ),
-              ),
+                Text('Texto', style: textStyleBlueLitle,)
+              ],
             ),
-            Text('Texto', style: textStyleBlueLitle,)
-          ],
+          ),
         ),
       ),
     );
@@ -168,32 +174,39 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
       onHorizontalDragEnd: (d) => actionGrabando(),
       onVerticalDragEnd: (d) => actionGrabando(),
       child: Container(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            grabando ?
-            Container(
-              height: alto * 0.03,
-              width: alto * 0.025,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: ViewImage().assetsImage("assets/image/micro_red.png",).image,
-                  fit: BoxFit.fitHeight,
+        height: alto * 0.08,
+        color: Colors.transparent,
+        child: Center(
+          child: Container(
+            margin: EdgeInsets.only(left: ancho * 0.02, right: ancho * 0.04,),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                grabando ?
+                Container(
+                  height: alto * 0.03,
+                  width: alto * 0.025,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: ViewImage().assetsImage("assets/image/micro_red.png",).image,
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ),
+                ) :
+                Container(
+                  height: alto * 0.03,
+                  width: alto * 0.025,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: ViewImage().assetsImage("assets/image/Icon_microphone_blue.png",).image,
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ),
                 ),
-              ),
-            ) :
-            Container(
-              height: alto * 0.03,
-              width: alto * 0.025,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: ViewImage().assetsImage("assets/image/Icon_microphone_blue.png",).image,
-                  fit: BoxFit.fitHeight,
-                ),
-              ),
+                Text('Audio', style: grabando ? textStyleRedLitle : textStyleBlueLitle,)
+              ],
             ),
-            Text('Audio', style: grabando ? textStyleRedLitle : textStyleBlueLitle,)
-          ],
+          ),
         ),
       ),
     );
@@ -283,6 +296,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
 
   Future<void> _contMinute() async {
     if(grabando){
+      await Future.delayed(Duration(seconds: 1));
       segundoEspera++;
       if(segundoEspera > 59){
         mostrarMinutosEspera++;
@@ -298,7 +312,6 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
         segundos = '0$segundos';
       }
       setState((){});
-      await Future.delayed(Duration(seconds: 1));
       _contMinute();
     }
   }
