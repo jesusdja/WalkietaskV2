@@ -802,6 +802,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
 
   Future<void> _contMinutePause() async {
     if(reproduciendo){
+      await Future.delayed(Duration(seconds: 1));
       segundoEspera++;
       if(segundoEspera > 59){
         mostrarMinutosEspera++;
@@ -819,7 +820,6 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
       if(mounted){
         setState((){});
       }
-      await Future.delayed(Duration(seconds: 1));
       _contMinutePause();
     }
   }
@@ -846,69 +846,81 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
   }
 
   void _sendTask() async {
-    enviandoTarea = true;
-    setState(() {});
-    try{
-      if(!isAudio && titleTask.isEmpty){
-        showAlert('Las tareas de texto deben llevar título.',WalkieTaskColors.color_E07676);
-      }else{
-        //VERIFICAR SI SE SELECCIONO UN INTEGRANTE
-        int userSend = user.id;
-        if(userSend != null){
-          //VERIFICAR DATOS EXTRAS
-          List<dynamic> listShared2 = await SharedPrefe().getValue('WalListDocument');
-          listShared2 = listShared2 ?? [];
-          List<String> listShared = [];
-          listShared = listShared2.map((e) => e.toString()).toList();
-          String shared = '';
-          //id integrante | titulo | path audio | id caso | descripcion | fecha | path adjunto
-          shared = '$userSend|';
-          if(titleTask != null && titleTask.isNotEmpty){
-            shared = '$shared$titleTask|';
-          }else{ shared = '$shared|';}
-          if(audioPath != null && isAudio){
-            shared = '$shared$audioPath|';
-          }else{ shared = '$shared|';}
-          mapcasoSelect.forEach((key, value) {
-            if(value){
-              shared = '$shared$key|';
-            }
-          });
-          if(mapcasoSelect.length == 0){ shared = '$shared|';}
-          if(descriptionTask != null && descriptionTask.isNotEmpty){
-            shared = '$shared$descriptionTask|';
-          }else{ shared = '$shared|';}
-          if(fechaTask != null){
-            shared = '$shared$fechaTask|';
-          }else{ shared = '$shared|';}
-          if(_pathAdjunto != null && _pathAdjunto.isNotEmpty){
-            shared = '$shared$_pathAdjunto|';
-          }else{ shared = '$shared|';}
-          listShared.add(shared);
-          bool errorAudio = true;
-          if(isAudio){
-            bool exit = audioPath != null ? await File(audioPath).exists() : false;
-            print('EL AUDIO = $exit');
-            if(!exit){
-              errorAudio = false;
-              showAlert('Problemas para cargar el audio. Intente de nuevo.',WalkieTaskColors.color_E07676);
-            }
-          }
-          if(errorAudio){
-            //ENVIAR A SEGUNDO PLANO
-            await SharedPrefe().setStringListValue('WalListDocument',listShared);
-            uploadBackDocuments(widget.blocIndicatorProgress);
-            Navigator.of(context).pop(true);
-            showAlert('Tarea enviada',WalkieTaskColors.color_89BD7D);
-          }
-        }else{
-          showAlert('Seleccionar integrante.',WalkieTaskColors.color_E07676);
-        }
-      }
-    }catch(e){
-      print(e.toString());
-      showAlert('Error al enviar datos.',WalkieTaskColors.color_E07676);
+
+    if(audioPlayer.state == AudioPlayerState.PLAYING || audioPlayer.state == AudioPlayerState.PAUSED){
+      audioPlayer.stop();
+
+      setState(() {
+        pause = false;
+        reproduciendo = false;
+        pausado = false;
+        _durationPause = Duration(seconds: 0);
+      });
     }
+
+    // enviandoTarea = true;
+    // setState(() {});
+    // try{
+    //   if(!isAudio && titleTask.isEmpty){
+    //     showAlert('Las tareas de texto deben llevar título.',WalkieTaskColors.color_E07676);
+    //   }else{
+    //     //VERIFICAR SI SE SELECCIONO UN INTEGRANTE
+    //     int userSend = user.id;
+    //     if(userSend != null){
+    //       //VERIFICAR DATOS EXTRAS
+    //       List<dynamic> listShared2 = await SharedPrefe().getValue('WalListDocument');
+    //       listShared2 = listShared2 ?? [];
+    //       List<String> listShared = [];
+    //       listShared = listShared2.map((e) => e.toString()).toList();
+    //       String shared = '';
+    //       //id integrante | titulo | path audio | id caso | descripcion | fecha | path adjunto
+    //       shared = '$userSend|';
+    //       if(titleTask != null && titleTask.isNotEmpty){
+    //         shared = '$shared$titleTask|';
+    //       }else{ shared = '$shared|';}
+    //       if(audioPath != null && isAudio){
+    //         shared = '$shared$audioPath|';
+    //       }else{ shared = '$shared|';}
+    //       mapcasoSelect.forEach((key, value) {
+    //         if(value){
+    //           shared = '$shared$key|';
+    //         }
+    //       });
+    //       if(mapcasoSelect.length == 0){ shared = '$shared|';}
+    //       if(descriptionTask != null && descriptionTask.isNotEmpty){
+    //         shared = '$shared$descriptionTask|';
+    //       }else{ shared = '$shared|';}
+    //       if(fechaTask != null){
+    //         shared = '$shared$fechaTask|';
+    //       }else{ shared = '$shared|';}
+    //       if(_pathAdjunto != null && _pathAdjunto.isNotEmpty){
+    //         shared = '$shared$_pathAdjunto|';
+    //       }else{ shared = '$shared|';}
+    //       listShared.add(shared);
+    //       bool errorAudio = true;
+    //       if(isAudio){
+    //         bool exit = audioPath != null ? await File(audioPath).exists() : false;
+    //         print('EL AUDIO = $exit');
+    //         if(!exit){
+    //           errorAudio = false;
+    //           showAlert('Problemas para cargar el audio. Intente de nuevo.',WalkieTaskColors.color_E07676);
+    //         }
+    //       }
+    //       if(errorAudio){
+    //         //ENVIAR A SEGUNDO PLANO
+    //         await SharedPrefe().setStringListValue('WalListDocument',listShared);
+    //         uploadBackDocuments(widget.blocIndicatorProgress);
+    //         Navigator.of(context).pop(true);
+    //         showAlert('Tarea enviada',WalkieTaskColors.color_89BD7D);
+    //       }
+    //     }else{
+    //       showAlert('Seleccionar integrante.',WalkieTaskColors.color_E07676);
+    //     }
+    //   }
+    // }catch(e){
+    //   print(e.toString());
+    //   showAlert('Error al enviar datos.',WalkieTaskColors.color_E07676);
+    // }
     enviandoTarea = false;
     setState(() {});
   }
