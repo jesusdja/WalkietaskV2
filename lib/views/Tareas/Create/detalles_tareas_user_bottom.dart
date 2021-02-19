@@ -118,6 +118,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
   Widget _buttonText(){
     return InkWell(
       onTap: () async {
+        widget.blocTab.inList.add(false);
         var result = await Navigator.push(context, new MaterialPageRoute(
             builder: (BuildContext context) =>
             new NewTaskForUser(
@@ -169,6 +170,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
         setState(() {});
         _grabarSound();
         _contMinute();
+        widget.blocTab.inList.add(false);
       },
       onTapUp: (va)=> actionGrabando(),
       onHorizontalDragEnd: (d) => actionGrabando(),

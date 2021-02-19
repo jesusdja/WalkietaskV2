@@ -816,7 +816,9 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
       if(segundoEspera < 10){
         segundos = '0$segundos';
       }
-      setState((){});
+      if(mounted){
+        setState((){});
+      }
       await Future.delayed(Duration(seconds: 1));
       _contMinutePause();
     }
@@ -945,6 +947,8 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
       print(e.toString());
       showAlert('Error al actualizar lista de proyectos, verificar conexión e intentar nuevamente.', WalkieTaskColors.color_E07676);
     }
-    setState(() {});
+    if(mounted){
+      setState(() {});
+    }
   }
 }

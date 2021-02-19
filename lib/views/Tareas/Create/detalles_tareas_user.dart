@@ -67,6 +67,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
   TextStyle textStylePrimaryLitle;
   TextStyle textStylePrimaryLitleRed;
   TextStyle textStylePrimaryTextCenter;
+  TextStyle textStylePrimaryBlueBold;
 
   bool isPersonal = false;
   bool viewIndicatorProgress = false;
@@ -143,6 +144,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
 
     textStylePrimary = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022, color: WalkieTaskColors.black, spacing: 1);
     textStylePrimaryBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.022, color: WalkieTaskColors.black, spacing: 0.5);
+    textStylePrimaryBlueBold = WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.022, color: WalkieTaskColors.primary, spacing: 0.5);
     textStyleBlue = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.024, color: WalkieTaskColors.primary, spacing: 1, fontWeight: FontWeight.bold);
     textStyleBlueLitle = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.016, color: WalkieTaskColors.primary, spacing: 0.5, fontWeight: FontWeight.bold);
     textStylePrimaryLitle = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: WalkieTaskColors.black, spacing: 1);
@@ -173,7 +175,41 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
 
   Widget _body(){
 
-    double h2 = alto < 600 ? alto * 0.72 : alto * 0.74;
+    int cantTaskSend = 0;
+    int cantTaskReceived = 0;
+    List<Tarea> listTaskFinaliced = [];
+
+    if(!isPersonal){
+      listSend.forEach((task) {
+        if(task.finalized ==1 ){
+          listTaskFinaliced.add(task);
+        }else{
+          cantTaskSend++;
+        }
+      });
+    }
+
+    listRecived.forEach((task) {
+      if(task.finalized ==1 ){
+        listTaskFinaliced.add(task);
+      }else{
+        cantTaskReceived++;
+      }
+    });
+
+    double addPx = listTaskFinaliced.isEmpty ? 0.2 : 0;
+    double addPxEntity = 0;
+    if((tagReceived && listRecived.isEmpty) || isPersonal && ((listRecived.length - listTaskFinaliced.length) == 0)){
+      addPxEntity = addPx + 0.2;
+    }
+    if(!tagReceived && listSend.isEmpty){
+      addPxEntity = addPx + 0.2;
+    }
+
+    double heightTop = alto < 600 ? alto * (0.36 + addPx - addPxEntity) : alto * (0.38+ addPx - addPxEntity);
+    //double heightTopPersonal = alto < 600 ? alto * (0.36 + addPx) : alto * (0.38+ addPx);
+
+    double heightBottom = alto < 600 ? alto * (0.3 - addPx) : alto * (0.32 - addPx);
 
     return Container(
       width: ancho,
@@ -187,14 +223,14 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
               width: ancho,
               child: Row(
                 children: [
-                  tag(0, containReceived),
-                  tag(1, containSend),
+                  tag(0, containReceived, cantTaskReceived),
+                  tag(1, containSend, cantTaskSend),
                 ],
               ),
             ),
             isPersonal ? Container() :
             Container(
-              height: h2,
+              height: heightTop,
               width: ancho,
               color: WalkieTaskColors.white,
               child: tagReceived ? _listTaskRecived() : _listTaskSend(),
@@ -211,21 +247,37 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
             isPersonal ? Container(
               width: ancho,
               color: WalkieTaskColors.white,
-              height: h2,
+              height: heightTop,
               //color: Colors.grey,
-              child: _listTaskPersonal(h2),
+              child: _listTaskPersonal(heightTop),
             ) : Container(),
+            Container(
+              width: ancho,
+              height: alto * 0.06,
+              color: WalkieTaskColors.white,
+              child: Container(
+                margin: EdgeInsets.only(top: alto * 0.03, left: ancho * 0.03),
+                child: Text('Terminadas', style: textStylePrimaryBlueBold,),
+              ),
+            ),
+
+            Container(
+              height: heightBottom,
+              width: ancho,
+              color: WalkieTaskColors.white,
+              child: _listTaskFinalized(listTaskFinaliced),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget tag(int type, bool viewCircule ){
-    String name = 'Recibidas';
+  Widget tag(int type, bool viewCircule, int cant ){
+    String name = cant == 0 ? 'Recibidas' : 'Recibidas ($cant)';
     bool activo = tagReceived;
      if(type == 1){
-      name = 'Enviadas';
+      name = cant == 0 ? 'Enviadas' : 'Enviadas ($cant)';
       activo = !tagReceived;
       viewCircule = containSend;
     }
@@ -419,7 +471,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       width: ancho,
       child: (cont < 1 || listRecived.isEmpty) ?
       Container(
-        margin: EdgeInsets.only(top: alto * 0.15),
+        margin: EdgeInsets.only(top: alto * 0.1),
         width: ancho,
         child: Text('No has recibido tareas de ${user.name}', style: textStylePrimaryTextCenter, textAlign: TextAlign.center,),
       ) :
@@ -586,7 +638,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       width: ancho,
       child: (cont < 1 || listSend.isEmpty) ?
       Container(
-        margin: EdgeInsets.only(top: alto * 0.15),
+        margin: EdgeInsets.only(top: alto * 0.1),
         width: ancho,
         child: Text('No has enviado tareas a ${user.name}', style: textStylePrimaryTextCenter, textAlign: TextAlign.center,),
       ) :
@@ -713,13 +765,171 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       width: ancho,
       child: data.isEmpty ?
       Container(
-        margin: EdgeInsets.only(top: alto * 0.02),
+        margin: EdgeInsets.only(top: alto * 0.08),
         width: ancho,
         child: Text('Sin recordatorio personal', style: textStylePrimaryTextCenter, textAlign: TextAlign.center,),
       ) :
       Container(
         width: ancho,
         height: he,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: data,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _listTaskFinalized(List<Tarea> listTask){
+    List<Widget> data = [
+      SizedBox(height: alto * 0.02,)
+    ];
+    listTask.forEach((task) {
+      String daysLeft = getDayDiff(task.deadline);
+
+      String nameCase = '(Sin proyecto asignado)';
+      if(task.project_id != null && task.project_id != 0 && mapCasos[task.project_id] != null){
+        nameCase = mapCasos[task.project_id].name;
+      }
+
+      bool isNew = false;
+      int cantChat = 0;
+      listViewTaskNew.forEach((element) {
+        if(element == task.id.toString()){
+          isNew = true;
+        }
+      });
+      listViewTaskNewChat.forEach((element) {
+        if(element == task.id.toString()){
+          isNew = true;
+          cantChat++;
+        }
+      });
+
+      double radiusChat = 0.012;
+      if(cantChat >= 10 && cantChat < 100){radiusChat = 0.014; }
+      if(cantChat > 100){radiusChat = 0.018; }
+
+      data.add(
+          IntrinsicHeight(
+            child: Container(
+              key: ValueKey("value${task.id}"),
+              color: Colors.white,
+              child: Slidable(
+                actionPane: SlidableDrawerActionPane(),
+                actionExtentRatio: 0.25,
+                child: InkWell(
+                  onTap: () => clickTarea(task, false),
+                  child: Container(
+                    width: ancho,
+                    child: Row(
+                      children: [
+                        task.working == 1 ? Container(
+                          width: ancho * 0.015,
+                          color: WalkieTaskColors.color_89BD7D,
+                        ) : Container(width: ancho * 0.015,),
+                        Container(
+                          width: ancho * 0.06,
+                          padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
+                          child: Column(
+                            children: [
+                              daysLeft.contains('-') ?
+                              Container(
+                                padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                                height: alto * 0.02,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ) : Container(),
+                              task.is_priority == 1 ?
+                              Container(
+                                margin: EdgeInsets.only(right: ancho * 0.02),
+                                child: Icon(Icons.star,color: WalkieTaskColors.yellow, size: alto * 0.03,),
+                              ) : Container(),
+
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue : isNew ? textStylePrimaryBold : textStylePrimary),
+                                Text(nameCase, style: textStylePrimaryLitle,)
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
+                          width: ancho * 0.2,
+                          margin: EdgeInsets.only(right: ancho * 0.02),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Container(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    cantChat != 0 ? Container(
+                                      margin: EdgeInsets.only(right: ancho * 0.02),
+                                      child: CircleAvatar(
+                                        backgroundColor: WalkieTaskColors.primary,
+                                        // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
+                                        radius: alto * radiusChat,
+                                        child: Text('$cantChat',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
+                                      ),
+                                    ) : Container(),
+                                    daysLeft.isEmpty ? Container() : Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
+                                  ],
+                                ),
+                              ),
+                              task.url_audio.isNotEmpty ?
+                              SoundTask(
+                                alto: alto * 0.03,
+                                colorStop: WalkieTaskColors.color_E07676,
+                                path: task.url_audio,
+                                idTask: task.id,
+                                page: bottonSelect.opcion2,
+                                blocAudioChangePage: widget.blocAudioChangePage,
+                              ) : Container(),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                actions: <Widget>[
+                  _buttonSliderAction('RECUPERAR',Icon(Icons.archive, color: WalkieTaskColors.white,size: alto * 0.04,),colorSliderTrabajando,WalkieTaskColors.white,5,task, false),
+                ],
+                secondaryActions: <Widget>[
+                  _buttonSliderAction('ELIMINAR',Icon(Icons.clear ,color: WalkieTaskColors.white,size: alto * 0.04,),WalkieTaskColors.color_DD7777, WalkieTaskColors.white,6,task, false),
+                ],
+              ),
+            ),
+          )
+      );
+      data.add(Divider());
+    });
+
+    return Container(
+      width: ancho,
+      child: listTask.isEmpty ?
+      Container(
+        margin: EdgeInsets.only(top: alto * 0.03),
+        width: ancho,
+        child: Text('No hay tareas finalizadas', style: textStylePrimaryTextCenter, textAlign: TextAlign.center,),
+      ) :
+      Container(
+        width: ancho,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.max,
@@ -1128,6 +1338,12 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
             showAlert('La tarea debe estar iniciada para finalizarla.',WalkieTaskColors.color_E07676);
           }
         }
+        if(accion == 5){
+          showAlert('Tarea recuperada',WalkieTaskColors.color_89BD7D);
+        }
+        if(accion == 6){
+          showAlert('Tarea eliminada',WalkieTaskColors.color_89BD7D);
+        }
       },
     );
   }
@@ -1140,6 +1356,8 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
           setState(() {
             tagReceived = false;
           });
+        }else{
+          widget.blocAudioChangePage.inList.add({'page' : bottonSelect.opcion1});
         }
       });
     } catch (e) {}

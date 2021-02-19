@@ -167,21 +167,21 @@ class UpdateData{
         }
       }
 
-      List<Tarea> listRecibida = await DatabaseProvider.db.getAllRecevidTask();
-      for(int x = 0; x < listRecibida.length; x++){
-        bool existTask = false;
-        for(int xx = 0; xx < tareas.length; xx++){
-          if(listRecibida[x].id == tareas[xx]['id']){
-            existTask = true;
-          }
-        }
-        if(!existTask){
-          entre = true;
-          Tarea taskUpdate = listRecibida[x];
-          taskUpdate.finalized = 1;
-          await DatabaseProvider.db.deleteTaskId(taskUpdate.id);
-        }
-      }
+      // List<Tarea> listRecibida = await DatabaseProvider.db.getAllRecevidTask();
+      // for(int x = 0; x < listRecibida.length; x++){
+      //   bool existTask = false;
+      //   for(int xx = 0; xx < tareas.length; xx++){
+      //     if(listRecibida[x].id == tareas[xx]['id']){
+      //       existTask = true;
+      //     }
+      //   }
+      //   if(!existTask){
+      //     entre = true;
+      //     Tarea taskUpdate = listRecibida[x];
+      //     taskUpdate.finalized = 1;
+      //     await DatabaseProvider.db.deleteTaskId(taskUpdate.id);
+      //   }
+      // }
 
       if(entre){
         blocTaskReceived.inList.add(true);
@@ -229,21 +229,21 @@ class UpdateData{
         }
       }
 
-      List<Tarea> listEnviados = await DatabaseProvider.db.getAllSendTask();
-      for(int x = 0; x < listEnviados.length; x++){
-        bool existTask = false;
-        for(int xx = 0; xx < tareas.length; xx++){
-          if(listEnviados[x].id == tareas[xx]['id']){
-            existTask = true;
-          }
-        }
-        if(!existTask){
-          entre = true;
-          Tarea taskUpdate = listEnviados[x];
-          taskUpdate.finalized = 1;
-          await DatabaseProvider.db.deleteTaskId(taskUpdate.id);
-        }
-      }
+      // List<Tarea> listEnviados = await DatabaseProvider.db.getAllSendTask();
+      // for(int x = 0; x < listEnviados.length; x++){
+      //   bool existTask = false;
+      //   for(int xx = 0; xx < tareas.length; xx++){
+      //     if(listEnviados[x].id == tareas[xx]['id']){
+      //       existTask = true;
+      //     }
+      //   }
+      //   if(!existTask){
+      //     entre = true;
+      //     Tarea taskUpdate = listEnviados[x];
+      //     taskUpdate.finalized = 1;
+      //     await DatabaseProvider.db.deleteTaskId(taskUpdate.id);
+      //   }
+      // }
 
       if(entre){
         blocTaskSend.inList.add(true);

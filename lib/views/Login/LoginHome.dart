@@ -294,7 +294,7 @@ class _LoginHomeState extends State<LoginHome> {
             await PermisoPhotos();
 
             try{
-              AuthService auth = provider.Provider.of<AuthService>(context);
+              AuthService auth = provider.Provider.of<AuthService>(context,listen: false);
               auth.init();
             }catch(ex){
               print(ex);
