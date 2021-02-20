@@ -24,6 +24,7 @@ import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
+import 'package:walkietaskv2/utils/download_file.dart';
 
 class ChatForTarea extends StatefulWidget {
 
@@ -75,7 +76,6 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     blocTaskSend = widget.blocTaskSend;
 
@@ -749,16 +749,12 @@ class _ChatForTareaState extends State<ChatForTarea> {
                       )),
                       onTap: () async {
                         if(!viewImage){
-                          try{
-                            if (await canLaunch(tarea.url_attachment)) {
-                              await launch(tarea.url_attachment);
-                            } else {
-                              throw 'Could not launch ${tarea.url_attachment}';
-                            }
-                          }catch(e){
-                            print(e.toString());
-                          }
-                        }else{
+                          downloadFile(
+                            url: tarea.url_attachment,
+                            idMyUser: idMyUser,
+                            contextHome: context
+                          );
+                        }else {
                           _one = -alto;
                           _oneFixed = -alto;
                           _top = true;
@@ -1171,11 +1167,11 @@ class _ChatForTareaState extends State<ChatForTarea> {
                 child: Icon(Icons.download_sharp, color: WalkieTaskColors.white,size: alto * 0.05,),
                 onTap: () async{
                   try{
-                    if (await canLaunch(tarea.url_attachment)) {
-                      await launch(tarea.url_attachment);
-                    } else {
-                      throw 'Could not launch ${tarea.url_attachment}';
-                    }
+                    downloadFile(
+                        url: tarea.url_attachment,
+                        idMyUser: idMyUser,
+                        contextHome: context
+                    );
                   }catch(e){
                     print(e.toString());
                     showAlert('Error al descargar imagen, verifique su conexión.',WalkieTaskColors.color_89BD7D);

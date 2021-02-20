@@ -3,4 +3,13 @@
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="name" translatable="false">Chats</string>
     <string name="descripcion" translatable="false">Chat notifications</string>
+
+    <string name="flutter_downloader_notification_started">started</string>
+    <string name="flutter_downloader_notification_in_progress">in progress</string>
+    <string name="flutter_downloader_notification_canceled">canceled</string>
+    <string name="flutter_downloader_notification_failed">failed</string>
+    <string name="flutter_downloader_notification_complete">Completado</string>
+    <string name="flutter_downloader_notification_paused">paused</string>
+    <string name="flutter_downloader_notification_channel_name">Downloader</string>
+    <string name="flutter_downloader_notification_channel_description">Display download progress</string>
 </resources>
