@@ -389,7 +389,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           child: Row(
             children: <Widget>[
               Expanded(
-                child: navigatorBottonContenido(bottonSelect.opcion1,'','Tareas','Tarea',false),
+                child: navigatorBottonContenido(bottonSelect.opcion1,'','Tareas','Inicio',false),
               ),
               Expanded(
                 child: navigatorBottonContenido(bottonSelect.opcion2,'-1','Tareas recibidas', 'Recibidas',notiRecived),

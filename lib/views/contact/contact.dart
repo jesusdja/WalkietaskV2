@@ -219,7 +219,7 @@ class _ContactsState extends State<Contacts> {
                 setState(() {});
 
                 bool res = false;
-                res = await alertDeleteElement(context,'¿Estas segudo que deseas eliminar tu contacto ${user.name} ${user.surname}');
+                res = await alertDeleteElement(context,'¿Estas seguro que deseas eliminar tu contacto ${user.name} ${user.surname}?');
                 if(res != null && res){
                   try{
                     var response = await connectionHttp.httpDeleteContact(user.id);

@@ -372,7 +372,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                 String h = dateS.hour.toString().length > 1 ? dateS.hour.toString() : '0${dateS.hour}';
                 String min = dateS.minute.toString().length > 1 ? dateS.minute.toString() : '0${dateS.minute}';
 
-                dateStr = '$d/$m/${dateS.year} $h/$min $horario';
+                dateStr = '$d/$m/${dateS.year} $h:$min $horario';
               }
 
               return _cardSMS(Colors.red,'${chatTarea.mensajes['$pos']['texto']}', dateStr,izq,userFrom);
