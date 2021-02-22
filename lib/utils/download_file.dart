@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
+import 'package:open_file/open_file.dart';
 
 Future downloadFile({
   @required String url,
@@ -18,14 +19,20 @@ Future downloadFile({
         savedDir.create();
       }
 
-      await FlutterDownloader.enqueue(
-          url: url,
-          headers: {"auth": "test_for_sql_encoding"},
-          savedDir: _localPath,
-          showNotification: true,
-          openFileFromNotification: true);
-
-      showAlert('Se inicio la descarga del archivo.', WalkieTaskColors.color_89BD7D);
+      String fileName = url.split('/').last;
+      String fileDownload = '$_localPath/$fileName';
+      bool exist = File(fileDownload).existsSync();
+      if (exist) {
+        OpenFile.open(fileDownload);
+      }else{
+        await FlutterDownloader.enqueue(
+            url: url,
+            headers: {"auth": "test_for_sql_encoding"},
+            savedDir: _localPath,
+            showNotification: true,
+            openFileFromNotification: true);
+        showAlert('Se inicio la descarga del archivo.', WalkieTaskColors.color_89BD7D);
+      }
     }catch(e){
       print(e.toString());
     }
