@@ -254,6 +254,14 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       }
     }
 
+    refreshListNoti();
+
+    getPhoto();
+
+    setState(() {});
+  }
+
+  void refreshListNoti() async{
     try{
       notiRecived = await SharedPrefe().getValue('notiRecived') ?? false;
       notiContacts = await SharedPrefe().getValue('notiContacts') ?? false;
@@ -261,10 +269,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     } catch (e) {
       print(e.toString());
     }
-
-    getPhoto();
-
-    setState(() {});
   }
 
   Future<void> getPhoto() async {
@@ -854,6 +858,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       streamSubscriptionTaskRecived = blocTaskReceived.outList.listen((newVal) {
         if(newVal){
           _inicializarTaskRecived();
+        }else{
+          updateNoti(0, false);
         }
       });
     } catch (e) {}

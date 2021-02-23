@@ -1008,9 +1008,12 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       task.read = 1;
       if(await DatabaseProvider.db.updateTask(task) == 1){
         widget.blocTaskReceived.inList.add(true);
+        widget.blocTaskReceived.inList.add(false);
         try{
           await conexionHispanos.httpReadTask(task.id);
         }catch(_){}
+        widget.blocTaskReceived.inList.add(true);
+        widget.blocTaskReceived.inList.add(false);
       }
     }
   }
@@ -1066,8 +1069,8 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       listViewTaskNew = [];
       listViewTaskNew3.forEach((element) {
         listViewTaskNew.add(element);
-        listRecived.forEach((task) { if(task.id.toString() == element){ containReceived = true;} });
-        listSend.forEach((task) { if(task.id.toString() == element){ containSend = true;} });
+        listRecived.forEach((task) { if(task.id.toString() == element && !tagReceived){ containReceived = true;} });
+        listSend.forEach((task) { if(task.id.toString() == element && tagReceived){ containSend = true;} });
       });
       listViewTaskNew2 = await SharedPrefe().getValue('notiListChat') ?? [];
       listViewTaskNewChat = [];
