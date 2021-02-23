@@ -415,7 +415,10 @@ class _CreateTaskState extends State<CreateTask> {
         dateDiff = getDayDiff(mapDataUserHome[widget.myUserRes.id][0]);
         redColor = dateDiff.contains('-');
       }
-      cant = mapDataUserHome[widget.myUserRes.id][2].length;
+
+      mapDataUserHome[widget.myUserRes.id][2].forEach((task) {
+        if(task.finalized != 1){ cant++; }
+      });
     }
 
     return InkWell(
