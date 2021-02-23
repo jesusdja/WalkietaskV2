@@ -181,7 +181,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
 
     if(!isPersonal){
       listSend.forEach((task) {
-        if(task.finalized ==1 ){
+        if(task.finalized == 1 ){
           listTaskFinaliced.add(task);
         }else{
           cantTaskSend++;
@@ -197,19 +197,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       }
     });
 
-    double addPx = listTaskFinaliced.isEmpty ? 0.2 : 0;
-    double addPxEntity = 0;
-    if((tagReceived && listRecived.isEmpty) || isPersonal && ((listRecived.length - listTaskFinaliced.length) == 0)){
-      addPxEntity = addPx + 0.2;
-    }
-    if(!tagReceived && listSend.isEmpty){
-      addPxEntity = addPx + 0.2;
-    }
-
-    double heightTop = alto < 600 ? alto * (0.36 + addPx - addPxEntity) : alto * (0.38+ addPx - addPxEntity);
-    //double heightTopPersonal = alto < 600 ? alto * (0.36 + addPx) : alto * (0.38+ addPx);
-
-    double heightBottom = alto < 600 ? alto * (0.3 - addPx) : alto * (0.32 - addPx);
+    double heightTop = alto < 600 ? alto * 0.74 : alto * 0.76;
 
     return Container(
       width: ancho,
@@ -251,7 +239,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
               //color: Colors.grey,
               child: _listTaskPersonal(heightTop),
             ) : Container(),
-            Container(
+            /*Container(
               width: ancho,
               height: alto * 0.06,
               color: WalkieTaskColors.white,
@@ -260,13 +248,12 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                 child: Text('Terminadas', style: textStylePrimaryBlueBold,),
               ),
             ),
-
             Container(
               height: heightBottom,
               width: ancho,
               color: WalkieTaskColors.white,
               child: _listTaskFinalized(listTaskFinaliced),
-            ),
+            ),*/
           ],
         ),
       ),
@@ -467,15 +454,25 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       if(element.finalized != 1){ cont++; }
     });
 
+    if(cont < 1 || listRecived.isEmpty){
+      data.add(
+        Container(
+          margin: EdgeInsets.only(top: alto * 0.05, bottom: alto * 0.05),
+          width: ancho,
+          child: Text('No has recibido tareas de ${user.name}', style: textStylePrimaryTextCenter, textAlign: TextAlign.center,),
+        )
+      );
+      data.add(SizedBox(height: alto * 0.02,));
+    }
+
+    List<Widget> listFinalized = _listTaskFinalized(true);
+
+    listFinalized.forEach((element) { data.add(element); });
+
+
     return Container(
       width: ancho,
-      child: (cont < 1 || listRecived.isEmpty) ?
-      Container(
-        margin: EdgeInsets.only(top: alto * 0.1),
-        width: ancho,
-        child: Text('No has recibido tareas de ${user.name}', style: textStylePrimaryTextCenter, textAlign: TextAlign.center,),
-      ) :
-      Container(
+      child: Container(
         width: ancho,
         child: SingleChildScrollView(
           child: Column(
@@ -634,21 +631,28 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       if(element.finalized != 1){ cont++; }
     });
 
+    if(cont < 1 || listSend.isEmpty){
+      data.add(
+        Container(
+          margin: EdgeInsets.only(top: alto * 0.05, bottom: alto * 0.05),
+          width: ancho,
+          child: Text('No has enviado tareas a ${user.name}', style: textStylePrimaryTextCenter, textAlign: TextAlign.center,),
+        )
+      );
+
+      data.add(SizedBox(height: alto * 0.02,));
+    }
+
+    List<Widget> listFinalized = _listTaskFinalized(false);
+
+    listFinalized.forEach((element) { data.add(element); });
+
     return Container(
       width: ancho,
-      child: (cont < 1 || listSend.isEmpty) ?
-      Container(
-        margin: EdgeInsets.only(top: alto * 0.1),
-        width: ancho,
-        child: Text('No has enviado tareas a ${user.name}', style: textStylePrimaryTextCenter, textAlign: TextAlign.center,),
-      ) :
-      Container(
-        width: ancho,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: data,
-          ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: data,
         ),
       ),
     );
@@ -760,32 +764,70 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       }
     });
 
+    if(data.isEmpty){
+      data.add(
+        Container(
+          margin: EdgeInsets.only(top: alto * 0.08 ,bottom: alto * 0.08),
+          width: ancho,
+          child: Text('Sin recordatorio personal', style: textStylePrimaryTextCenter, textAlign: TextAlign.center,),
+        ),
+      );
+      data.add(SizedBox(height: alto * 0.02,));
+    }
+
+    List<Widget> listFinalized = _listTaskFinalized(true);
+
+    listFinalized.forEach((element) { data.add(element); });
 
     return Container(
       width: ancho,
-      child: data.isEmpty ?
-      Container(
-        margin: EdgeInsets.only(top: alto * 0.08),
-        width: ancho,
-        child: Text('Sin recordatorio personal', style: textStylePrimaryTextCenter, textAlign: TextAlign.center,),
-      ) :
-      Container(
-        width: ancho,
-        height: he,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: data,
-          ),
+      height: he,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: data,
         ),
       ),
     );
   }
 
-  Widget _listTaskFinalized(List<Tarea> listTask){
+  List<Widget> _listTaskFinalized(bool isReceived){
+
+  List<Tarea> listTask = [];
+
+    if(isReceived){
+      listRecived.forEach((task) {
+        if(task.finalized ==1 ){
+          listTask.add(task);
+        }
+      });
+    }else{
+      if(!isPersonal){
+        listSend.forEach((task) {
+          if(task.finalized == 1 ){
+            listTask.add(task);
+          }
+        });
+      }
+    }
+
     List<Widget> data = [
-      SizedBox(height: alto * 0.02,)
+      SizedBox(height: alto * 0.015,)
     ];
+
+    data.add(
+      Container(
+        width: ancho,
+        color: WalkieTaskColors.white,
+        child: Container(
+          margin: EdgeInsets.only(left: ancho * 0.03),
+          child: Text('Terminadas', style: textStylePrimaryBlueBold,),
+        ),
+      ),
+    );
+
+    data.add( SizedBox(height: alto * 0.02,) );
+
     listTask.forEach((task) {
       String daysLeft = getDayDiff(task.deadline);
 
@@ -793,24 +835,6 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       if(task.project_id != null && task.project_id != 0 && mapCasos[task.project_id] != null){
         nameCase = mapCasos[task.project_id].name;
       }
-
-      bool isNew = false;
-      int cantChat = 0;
-      listViewTaskNew.forEach((element) {
-        if(element == task.id.toString()){
-          isNew = true;
-        }
-      });
-      listViewTaskNewChat.forEach((element) {
-        if(element == task.id.toString()){
-          isNew = true;
-          cantChat++;
-        }
-      });
-
-      double radiusChat = 0.012;
-      if(cantChat >= 10 && cantChat < 100){radiusChat = 0.014; }
-      if(cantChat > 100){radiusChat = 0.018; }
 
       data.add(
           IntrinsicHeight(
@@ -826,42 +850,14 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                     width: ancho,
                     child: Row(
                       children: [
-                        task.working == 1 ? Container(
-                          width: ancho * 0.015,
-                          color: WalkieTaskColors.color_89BD7D,
-                        ) : Container(width: ancho * 0.015,),
-                        Container(
-                          width: ancho * 0.06,
-                          padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
-                          child: Column(
-                            children: [
-                              daysLeft.contains('-') ?
-                              Container(
-                                padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-                                height: alto * 0.02,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                              ) : Container(),
-                              task.is_priority == 1 ?
-                              Container(
-                                margin: EdgeInsets.only(right: ancho * 0.02),
-                                child: Icon(Icons.star,color: WalkieTaskColors.yellow, size: alto * 0.03,),
-                              ) : Container(),
-
-                            ],
-                          ),
-                        ),
+                        Container(width: ancho * 0.075,),
                         Expanded(
                           child: Container(
                             padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue : isNew ? textStylePrimaryBold : textStylePrimary),
+                                Text(task.name.isNotEmpty ? task.name : 'Tarea sin título. Tap para nombrarla', style: task.name.isEmpty ? textStyleBlue : textStylePrimary),
                                 Text(nameCase, style: textStylePrimaryLitle,)
                               ],
                             ),
@@ -874,23 +870,6 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Container(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    cantChat != 0 ? Container(
-                                      margin: EdgeInsets.only(right: ancho * 0.02),
-                                      child: CircleAvatar(
-                                        backgroundColor: WalkieTaskColors.primary,
-                                        // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
-                                        radius: alto * radiusChat,
-                                        child: Text('$cantChat',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
-                                      ),
-                                    ) : Container(),
-                                    daysLeft.isEmpty ? Container() : Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
-                                  ],
-                                ),
-                              ),
                               task.url_audio.isNotEmpty ?
                               SoundTask(
                                 alto: alto * 0.03,
@@ -920,24 +899,17 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       data.add(Divider());
     });
 
-    return Container(
-      width: ancho,
-      child: listTask.isEmpty ?
-      Container(
-        margin: EdgeInsets.only(top: alto * 0.03),
-        width: ancho,
-        child: Text('No hay tareas finalizadas', style: textStylePrimaryTextCenter, textAlign: TextAlign.center,),
-      ) :
-      Container(
-        width: ancho,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: data,
-          ),
+    if(listTask.isEmpty){
+      data.add(
+        Container(
+          margin: EdgeInsets.only(top: alto * 0.03, bottom: alto * 0.05),
+          width: ancho,
+          child: Text('No hay tareas finalizadas', style: textStylePrimaryTextCenter, textAlign: TextAlign.center,),
         ),
-      ),
-    );
+      );
+    }
+
+    return data;
   }
 
   AppBar _appBar(){
