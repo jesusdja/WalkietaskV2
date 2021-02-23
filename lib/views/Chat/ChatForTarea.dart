@@ -65,6 +65,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
   StreamSubscription streamSubscriptionTaskSend;
 
   bool edit = false;
+  bool viewAppBar = true;
 
   DateTime fechaTask;
   DateTime fechaTaskOld;
@@ -180,7 +181,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
       },
       child: Scaffold(
         backgroundColor: colorChat,
-        appBar: _appBarH(),
+        appBar: viewAppBar ? _appBarH() : null,
         body: SafeArea(
           child: Stack(
             children: <Widget>[
@@ -230,6 +231,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                       if(_one < (-alto + 400)){
                         _one = 0;
                         _top = false;
+                        viewAppBar = true;
                       }
                       setState(() {});
                     }
@@ -302,6 +304,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
       leading: InkWell(
         onTap: () async {
           if(_one != 0){
+            viewAppBar = true;
             setState(() {
               _one = 0;
             });
@@ -755,6 +758,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                             contextHome: context
                           );
                         }else {
+                          viewAppBar = false;
                           _one = -alto;
                           _oneFixed = -alto;
                           _top = true;
@@ -1124,7 +1128,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
       children: [
         Container(
           color: colorFondoChat,
-          height: alto * 0.9,
+          height: alto,
           width: ancho,
           child: Center(
             child: Container(
@@ -1140,12 +1144,12 @@ class _ChatForTareaState extends State<ChatForTarea> {
         ),
         Container(
           //color: colorFondoChat,
-          height: alto * 0.9,
+          height: alto,
           width: ancho,
           decoration: BoxDecoration(
             image: DecorationImage(
               image: Image.network(tarea.url_attachment).image,
-              fit: BoxFit.contain,
+              fit: BoxFit.fitWidth,
             ),
           ),
         ),
