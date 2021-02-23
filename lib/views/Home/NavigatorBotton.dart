@@ -503,20 +503,22 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           data[task.user_id] = ['',[],[]];
         }
         data[task.user_id][1].add(task);
-        if(data[task.user_id][0] == ''){
-          data[task.user_id][0] = task.deadline;
-        }else{
-          if(task.deadline.isEmpty || data[task.user_id][0].isEmpty){
-            if(data[task.user_id][0].isEmpty){ data[task.user_id][0] = task.deadline.isEmpty; }
+        if(task.finalized == 0){
+          if(data[task.user_id][0] == ''){
+            data[task.user_id][0] = task.deadline;
           }else{
-            DateTime dateCreate = DateTime.parse(task.deadline);
-            Duration difDays = dateCreate.difference(DateTime.now());
+            if(task.deadline.isEmpty || data[task.user_id][0].isEmpty){
+              if(data[task.user_id][0].isEmpty){ data[task.user_id][0] = task.deadline.isEmpty; }
+            }else{
+              DateTime dateCreate = DateTime.parse(task.deadline);
+              Duration difDays = dateCreate.difference(DateTime.now());
 
-            DateTime dateCreate2 = DateTime.parse(data[task.user_id][0]);
-            Duration difDays2 = dateCreate2.difference(DateTime.now());
+              DateTime dateCreate2 = DateTime.parse(data[task.user_id][0]);
+              Duration difDays2 = dateCreate2.difference(DateTime.now());
 
-            if(difDays < difDays2){
-              data[task.user_id][0] = dateCreate2.toString();
+              if(difDays < difDays2){
+                data[task.user_id][0] = dateCreate2.toString();
+              }
             }
           }
         }
@@ -527,20 +529,22 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           data[task.user_responsability_id] = ['',[],[]];
         }
         data[task.user_responsability_id][2].add(task);
-        if(data[task.user_responsability_id][0] == ''){
-          data[task.user_responsability_id][0] = task.deadline;
-        }else{
-          if(task.deadline.isEmpty || data[task.user_responsability_id][0].isEmpty){
-            if(data[task.user_responsability_id][0].isEmpty){ data[task.user_responsability_id][0] = task.deadline.isEmpty; }
+        if(task.finalized == 0){
+          if(data[task.user_responsability_id][0] == ''){
+            data[task.user_responsability_id][0] = task.deadline;
           }else{
-            DateTime dateCreate = DateTime.parse(task.deadline);
-            Duration difDays = dateCreate.difference(DateTime.now());
+            if(task.deadline.isEmpty || data[task.user_responsability_id][0].isEmpty){
+              if(data[task.user_responsability_id][0].isEmpty){ data[task.user_responsability_id][0] = task.deadline.isEmpty; }
+            }else{
+              DateTime dateCreate = DateTime.parse(task.deadline);
+              Duration difDays = dateCreate.difference(DateTime.now());
 
-            DateTime dateCreate2 = DateTime.parse(data[task.user_responsability_id][0]);
-            Duration difDays2 = dateCreate2.difference(DateTime.now());
+              DateTime dateCreate2 = DateTime.parse(data[task.user_responsability_id][0]);
+              Duration difDays2 = dateCreate2.difference(DateTime.now());
 
-            if(difDays < difDays2){
-              data[task.user_responsability_id][0] = dateCreate2.toString();
+              if(difDays < difDays2){
+                data[task.user_responsability_id][0] = dateCreate2.toString();
+              }
             }
           }
         }

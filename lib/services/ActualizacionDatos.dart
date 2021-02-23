@@ -151,7 +151,7 @@ class UpdateData{
 
         //******************************
         //VERIFICAR TAREAS NUEVAS
-        if(tareas[x]['read'] != null && tareas[x]['read'] == 0){
+        if(tareas[x]['read'] != null && tareas[x]['read'] == 0 && tareas[x]['finalized'] == 0){
           try{
             List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListTask');
             if (listTaskNew == null) {

@@ -252,7 +252,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
             textAlign: TextAlign.left,
             sizeHeight: alto * 0.2,
             maxLines: 8,
-            textInputAction: TextInputAction.done,
+            //textInputAction: TextInputAction.done,
           ),
         ));
     widgets.add(Container(
