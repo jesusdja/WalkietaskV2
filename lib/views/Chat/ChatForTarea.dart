@@ -930,7 +930,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                 children: <Widget>[
                   loadSaveEdit ?
                   Container(
-                    width: ancho * 0.2,
+                    width: alto * 0.04,
                     height: alto * 0.04,
                     child: Center(child: CircularProgressIndicator(),),
                   ) :
@@ -944,10 +944,9 @@ class _ChatForTareaState extends State<ChatForTarea> {
                     backgroundColor: WalkieTaskColors.primary,
                     onPressed: () => _saveEditTask(),
                   ),
-                  SizedBox(width: ancho * 0.07,),
+                  SizedBox(width: ancho * 0.04,),
                   RoundedButton(
                     borderColor: WalkieTaskColors.white,
-                    width: ancho * 0.2,
                     height: alto * 0.04,
                     radius: 5.0,
                     title: 'Cancelar',

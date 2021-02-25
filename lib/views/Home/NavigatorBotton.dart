@@ -950,25 +950,30 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
               updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
               updateData.actualizarListaEnviados(blocTaskSend, blocConection);
             }
-
-            if (page == bottonSelect.opcion1 || page == bottonSelect.opcion3 ||
-                page == bottonSelect.opcion4) {
-              if (isTask) {
-                updateNoti(0, true);
-              } else {
-                updateNoti(1, true);
-                updateNoti(2, true);
+           // if(argumento['type'] == '1' || !isTask){
+              if (page == bottonSelect.opcion1 || page == bottonSelect.opcion3 || page == bottonSelect.opcion4) {
+                if (isTask) {
+                  updateNoti(0, true);
+                } else {
+                  updateNoti(1, true);
+                  updateNoti(2, true);
+                }
               }
-            }
-            if (page == bottonSelect.opcion2) {
-              if (!isTask) {
-                updateNoti(1, true);
-                updateNoti(2, true);
+              if (page == bottonSelect.opcion2) {
+                if (!isTask) {
+                  updateNoti(1, true);
+                  updateNoti(2, true);
+                }
               }
-            }
-            if (page == bottonSelect.opcion5) {
-              updateNoti(isTask ? 0 : 2, true);
-            }
+              if (page == bottonSelect.opcion5) {
+                updateNoti(isTask ? 0 : 2, true);
+              }
+            // }
+            // else{
+            //   Tarea task = await DatabaseProvider.db.getCodeIdTask(argumento['idDoc']);
+            //   _onTapNavigator(bottonSelect.opcion2, 'Tareas recibidas');
+            //   clickTarea(task);
+            // }
           }
 
           if(argumento['table'] != null && argumento['table'].contains('sms')){
