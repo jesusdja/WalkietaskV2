@@ -645,11 +645,15 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                   builder: (BuildContext context) => ProfileHome(
                     myUser: myUser,
                   )));
-              getPhoto();
-              if(res){
+
+              if(res[0]){
                 myUser = await updateData.getMyUser();
+                await updateData.actualizarListaUsuarios(blocUser, blocConection);
+                if(res[1]){
+                  myUser.avatar = '';
+                  getPhoto();
+                }
                 setState(() {});
-                updateData.actualizarListaUsuarios(blocUser, blocConection);
               }
             }),
             _divider,
