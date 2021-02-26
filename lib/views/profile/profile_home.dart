@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
@@ -44,6 +45,7 @@ class _ProfileHomeState extends State<ProfileHome> {
   Map<int,bool> mapData = {};
   Image avatarUser;
   String urlImage = '';
+  int selectIndex = 0;
 
   TextEditingController controllerName = TextEditingController();
   TextEditingController controllerLastName = TextEditingController();
@@ -66,6 +68,7 @@ class _ProfileHomeState extends State<ProfileHome> {
       3 : false, //clave anterios
       4 : false, //clave nueva
       5 : false, //Imagen
+      6 : false, //select barra recordatorio
     };
 
     initData();
@@ -153,6 +156,10 @@ class _ProfileHomeState extends State<ProfileHome> {
               _textTitle('Recibir notificaciones:'),
               SizedBox(height: alto * 0.02,),
               columnSwitchRN(),
+              SizedBox(height: alto * 0.04,),
+              _textTitle('Posición de botón de recordatorio:'),
+              SizedBox(height: alto * 0.02,),
+              _selectRemenber(),
               SizedBox(height: alto * 0.1,),
               //_textTitle('Posición de botón de recordatorio:'),
               //SizedBox(height: alto * 0.1,),
@@ -170,6 +177,7 @@ class _ProfileHomeState extends State<ProfileHome> {
                   }
                 },
               ),
+
               SizedBox(height: alto * 0.1,),
             ],
           ),
@@ -247,6 +255,159 @@ class _ProfileHomeState extends State<ProfileHome> {
                 },
               ),
             ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget columnSwitchRN(){
+    return Container(
+      width: ancho,
+      margin: EdgeInsets.symmetric(horizontal: ancho * 0.1),
+      child: Column(
+        children: [
+          receivedNotification('Nuevas tareas'),
+          receivedNotification('Invitación a proyectos'),
+          receivedNotification('Recordatorios diarios'),
+        ],
+      ),
+    );
+  }
+
+  Widget receivedNotification(String title){
+    return Container(
+      width: ancho,
+      margin: EdgeInsets.only(right: ancho * 0.03, top: alto * 0.01, bottom: alto * 0.01),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Text(title, style: WalkieTaskStyles().stylePrimary(color: WalkieTaskColors.color_969696, size: alto * 0.02, fontWeight: FontWeight.bold, spacing: 0.5),),
+          SizedBox(width: ancho * 0.02,),
+          Container(
+            margin: EdgeInsets.only(right: ancho * 0.02),
+            child: CustomSwitchLocal(
+              value: true,
+              sizeH: alto * 0.025,
+              sizeW: ancho * 0.11,
+              onChanged: (bool val) async {
+                showAlert('Por los momentos esta función se encuentra bloqueada.',WalkieTaskColors.color_E07676);
+              },
+              colorBgOff: WalkieTaskColors.color_DD7777,
+              colorBgOn: WalkieTaskColors.color_89BD7D,
+              sizeCircule: alto * 0.025,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _profilePhoto(){
+    return Container(
+      width: ancho,
+      child: Column(
+        children: [
+          InkWell(
+            onTap: () => _onTapPhoto(),
+            child: Container(
+              child: Container(
+                padding: const EdgeInsets.all(2.0), // borde width
+                decoration: new BoxDecoration(
+                  color: WalkieTaskColors.color_969696, // border color
+                  shape: BoxShape.circle,
+                ),
+                child: avatarUser != null ? CircleAvatar(
+                  radius: alto * 0.1,
+                  backgroundImage: avatarUser.image,
+                ) : CircleAvatar(
+                  radius: alto * 0.1,
+                  backgroundColor: WalkieTaskColors.color_B7B7B7,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: alto * 0.01,),
+          InkWell(
+            onTap: () => _onTapPhoto(),
+            child: Text('Cambiar', style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.black, spacing: 0.5),),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onTapPhoto(){
+    final callback = Navigator.push(context, new MaterialPageRoute(
+        builder: (BuildContext context) => GalleryCameraDialog(
+          isVideo: false,
+        ))
+    );
+    callback.then((media) async {
+        if(media != null) {
+          PickedFile _imageFile = media as PickedFile;
+          File croppedImage = await ViewImage().croppedImageView(_imageFile.path, cropStyle: CropStyle.circle);
+          if(croppedImage != null){
+            avatarUser = Image.file(croppedImage);
+            mapData[5] = true;
+            urlImage = croppedImage.path;
+            setState(() {});
+
+
+            /*
+            List<dynamic> listDocuments = await SharedPrefe().getValue('WalListUpdateAvatar') ?? [];
+            List<String> listNew = [];
+            listDocuments.forEach((element) { listNew.add(element);});
+            listNew.add(croppedImage.path);
+            await SharedPrefe().setStringListValue('WalListUpdateAvatar', listNew);
+            uploadUpdateUser();
+            */
+          }
+        }
+      },
+    );
+  }
+
+  Widget _selectRemenber(){
+    return Container(
+      width: ancho,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          containerRemenber(1),
+          containerRemenber(0),
+          containerRemenber(2),
+        ],
+      ),
+    );
+  }
+
+  Widget containerRemenber(int index){
+    return Container(
+      child: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.only(bottom: alto * 0.02),
+            child: Container(
+              height: alto * 0.2,
+              width: ancho * 0.25,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: ViewImage().assetsImage("assets/image/reminder$index.png").image,
+                  fit: BoxFit.fitHeight,
+                ),
+              ),
+            ),
+          ),
+          Radio(
+            value: index,
+            groupValue: selectIndex,
+            activeColor: WalkieTaskColors.primary,
+            onChanged: (newIndex){
+              // setState(() {
+              //   selectIndex = newIndex;
+              // });
+            },
           )
         ],
       ),
@@ -365,113 +526,6 @@ class _ProfileHomeState extends State<ProfileHome> {
     setState(() {
       loadSave = false;
     });
-  }
-
-  Widget columnSwitchRN(){
-    return Container(
-      width: ancho,
-      margin: EdgeInsets.symmetric(horizontal: ancho * 0.1),
-      child: Column(
-        children: [
-          receivedNotification('Nuevas tareas'),
-          receivedNotification('Invitación a proyectos'),
-          receivedNotification('Recordatorios diarios'),
-        ],
-      ),
-    );
-  }
-
-  Widget receivedNotification(String title){
-    return Container(
-      width: ancho,
-      margin: EdgeInsets.only(right: ancho * 0.03, top: alto * 0.01, bottom: alto * 0.01),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          Text(title, style: WalkieTaskStyles().stylePrimary(color: WalkieTaskColors.color_969696, size: alto * 0.02, fontWeight: FontWeight.bold, spacing: 0.5),),
-          SizedBox(width: ancho * 0.02,),
-          Container(
-            margin: EdgeInsets.only(right: ancho * 0.02),
-            child: CustomSwitchLocal(
-              value: true,
-              sizeH: alto * 0.025,
-              sizeW: ancho * 0.11,
-              onChanged: (bool val) async {
-                showAlert('Por los momentos esta función se encuentra bloqueada.',WalkieTaskColors.color_E07676);
-              },
-              colorBgOff: WalkieTaskColors.color_DD7777,
-              colorBgOn: WalkieTaskColors.color_89BD7D,
-              sizeCircule: alto * 0.025,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _profilePhoto(){
-    return Container(
-      width: ancho,
-      child: Column(
-        children: [
-          InkWell(
-            onTap: () => _onTapPhoto(),
-            child: Container(
-              child: Container(
-                padding: const EdgeInsets.all(2.0), // borde width
-                decoration: new BoxDecoration(
-                  color: WalkieTaskColors.color_969696, // border color
-                  shape: BoxShape.circle,
-                ),
-                child: avatarUser != null ? CircleAvatar(
-                  radius: alto * 0.1,
-                  backgroundImage: avatarUser.image,
-                ) : CircleAvatar(
-                  radius: alto * 0.1,
-                  backgroundColor: WalkieTaskColors.color_B7B7B7,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: alto * 0.01,),
-          InkWell(
-            onTap: () => _onTapPhoto(),
-            child: Text('Cambiar', style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.black, spacing: 0.5),),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _onTapPhoto(){
-    final callback = Navigator.push(context, new MaterialPageRoute(
-        builder: (BuildContext context) => GalleryCameraDialog(
-          isVideo: false,
-        ))
-    );
-    callback.then((media) async {
-        if(media != null) {
-          PickedFile _imageFile = media as PickedFile;
-          File croppedImage = await ViewImage().croppedImageView(_imageFile.path, cropStyle: CropStyle.circle);
-          if(croppedImage != null){
-            avatarUser = Image.file(croppedImage);
-            mapData[5] = true;
-            urlImage = croppedImage.path;
-            setState(() {});
-
-
-            /*
-            List<dynamic> listDocuments = await SharedPrefe().getValue('WalListUpdateAvatar') ?? [];
-            List<String> listNew = [];
-            listDocuments.forEach((element) { listNew.add(element);});
-            listNew.add(croppedImage.path);
-            await SharedPrefe().setStringListValue('WalListUpdateAvatar', listNew);
-            uploadUpdateUser();
-            */
-          }
-        }
-      },
-    );
   }
 
 }
