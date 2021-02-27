@@ -219,7 +219,7 @@ class _ContactsState extends State<Contacts> {
                 setState(() {});
 
                 bool res = false;
-                res = await alertDeleteElement(context,'¿Estas seguro que deseas eliminar tu contacto ${user.name} ${user.surname}?');
+                res = await alertDeleteElement(context,'¿En realidad quieres eliminar a ${user.name} ${user.surname}?');
                 if(res != null && res){
                   try{
                     var response = await connectionHttp.httpDeleteContact(user.id);
@@ -309,19 +309,25 @@ class _ContactsState extends State<Contacts> {
         }
         setState(() {});
       },
-      child: Column(
-        children: <Widget>[
-          Text(text, style: WalkieTaskStyles().stylePrimary(size: alto * 0.015, color: WalkieTaskColors.primary),),
-          mapAppBar[index] ? Container(
-            width: ancho * 0.2,
-            height: alto * 0.007,
-            decoration: new BoxDecoration(
-              shape: BoxShape.rectangle,
-              color: WalkieTaskColors.primary,
-              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: alto * 0.005),
+        child: Column(
+          children: <Widget>[
+            Text(text, style: WalkieTaskStyles().stylePrimary(size: alto * 0.016, color: WalkieTaskColors.primary,spacing: 0.3),),
+            mapAppBar[index] ? Container(
+              width: ancho * 0.22,
+              height: alto * 0.007,
+              decoration: new BoxDecoration(
+                shape: BoxShape.rectangle,
+                color: WalkieTaskColors.primary,
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              ),
+            ) : Container(
+              width: ancho * 0.22,
+              height: alto * 0.007,
             ),
-          ) : Container(),
-        ],
+          ],
+        ),
       ),
     );
   }
