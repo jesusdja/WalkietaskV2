@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
+import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
@@ -400,40 +401,23 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                   ),
                 ),
               ),
-              Container(
-                margin: EdgeInsets.only(right: ancho * 0.03),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(daysLeft.replaceAll('-', ''),style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: daysLeft.contains('-') ? WalkieTaskColors.color_E07676 : Colors.grey[600]),),
-                    SizedBox(height: alto * 0.006,),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        chatCont != 0 ? Container(
-                          margin: EdgeInsets.only(right: ancho * 0.002),
-                          child: CircleAvatar(
-                            backgroundColor: WalkieTaskColors.primary,
-                            // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
-                            radius: alto * radiusChat,
-                            child: Text('$chatCont',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
-                          ),
-                        ) : Container(),
-                        tarea.url_audio.isNotEmpty ?
-                        SoundTask(
-                          alto: alto * 0.03,
-                          colorStop: WalkieTaskColors.color_E07676,
-                          path: tarea.url_audio,
-                          idTask: tarea.id,
-                          blocAudioChangePage: widget.blocAudioChangePage,
-                          page: bottonSelect.opcion2,
-                        ) : Container(),
-                      ],
-                    )
-                  ],
-                ),
+              SoundTask(
+                alto: alto * 0.03,
+                colorStop: WalkieTaskColors.color_E07676,
+                path: tarea.url_audio,
+                idTask: tarea.id,
+                blocAudioChangePage: widget.blocAudioChangePage,
+                page: bottonSelect.opcion2,
+                chatCont: chatCont != 0 ? Container(
+                  margin: EdgeInsets.only(right: ancho * 0.002),
+                  child: CircleAvatar(
+                    backgroundColor: WalkieTaskColors.primary,
+                    // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
+                    radius: alto * radiusChat,
+                    child: Text('$chatCont',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
+                  ),
+                ) : Container(),
+                textDate: Text(daysLeft.replaceAll('-', ''),style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: daysLeft.contains('-') ? WalkieTaskColors.color_E07676 : Colors.grey[600]),),
               ),
             ],
           ),
@@ -633,40 +617,23 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                               ),
                             ),
                           ),
-                          Container(
-                            margin: EdgeInsets.only(right: ancho * 0.03),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text(daysLeft.replaceAll('-', ''),style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: daysLeft.contains('-') ? WalkieTaskColors.color_E07676 : Colors.grey[600]),),
-                                SizedBox(height: alto * 0.006,),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: <Widget>[
-                                    chatCont != 0 ? Container(
-                                      margin: EdgeInsets.only(right: ancho * 0.002),
-                                      child: CircleAvatar(
-                                        backgroundColor: WalkieTaskColors.primary,
-                                        // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
-                                        radius: alto * radiusChat,
-                                        child: Text('$chatCont',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
-                                      ),
-                                    ) : Container(),
-                                    InkWell(
-                                      child: task.url_audio != '' ? Icon(Icons.volume_up,color: reproTask ? WalkieTaskColors.color_89BD7D : Colors.grey[600],size: alto * 0.03,) : Container(),
-                                      onTap: (){
-                                        audioPlayer.play(task.url_audio);
-                                        setState(() {
-                                          taskReproduciendo = task.id;
-                                        });
-                                      },
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
+                          SoundTask(
+                            alto: alto * 0.03,
+                            colorStop: WalkieTaskColors.color_E07676,
+                            path: task.url_audio,
+                            idTask: task.id,
+                            blocAudioChangePage: widget.blocAudioChangePage,
+                            page: bottonSelect.opcion2,
+                            chatCont: chatCont != 0 ? Container(
+                              margin: EdgeInsets.only(right: ancho * 0.002),
+                              child: CircleAvatar(
+                                backgroundColor: WalkieTaskColors.primary,
+                                // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
+                                radius: alto * radiusChat,
+                                child: Text('$chatCont',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
+                              ),
+                            ) : Container(),
+                            textDate: Text(daysLeft.replaceAll('-', ''),style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018, color: daysLeft.contains('-') ? WalkieTaskColors.color_E07676 : Colors.grey[600]),),
                           ),
                         ],
                       ),

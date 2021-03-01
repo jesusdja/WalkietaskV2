@@ -18,6 +18,8 @@ class SoundTask extends StatefulWidget {
   final int idTask;
   final BlocProgress blocAudioChangePage;
   final bottonSelect page;
+  final Widget textDate;
+  final Widget chatCont;
 
   SoundTask({
     this.status = false,
@@ -28,6 +30,8 @@ class SoundTask extends StatefulWidget {
     @required this.idTask,
     @required this.blocAudioChangePage,
     @required this.page,
+    this.textDate,
+    this.chatCont,
   });
 
   @override
@@ -43,6 +47,7 @@ class _SoundTaskState extends State<SoundTask> {
   AudioPlayer audioPlayer;
   StreamSubscription _durationSubscription;
   StreamSubscription streamSubscriptionPageAudio;
+  StreamSubscription _activeAudioSubscription;
 
   @override
   void initState() {
@@ -73,6 +78,7 @@ class _SoundTaskState extends State<SoundTask> {
       }
       _durationSubscription?.cancel();
       streamSubscriptionPageAudio?.cancel();
+      _activeAudioSubscription?.cancel();
     }catch(e){
       print(e.toString());
     }
@@ -85,36 +91,57 @@ class _SoundTaskState extends State<SoundTask> {
     ancho = MediaQuery.of(context).size.width;
 
     return InkWell(
-      onTap: () async {
-        try{
-          if(widget.path.isNotEmpty){
-            if(!sonando){
-              audioPlayer.play(widget.path);
-              await SharedPrefe().setIntValue('idSoundWalkie',widget.idTask);
-            }else{
-              await audioPlayer.stop();
-              await SharedPrefe().setIntValue('idSoundWalkie',0);
-            }
-            setState(() {
-              sonando = !sonando;
-            });
-          }else{
-            showAlert('No existe sonido alojado.',WalkieTaskColors.color_E07676);
-          }
-        }catch(e){
-          print(e.toString());
-          showAlert('Problemas para reproducir audio.',WalkieTaskColors.color_E07676);
-        }
-      },
+      onTap: () => _onTap(),
       child: Container(
-        width: ancho * 0.1,
-        child: Icon(
-          sonando ? Icons.stop : Icons.volume_up,
-          color: sonando ? widget.colorStop : widget.colorPlay,
-          size: widget.alto,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            SizedBox(height: alto * 0.006,),
+            Container(
+              margin: EdgeInsets.only(right: ancho * 0.03),
+              child: widget.textDate ?? Container(),
+            ),
+            SizedBox(height: alto * 0.006,),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                widget.chatCont ?? Container(),
+                widget.path.isNotEmpty ?
+                Container(
+                  width: ancho * 0.1,
+                  child: Icon(
+                    sonando ? Icons.stop : Icons.volume_up,
+                    color: sonando ? widget.colorStop : widget.colorPlay,
+                    size: widget.alto,
+                  ),
+                ) : Container(),
+              ],
+            )
+          ],
         ),
       ),
     );
+  }
+
+  Future<void> _onTap() async {
+    try{
+      if(widget.path.isNotEmpty){
+        if(!sonando){
+          audioPlayer.play(widget.path);
+          await SharedPrefe().setIntValue('idSoundWalkie',widget.idTask);
+        }else{
+          await audioPlayer.stop();
+          await SharedPrefe().setIntValue('idSoundWalkie',0);
+        }
+        setState(() {
+          sonando = !sonando;
+        });
+      }
+    }catch(e){
+      print(e.toString());
+      showAlert('Problemas para reproducir audio.',WalkieTaskColors.color_E07676);
+    }
   }
 
   Future<void> listenerAudio() async {
