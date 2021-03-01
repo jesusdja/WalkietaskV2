@@ -397,36 +397,23 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                             padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
                             width: ancho * 0.2,
                             margin: EdgeInsets.only(right: ancho * 0.02),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Container(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      cantChat != 0 ? Container(
-                                        margin: EdgeInsets.only(right: ancho * 0.02),
-                                        child: CircleAvatar(
-                                          backgroundColor: WalkieTaskColors.primary,
-                                          // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
-                                          radius: alto * radiusChat,
-                                          child: Text('$cantChat',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
-                                        ),
-                                      ) : Container(),
-                                      daysLeft.isEmpty ? Container() : Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
-                                    ],
-                                  ),
+                            child: SoundTask(
+                              alto: alto * 0.03,
+                              colorStop: WalkieTaskColors.color_E07676,
+                              path: task.url_audio,
+                              idTask: task.id,
+                              blocAudioChangePage: widget.blocAudioChangePage,
+                              page: bottonSelect.opcion2,
+                              chatCont: cantChat != 0 ? Container(
+                                margin: EdgeInsets.only(right: ancho * 0.02),
+                                child: CircleAvatar(
+                                  backgroundColor: WalkieTaskColors.primary,
+                                  // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
+                                  radius: alto * radiusChat,
+                                  child: Text('$cantChat',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
                                 ),
-                                task.url_audio.isNotEmpty ?
-                                SoundTask(
-                                  alto: alto * 0.03,
-                                  colorStop: WalkieTaskColors.color_E07676,
-                                  path: task.url_audio,
-                                  idTask: task.id,
-                                  page: bottonSelect.opcion2,
-                                  blocAudioChangePage: widget.blocAudioChangePage,
-                                ) : Container(),
-                              ],
+                              ) : Container(),
+                              textDate: daysLeft.isEmpty ? Container() : Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
                             ),
                           ),
                         ],
@@ -574,36 +561,23 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                             padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
                             width: ancho * 0.2,
                             margin: EdgeInsets.only(right: ancho * 0.02),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Container(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      cantChat != 0 ? Container(
-                                        margin: EdgeInsets.only(right: ancho * 0.02),
-                                        child: CircleAvatar(
-                                          backgroundColor: WalkieTaskColors.primary,
-                                          // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
-                                          radius: alto * radiusChat,
-                                          child: Text('$cantChat',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
-                                        ),
-                                      ) : Container(),
-                                      daysLeft.isEmpty ? Container() : Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
-                                    ],
-                                  ),
+                            child: SoundTask(
+                              alto: alto * 0.03,
+                              colorStop: WalkieTaskColors.color_E07676,
+                              path: task.url_audio,
+                              idTask: task.id,
+                              blocAudioChangePage: widget.blocAudioChangePage,
+                              page: bottonSelect.opcion2,
+                              chatCont: cantChat != 0 ? Container(
+                                margin: EdgeInsets.only(right: ancho * 0.02),
+                                child: CircleAvatar(
+                                  backgroundColor: WalkieTaskColors.primary,
+                                  // 100 alto * 0.018, / 10 alto * 0.014, / 1 alto * 0.012,
+                                  radius: alto * radiusChat,
+                                  child: Text('$cantChat',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018),),
                                 ),
-                                task.url_audio.isNotEmpty ?
-                                SoundTask(
-                                  alto: alto * 0.03,
-                                  colorStop: WalkieTaskColors.color_E07676,
-                                  path: task.url_audio,
-                                  idTask: task.id,
-                                  page: bottonSelect.opcion2,
-                                  blocAudioChangePage: widget.blocAudioChangePage,
-                                ) : Container(),
-                              ],
+                              ) : Container(),
+                              textDate: daysLeft.isEmpty ? Container() : Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
                             ),
                           ),
                         ],
@@ -728,20 +702,14 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                           width: ancho * 0.2,
                           padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
                           margin: EdgeInsets.only(right: ancho * 0.02),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
-                              task.url_audio.isNotEmpty ?
-                              SoundTask(
-                                alto: alto * 0.03,
-                                colorStop: WalkieTaskColors.color_E07676,
-                                path: task.url_audio,
-                                idTask: task.id,
-                                page: bottonSelect.opcion2,
-                                blocAudioChangePage: widget.blocAudioChangePage,
-                              ) : Container(),
-                            ],
+                          child: SoundTask(
+                            alto: alto * 0.03,
+                            colorStop: WalkieTaskColors.color_E07676,
+                            path: task.url_audio,
+                            idTask: task.id,
+                            blocAudioChangePage: widget.blocAudioChangePage,
+                            page: bottonSelect.opcion2,
+                            textDate: daysLeft.isEmpty ? Container() : Text(daysLeft.replaceAll('-', ''), style: daysLeft.contains('-') ? textStylePrimaryLitleRed : textStylePrimaryLitle,),
                           ),
                         ),
                       ],
@@ -829,8 +797,6 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
     data.add( SizedBox(height: alto * 0.02,) );
 
     listTask.forEach((task) {
-      String daysLeft = getDayDiff(task.deadline);
-
       String nameCase = '(Sin proyecto asignado)';
       if(task.project_id != null && task.project_id != 0 && mapCasos[task.project_id] != null){
         nameCase = mapCasos[task.project_id].name;
@@ -867,19 +833,13 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                           padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01),
                           width: ancho * 0.2,
                           margin: EdgeInsets.only(right: ancho * 0.02),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              task.url_audio.isNotEmpty ?
-                              SoundTask(
-                                alto: alto * 0.03,
-                                colorStop: WalkieTaskColors.color_E07676,
-                                path: task.url_audio,
-                                idTask: task.id,
-                                page: bottonSelect.opcion2,
-                                blocAudioChangePage: widget.blocAudioChangePage,
-                              ) : Container(),
-                            ],
+                          child: SoundTask(
+                            alto: alto * 0.03,
+                            colorStop: WalkieTaskColors.color_E07676,
+                            path: task.url_audio,
+                            idTask: task.id,
+                            blocAudioChangePage: widget.blocAudioChangePage,
+                            page: bottonSelect.opcion2,
                           ),
                         ),
                       ],

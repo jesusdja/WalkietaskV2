@@ -387,7 +387,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
               path: tarea.url_audio,
               idTask: tarea.id,
               blocAudioChangePage: widget.blocAudioChangePage,
-              page: bottonSelect.opcion2,
+              page: bottonSelect.opcion3,
               chatCont: chatCont != 0 ? Container(
                 margin: EdgeInsets.only(right: ancho * 0.002),
                 child: CircleAvatar(
@@ -607,7 +607,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                               path: task.url_audio,
                               idTask: task.id,
                               blocAudioChangePage: widget.blocAudioChangePage,
-                              page: bottonSelect.opcion2,
+                              page: bottonSelect.opcion3,
                               chatCont: chatCont != 0 ? Container(
                                 margin: EdgeInsets.only(right: ancho * 0.002),
                                 child: CircleAvatar(
