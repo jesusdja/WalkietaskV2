@@ -60,6 +60,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
   bool reproduciendo = false;
   bool pause = false;
   bool pausado = false;
+  bool loadGuests = false;
 
   String audioPath;
   String titleTask = '';
@@ -266,22 +267,39 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
       child: _listadocasos(),
     ));
     widgets.add(SizedBox(height: alto * 0.02,));
-    widgets.add(InkWell(
-      child: Container(
-        width: ancho,
-        margin: EdgeInsets.only(top: alto * 0.01,left: ancho * 0.05,right: ancho * 0.05),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              flex: 1,
-              child: Container(
-                margin: EdgeInsets.only(right: ancho * 0.03),
-                child: Text('Fecha',textAlign: TextAlign.right,
-                    style: textStylePrimary),
-              ),
+    widgets.add(Container(
+      width: ancho,
+      margin: EdgeInsets.only(top: alto * 0.01,left: ancho * 0.05,right: ancho * 0.05),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 1,
+            child: Container(
+              margin: EdgeInsets.only(right: ancho * 0.03),
+              child: Text('Fecha',textAlign: TextAlign.right,
+                  style: textStylePrimary),
             ),
-            Expanded(
-              flex: 1,
+          ),
+          Expanded(
+            flex: 1,
+            child: InkWell(
+              onTap: () async {
+                DateTime newDateTime = await showDatePicker(
+                    context: context,
+                    initialDate: new DateTime.now(),
+                    firstDate: new DateTime(2018),
+                    lastDate: new DateTime(2025),
+                    locale: Locale('es', 'ES')
+                );
+                if (newDateTime != null) {
+                  Duration dif = newDateTime.difference(DateTime.now());
+                  if(dif.inDays >= 0){
+                    setState(() => fechaTask = newDateTime);
+                  }else{
+                    showAlert('Fecha debe ser mayor o igual a hoy.',Colors.red[400]);
+                  }
+                }
+              },
               child: Container(
                 height: alto * 0.045,
                 decoration: new BoxDecoration(
@@ -306,27 +324,10 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
                   ],
                 ) : Container(),
               ),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
-      onTap: () async {
-        DateTime newDateTime = await showDatePicker(
-            context: context,
-            initialDate: new DateTime.now(),
-            firstDate: new DateTime(2018),
-            lastDate: new DateTime(2025),
-            locale: Locale('es', 'ES')
-        );
-        if (newDateTime != null) {
-          Duration dif = newDateTime.difference(DateTime.now());
-          if(dif.inDays >= 0){
-            setState(() => fechaTask = newDateTime);
-          }else{
-            showAlert('Fecha debe ser mayor o igual a hoy.',Colors.red[400]);
-          }
-        }
-      },
     ));
     widgets.add(SizedBox(height: alto * 0.02,));
     widgets.add(Container(
@@ -535,7 +536,14 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
           return true;
         },
         child: ListView(
-          children: list,
+          children: loadGuests ?
+          [Container(
+            width: ancho,
+            padding: EdgeInsets.all(alto * 0.02),
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          )] : list,
         ),
       ),
     );
@@ -925,9 +933,9 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
   }
 
   Future<void> _getGuests() async {
-    // setState(() {
-    //   loadGuests = true;
-    // });
+    setState(() {
+      loadGuests = true;
+    });
     try{
       var response = await connectionHttp.httpGetListGuestsForProjects();
       var value = jsonDecode(response.body);
@@ -959,7 +967,9 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
       showAlert('Error al actualizar lista de proyectos, verificar conexión e intentar nuevamente.', WalkieTaskColors.color_E07676);
     }
     if(mounted){
-      setState(() {});
+      setState(() {
+        loadGuests = false;
+      });
     }
   }
 }
