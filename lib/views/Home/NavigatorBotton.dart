@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:wakelock/wakelock.dart';
 import 'package:walkietaskv2/App.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/bloc/blocPage.dart';
@@ -166,11 +167,16 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     _notificationListener();
 
     uploadData();
+
+    Wakelock.enable();
   }
 
   @override
   void dispose() {
     super.dispose();
+
+    Wakelock.disable();
+
     try{
       streamSubscriptionUser?.cancel();
       streamSubscriptionTaskSend?.cancel();
