@@ -768,4 +768,47 @@ class conexionHttp{
     }
     return response;
   }
+
+  Future<http.Response> httpDeleteTask(int id) async {
+
+    String token  = await obtenerToken();
+    Map<String,String> headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type':'application/json',
+      'Accept': 'application/json',
+    };
+
+    var response;
+
+    try{
+      response = await http.delete('$enlace/api/tasks/deleteTask/$id',
+        headers: headers,
+      );
+    }catch(e){
+      print(e.toString());
+    }
+    return response;
+  }
+
+  Future<http.Response> httpTaskRestore(int id) async {
+
+    String token  = await obtenerToken();
+    Map<String,String> headers = {
+      'Content-Type':'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Authorization': 'Bearer $token'
+    };
+
+    var response;
+
+    try{
+      response = await http.put('$enlace/api/auth/tasks/restoreTask/$id',
+        headers: headers,
+      );
+    }catch(e){
+      print(e.toString());
+    }
+
+    return response;
+  }
 }

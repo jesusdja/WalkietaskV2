@@ -12,6 +12,7 @@ import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/DialogAlert.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/format_deadline.dart';
@@ -1280,10 +1281,41 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
           }
         }
         if(accion == 5){
-          showAlert('Tarea recuperada',WalkieTaskColors.color_89BD7D);
+          try{
+            tarea.finalized = 0;
+            showAlert('Tarea recuperada',WalkieTaskColors.color_89BD7D);
+            if(await DatabaseProvider.db.updateTask(tarea) != 0){
+              if(isRecived){
+                widget.blocTaskReceived.inList.add(true);
+              }else{
+                widget.blocTaskSend.inList.add(true);
+              }
+              await conexionHispanos.httpTaskRestore(tarea.id);
+              widget.updateData.actualizarListaRecibidos(widget.blocTaskReceived, null);
+              widget.updateData.actualizarListaEnviados(widget.blocTaskReceived, null);
+            }
+          }catch(e){
+            print(e.toString());
+          }
         }
         if(accion == 6){
-          showAlert('Tarea eliminada',WalkieTaskColors.color_89BD7D);
+          bool res = false;
+          res = await alertDeleteElement(context,'¿En realidad quieres eliminar la tarea ${tarea.name}?');
+          if(res != null && res){
+            if(await DatabaseProvider.db.deleteTaskId(tarea.id) == 1){
+              //AVISAR A PATRONBLOC DE TAREAS ENVIADAS PARA QUE SE ACTUALICE
+              if(isRecived){
+                widget.blocTaskReceived.inList.add(true);
+              }else{
+                widget.blocTaskSend.inList.add(true);
+              }
+              //ENVIAR A API
+              try{
+                await conexionHispanos.httpDeleteTask(tarea.id);
+              }catch(e){}
+              showAlert('Tarea eliminada',WalkieTaskColors.color_89BD7D);
+            }
+          }
         }
       },
     );
