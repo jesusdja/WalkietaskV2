@@ -277,7 +277,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   }
 
   Future<bool> exit() async {
-    return false;
+    return true;
   }
 
   @override

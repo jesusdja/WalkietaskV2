@@ -49,7 +49,7 @@ class _LoginHomeState extends State<LoginHome> {
   }
 
   Future<bool> exit() async {
-    return false;
+    return true;
   }
 
   @override
