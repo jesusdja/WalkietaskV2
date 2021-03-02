@@ -285,7 +285,11 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     alto = MediaQuery.of(context).size.height;
     ancho = MediaQuery.of(context).size.width;
     contextHome = context;
+
     reconection();
+
+    viewUpdateNoti();
+
     return WillPopScope(
       onWillPop: exit,
       child: Scaffold(
@@ -468,30 +472,23 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     page = index;
     blocAudioChangePage.inList.add({'page' : index});
 
+    updateData.actualizarCasos(blocCasos);
+    updateData.actualizarListaUsuarios(blocUser, blocConection);
+
     if(page == bottonSelect.opcion1){
-      updateData.actualizarListaUsuarios(blocUser, blocConection);
-      updateData.actualizarCasos(blocCasos);
       updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
       updateData.actualizarListaEnviados(blocTaskSend, blocConection);
     }
     if(page == bottonSelect.opcion2){
-      updateData.actualizarListaUsuarios(blocUser, blocConection);
       updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
-      updateData.actualizarCasos(blocCasos);
       updateNoti(0, false);
     }
     if(page == bottonSelect.opcion3){
-      updateData.actualizarListaUsuarios(blocUser, blocConection);
       updateData.actualizarListaEnviados(blocTaskSend, blocConection);
-      updateData.actualizarCasos(blocCasos);
       updateNoti(3, false);
     }
-    if(page == bottonSelect.opcion4){
-      updateData.actualizarListaUsuarios(blocUser, blocConection);
-      updateData.actualizarCasos(blocCasos);
-    }
+    if(page == bottonSelect.opcion4){ }
     if(page == bottonSelect.opcion5){
-      updateData.actualizarListaUsuarios(blocUser, blocConection);
       updateData.actualizarListaInvitationSent(blocInvitation, blocConection);
       updateData.actualizarListaInvitationReceived(blocInvitation, blocConection);
       updateNoti(1, false);
@@ -863,7 +860,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         if(newVal){
           _inicializarTaskRecived();
         }else{
-          updateNoti(0, false);
+          //updateNoti(0, false);
+          setState(() {});
         }
       });
     } catch (e) {}
@@ -954,30 +952,33 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
               updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
               updateData.actualizarListaEnviados(blocTaskSend, blocConection);
             }
-           // if(argumento['type'] == '1' || !isTask){
-              if (page == bottonSelect.opcion1 || page == bottonSelect.opcion3 || page == bottonSelect.opcion4) {
-                if (isTask) {
-                  updateNoti(0, true);
-                } else {
-                  updateNoti(1, true);
-                  updateNoti(2, true);
-                }
-              }
-              if (page == bottonSelect.opcion2) {
-                if (!isTask) {
-                  updateNoti(1, true);
-                  updateNoti(2, true);
-                }
-              }
-              if (page == bottonSelect.opcion5) {
-                updateNoti(isTask ? 0 : 2, true);
-              }
+            // if (page == bottonSelect.opcion1 || page == bottonSelect.opcion3 || page == bottonSelect.opcion4) {
+            //   if (isTask) {
+            //     updateNoti(0, true);
+            //   } else {
+            //     updateNoti(1, true);
+            //     updateNoti(2, true);
+            //   }
             // }
-            // else{
-            //   Tarea task = await DatabaseProvider.db.getCodeIdTask(argumento['idDoc']);
-            //   _onTapNavigator(bottonSelect.opcion2, 'Tareas recibidas');
-            //   clickTarea(task);
+            // if (page == bottonSelect.opcion2) {
+            //   if (!isTask) {
+            //     updateNoti(1, true);
+            //     updateNoti(2, true);
+            //   }
             // }
+            // if (page == bottonSelect.opcion5) {
+            //   updateNoti(isTask ? 0 : 2, true);
+            // }
+          }
+
+          if(argumento['table'] != null && argumento['table'].contains('contacts')){
+            if (page != bottonSelect.opcion5) {
+              updateNoti(1, true);
+              updateNoti(2, true);
+            }
+            if (page == bottonSelect.opcion5) {
+              updateNoti(2, true);
+            }
           }
 
           if(argumento['table'] != null && argumento['table'].contains('sms')){
@@ -1085,6 +1086,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       }catch(e){
         print(e.toString());
       }
+      setState(() {});
     });
   }
 
@@ -1296,21 +1298,22 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   }
 
   Future<void> verifyNewTaskInvitation() async {
-    int first = await SharedPrefe().getValue('first');
-    if(first == null || first == 0){
-      await SharedPrefe().setIntValue('first', 1);
-      //TAREAS
-      List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListTask') ?? [];
-      if(listTaskNew.isNotEmpty){
-        updateNoti(0, true);
-      }
-      //INVITACIONES
-      bool yesVery = await SharedPrefe().getValue('notiContacts') ?? false;
-      if(yesVery){
-        updateNoti(1, true);
-        updateNoti(2, true);
-      }
-    }
+    setState(() {});
+    // int first = await SharedPrefe().getValue('first');
+    // if(first == null || first == 0){
+    //   await SharedPrefe().setIntValue('first', 1);
+    //   //TAREAS
+    //   List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListTask') ?? [];
+    //   if(listTaskNew.isNotEmpty){
+    //     updateNoti(0, true);
+    //   }
+    //   //INVITACIONES
+    //   bool yesVery = await SharedPrefe().getValue('notiContacts') ?? false;
+    //   if(yesVery){
+    //     updateNoti(1, true);
+    //     updateNoti(2, true);
+    //   }
+    // }
   }
 
   validateInvitation(List<InvitationModel> list) async {
@@ -1356,5 +1359,31 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       });
       await SharedPrefe().setStringListValue('notiListChat', listTaskNewString);
     }catch(_){}
+  }
+
+  void viewUpdateNoti(){
+    bool inReceived = false;
+    bool inContactReceived = false;
+
+    listRecibidos.forEach((task) {
+      if(task.read == 0 && task.finalized != 1 && page != bottonSelect.opcion2){
+        print('');
+        inReceived = true;
+      }
+    });
+
+    listInvitation.forEach((invitation) {
+      if(invitation.inv == 1 && invitation.read == 0 && page != bottonSelect.opcion5){
+        inContactReceived = true;
+      }
+    });
+
+    if(inReceived){
+      updateNoti(0,true);
+    }
+    if(inContactReceived){
+      updateNoti(1,true);
+      updateNoti(2,true);
+    }
   }
 }
