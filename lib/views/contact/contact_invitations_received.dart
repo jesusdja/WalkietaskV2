@@ -78,8 +78,8 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
         userInvited = widget.mapIdUsersRes[invitation.userId];
         if(invitation.inv == 1 && userInvited != null){
           Image avatarUser = Image.network(avatarImage);
-          if(userInvited.avatar.isNotEmpty){
-            avatarUser = Image.network(userInvited.avatar);
+          if(userInvited.avatar_100.isNotEmpty){
+            avatarUser = Image.network(userInvited.avatar_100);
           }
 
           DateTime date = DateTime.parse(invitation.createdAt);

@@ -159,8 +159,8 @@ class _ContactsState extends State<Contacts> {
 
   Widget _cardMyContacts(Usuario user){
     Image avatarUser = Image.network(avatarImage);
-    if(user.avatar.isNotEmpty){
-      avatarUser = Image.network(user.avatar);
+    if(user.avatar_100.isNotEmpty){
+      avatarUser = Image.network(user.avatar_100);
     }
     return Container(
       width: ancho,

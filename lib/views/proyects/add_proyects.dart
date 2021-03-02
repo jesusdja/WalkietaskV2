@@ -255,8 +255,8 @@ class _AddProyectsState extends State<AddProyects> {
     }
 
     Image avatarUser = Image.network(avatarImage);
-    if(user.avatar != ''){
-      avatarUser = Image.network(user.avatar);
+    if(user.avatar_100 != ''){
+      avatarUser = Image.network(user.avatar_100);
     }
     return Container(
       width: ancho,

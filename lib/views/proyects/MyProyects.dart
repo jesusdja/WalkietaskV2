@@ -117,7 +117,7 @@ class _MyProyectsState extends State<MyProyects> {
                   onTap: () async {
                     bool res = await Navigator.push(context, new MaterialPageRoute(
                         builder: (BuildContext context) => new AddProyects(myUserRes: myUser, listUserRes: listUser,blocPage: widget.blocPage,proyect: null,listUsersExist: null,)));
-                    if(res){
+                    if(res != null && res){
                       await updateData.actualizarCasos(blocCasos);
                       await _getGuests();
                     }
@@ -305,7 +305,7 @@ class _MyProyectsState extends State<MyProyects> {
     List listUsers = projectsUser[idProjects] ?? [];
     listUsers.forEach((mapUserProject) {
       if(mapUserProject['users']['id'] != myUser.id){
-        String avatar = mapUserProject['users']['avatar'];
+        String avatar = mapUserProject['users']['avatar_100'];
         String name = '${mapUserProject['users']['name']} ${mapUserProject['users']['surname']}';
         String email = mapUserProject['users']['email'];
 
