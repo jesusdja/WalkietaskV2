@@ -10,6 +10,9 @@ class Usuario extends Equatable {
   String surname;
   String address;
   String avatar;
+  String avatar_100;
+  String avatar_500;
+  String avatar_800;
   int createCases;
   int active;
   int system;
@@ -30,6 +33,9 @@ class Usuario extends Equatable {
         this.surname = '',
         this.address = '',
         this.avatar = '',
+        this.avatar_100 = '',
+        this.avatar_500 = '',
+        this.avatar_800 = '',
         this.createCases = 0,
         this.active = 0,
         this.system = 0,
@@ -51,6 +57,9 @@ class Usuario extends Equatable {
     surname = json['surname'] ?? '';
     address = json['address'] ?? '';
     avatar = json['avatar'] ?? '';
+    avatar_100 = json['avatar_100'] ?? '';
+    avatar_500 = json['avatar_500'] ?? '';
+    avatar_800 = json['avatar_800'] ?? '';
     createCases = json['create_cases'] ?? 0;
     active = json['active'] ?? 0;
     system = json['system'] ?? 0;
@@ -73,6 +82,9 @@ class Usuario extends Equatable {
     data['surname'] = this.surname;
     data['address'] = this.address;
     data['avatar'] = this.avatar;
+    data['avatar_100'] = this.avatar_100;
+    data['avatar_500'] = this.avatar_500;
+    data['avatar_800'] = this.avatar_800;
     data['create_cases'] = this.createCases;
     data['active'] = this.active;
     data['system'] = this.system;
@@ -94,6 +106,9 @@ class Usuario extends Equatable {
         surname = snapshot['surname'] ?? '',
         address = snapshot['address'] ?? '',
         avatar = snapshot['avatar'] ?? '',
+        avatar_100 = snapshot['avatar_100'] ?? '',
+        avatar_500 = snapshot['avatar_500'] ?? '',
+        avatar_800 = snapshot['avatar_800'] ?? '',
         createCases = snapshot['create_cases'] ?? 0,
         active = snapshot['active'] ?? 0,
         system = snapshot['system'] ?? 0,
@@ -115,6 +130,9 @@ class Usuario extends Equatable {
     this.surname = obj['surname'];
     this.address = obj['address'];
     this.avatar = obj['avatar'];
+    this.avatar_100 = obj['avatar_100'];
+    this.avatar_500 = obj['avatar_500'];
+    this.avatar_800 = obj['avatar_800'];
     this.createCases = obj['create_cases'];
     this.active = obj['active'];
     this.system = obj['system'];
@@ -136,6 +154,9 @@ class Usuario extends Equatable {
     'surname' :       surname == null ? '' : surname,
     'address' :       address== null ? '' :address,
     'avatar' :        avatar== null ? '' :avatar,
+    'avatar_100' :        avatar_100== null ? '' :avatar_100,
+    'avatar_500' :        avatar_500== null ? '' :avatar_500,
+    'avatar_800' :        avatar_800== null ? '' :avatar_800,
     'create_cases' :  createCases== null ? 0 :createCases,
     'active' :        active== null ? 0 :active,
     'system' :        system== null ? 0 :system,
@@ -158,6 +179,9 @@ class Usuario extends Equatable {
     surname,
     address ,
     avatar ,
+    avatar_100 ,
+    avatar_500 ,
+    avatar_800 ,
     createCases ,
     active ,
     system ,

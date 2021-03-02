@@ -78,8 +78,8 @@ class _ProfileHomeState extends State<ProfileHome> {
     avatarUser = await getPhotoUser();
     avatarUser = avatarUser ?? Image.network(avatarImage);
     if(myUser != null){
-      if(myUser != null && myUser.avatar != ''){
-        avatarUser = Image.network(myUser.avatar);
+      if(myUser != null && myUser.avatar_100 != ''){
+        avatarUser = Image.network(myUser.avatar_100);
       }
     }
     setState(() {});

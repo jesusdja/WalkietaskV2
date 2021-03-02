@@ -317,8 +317,8 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
 
     Image avatarUser = Image.network(avatarImage);
     if(mapIdUser != null){
-      if(mapIdUser[tarea.user_id] != null && mapIdUser[tarea.user_id].avatar != ''){
-        avatarUser = Image.network(mapIdUser[tarea.user_id].avatar);
+      if(mapIdUser[tarea.user_id] != null && mapIdUser[tarea.user_id].avatar_100 != ''){
+        avatarUser = Image.network(mapIdUser[tarea.user_id].avatar_100);
       }
     }
 
@@ -452,8 +452,8 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
 
     Image avatarUser = Image.network(avatarImage);
     if(mapIdUser != null){
-      if(user != null && user.avatar != ''){
-        avatarUser = Image.network(user.avatar);
+      if(user != null && user.avatar_100 != ''){
+        avatarUser = Image.network(user.avatar_100);
       }
     }
 

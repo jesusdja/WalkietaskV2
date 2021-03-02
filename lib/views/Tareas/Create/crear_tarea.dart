@@ -278,8 +278,8 @@ class _CreateTaskState extends State<CreateTask> {
       if(widget.myUserRes == null || widget.myUserRes.id == null || user.id == widget.myUserRes.id || user.contact == 0) return Container();
 
       Image avatarUser = Image.network(avatarImage);
-      if(user.avatar.isNotEmpty){
-        avatarUser = Image.network(user.avatar);
+      if(user.avatar_100.isNotEmpty){
+        avatarUser = Image.network(user.avatar_100);
       }
 
       bool favorite = user.fijo == 1;
@@ -622,8 +622,8 @@ class _CreateTaskState extends State<CreateTask> {
           (!user.surname.toLowerCase().contains(controlleBuscador.text.toLowerCase()))) return Container();
 
       Image avatarUser = Image.network(avatarImage);
-      if(user.avatar.isNotEmpty){
-        avatarUser = Image.network(user.avatar);
+      if(user.avatar_100.isNotEmpty){
+        avatarUser = Image.network(user.avatar_100);
       }
 
       bool favorite = user.fijo == 1;

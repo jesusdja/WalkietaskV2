@@ -100,14 +100,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
     blocTab = new BlocCasos();
     _inicializarPatronBlocTab();
 
-    widget.listaCasos.forEach((element) { mapCasos[element.id] = element;});
-
-    if(mapDataUserHome[user.id] != null && mapDataUserHome[user.id][1] != null){
-      mapDataUserHome[user.id][1].forEach((element) { listRecived.add(element); });
-    }
-    if(mapDataUserHome[user.id] != null && mapDataUserHome[user.id][2] != null){
-      mapDataUserHome[user.id][2].forEach((element) { listSend.add(element); });
-    }
+    refreshData();
 
     _updateDataNewFirebase();
 
@@ -130,6 +123,19 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
     }catch(e){
       print(e.toString());
     }
+  }
+
+  void refreshData(){
+    widget.listaCasos.forEach((element) { mapCasos[element.id] = element;});
+
+    if(mapDataUserHome[user.id] != null && mapDataUserHome[user.id][2] != null){
+      mapDataUserHome[user.id][2].forEach((element) { listSend.add(element); });
+    }
+
+    if(mapDataUserHome[user.id] != null && mapDataUserHome[user.id][1] != null){
+      mapDataUserHome[user.id][1].forEach((element) { listRecived.add(element); });
+    }
+    setState(() {});
   }
 
   addPop(int num) async{
@@ -875,8 +881,8 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
   AppBar _appBar(){
 
     Image avatarUser = Image.network(avatarImage);
-    if(user.avatar.isNotEmpty){
-      avatarUser = Image.network(user.avatar);
+    if(user.avatar_100.isNotEmpty){
+      avatarUser = Image.network(user.avatar_100);
     }
 
     return AppBar(
@@ -1029,15 +1035,15 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       listViewTaskNew = [];
       listViewTaskNew3.forEach((element) {
         listViewTaskNew.add(element);
-        listRecived.forEach((task) { if(task.id.toString() == element && !tagReceived){ containReceived = true;} });
-        listSend.forEach((task) { if(task.id.toString() == element && tagReceived){ containSend = true;} });
+        listRecived.forEach((task) { if(task.id.toString() == element && !tagReceived && task.finalized != 1){ containReceived = true;} });
+        listSend.forEach((task) { if(task.id.toString() == element && tagReceived && task.finalized != 1){ containSend = true;} });
       });
       listViewTaskNew2 = await SharedPrefe().getValue('notiListChat') ?? [];
       listViewTaskNewChat = [];
       listViewTaskNew2.forEach((element) {
         listViewTaskNewChat.add(element);
-        listRecived.forEach((task) { if(task.id.toString() == element){ containReceived = true;} });
-        listSend.forEach((task) { if(task.id.toString() == element){ containSend = true;} });
+        listRecived.forEach((task) { if(task.id.toString() == element && task.finalized != 1){ containReceived = true;} });
+        listSend.forEach((task) { if(task.id.toString() == element && task.finalized != 1){ containSend = true;} });
       });
       setState(() {});
     }catch(e){

@@ -18,7 +18,6 @@ import 'package:walkietaskv2/services/Firebase/chatTareasFirebase.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
@@ -127,8 +126,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
     if(tarea.user_responsability_id != null){
       usuarioResponsable = await DatabaseProvider.db.getCodeIdUser(idSearch.toString());
-      if(usuarioResponsable != null && usuarioResponsable.avatar != null && usuarioResponsable.avatar.isNotEmpty){
-        imagenUser = Image.network(usuarioResponsable.avatar);
+      if(usuarioResponsable != null && usuarioResponsable.avatar_100 != null && usuarioResponsable.avatar_100.isNotEmpty){
+        imagenUser = Image.network(usuarioResponsable.avatar_100);
       }
     }
 
@@ -252,8 +251,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
     String nombreUser = '';
 
     if(usuarioResponsable != null){
-      if(usuarioResponsable.avatar != null && usuarioResponsable.avatar != ''){
-        imagenUser = Image.network(usuarioResponsable.avatar);
+      if(usuarioResponsable.avatar_100 != null && usuarioResponsable.avatar_100 != ''){
+        imagenUser = Image.network(usuarioResponsable.avatar_100);
       }
       if(usuarioResponsable.name != null && usuarioResponsable.name != ''){
         nombreUser = '${usuarioResponsable.name} ${usuarioResponsable.surname}';
@@ -389,8 +388,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
   Widget _cardSMS(Color colorCard, String texto, String dateSrt,bool lateralDer,Usuario userFrom){
     Image imagenAvatar = avatarUser ?? Image.network('$avatarImage');
-    if(userFrom != null && userFrom.avatar != null && userFrom.avatar != ''){
-      imagenAvatar = Image.network(userFrom.avatar);
+    if(userFrom != null && userFrom.avatar_100 != null && userFrom.avatar_100 != ''){
+      imagenAvatar = Image.network(userFrom.avatar_100);
     }
 
     TextStyle style = WalkieTaskStyles().stylePrimary(size: alto * 0.016);

@@ -575,8 +575,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
     avatarUser = avatarUser ?? Image.network(avatarImage);
     if(myUser != null){
-      if(myUser.avatar != null && myUser.avatar != ''){
-        avatarUser = Image.network(myUser.avatar);
+      if(myUser.avatar_100 != null && myUser.avatar_100 != ''){
+        avatarUser = Image.network(myUser.avatar_100);
       }
     }
 
@@ -647,7 +647,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                 myUser = await updateData.getMyUser();
                 await updateData.actualizarListaUsuarios(blocUser, blocConection);
                 if(res[1]){
-                  myUser.avatar = '';
+                  myUser.avatar_100 = '';
                   getPhoto();
                 }
                 setState(() {});
@@ -1100,15 +1100,15 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     String nameUser = '';
     if(isRecived){
       if(mapIdUser[task.user_id] != null){
-        if(mapIdUser[task.user_id].avatar != ''){
-          avatarUser = Image.network(mapIdUser[task.user_id].avatar);
+        if(mapIdUser[task.user_id].avatar_100 != ''){
+          avatarUser = Image.network(mapIdUser[task.user_id].avatar_100);
         }
         nameUser = mapIdUser[task.user_id].name;
       }
     }else{
       if(mapIdUser[task.user_responsability_id] != null){
-        if(mapIdUser[task.user_responsability_id].avatar != ''){
-          avatarUser = Image.network(mapIdUser[task.user_responsability_id].avatar);
+        if(mapIdUser[task.user_responsability_id].avatar_100 != ''){
+          avatarUser = Image.network(mapIdUser[task.user_responsability_id].avatar_100);
         }
         nameUser = mapIdUser[task.user_responsability_id].name;
       }
@@ -1176,8 +1176,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     }catch(e){}
 
     if(mapIdUser[idUser] != null){
-      if(mapIdUser[idUser].avatar != ''){
-        avatarUser = Image.network(mapIdUser[idUser].avatar);
+      if(mapIdUser[idUser].avatar_100 != ''){
+        avatarUser = Image.network(mapIdUser[idUser].avatar_100);
       }
       nameUser = mapIdUser[idUser].name;
     }
@@ -1218,8 +1218,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
     Image avatarUser = Image.network(avatarImage);
     if(myUser != null){
-      if(myUser.avatar != ''){
-        avatarUser = Image.network(myUser.avatar);
+      if(myUser.avatar_100 != ''){
+        avatarUser = Image.network(myUser.avatar_100);
       }
     }
 

@@ -748,4 +748,24 @@ class conexionHttp{
     }
     return response;
   }
+
+  Future<http.Response> httpSendImage(String path) async {
+    String token  = await obtenerToken();
+    Map<String, String> headers = {
+      'Authorization': 'Bearer $token'
+    };
+
+    var response;
+    try {
+      final imageUp = http.MultipartRequest('POST',Uri.parse('$enlace/api/auth/users/uploadphoto'));
+      imageUp.headers.addAll(headers);
+      final file = await http.MultipartFile.fromPath('avatar', path,);
+      imageUp.files.add(file);
+      final streamedResponse = await imageUp.send();
+      response = await http.Response.fromStream(streamedResponse);
+    } catch (ex) {
+      print(ex.toString());
+    }
+    return response;
+  }
 }

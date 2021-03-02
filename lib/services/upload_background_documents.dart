@@ -143,21 +143,21 @@ Future<void> uploadUpdateUser() async {
     String data = listDocuments[x];
     Map<String,dynamic> jsonBody = {};
 
-    try{
-      Map<String,String> result = await subirArchivo(data);
-      if(result['subir'] == 'true'){
-        String pathUrlAttachment = result['location'];
-        jsonBody['avatar'] = pathUrlAttachment;
-      }
-    }catch(e){
-      print(e.toString());
-    }
+    // try{
+    //   Map<String,String> result = await subirArchivo(data);
+    //   if(result['subir'] == 'true'){
+    //     String pathUrlAttachment = result['location'];
+    //     jsonBody['avatar'] = pathUrlAttachment;
+    //   }
+    // }catch(e){
+    //   print(e.toString());
+    // }
 
     try{
-      var response = await conexionHttp().httpUpdateUser(jsonBody);
-      var value = jsonDecode(response.body);
-      if(value['status_code'] == 200){
-        //ELIMINAR AUDIO
+      var responseImage = await conexionHttp().httpSendImage(data);
+      var valueImage = jsonDecode(responseImage.body);
+      if(valueImage['status_code'] == 200){
+        //ELIMINAR
         final file = File(data[0]);
         file.openRead();
         bool exist = await file.exists();
@@ -172,12 +172,37 @@ Future<void> uploadUpdateUser() async {
         }
         await SharedPrefe().setStringListValue('WalListUpdateAvatar',listDocumentsNoSend);
         print('USUARIO MODIFICADO');
-      }else{
-        print('NO MODIFICADO');
       }
     }catch(e){
       print(e.toString());
-      print('ERROR MODIFICANDO');
+      print('ERROR AL SUBIR ARCHIVO');
     }
+
+    // try{
+    //   var response = await conexionHttp().httpUpdateUser(jsonBody);
+    //   var value = jsonDecode(response.body);
+    //   if(value['status_code'] == 200){
+    //     //ELIMINAR AUDIO
+    //     final file = File(data[0]);
+    //     file.openRead();
+    //     bool exist = await file.exists();
+    //     if(exist){
+    //       await File(data[0]).delete();
+    //       print('SE ELIMINO AVATAR DE USUARIO');
+    //     }
+    //     //ELIMINAR TAREA DE LISTA
+    //     List<String> listDocumentsNoSend = [];
+    //     for(int x1 = 0; x1 < listDocuments.length; x1++){
+    //       if(x != x1){ listDocumentsNoSend.add(listDocuments[x]); }
+    //     }
+    //     await SharedPrefe().setStringListValue('WalListUpdateAvatar',listDocumentsNoSend);
+    //     print('USUARIO MODIFICADO');
+    //   }else{
+    //     print('NO MODIFICADO');
+    //   }
+    // }catch(e){
+    //   print(e.toString());
+    //   print('ERROR MODIFICANDO');
+    // }
   }
 }

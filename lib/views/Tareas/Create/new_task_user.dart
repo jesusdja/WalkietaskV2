@@ -158,8 +158,8 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
   Widget _body(){
 
     Image avatarUser = Image.network(avatarImage);
-    if(user.avatar.isNotEmpty){
-      avatarUser = Image.network(user.avatar);
+    if(user.avatar_100.isNotEmpty){
+      avatarUser = Image.network(user.avatar_100);
     }
 
     return opcionesOpen ? _taskSendOpen() : _taskSendOut(avatarUser);
@@ -174,7 +174,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
           children: [
             SizedBox(height: alto * 0.1,),
             Container(
-              child: Text('Enviarás una tarea a ${user.name}', style: textStylePrimary,),
+              child: Text(isPersonal ? 'Enviarás un recordatorio personal.' : 'Enviarás una tarea a ${user.name}.', style: textStylePrimary,),
             ),
             Container(
               margin: EdgeInsets.only(top: alto * 0.01),
@@ -634,8 +634,8 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
   AppBar _appBar(){
 
     Image avatarUser = Image.network(avatarImage);
-    if(user.avatar.isNotEmpty){
-      avatarUser = Image.network(user.avatar);
+    if(user.avatar_100.isNotEmpty){
+      avatarUser = Image.network(user.avatar_100);
     }
 
     return AppBar(

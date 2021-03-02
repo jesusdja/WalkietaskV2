@@ -14,8 +14,8 @@ class DatabaseProvider{
   Future<Database> get database async {
     if(_database != null){
       int versiondb = await SharedPrefe().getValue('unityInit');
-      if(versiondb == null || versiondb != 15){
-        await SharedPrefe().setIntValue('unityInit', 15);
+      if(versiondb == null || versiondb != 16){
+        await SharedPrefe().setIntValue('unityInit', 16);
         await deleteDatabaseInstance();
       }else{
         return _database;
