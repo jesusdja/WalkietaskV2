@@ -16,8 +16,11 @@ Future<Map<String,String>> subirAudio(String ruta) async{
 
   try {
 
-    const _accessKeyId = 'AKIAIPC6TH34P6BZXFZA';
-    const _secretKeyId = 'HxTaIwcioqnfYFhUp/bsQM67dPt0ITtF7XObaaIB';
+    const _accessKeyId = 'AKIAJLVTLYI6Y3MKN64Q';
+    const _secretKeyId = 'vU6meAOMGYkgjm3siqXjj+dp9WIaHQ+/4hYhs5fF';
+
+    // const _accessKeyId = 'AKIAIPC6TH34P6BZXFZA';
+    // const _secretKeyId = 'HxTaIwcioqnfYFhUp/bsQM67dPt0ITtF7XObaaIB';
     const _region = 'us-east-2';
     const _s3Endpoint ='https://awswalkietask.s3-us-east-2.amazonaws.com';
 
@@ -70,8 +73,11 @@ Future<Map<String,String>> subirArchivo(String ruta) async{
 
   try {
 
-    const _accessKeyId = 'AKIAIPC6TH34P6BZXFZA';
-    const _secretKeyId = 'HxTaIwcioqnfYFhUp/bsQM67dPt0ITtF7XObaaIB';
+    const _accessKeyId = 'AKIAJLVTLYI6Y3MKN64Q';
+    const _secretKeyId = 'vU6meAOMGYkgjm3siqXjj+dp9WIaHQ+/4hYhs5fF';
+
+    // const _accessKeyId = 'AKIAIPC6TH34P6BZXFZA';
+    // const _secretKeyId = 'HxTaIwcioqnfYFhUp/bsQM67dPt0ITtF7XObaaIB';
     const _region = 'us-east-2';
     const _s3Endpoint ='https://awswalkietask.s3-us-east-2.amazonaws.com';
 

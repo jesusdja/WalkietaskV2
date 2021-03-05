@@ -802,6 +802,9 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       mapIdUser[listaUser[x].id] = listaUser[x];
     }
     loadListUser = true;
+
+    listaUser = orderUserForDate(listaUser);
+
     setState(() {});
   }
   _inicializarCasos() async {
@@ -814,6 +817,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     setState(() {});
     validateInvitation(listInvitation);
   }
+
   //*******************************************
   //*******************************************
   //*************ESCUCHAR APIS*****************
@@ -1367,13 +1371,12 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     }catch(_){}
   }
 
-  void viewUpdateNoti(){
+  Future<void> viewUpdateNoti() async {
     bool inReceived = false;
     bool inContactReceived = false;
 
     listRecibidos.forEach((task) {
       if(task.read == 0 && task.finalized != 1 && page != bottonSelect.opcion2){
-        print('');
         inReceived = true;
       }
     });
@@ -1385,11 +1388,66 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     });
 
     if(inReceived){
-      updateNoti(0,true);
+      notiRecived = true;
+      await SharedPrefe().setBoolValue('notiRecived', true);
     }
     if(inContactReceived){
-      updateNoti(1,true);
-      updateNoti(2,true);
+      notiContacts = true;
+      await SharedPrefe().setBoolValue('notiContacts', true);
+      await SharedPrefe().setBoolValue('notiContacts_received', true);
     }
+  }
+
+  List<Usuario> orderUserForDate(List<Usuario> listUser){
+    List<Usuario> users = [];
+    Map<int,Usuario> contacts = {};
+    Map<int,Usuario> contacts2 = {};
+
+    listUser.forEach((element) {
+      if(element.contact == 1){ contacts[element.id] = element; contacts2[element.id] = element; }
+    });
+
+    for(int x = 1; x < contacts.length; x++){
+      int idMax = 0;
+      String dateMax = '';
+
+      contacts2.forEach((key, value) {
+        if(value.updatedAt.isNotEmpty){
+          if(dateMax.isEmpty){
+            idMax = key;
+            dateMax = value.updatedAt;
+          }else{
+            DateTime dateCreate = DateTime.parse(dateMax);
+            Duration difDays = dateCreate.difference(DateTime.now());
+
+            DateTime dateCreate2 = DateTime.parse(value.updatedAt);
+            Duration difDays2 = dateCreate2.difference(DateTime.now());
+
+            if(difDays2.inSeconds > difDays.inSeconds){
+              idMax = key;
+              dateMax = value.updatedAt;
+            }
+          }
+        }
+      });
+
+      contacts2.remove(idMax);
+      if(contacts[idMax] != null){
+        users.add(contacts[idMax]);
+      }
+    }
+
+    contacts.forEach((key, value) {
+      bool isHere = false;
+      users.forEach((element) {
+        if(element.id == key){
+          isHere = true;
+        }
+      });
+      if(!isHere){
+        users.add(value);
+      }
+    });
+    return users;
   }
 }

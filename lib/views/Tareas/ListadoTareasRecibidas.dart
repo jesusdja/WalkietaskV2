@@ -332,7 +332,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
     String nameUser = '';
     if(mapIdUser[tarea.user_id] != null){
       nameUser = '${mapIdUser[tarea.user_id].name} ${mapIdUser[tarea.user_id].surname}';
-      if(widget.myUserRes.id == mapIdUser[tarea.user_id].id){
+      if(widget.myUserRes != null && widget.myUserRes.id != null && widget.myUserRes.id == mapIdUser[tarea.user_id].id){
         nameUser = 'Recordatorio personal';
       }
     }

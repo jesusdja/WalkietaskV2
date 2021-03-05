@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
+import 'package:walkietaskv2/utils/finish_app.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 
 enum Status { Logo,Login,home,code}
@@ -15,6 +16,13 @@ class AuthService with ChangeNotifier{
   Status get status => _status;
 
   Future init() async {
+
+    int versiondb = await SharedPrefe().getValue('unityInit');
+    if(versiondb == null || versiondb != 17){
+      await SharedPrefe().setIntValue('unityInit', 17);
+      await finishApp();
+    }
+
     int counter = await SharedPrefe().getValue('unityLogin');
 
     if(counter != null){
