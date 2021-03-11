@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:walkietaskv2/services/provider/home_provider.dart';
 import 'App.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -45,23 +47,28 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        localizationsDelegates: [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          DefaultCupertinoLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        locale: Locale('es', 'ES'),
-        supportedLocales: [
-          const Locale('es', 'ES'), // English
-          const Locale('en', 'US'), // English
-        ],
-        home: App(),
-        theme: ThemeData(
-          fontFamily: 'helveticaneue',
-        )
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => new HomeProvider()),
+      ],
+      child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            DefaultCupertinoLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          locale: Locale('es', 'ES'),
+          supportedLocales: [
+            const Locale('es', 'ES'), // English
+            const Locale('en', 'US'), // English
+          ],
+          home: App(),
+          theme: ThemeData(
+            fontFamily: 'helveticaneue',
+          )
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:provider/provider.dart';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/bloc/blocUser.dart';
@@ -10,10 +11,12 @@ import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
+import 'package:walkietaskv2/services/provider/home_provider.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/format_deadline.dart';
+import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/task_sound.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
@@ -66,6 +69,7 @@ class _CreateTaskState extends State<CreateTask> {
 
   double alto = 0;
   double ancho = 0;
+  int posPersonal = 0;
 
   TextStyle textStylePrimary;
   TextStyle textStylePrimaryLitle;
@@ -116,6 +120,8 @@ class _CreateTaskState extends State<CreateTask> {
 
     int cont = 0;
     listUser.forEach((element) { if(element.contact == 1){ cont++; }});
+
+    final posPersonalProvider = Provider.of<HomeProvider>(context);
 
     return GestureDetector(
       onTap: () {
@@ -211,8 +217,6 @@ class _CreateTaskState extends State<CreateTask> {
       ),
     );
   }
-
-
 
   Widget _users(){
 

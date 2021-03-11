@@ -811,4 +811,19 @@ class conexionHttp{
 
     return response;
   }
+
+  Future<http.Response> httpBinnacle() async{
+    String token  = await obtenerToken();
+    var response;
+    Map<String, String> requestHeaders = {
+      'Authorization': 'Bearer $token'
+    };
+    try{
+      response = http.get('$enlace/api/auth/tasks/binnacle',
+          headers: requestHeaders);
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
 }

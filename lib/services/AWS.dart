@@ -11,7 +11,7 @@ const _secretKeyId = 'PsvOg4GzJOOoSf0VMxbZa/gN+RmFPUYkhzOBdIlz';
 const _region = 'us-east-2';
 const _s3Endpoint ='https://walkietask-bucket.s3-us-east-2.amazonaws.com';
 
-String nameUser = 'walkietask-bucket';
+String nameBucket = 'walkietask-bucket';
 
 Future<Map<String,String>> subirAudio(String ruta) async{
 
@@ -31,7 +31,7 @@ Future<Map<String,String>> subirAudio(String ruta) async{
     final req = http.MultipartRequest("POST", uri);
     final multipartFile = http.MultipartFile('file', stream, length,filename: path.basename(file.path));
 
-    final policy = Policy.fromS3PresignedPost('audios/$nombreSubido.mp4',nameUser, _accessKeyId, 15, length,region: _region);
+    final policy = Policy.fromS3PresignedPost('audios/$nombreSubido.mp4',nameBucket, _accessKeyId, 15, length,region: _region);
     final key = SigV4.calculateSigningKey(_secretKeyId, policy.datetime, _region, 's3');
     final signature = SigV4.calculateSignature(key, policy.encode());
 
@@ -77,7 +77,7 @@ Future<Map<String,String>> subirArchivo(String ruta) async{
     final req = http.MultipartRequest("POST", uri);
     final multipartFile = http.MultipartFile('file', stream, length,filename: path.basename(file.path));
 
-    final policy = Policy.fromS3PresignedPost('attached/$nombreSubido',nameUser, _accessKeyId, 15, length,region: _region);
+    final policy = Policy.fromS3PresignedPost('attached/$nombreSubido',nameBucket, _accessKeyId, 15, length,region: _region);
     final key = SigV4.calculateSigningKey(_secretKeyId, policy.datetime, _region, 's3');
     final signature = SigV4.calculateSignature(key, policy.encode());
 

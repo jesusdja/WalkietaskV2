@@ -8,8 +8,10 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/services/provider/home_provider.dart';
 import 'package:walkietaskv2/services/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
@@ -24,7 +26,6 @@ import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/value_validators.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
-import 'package:walkietaskv2/views/profile/profile_photo.dart';
 
 class ProfileHome extends StatefulWidget {
 
@@ -72,6 +73,7 @@ class _ProfileHomeState extends State<ProfileHome> {
     };
 
     initData();
+    initPosPesonal();
   }
 
   Future<void> initData() async {
@@ -85,11 +87,20 @@ class _ProfileHomeState extends State<ProfileHome> {
     setState(() {});
   }
 
+  initPosPesonal() async{
+    selectIndex = await SharedPrefe().getValue('posPersonal') ?? 0;
+    setState(() {
+
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
 
     alto = MediaQuery.of(context).size.height;
     ancho = MediaQuery.of(context).size.width;
+
+    final posPersonalProvider = Provider.of<HomeProvider>(context);
 
     bool edit = false;
     mapData.forEach((key, value) { if(value){ edit = true;} });
@@ -173,7 +184,7 @@ class _ProfileHomeState extends State<ProfileHome> {
                 backgroundColor: edit ? WalkieTaskColors.primary : WalkieTaskColors.color_B7B7B7,
                 onPressed: () async {
                   if(edit){
-                    await saveUser();
+                    await saveUser(context);
                   }
                 },
               ),
@@ -403,10 +414,11 @@ class _ProfileHomeState extends State<ProfileHome> {
             value: index,
             groupValue: selectIndex,
             activeColor: WalkieTaskColors.primary,
-            onChanged: (newIndex){
-              // setState(() {
-              //   selectIndex = newIndex;
-              // });
+            onChanged: (newIndex) async {
+              setState(() {
+                selectIndex = newIndex;
+                mapData[6] = true;
+              });
             },
           )
         ],
@@ -414,7 +426,7 @@ class _ProfileHomeState extends State<ProfileHome> {
     );
   }
 
-  Future<void> saveUser() async {
+  Future<void> saveUser(BuildContext context) async {
     setState(() {
       loadSave = true;
     });
@@ -485,6 +497,16 @@ class _ProfileHomeState extends State<ProfileHome> {
       }
     }
 
+    if( mapData[6]){
+      final posPersonalProvider = Provider.of<HomeProvider>(context, listen: false);
+      try{
+        posPersonalProvider.posPersonal = selectIndex;
+        if(body.length <= 1){
+          notError = false;
+        }
+      }catch(_){}
+    }
+
     if((body.length > 1 || validateEmailAddress(controllerEmail.text)['valid']) && notError){
       try{
         var response = await conexionHttp().httpUpdateUser(body);
@@ -520,6 +542,13 @@ class _ProfileHomeState extends State<ProfileHome> {
       }catch(e){
         print(e.toString());
         showAlert('Error al enviar los datos.',WalkieTaskColors.color_E07676);
+      }
+    }else{
+      if(mapData[6]){
+        Map result = {0 : true, 1: false};
+        result[1] = true;
+        Navigator.of(context).pop(result);
+        showAlert('Usuario editado con exito',WalkieTaskColors.color_89BD7D);
       }
     }
 

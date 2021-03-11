@@ -38,6 +38,7 @@ import 'package:walkietaskv2/views/Tareas/ListadoTareasEnviadas.dart';
 import 'package:walkietaskv2/views/contact/contact.dart';
 import 'package:walkietaskv2/views/profile/profile_home.dart';
 import 'package:walkietaskv2/views/proyects/MyProyects.dart';
+import 'package:walkietaskv2/views/binnacle/binnacle.dart';
 
 enum bottonSelect {opcion1,opcion2,opcion3,opcion4,opcion5}
 
@@ -658,6 +659,13 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                 }
                 setState(() {});
               }
+            }),
+            _divider,
+            _textDrawer('Bitácora', () async {
+              Navigator.push(context, new MaterialPageRoute(
+                  builder: (BuildContext context) => BinnaclePage(
+                    myUser: myUser,
+                  )));
             }),
             _divider,
             _textDrawer('Acerca de', (){}),
