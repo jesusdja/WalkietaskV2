@@ -16,7 +16,6 @@ import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/format_deadline.dart';
-import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/task_sound.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
@@ -122,6 +121,7 @@ class _CreateTaskState extends State<CreateTask> {
     listUser.forEach((element) { if(element.contact == 1){ cont++; }});
 
     final posPersonalProvider = Provider.of<HomeProvider>(context);
+    posPersonal = posPersonalProvider.posPersonal;
 
     return GestureDetector(
       onTap: () {
@@ -129,6 +129,13 @@ class _CreateTaskState extends State<CreateTask> {
       },
       child: Scaffold(
         backgroundColor: WalkieTaskColors.white,
+        bottomNavigationBar: posPersonal == 2 ?
+            Container(
+              height: alto * 0.06,
+              margin: EdgeInsets.only(bottom: alto * 0.01),
+              child: _reminderPersonal(),
+            )
+            : Container(height: 5,),
         body: cont == 0 ? _taskIsEmpty() : _taskForUsers(),
       ),
     );
@@ -140,6 +147,8 @@ class _CreateTaskState extends State<CreateTask> {
         width: ancho,
         child: Column(
           children: [
+            posPersonal == 1 ? SizedBox(height: alto * 0.02,) : Container(),
+            posPersonal == 1 ? _reminderPersonal() : Container(),
             Container(
               padding: EdgeInsets.only(top: alto * 0.05, left: ancho * 0.06, right: ancho * 0.06),
               width: ancho,
@@ -176,7 +185,7 @@ class _CreateTaskState extends State<CreateTask> {
                 style: textStylePrimary, textAlign: TextAlign.left,),
             ),
             SizedBox(height: alto * 0.02,),
-            _reminderPersonal(),
+            posPersonal == 0 ? _reminderPersonal() : Container(),
           ],
         ),
       ),
@@ -210,6 +219,8 @@ class _CreateTaskState extends State<CreateTask> {
           ),
           SliverList(
             delegate: SliverChildListDelegate([
+              iconBuscador ? Container() : posPersonal == 1 ? SizedBox(height: alto * 0.02,) : Container(),
+              iconBuscador ? Container() : posPersonal == 1 ? _reminderPersonal() : Container(),
               iconBuscador ? resultSearch() : _users()
             ]),
           ),
@@ -342,7 +353,10 @@ class _CreateTaskState extends State<CreateTask> {
           )
       );
     });
-    users.add(_reminderPersonal());
+
+    if(posPersonal == 0){
+      users.add(_reminderPersonal());
+    }
 
     users.add(SizedBox(height: alto * 0.03,));
 
