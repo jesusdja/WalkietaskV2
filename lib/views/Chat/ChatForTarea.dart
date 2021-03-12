@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:audioplayers/audioplayers.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
@@ -48,7 +48,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
   List<Usuario> listUser = new List<Usuario>();
 
-  CollectionReference tareasColeccion;
+  //CollectionReference tareasColeccion;
   ChatTareaFirebase tareaFB;
   final ScrollController listScrollController = new ScrollController();
 
@@ -83,7 +83,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
     listenerAudio();
 
     try{
-      tareasColeccion = FirebaseFirestore.instance.collection('Tareas');
+      //tareasColeccion = FirebaseFirestore.instance.collection('Tareas');
       tareaFB = ChatTareaFirebase();
     }catch(e){
       print(e.toString());
@@ -327,7 +327,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
   Widget _mensajes(){
     return tarea == null ? Container() : Container(
-      child: StreamBuilder<QuerySnapshot>(
+      /*child: StreamBuilder<QuerySnapshot>(
         stream: tareasColeccion.where("idTarea", isEqualTo: tarea.id.toString()).snapshots(),
         builder: (context,snapshot){
           if (snapshot.data == null){
@@ -382,7 +382,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
           ) :
           Container();
         }
-      ),
+      ),*/
     );
   }
 

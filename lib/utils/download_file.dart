@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
+//import 'package:flutter_downloader/flutter_downloader.dart';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
+//import 'package:path_provider/path_provider.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:open_file/open_file.dart';
@@ -25,13 +25,14 @@ Future downloadFile({
       if (exist) {
         OpenFile.open(fileDownload);
       }else{
-        await FlutterDownloader.enqueue(
+        /*await FlutterDownloader.enqueue(
             url: url,
             headers: {"auth": "test_for_sql_encoding"},
             savedDir: _localPath,
             showNotification: true,
             openFileFromNotification: true);
         showAlert('Se inicio la descarga del archivo.', WalkieTaskColors.color_89BD7D);
+        */
       }
     }catch(e){
       print(e.toString());
@@ -39,8 +40,9 @@ Future downloadFile({
 }
 
 Future<String> _findLocalPath(BuildContext context) async {
-  final directory = Theme.of(context).platform == TargetPlatform.android
+  /*final directory; = Theme.of(context).platform == TargetPlatform.android
       ? await getExternalStorageDirectory()
-      : await getApplicationDocumentsDirectory();
-  return directory.path;
+      : await getApplicationDocumentsDirectory();*/
+  //return directory.path;
+  return '';
 }

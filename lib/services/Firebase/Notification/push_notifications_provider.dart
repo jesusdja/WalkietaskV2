@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
+//import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
@@ -10,7 +10,7 @@ import 'package:walkietaskv2/utils/shared_preferences.dart';
 
 class PushProvider{
 
-  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  //FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   final _mensajesStreamController = StreamController<Map<String,String>>.broadcast();
   Stream<Map<String,String>> get mensajes => _mensajesStreamController.stream;
@@ -20,7 +20,7 @@ class PushProvider{
   }
 
   getToken() async {
-    _firebaseMessaging.requestNotificationPermissions();
+    /*_firebaseMessaging.requestNotificationPermissions();
     _firebaseMessaging.getToken().then((token) async {
       await SharedPrefe().setStringValue('walkietaskIdNoti',token);
       print('======== TOKEN FIREBASE ========');
@@ -37,12 +37,12 @@ class PushProvider{
       }catch(e){
         print('ERROR AL OBTENER USUARIO EN TOKEN');
       }
-    });
+    });*/
   }
 
 
   initNotificaciones() async {
-    _firebaseMessaging.requestNotificationPermissions();
+    /*_firebaseMessaging.requestNotificationPermissions();
     _firebaseMessaging.configure(
       //APP ABIERTA
       // ignore: missing_return
@@ -99,7 +99,7 @@ class PushProvider{
         }
         _mensajesStreamController.sink.add(argumento);
       },
-    );
+    );*/
   }
 
 

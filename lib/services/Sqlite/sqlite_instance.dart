@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
+//import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'package:path/path.dart';
@@ -8,7 +8,7 @@ import 'package:path/path.dart';
 String versionApp = '1.2.12+1';
 
 Future<Database> getDatabaseInstance() async {
-  Directory directory = await getApplicationDocumentsDirectory();
+  Directory directory;// = await getApplicationDocumentsDirectory();
   String path = join(directory.path, "unity16.db");
   print(path);
   return await openDatabase(path, version: 16,

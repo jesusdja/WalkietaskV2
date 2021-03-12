@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'App.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
+//import 'package:firebase_core/firebase_core.dart';
+//import 'package:flutter_downloader/flutter_downloader.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await FlutterDownloader.initialize(debug: true);
+  //await Firebase.initializeApp();
+  //await FlutterDownloader.initialize(debug: true);
   runApp(MyApp());
 }
 
@@ -68,7 +68,7 @@ class _MyAppState extends State<MyApp> {
 
 class AppFR extends StatelessWidget {
 
-  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+  //final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +85,9 @@ class AppFR extends StatelessWidget {
         const Locale('es', 'ES'), // English
         const Locale('en', 'US'), // English
       ],
+
+      home: MyApp()
+      /*
       home: FutureBuilder(
         // Initialize FlutterFire:
         future: _initialization,
@@ -101,7 +104,7 @@ class AppFR extends StatelessWidget {
           // Otherwise, show something whilst waiting for initialization to complete
           return Scaffold(backgroundColor: Colors.white,body: Container(),);
         },
-      ),
+      ),*/
     );
   }
 }

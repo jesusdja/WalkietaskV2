@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sound/flutter_sound.dart';
+//import 'package:flutter_sound/flutter_sound.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
@@ -14,7 +14,7 @@ import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Tareas/Create/new_task_user.dart';
-import 'package:path_provider/path_provider.dart';
+//import 'package:path_provider/path_provider.dart';
 
 class BottomDetailsTask extends StatefulWidget {
 
@@ -65,8 +65,8 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
 
   Usuario user;
 
-  FlutterSound flutterSound = new FlutterSound();
-  FlutterSoundRecorder flutterSoundRecorder = FlutterSoundRecorder();
+  //FlutterSound flutterSound = new FlutterSound();
+  //FlutterSoundRecorder flutterSoundRecorder = FlutterSoundRecorder();
 
   UpdateData updateData;
 
@@ -81,7 +81,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
   @override
   void dispose() {
     super.dispose();
-    flutterSoundRecorder?.closeAudioSession();
+    //flutterSoundRecorder?.closeAudioSession();
   }
 
   @override
@@ -225,10 +225,10 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
       DateTime date = DateTime.now();
       audioName = 'audioplay${date.year}${date.month}${date.day}${date.hour}${date.minute}${date.second}';
       audioPath = '$appDocPath/$audioName.mp4';
-      await flutterSoundRecorder.startRecorder(toFile: '$appDocPath/$audioName.mp4').then((value) {
+      /*await flutterSoundRecorder.startRecorder(toFile: '$appDocPath/$audioName.mp4').then((value) {
         print('startRecorder');
         setState(() {});
-      });
+      });*/
     } catch (err) {
       print('startRecorder error: $err');
     }
@@ -237,9 +237,9 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
   _detenergrabar() async {
     try{
       try{
-        await flutterSoundRecorder.stopRecorder().then((value) {
+        /*await flutterSoundRecorder.stopRecorder().then((value) {
           setState(() {});
-        });
+        });*/
       }catch(ex){
         print('ERROR EN STOP ${ex.toString()}');
       }
@@ -321,12 +321,12 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
   pathinicial() async{
 
     try{
-      await flutterSoundRecorder.openAudioSession();
+      //await flutterSoundRecorder.openAudioSession();
     }catch(e){
       print(e.toString());
     }
 
-    Directory appDocDi25 = await getExternalStorageDirectory();
+    Directory appDocDi25;// = await getExternalStorageDirectory();
     appDocPath = appDocDi25.path;
     setState(() {});
   }

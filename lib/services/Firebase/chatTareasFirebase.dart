@@ -1,15 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:walkietaskv2/models/Chat/ChatTareas.dart';
 
 class ChatTareaFirebase{
 
-  final CollectionReference tareasColeccion = FirebaseFirestore.instance.collection('Tareas');
+  //final CollectionReference tareasColeccion = FirebaseFirestore.instance.collection('Tareas');
 
   Future<ChatTareas> crearTareaChat(ChatTareas chat) async {
     ChatTareas chatRes;
     try{
-      DocumentReference ref = await tareasColeccion.add(chat.toJson());
-      chat.id = ref.id;
+      //DocumentReference ref = await tareasColeccion.add(chat.toJson());
+      chat.id = ''; //ref.id;
       if(await modificarTareaChat(chat)){
         chatRes = chat;
       }
@@ -22,7 +22,7 @@ class ChatTareaFirebase{
   Future<bool> modificarTareaChat(ChatTareas chat) async{
     bool res = false;
     try{
-      await tareasColeccion.doc(chat.id).update(chat.toJson());
+      //await tareasColeccion.doc(chat.id).update(chat.toJson());
       res = true;
     }catch(ex){
       print(ex.toString());
@@ -32,7 +32,7 @@ class ChatTareaFirebase{
   Future<bool> agregarMensaje(String id, Map<dynamic,dynamic> listMenj2) async{
     bool res = false;
     try{
-      await tareasColeccion.doc(id).update({'mensajes': listMenj2});
+      //await tareasColeccion.doc(id).update({'mensajes': listMenj2});
       res = true;
     }catch(ex){
       print(ex.toString());
@@ -43,8 +43,8 @@ class ChatTareaFirebase{
   Future<ChatTareas> verificarExistencia(String id) async{
     ChatTareas res;
     try{
-      var result =  await tareasColeccion.where('idTarea',isEqualTo: id).get();
-      List<ChatTareas> listGrupo = result.docs.map((e) => ChatTareas.fromMap(e.data())).toList();
+      //var result =  await tareasColeccion.where('idTarea',isEqualTo: id).get();
+      List<ChatTareas> listGrupo = [];//result.docs.map((e) => ChatTareas.fromMap(e.data())).toList();
       if(listGrupo.length != 0){
         res = listGrupo[0];
       }
