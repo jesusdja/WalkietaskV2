@@ -819,7 +819,7 @@ class conexionHttp{
       'Authorization': 'Bearer $token'
     };
     try{
-      response = http.get('$enlace/api/auth/tasks/binnacle',
+      response = http.get('$enlace/api/auth/binnacle',
           headers: requestHeaders);
     }catch(ex){
       print(ex.toString());

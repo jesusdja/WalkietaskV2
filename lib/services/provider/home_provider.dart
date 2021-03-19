@@ -21,7 +21,7 @@ class HomeProvider with ChangeNotifier{
     await SharedPrefe().setIntValue('posPersonal', value);
   }
   Future<void> getValue() async{
-    _posPersonal = await SharedPrefe().getValue('posPersonal');
+    _posPersonal = await SharedPrefe().getValue('posPersonal') ?? 0;
   }
 
 }

@@ -148,7 +148,6 @@ class _SoundTaskState extends State<SoundTask> {
     audioPlayer.onAudioPositionChanged.listen((Duration  p){
       //print('Current position: $p');
     });
-    AudioPlayerState oldState = AudioPlayerState.COMPLETED;
     audioPlayer.onPlayerStateChanged.listen((AudioPlayerState s){
       if(mounted){
         if(AudioPlayerState.COMPLETED == s){
@@ -159,10 +158,6 @@ class _SoundTaskState extends State<SoundTask> {
         if(AudioPlayerState.PLAYING == s){
           sonando = true;
           setState(() {});
-        }
-        oldState = s;
-        if(AudioPlayerState.STOPPED == s){
-          oldState = AudioPlayerState.COMPLETED;
         }
       }
     });

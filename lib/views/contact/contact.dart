@@ -361,7 +361,6 @@ class _ContactsState extends State<Contacts> {
       int counter = await SharedPrefe().getValue('unityLogin');
       if(counter == 1){
         if(argumento['table'] != null && argumento['table'].contains('contacts')) {
-          String idDoc = argumento['idDoc'];
           if(!inInvitedRecived){
             activeRecived = true;
             setState(() {});

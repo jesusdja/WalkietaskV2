@@ -39,7 +39,6 @@ class _InvitationsReceivedState extends State<InvitationsReceived> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _inicializarPatronBlocInvitation();
     _inicializarInvitation();

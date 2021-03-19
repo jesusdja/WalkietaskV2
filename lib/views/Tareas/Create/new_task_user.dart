@@ -339,7 +339,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
             flex: 1,
             child: Container(
               margin: EdgeInsets.only(right: ancho * 0.03),
-              child: Text('Adjuntos',textAlign: TextAlign.right,
+              child: Text('Adjunto',textAlign: TextAlign.right,
                   style: textStylePrimary),
             ),
           ),

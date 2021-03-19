@@ -185,7 +185,7 @@ class _CreateTaskState extends State<CreateTask> {
                 style: textStylePrimary, textAlign: TextAlign.left,),
             ),
             SizedBox(height: alto * 0.02,),
-            posPersonal == 0 ? _reminderPersonal() : Container(),
+            posPersonal != 0 ? _reminderPersonal() : Container(),
           ],
         ),
       ),

@@ -51,6 +51,7 @@ class _FormRegisterState extends State<FormRegister> {
 
   BlocUserCheck _blocUserCheck;
   StreamSubscription streamSubscriptionUser;
+  AuthService auth;
 
   @override
   void initState() {
@@ -83,6 +84,10 @@ class _FormRegisterState extends State<FormRegister> {
   Widget build(BuildContext context) {
     sizeH = MediaQuery.of(context).size.height;
     sizeW = MediaQuery.of(context).size.width;
+
+    try{
+      auth = provider.Provider.of<AuthService>(widget.contextLogin);
+    }catch(_){}
 
     Map<String, FocusNode> mapError = {};
 
@@ -476,7 +481,7 @@ class _FormRegisterState extends State<FormRegister> {
                       await PermisoSonido();
                       await PermisoPhotos();
                       try{
-                        AuthService auth = provider.Provider.of<AuthService>(widget.contextLogin);
+
                         auth.init();
                         Navigator.of(context).pop();
                       }catch(ex){

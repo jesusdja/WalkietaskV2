@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
@@ -63,13 +61,7 @@ class GalleryCameraDialog extends StatelessWidget {
   }
 
   void _selectResource(ImageSource source, BuildContext context) async {
-    Future<File> pickSource;
-    Future<PickedFile> pickSource2;
-    if (isVideo) {
-      pickSource = ImagePicker.pickVideo(source: source);
-    } else {
-      pickSource2 = ImagePicker().getImage(source: source,maxWidth: 800,maxHeight: 800);
-    }
+    Future<PickedFile> pickSource2 = ImagePicker().getImage(source: source,maxWidth: 800,maxHeight: 800);
     try {
       PickedFile selectedFile = await pickSource2;
       if (selectedFile == null) return; //No se eligió una imagen

@@ -45,6 +45,8 @@ class _RegisterCodeState extends State<RegisterCode> {
     1: '', 2: '', 3: '', 4: '',
   };
 
+  AuthService auth;
+
   @override
   void initState() {
     super.initState();
@@ -73,6 +75,10 @@ class _RegisterCodeState extends State<RegisterCode> {
   Widget build(BuildContext context) {
     sizeH = MediaQuery.of(context).size.height;
     sizeW = MediaQuery.of(context).size.width;
+
+    try{
+      auth = provider.Provider.of<AuthService>(widget.contextLogin);
+    }catch(_){}
 
     TextStyle textStyle1 = WalkieTaskStyles().styleNunitoRegular(size: sizeH * 0.02);
 
@@ -166,7 +172,6 @@ class _RegisterCodeState extends State<RegisterCode> {
                   }
                   try{
                     await SharedPrefe().setIntValue('unityLogin',statusCode);
-                    AuthService auth = provider.Provider.of<AuthService>(widget.contextLogin);
                     auth.init();
                   }catch(ex){
                     print(ex);
@@ -304,7 +309,15 @@ class _RegisterCodeState extends State<RegisterCode> {
 
   Widget appBarWidget(double sizeH,Function() onTap,String title){
     return AppBar(
-      leading: Container(),
+      leading: InkWell(
+        onTap: () async {
+          await SharedPrefe().setIntValue('unityLogin',0);
+          auth.init();
+        },
+        child: Container(
+          child: Icon(Icons.close),
+        ),
+      ),
       title: Text(title,style: WalkieTaskStyles().styleNunitoBold()),
     );
   }

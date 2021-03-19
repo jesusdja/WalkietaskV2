@@ -9,7 +9,6 @@ import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Firebase/Notification/push_notifications_provider.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
-import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
@@ -208,7 +207,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
             width: ancho,
             height: alto * 0.8,
             child: Center(
-              child: Cargando('Actualizando tareas.',context),
+              child: Text('No existen tareas enviadas', style: textStylePrimary,),
             ),
           ) :SingleChildScrollView(
             child: Column(
@@ -538,11 +537,6 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
         }
 
         String daysLeft = getDayDiff(task.deadline);
-
-        bool reproTask = false;
-        if(taskReproduciendo == task.id){
-          reproTask = true;
-        }
 
         int chatCont = 0;
         listCheckChat.forEach((element) {

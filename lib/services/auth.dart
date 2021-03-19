@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/finish_app.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 

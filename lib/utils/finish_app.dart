@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
@@ -7,8 +6,7 @@ Future<void> finishApp() async{
   try{
 
     try{
-      var response = await conexionHttp().httpUpdateTokenFirebase('');
-      var value = jsonDecode(response.body);
+      await conexionHttp().httpUpdateTokenFirebase('');
     }catch(e){
       print('ERROR AL OBTENER USUARIO EN TOKEN');
     }

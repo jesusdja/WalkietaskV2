@@ -141,17 +141,6 @@ Future<void> uploadUpdateUser() async {
 
     //url path image |
     String data = listDocuments[x];
-    Map<String,dynamic> jsonBody = {};
-
-    // try{
-    //   Map<String,String> result = await subirArchivo(data);
-    //   if(result['subir'] == 'true'){
-    //     String pathUrlAttachment = result['location'];
-    //     jsonBody['avatar'] = pathUrlAttachment;
-    //   }
-    // }catch(e){
-    //   print(e.toString());
-    // }
 
     try{
       var responseImage = await conexionHttp().httpSendImage(data);

@@ -100,8 +100,6 @@ class _ProfileHomeState extends State<ProfileHome> {
     alto = MediaQuery.of(context).size.height;
     ancho = MediaQuery.of(context).size.width;
 
-    final posPersonalProvider = Provider.of<HomeProvider>(context);
-
     bool edit = false;
     mapData.forEach((key, value) { if(value){ edit = true;} });
 

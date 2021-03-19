@@ -36,7 +36,6 @@ class _InvitationsSentState extends State<InvitationsSent> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _inicializarPatronBlocInvitation();
     _inicializarInvitation();

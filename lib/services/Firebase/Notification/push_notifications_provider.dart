@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -31,8 +30,7 @@ class PushProvider{
       try{
         Usuario myUser = await UpdateData().getMyUser();
         if(myUser.fcmToken == null || myUser.fcmToken != token){
-          var response = await conexionHttp().httpUpdateTokenFirebase(token);
-          var value = jsonDecode(response.body);
+          await conexionHttp().httpUpdateTokenFirebase(token);
         }
       }catch(e){
         print('ERROR AL OBTENER USUARIO EN TOKEN');
