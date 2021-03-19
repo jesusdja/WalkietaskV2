@@ -781,7 +781,7 @@ class conexionHttp{
     var response;
 
     try{
-      response = await http.delete('$enlace/api/tasks/deleteTask/$id',
+      response = await http.delete('$enlace/api/auth/tasks/deleteTask/$id',
         headers: headers,
       );
     }catch(e){

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -1312,7 +1313,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
               //ENVIAR A API
               try{
                 await conexionHispanos.httpDeleteTask(tarea.id);
-              }catch(e){}
+              }catch(_){}
               showAlert('Tarea eliminada',WalkieTaskColors.color_89BD7D);
             }
           }

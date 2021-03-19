@@ -8,6 +8,7 @@ import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
+import 'package:walkietaskv2/views/binnacle/widgets/binnacle_task.dart';
 
 class BinnaclePage extends StatefulWidget {
 
@@ -221,6 +222,14 @@ class _BinnaclePageState extends State<BinnaclePage> {
       List<Widget> columnElementsDay = [];
 
       elementDay.forEach((element) {
+        columnElementsDay.add(
+            Container(
+              height: 0.5,
+              width: ancho,
+              color: WalkieTaskColors.color_969696,
+              margin: EdgeInsets.only(bottom: alto * 0.02, top: alto * 0.01),
+            )
+        );
         columnElementsDay.add(elementColumn(element));
       });
 
@@ -242,7 +251,9 @@ class _BinnaclePageState extends State<BinnaclePage> {
           ),
         )
       );
-
+      data.add(
+          SizedBox(height: alto * 0.02,)
+      );
       data.add(
           Container(
             margin: EdgeInsets.symmetric(horizontal: ancho * 0.06, vertical: alto * 0.005),
@@ -266,16 +277,15 @@ class _BinnaclePageState extends State<BinnaclePage> {
 
 
   Widget elementColumn(Map<String, dynamic> data){
-    Widget element = Container();
+    Widget element = Container(
+      //child: Text('${data['category']} - ${data['type']}'),
+    );
 
     if(data['category'] == 'task'){
-
+      element = BinnacleTask(type: data['type'],info: data,myUser: myUser,);
     }
 
-    return Container(
-      width: ancho,
-      child: element,
-    );
+    return element;
   }
 
 
