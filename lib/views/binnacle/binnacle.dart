@@ -220,8 +220,13 @@ class _BinnaclePageState extends State<BinnaclePage> {
       });
 
       List<Widget> columnElementsDay = [];
+      List<Widget> columnElementsDay2 = [];
 
       elementDay.forEach((element) {
+        columnElementsDay2.add(elementColumn(element));
+      });
+
+      for(int x = columnElementsDay2.length; x > 0; x--){
         columnElementsDay.add(
             Container(
               height: 0.5,
@@ -230,8 +235,8 @@ class _BinnaclePageState extends State<BinnaclePage> {
               margin: EdgeInsets.only(bottom: alto * 0.02, top: alto * 0.01),
             )
         );
-        columnElementsDay.add(elementColumn(element));
-      });
+        columnElementsDay.add(columnElementsDay2[x - 1]);
+      }
 
       data.add(
         Container(
