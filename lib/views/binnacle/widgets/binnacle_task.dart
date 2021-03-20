@@ -41,6 +41,12 @@ class BinnacleTask extends StatelessWidget {
     if( type == 'priority'){
       _rowData = taskPriority(size: size, styleTitle: styleTitle, styleSubTitle: styleSubTitle);
     }
+    if( type == 'working'){
+      _rowData = taskWorking(size: size, styleTitle: styleTitle, styleSubTitle: styleSubTitle);
+    }
+    if( type == 'finalized'){
+      _rowData = taskFinalized(size: size, styleTitle: styleTitle, styleSubTitle: styleSubTitle);
+    }
 
     return _rowData;
   }
@@ -300,6 +306,110 @@ class BinnacleTask extends StatelessWidget {
           Container(
             width: size.width,
             child: Text(projectName, style: styleSubTitle,softWrap: false, overflow: TextOverflow.fade,textAlign: TextAlign.end,),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget taskWorking({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
+
+    bool isProperty = false;
+    String title = 'Comenzaste a trabajar en una tarea';
+    String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
+    String nameTask = info['info']['name'];
+
+    String projectName = '(Sin proyecto asignado)';
+    if(info['info']['projects'] != null ){
+      projectName = info['info']['projects']['name'];
+    }
+
+    if(myUser.id == info['user_action_id']){
+      isProperty = true;
+    }else{
+      urlAvatar = info['useraction']['avatar_100']  ?? avatarImage;
+      title = '${info['useraction']['name']} ${info['useraction']['surname'] ?? ''} comenzo a trabajar en una tarea';
+    }
+
+
+    return Container(
+      width: size.width,
+      margin: isProperty ? EdgeInsets.only(left: size.width * 0.1) : EdgeInsets.only(right: size.width * 0.1),
+      child: Column(
+        crossAxisAlignment: isProperty ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: size.width,
+            child: Row(
+              mainAxisAlignment: isProperty ? MainAxisAlignment.end : MainAxisAlignment.start,
+              children: [
+                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: size.width,
+            child: Text(nameTask, style: styleTitle,softWrap: false, overflow: TextOverflow.fade,textAlign: isProperty ? TextAlign.end : TextAlign.start,),
+          ),
+          Container(
+            width: size.width,
+            child: Text(projectName, style: styleSubTitle,softWrap: false, overflow: TextOverflow.fade,textAlign: isProperty ? TextAlign.end : TextAlign.start,),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget taskFinalized({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
+
+    bool isProperty = false;
+    String title = 'Finalizaste una tarea';
+    String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
+    String nameTask = info['info']['name'];
+
+    String projectName = '(Sin proyecto asignado)';
+    if(info['info']['projects'] != null ){
+      projectName = info['info']['projects']['name'];
+    }
+
+    if(myUser.id == info['user_action_id']){
+      isProperty = true;
+    }else{
+      urlAvatar = info['useraction']['avatar_100']  ?? avatarImage;
+      title = '${info['useraction']['name']} ${info['useraction']['surname'] ?? ''} finalizo una tarea';
+    }
+
+
+    return Container(
+      width: size.width,
+      margin: isProperty ? EdgeInsets.only(left: size.width * 0.1) : EdgeInsets.only(right: size.width * 0.1),
+      child: Column(
+        crossAxisAlignment: isProperty ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: size.width,
+            child: Row(
+              mainAxisAlignment: isProperty ? MainAxisAlignment.end : MainAxisAlignment.start,
+              children: [
+                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: size.width,
+            child: Text(nameTask, style: styleTitle,softWrap: false, overflow: TextOverflow.fade,textAlign: isProperty ? TextAlign.end : TextAlign.start,),
+          ),
+          Container(
+            width: size.width,
+            child: Text(projectName, style: styleSubTitle,softWrap: false, overflow: TextOverflow.fade,textAlign: isProperty ? TextAlign.end : TextAlign.start,),
           ),
         ],
       ),

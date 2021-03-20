@@ -8,6 +8,7 @@ import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
+import 'package:walkietaskv2/views/binnacle/widgets/binnacle_projects.dart';
 import 'package:walkietaskv2/views/binnacle/widgets/binnacle_task.dart';
 
 class BinnaclePage extends StatefulWidget {
@@ -100,6 +101,13 @@ class _BinnaclePageState extends State<BinnaclePage> {
     alto = MediaQuery.of(context).size.height;
     ancho = MediaQuery.of(context).size.width;
 
+    List<Widget> data1 = _data();
+    List<Widget> data2 = [];
+
+    for(int x = data1.length; x > 0; x--){
+      data2.add(data1[x - 1]);
+    }
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(new FocusNode());
@@ -116,15 +124,14 @@ class _BinnaclePageState extends State<BinnaclePage> {
           child: Text('Sin datos en la bitácora.', style: WalkieTaskStyles().stylePrimary(size: alto * 0.025, spacing: 0.5),),
         ) :
         Container(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: _data(),
-            ),
+          child: ListView.builder(
+            itemCount: data2.length,
+            reverse: true,
+            itemBuilder: (context, i){
+              return data2[i];
+            },
           ),
-        ),
+        )
       ),
     );
   }
@@ -280,7 +287,6 @@ class _BinnaclePageState extends State<BinnaclePage> {
     return data;
   }
 
-
   Widget elementColumn(Map<String, dynamic> data){
     Widget element = Container(
       //child: Text('${data['category']} - ${data['type']}'),
@@ -288,6 +294,10 @@ class _BinnaclePageState extends State<BinnaclePage> {
 
     if(data['category'] == 'task'){
       element = BinnacleTask(type: data['type'],info: data,myUser: myUser,);
+    }
+
+    if(data['category'] == 'project'){
+      element = BinnacleProjects(type: data['type'],info: data,myUser: myUser,);
     }
 
     return element;
