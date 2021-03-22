@@ -8,6 +8,7 @@ import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
+import 'package:walkietaskv2/views/binnacle/widgets/binnacle_invitation.dart';
 import 'package:walkietaskv2/views/binnacle/widgets/binnacle_projects.dart';
 import 'package:walkietaskv2/views/binnacle/widgets/binnacle_task.dart';
 
@@ -298,6 +299,10 @@ class _BinnaclePageState extends State<BinnaclePage> {
 
     if(data['category'] == 'project'){
       element = BinnacleProjects(type: data['type'],info: data,myUser: myUser,);
+    }
+
+    if(data['category'] == 'invitation' || data['category'] == 'contact'){
+      element = BinnacleInvitation(type: data['type'],info: data,myUser: myUser,);
     }
 
     return element;

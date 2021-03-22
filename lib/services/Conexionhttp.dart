@@ -387,7 +387,7 @@ class conexionHttp{
         'X-Requested-With': 'XMLHttpRequest',
         'Authorization': 'Bearer $token'
       };
-      response = await http.post('$enlace/api/auth/contacts/sendinvitation',
+      response = await http.post('$enlace/api/auth/contacts/senduserinvitation',
         headers: headers,
         body: jsonBody,
       );

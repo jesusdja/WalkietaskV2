@@ -33,6 +33,10 @@ class BinnacleProjects extends StatelessWidget {
       _rowData = projectsDeleted(size: size, styleTitle: styleTitle);
     }
 
+    if( type == 'added'){
+      _rowData = projectsAddUser(size: size, styleTitle: styleTitle);
+    }
+
     return _rowData;
   }
 
@@ -98,7 +102,10 @@ class BinnacleProjects extends StatelessWidget {
 
     String title = 'Eliminaste un nuevo proyecto';
     String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
-    String nameTask = info['info']['name'] ?? '';
+    String nameTask = 'Sin data';
+    if(info['info'] != null && info['info']['name']){
+      nameTask = info['info']['name'];
+    }
 
     return Container(
       width: size.width,
@@ -128,25 +135,25 @@ class BinnacleProjects extends StatelessWidget {
     );
   }
 
-  Widget projectsNew2({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
+  Widget projectsAddUser({Size size, TextStyle styleTitle}){
 
-    bool isProperty = false;
-    String title = 'Enviaste una tarea a ${info['info']['userresponsabilities']['name']} ${info['info']['userresponsabilities']['surname'] ?? ''}';
-    String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
-    String nameTask = info['info']['name'];
+    bool isProperty = true;
 
     String projectName = '(Sin proyecto asignado)';
-    if(info['info']['projects'] != null ){
-      projectName = info['info']['projects']['name'];
+    if(info['info']['name'] != null ){
+      projectName = info['info']['name'];
     }
+
+    String title = 'Agregaste a ${info['usernotification']['name']} ${info['usernotification']['surname'] ?? ''} al proyecto $projectName';
+    String urlAvatar = info['useraction']['avatar_100']  ?? avatarImage;
 
     if(myUser.id == info['user_action_id']){
       //TAREA NUEVA QUE YO CREE
-      isProperty = true;
+      isProperty = false;
     }else{
       //TAREA NUEVA QUE SE ME FUE ASIGNADA
-      urlAvatar = info['useraction']['avatar_100']  ?? avatarImage;
-      title = 'Recibiste una tarea de ${info['useraction']['name']} ${info['useraction']['surname'] ?? ''}';
+      urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
+      title = 'Fuiste agregado al proyecto $projectName';
     }
 
 
@@ -171,11 +178,7 @@ class BinnacleProjects extends StatelessWidget {
           ),
           Container(
             width: size.width,
-            child: Text(nameTask, style: styleTitle,softWrap: false, overflow: TextOverflow.fade,textAlign: isProperty ? TextAlign.end : TextAlign.start,),
-          ),
-          Container(
-            width: size.width,
-            child: Text(projectName, style: styleSubTitle,softWrap: false, overflow: TextOverflow.fade,textAlign: isProperty ? TextAlign.end : TextAlign.start,),
+            child: Text(projectName, style: styleTitle,softWrap: false, overflow: TextOverflow.fade,textAlign: isProperty ? TextAlign.end : TextAlign.start,),
           ),
         ],
       ),

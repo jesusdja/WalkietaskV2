@@ -254,7 +254,7 @@ class _SendInvitationState extends State<SendInvitation> {
 
     if(_controllerUser.text.isNotEmpty){
       Map jsonBody = {
-        'username': _controllerUser.text,
+        'email': _controllerUser.text,
       };
 
       try{
