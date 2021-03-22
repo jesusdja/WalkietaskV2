@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart' as provider;
+import 'package:provider/provider.dart';
 import 'package:walkietaskv2/services/auth.dart';
+import 'package:walkietaskv2/services/provider/language_provider.dart';
 import 'package:walkietaskv2/views/Home/NavigatorBotton.dart';
 import 'package:walkietaskv2/views/Login/LoginHome.dart';
 import 'package:walkietaskv2/views/Home/StarLogo.dart';
@@ -24,6 +26,10 @@ class _AppState extends State<App>{
 
   @override
   Widget build(BuildContext context) {
+
+    var appLanguage = Provider.of<LanguageProvider>(context);
+    appLanguage.fetchLocale();
+
     return provider.ChangeNotifierProvider(
       create: (_) => AuthService.instance(),
       child: provider.Consumer(

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:wakelock/wakelock.dart';
 import 'package:walkietaskv2/App.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
@@ -8,6 +9,7 @@ import 'package:walkietaskv2/bloc/blocPage.dart';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/bloc/blocUser.dart';
+import 'package:walkietaskv2/main.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
@@ -18,6 +20,7 @@ import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Sqlite/sqlite_instance.dart';
+import 'package:walkietaskv2/services/provider/language_provider.dart';
 import 'package:walkietaskv2/services/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
@@ -320,6 +323,17 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           bottom: _indicatorProgress(),
         ),
         body: Container(child: contenido(),),
+        // floatingActionButton: FloatingActionButton(
+        //   child: Text(AppLocalizations.of(context).translate('Message')),
+        //   onPressed: (){
+        //     var appLanguage = Provider.of<LanguageProvider>(context,listen: false);
+        //     appLanguage.changeLanguage(Locale("es"));
+        //     setState(() {});
+        //
+        //     Navigator.pushReplacement(context, new MaterialPageRoute(
+        //         builder: (BuildContext context) => new App()));
+        //   },
+        // ),
         bottomNavigationBar: navigatorBotton(),
       ),
     );
@@ -675,7 +689,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
               res = await alert(context);
               if(res != null && res){
                 await finishApp();
-                Navigator.push(context, new MaterialPageRoute(
+                Navigator.pushReplacement(context, new MaterialPageRoute(
                     builder: (BuildContext context) => new App()));
               }
             }),
