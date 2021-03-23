@@ -72,13 +72,17 @@ class BinnacleTask extends StatelessWidget {
   Widget taskNew({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
 
     bool isProperty = false;
-    String title = 'Enviaste una tarea a ${info['info']['userresponsabilities']['name']} ${info['info']['userresponsabilities']['surname'] ?? ''}';
+    String title = 'Enviaste una tarea';
     String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
-    String nameTask = info['info']['name'];
-
+    String nameTask = '';
     String projectName = '(Sin proyecto asignado)';
-    if(info['info']['projects'] != null ){
-      projectName = info['info']['projects']['name'];
+
+    if(info['info'] != null){
+      title = 'Enviaste una tarea a ${info['info']['userresponsabilities']['name']} ${info['info']['userresponsabilities']['surname'] ?? ''}';
+      nameTask = info['info']['name'];
+      if(info['info']['projects'] != null ){
+        projectName = info['info']['projects']['name'];
+      }
     }
 
     if(myUser.id == info['user_action_id']){
@@ -126,11 +130,14 @@ class BinnacleTask extends StatelessWidget {
   Widget taskPersonalReminder({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
     String title = 'Enviaste recordatorio personal';
     String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
-    String nameTask = info['info']['name'];
-
+    String nameTask = '';
     String projectName = '(Sin proyecto asignado)';
-    if(info['info']['projects'] != null ){
-      projectName = info['info']['projects']['name'];
+
+    if(info['info'] != null){
+      nameTask = info['info']['name'];
+      if(info['info']['projects'] != null ){
+        projectName = info['info']['projects']['name'];
+      }
     }
 
     return Container(
@@ -170,11 +177,14 @@ class BinnacleTask extends StatelessWidget {
     bool isProperty = false;
     String title = 'Eliminaste una tarea';
     String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
-    String nameTask = info['info']['name'];
-
+    String nameTask = '';
     String projectName = '(Sin proyecto asignado)';
-    if(info['info']['projects'] != null ){
-      projectName = info['info']['projects']['name'];
+
+    if(info['info'] != null){
+      nameTask = info['info']['name'];
+      if(info['info']['projects'] != null ){
+        projectName = info['info']['projects']['name'];
+      }
     }
 
     if(myUser.id == info['user_action_id']){
@@ -222,11 +232,14 @@ class BinnacleTask extends StatelessWidget {
     bool isProperty = false;
     String title = 'Editaste una tarea';
     String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
-    String nameTask = info['info']['name'];
-
+    String nameTask = '';
     String projectName = '(Sin proyecto asignado)';
-    if(info['info']['projects'] != null ){
-      projectName = info['info']['projects']['name'];
+
+    if(info['info'] != null){
+      nameTask = info['info']['name'];
+      if(info['info']['projects'] != null ){
+        projectName = info['info']['projects']['name'];
+      }
     }
 
     if(myUser.id == info['user_action_id']){
@@ -273,11 +286,14 @@ class BinnacleTask extends StatelessWidget {
 
     String title = 'Indicaste como favorito la siguente tarea';
     String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
-    String nameTask = info['info']['name'];
-
+    String nameTask = '';
     String projectName = '(Sin proyecto asignado)';
-    if(info['info']['projects'] != null ){
-      projectName = info['info']['projects']['name'];
+
+    if(info['info'] != null){
+      nameTask = info['info']['name'];
+      if(info['info']['projects'] != null ){
+        projectName = info['info']['projects']['name'];
+      }
     }
 
     return Container(
@@ -317,11 +333,14 @@ class BinnacleTask extends StatelessWidget {
     bool isProperty = false;
     String title = 'Comenzaste a trabajar en una tarea';
     String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
-    String nameTask = info['info']['name'];
-
+    String nameTask = '';
     String projectName = '(Sin proyecto asignado)';
-    if(info['info']['projects'] != null ){
-      projectName = info['info']['projects']['name'];
+
+    if(info['info'] != null){
+      nameTask = info['info']['name'];
+      if(info['info']['projects'] != null ){
+        projectName = info['info']['projects']['name'];
+      }
     }
 
     if(myUser.id == info['user_action_id']){
@@ -369,11 +388,14 @@ class BinnacleTask extends StatelessWidget {
     bool isProperty = false;
     String title = 'Finalizaste una tarea';
     String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
-    String nameTask = info['info']['name'];
-
+    String nameTask = '';
     String projectName = '(Sin proyecto asignado)';
-    if(info['info']['projects'] != null ){
-      projectName = info['info']['projects']['name'];
+
+    if(info['info'] != null){
+      nameTask = info['info']['name'];
+      if(info['info']['projects'] != null ){
+        projectName = info['info']['projects']['name'];
+      }
     }
 
     if(myUser.id == info['user_action_id']){

@@ -37,6 +37,10 @@ class BinnacleProjects extends StatelessWidget {
       _rowData = projectsAddUser(size: size, styleTitle: styleTitle);
     }
 
+    if( type == 'deleteuserproject'){
+      _rowData = projectsDeletedUser(size: size, styleTitle: styleTitle);
+    }
+
     return _rowData;
   }
 
@@ -62,7 +66,10 @@ class BinnacleProjects extends StatelessWidget {
 
     String title = 'Creaste un nuevo proyecto';
     String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
-    String nameTask = info['info']['name'];
+    String nameTask = '';
+    if(info['info'] != null){
+      nameTask = info['info']['name'];
+    }
 
     return Container(
       width: size.width,
@@ -93,17 +100,10 @@ class BinnacleProjects extends StatelessWidget {
   }
 
   Widget projectsDeleted({Size size, TextStyle styleTitle}){
-
-    //****************
-    //****************
-    //CUANDO SE ELIMINA EL PROYECTO LA INFO VIENE NULL
-    //****************
-    //****************
-
-    String title = 'Eliminaste un nuevo proyecto';
+    String title = 'Eliminaste un proyecto';
     String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
     String nameTask = 'Sin data';
-    if(info['info'] != null && info['info']['name']){
+    if(info['info'] != null && info['info']['name'] != null){
       nameTask = info['info']['name'];
     }
 
@@ -137,11 +137,11 @@ class BinnacleProjects extends StatelessWidget {
 
   Widget projectsAddUser({Size size, TextStyle styleTitle}){
 
-    bool isProperty = true;
+    bool isProperty = false;
 
-    String projectName = '(Sin proyecto asignado)';
-    if(info['info']['name'] != null ){
-      projectName = info['info']['name'];
+    String projectName = 'Sin nombre';
+    if(info['info'] != null && info['info']['projects']['name'] != null ){
+      projectName = info['info']['projects']['name'];
     }
 
     String title = 'Agregaste a ${info['usernotification']['name']} ${info['usernotification']['surname'] ?? ''} al proyecto $projectName';
@@ -149,11 +149,61 @@ class BinnacleProjects extends StatelessWidget {
 
     if(myUser.id == info['user_action_id']){
       //TAREA NUEVA QUE YO CREE
-      isProperty = false;
+      isProperty = true;
     }else{
       //TAREA NUEVA QUE SE ME FUE ASIGNADA
-      urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
-      title = 'Fuiste agregado al proyecto $projectName';
+      urlAvatar = info['useraction']['avatar_100']  ?? avatarImage;
+      title = 'Fuiste agregado a un proyecto';
+    }
+
+
+    return Container(
+      width: size.width,
+      margin: isProperty ? EdgeInsets.only(left: size.width * 0.1) : EdgeInsets.only(right: size.width * 0.1),
+      child: Column(
+        crossAxisAlignment: isProperty ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: size.width,
+            child: Row(
+              mainAxisAlignment: isProperty ? MainAxisAlignment.end : MainAxisAlignment.start,
+              children: [
+                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: size.width,
+            child: Text(projectName, style: styleTitle,softWrap: false, overflow: TextOverflow.fade,textAlign: isProperty ? TextAlign.end : TextAlign.start,),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget projectsDeletedUser({Size size, TextStyle styleTitle}){
+
+    bool isProperty = false;
+
+    String projectName = 'Sin nombre';
+    if(info['info'] != null && info['info']['projects']['name'] != null ){
+      projectName = info['info']['projects']['name'];
+    }
+
+    String title = 'Eliminaste a ${info['usernotification']['name']} ${info['usernotification']['surname'] ?? ''} de un proyecto';
+    String urlAvatar = info['useraction']['avatar_100']  ?? avatarImage;
+
+    if(myUser.id == info['user_action_id']){
+      //TAREA NUEVA QUE YO CREE
+      isProperty = true;
+    }else{
+      //TAREA NUEVA QUE SE ME FUE ASIGNADA
+      urlAvatar = info['useraction']['avatar_100']  ?? avatarImage;
+      title = 'Fuiste eliminado de un proyecto';
     }
 
 
