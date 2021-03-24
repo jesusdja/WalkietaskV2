@@ -6,11 +6,12 @@ class LanguageProvider extends ChangeNotifier {
 
   Locale get appLocal => _appLocale ?? Locale("es");
   fetchLocale() async {
-    if (SharedPrefe().getValue('language_code') == null) {
+    if (await SharedPrefe().getValue('language_code') == null) {
       _appLocale = Locale('es');
       return Null;
     }
-    _appLocale = Locale(SharedPrefe().getValue('language_code').toString());
+    String lg = await SharedPrefe().getValue('language_code');
+    _appLocale = Locale(lg);
     return Null;
   }
 

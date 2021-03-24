@@ -1,4 +1,13 @@
 {
-  "title": "Hello!",
-  "Message" : "This is English"
+  "Message" : "Esto es español",
+  "email": "Email",
+  "Password" : "Password",
+  "LogIn" : "Log in",
+  "ForgotYourPassword" : "Forgot your password?",
+  "haveAnAccount" : "Don´t have an account?",
+  "SignInHereFree" : "Sign in here. It´s free!",
+  "codeHasExpired" : "The code has expired. Please try again.",
+  "ConnectionError" : "Connection error. Please try again later",
+  "VerifyingInformation" : "Verifying information…",
+  "PleaseFillOutAllFields" : "Please fill out all the fields"
 }

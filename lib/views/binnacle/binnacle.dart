@@ -307,6 +307,4 @@ class _BinnaclePageState extends State<BinnaclePage> {
 
     return element;
   }
-
-
 }

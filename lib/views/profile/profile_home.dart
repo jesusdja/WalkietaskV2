@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/provider/home_provider.dart';
+import 'package:walkietaskv2/services/provider/language_provider.dart';
 import 'package:walkietaskv2/services/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
@@ -47,6 +48,7 @@ class _ProfileHomeState extends State<ProfileHome> {
   Image avatarUser;
   String urlImage = '';
   int selectIndex = 0;
+  int selectIndexLang = 0;
 
   TextEditingController controllerName = TextEditingController();
   TextEditingController controllerLastName = TextEditingController();
@@ -70,6 +72,7 @@ class _ProfileHomeState extends State<ProfileHome> {
       4 : false, //clave nueva
       5 : false, //Imagen
       6 : false, //select barra recordatorio
+      7 : false, //select idioma
     };
 
     initData();
@@ -89,9 +92,11 @@ class _ProfileHomeState extends State<ProfileHome> {
 
   initPosPesonal() async{
     selectIndex = await SharedPrefe().getValue('posPersonal') ?? 0;
-    setState(() {
-
-    });
+    String lg = await SharedPrefe().getValue('language_code') ?? 'es';
+    if(lg != 'es'){
+      selectIndexLang = 1;
+    }
+    setState(() {});
   }
 
   @override
@@ -169,6 +174,10 @@ class _ProfileHomeState extends State<ProfileHome> {
               _textTitle('Posición de botón de recordatorio:'),
               SizedBox(height: alto * 0.02,),
               _selectRemenber(),
+              SizedBox(height: alto * 0.04,),
+              _textTitle('Seleccionar idioma:'),
+              SizedBox(height: alto * 0.02,),
+              _selectLanguage(),
               SizedBox(height: alto * 0.1,),
               //_textTitle('Posición de botón de recordatorio:'),
               //SizedBox(height: alto * 0.1,),
@@ -424,6 +433,51 @@ class _ProfileHomeState extends State<ProfileHome> {
     );
   }
 
+  Widget _selectLanguage(){
+    return Container(
+      width: ancho,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          containerLanguage(0),
+          containerLanguage(1),
+        ],
+      ),
+    );
+  }
+
+  Widget containerLanguage(int index){
+
+    String language = 'Español';
+    if(index == 1){
+      language = 'Ingles';
+    }
+
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: ancho * 0.25,
+            child: Text(language, style: WalkieTaskStyles().stylePrimary(color: WalkieTaskColors.color_969696, size: alto * 0.025, fontWeight: FontWeight.bold, spacing: 0.5),),
+          ),
+          Radio(
+            value: index,
+            groupValue: selectIndexLang,
+            activeColor: WalkieTaskColors.primary,
+            onChanged: (newIndex) async {
+              setState(() {
+                selectIndexLang = newIndex;
+                mapData[7] = true;
+              });
+            },
+          )
+        ],
+      ),
+    );
+  }
+
   Future<void> saveUser(BuildContext context) async {
     setState(() {
       loadSave = true;
@@ -505,6 +559,16 @@ class _ProfileHomeState extends State<ProfileHome> {
       }catch(_){}
     }
 
+    if( mapData[7]){
+      var appLanguage = Provider.of<LanguageProvider>(context,listen: false);
+      try{
+        appLanguage.changeLanguage( selectIndexLang == 0 ? Locale("es") : Locale("en"));
+        if(body.length <= 1){
+          notError = false;
+        }
+      }catch(_){}
+    }
+
     if((body.length > 1 || validateEmailAddress(controllerEmail.text)['valid']) && notError){
       try{
         var response = await conexionHttp().httpUpdateUser(body);
@@ -542,7 +606,7 @@ class _ProfileHomeState extends State<ProfileHome> {
         showAlert('Error al enviar los datos.',WalkieTaskColors.color_E07676);
       }
     }else{
-      if(mapData[6]){
+      if(mapData[6] || mapData[7]){
         Map result = {0 : true, 1: false};
         result[1] = true;
         Navigator.of(context).pop(result);

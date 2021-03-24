@@ -102,7 +102,7 @@ class BinnacleProjects extends StatelessWidget {
   Widget projectsDeleted({Size size, TextStyle styleTitle}){
     String title = 'Eliminaste un proyecto';
     String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
-    String nameTask = 'Sin data';
+    String nameTask = 'Sin nombre';
     if(info['info'] != null && info['info']['name'] != null){
       nameTask = info['info']['name'];
     }
