@@ -1,22 +1,30 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:walkietaskv2/bloc/blocTareas.dart';
+import 'package:walkietaskv2/models/Caso.dart';
+import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
+import 'package:walkietaskv2/views/Chat/ChatForTarea.dart';
+import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
 import 'package:walkietaskv2/views/binnacle/widgets/binnacle_invitation.dart';
 import 'package:walkietaskv2/views/binnacle/widgets/binnacle_projects.dart';
 import 'package:walkietaskv2/views/binnacle/widgets/binnacle_task.dart';
 
 class BinnaclePage extends StatefulWidget {
 
-  BinnaclePage({ this.myUser });
+  BinnaclePage({ this.myUser, @required this.blocTaskReceived, @required this.listCase });
 
   final Usuario myUser;
+  final BlocTask blocTaskReceived;
+  final List<Caso> listCase;
 
   @override
   _BinnaclePageState createState() => _BinnaclePageState();
@@ -294,7 +302,10 @@ class _BinnaclePageState extends State<BinnaclePage> {
     );
 
     if(data['category'] == 'task'){
-      element = BinnacleTask(type: data['type'],info: data,myUser: myUser,);
+      element = InkWell(
+        onTap: () => clickTask(Tarea.fromMap(data['info'])),
+        child: BinnacleTask(type: data['type'],info: data,myUser: myUser,),
+      );
     }
 
     if(data['category'] == 'project'){
@@ -306,5 +317,44 @@ class _BinnaclePageState extends State<BinnaclePage> {
     }
 
     return element;
+  }
+
+  void clickTask(Tarea tarea) async {
+
+    readTask(tarea);
+
+    try{
+      if(tarea.name.isEmpty){
+        var result  = await Navigator.push(context, new MaterialPageRoute(
+            builder: (BuildContext context) => new AddNameTask(tareaRes: tarea,)));
+        if(result){
+          widget.blocTaskReceived.inList.add(true);
+        }
+      }else{
+        Navigator.push(context, new MaterialPageRoute(
+            builder: (BuildContext context) =>
+            new ChatForTarea(
+              tareaRes: tarea,
+              listaCasosRes: widget.listCase,
+              blocTaskSend: widget.blocTaskReceived,
+            )));
+      }
+    }catch(e){
+      print(e.toString());
+    }
+  }
+
+  Future<void> readTask(Tarea task) async {
+
+    //CAMBIAR ESTADO DE DESTACAR 0 = FALSE, 1 = TRUE
+    if(task.read == 0){
+      task.read = 1;
+      if(await DatabaseProvider.db.updateTask(task) == 1){
+        widget.blocTaskReceived.inList.add(true);
+        try{
+          await conexionHttp().httpReadTask(task.id);
+        }catch(_){}
+      }
+    }
   }
 }

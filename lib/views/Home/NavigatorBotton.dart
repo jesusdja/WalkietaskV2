@@ -679,6 +679,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
               Navigator.push(context, new MaterialPageRoute(
                   builder: (BuildContext context) => BinnaclePage(
                     myUser: myUser,
+                    blocTaskReceived: blocTaskReceived,
+                    listCase: listaCasos,
                   )));
             }),
             _divider,
