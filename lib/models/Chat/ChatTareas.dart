@@ -1,17 +1,23 @@
 class ChatTareas{
   String id;
   String idTarea;
+  String idUser;
+  String idFromUser;
   Map<dynamic,dynamic> mensajes;
 
   ChatTareas ({
     this.id,
     this.idTarea,
+    this.idUser,
+    this.idFromUser,
     this.mensajes,
   });
 
   ChatTareas.map(dynamic obj) {
     this.id = obj["id"];
     this.idTarea = obj["idTarea"];
+    this.idUser = obj["idUser"];
+    this.idFromUser = obj["idFromUser"];
     this.mensajes = obj["mensajes"];
   }
 
@@ -21,6 +27,8 @@ class ChatTareas{
     return{
       "id": id,
       "idTarea": idTarea,
+      "idUser": idUser,
+      "idFromUser": idFromUser,
       "mensajes": mensajes,
     };
   }
@@ -29,6 +37,8 @@ class ChatTareas{
   ChatTareas.fromMap(Map snapshot) :
         id = snapshot["id"],
         idTarea = snapshot["idTarea"],
+        idUser = snapshot["idUser"],
+        idFromUser = snapshot["idFromUser"],
         mensajes = snapshot["mensajes"]
   ;
 }

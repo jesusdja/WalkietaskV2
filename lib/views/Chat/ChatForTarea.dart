@@ -150,9 +150,18 @@ class _ChatForTareaState extends State<ChatForTarea> {
         chatTarea = chatTareaVery;
         setState(() {});
       }else{
+        String idUser = await SharedPrefe().getValue('unityIdMyUser');
+
+        String idUserFrom = '';
+        if(widget.tareaRes.user_id != widget.tareaRes.user_responsability_id){
+          idUserFrom = tarea.user_responsability_id.toString();
+        }
+
         ChatTareas chatTarea2 = new ChatTareas(
             id: '',
             idTarea: tarea.id.toString(),
+            idUser: '$idUser',
+            idFromUser: idUserFrom,
             mensajes: new Map<String,dynamic>()
         );
         ChatTareas chatTareaNew = await chatTareasdb.crearTareaChat(chatTarea2);

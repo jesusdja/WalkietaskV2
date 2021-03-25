@@ -1,11 +1,14 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
+import 'package:walkietaskv2/models/Chat/ChatTareas.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/services/Firebase/chatTareasFirebase.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
@@ -43,6 +46,9 @@ class _BinnaclePageState extends State<BinnaclePage> {
   List binnaclesList = [];
   Map<String,List<dynamic>> binnaclesMap = {};
 
+  List<ChatTareas> listChat = [];
+  List<ChatTareas> listFromChat = [];
+
   Map<int,String> dateMap = {
     1 : 'enero',
     2 : 'febrero',
@@ -58,12 +64,16 @@ class _BinnaclePageState extends State<BinnaclePage> {
     12: 'diciembre',
   };
 
+  CollectionReference taskCollection = FirebaseFirestore.instance.collection('Tareas');
+  ChatTareaFirebase chatTaskData = ChatTareaFirebase();
+
   @override
   void initState() {
     super.initState();
     myUser = widget.myUser;
     initData();
     initDataBinnacle();
+    initDataFirebaseBinnacle();
   }
 
   Future<void> initData() async {
@@ -97,6 +107,20 @@ class _BinnaclePageState extends State<BinnaclePage> {
     }catch(e){
       print(e.toString());
       showAlert('Error al obtener datos de bitácora', WalkieTaskColors.color_E07676);
+    }
+    loadData = false;
+    if(mounted){
+      setState(() {});
+    }
+  }
+
+  Future<void> initDataFirebaseBinnacle() async {
+    try{
+      listChat = await chatTaskData.getChatForUser(myUser.id.toString());
+      listFromChat = await chatTaskData.getChatForUserFrom(myUser.id.toString());
+    }catch(e){
+      print(e.toString());
+      showAlert('Error al obtener datos del chat', WalkieTaskColors.color_E07676);
     }
     loadData = false;
     if(mounted){
@@ -231,10 +255,16 @@ class _BinnaclePageState extends State<BinnaclePage> {
             pos = x;
           }
         }
+        //METER TODOS LOS CHAT CON FECHA MENOR AL ELEMENTO QUE SE VA AGREGAR
+
+        //*********************************
         elementDay.add(values2[pos]);
         values2.removeAt(pos);
       });
 
+      //METER TODOS LOS CHAT QUE SOBRARON
+
+      //*********************************
       List<Widget> columnElementsDay = [];
       List<Widget> columnElementsDay2 = [];
 

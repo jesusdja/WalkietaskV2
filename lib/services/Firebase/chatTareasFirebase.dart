@@ -54,6 +54,28 @@ class ChatTareaFirebase{
     return res;
   }
 
+  Future<List<ChatTareas>> getChatForUser(String id) async{
+    List<ChatTareas> listChat = [];
+    try{
+      var result =  await tareasColeccion.where('idUser',isEqualTo: id).get();
+      listChat = result.docs.map((e) => ChatTareas.fromMap(e.data())).toList();
+    }catch(ex){
+      print(ex.toString());
+    }
+    return listChat;
+  }
+
+  Future<List<ChatTareas>> getChatForUserFrom(String id) async{
+    List<ChatTareas> listChat = [];
+    try{
+      var result =  await tareasColeccion.where('idFromUser',isEqualTo: id).get();
+      listChat = result.docs.map((e) => ChatTareas.fromMap(e.data())).toList();
+    }catch(ex){
+      print(ex.toString());
+    }
+    return listChat;
+  }
+
 //  Future<bool> crearMensaje(String idGrupo) async {
 //    bool res = false;
 //    ChatModels chatM = new ChatModels(
