@@ -125,6 +125,23 @@
   "invitingPeopleHere" : "Start by inviting people here",
   "tasks" : "Tasks",
   "updatingTasks" : "Updating tasks…",
-  "sendPersonalReminders" : "You can also send yourself personal reminders, either audio or text."
-
+  "sendPersonalReminders" : "You can also send yourself personal reminders, either audio or text.",
+  "audio" : "Audio",
+  "finished" : "Finished",
+  "personalReminders" : "My Personal Reminders",
+  "newTask" : "New task for",
+  "noPersonalReminder" : "No personal reminder",
+  "text" : "Text",
+  "noAudio" : "The message is too short or doesn´t contain audio",
+  "noFinishedTasks" : "There are no finished tasks",
+  "noReceivedTasksFrom" : "You haven´t received tasks from",
+  "noSentTasksTo" : "You haven´t sent tasks to",
+  "accept" : "Accept",
+  "deleted." : "Deleted.",
+  "invitationAccepted." : "Invitation accepted.",
+  "invitationRejected." : "Invitation rejected.",
+  "reject" : "Reject",
+  "resend" : "Resend",
+  "sentOn" : "Sent on",
+  "sent_success" : "Sent."
 }
