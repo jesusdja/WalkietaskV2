@@ -224,8 +224,8 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
     try {
       DateTime date = DateTime.now();
       audioName = 'audioplay${date.year}${date.month}${date.day}${date.hour}${date.minute}${date.second}';
-      audioPath = '$appDocPath/$audioName.mp4';
-      await flutterSoundRecorder.startRecorder(toFile: '$appDocPath/$audioName.mp4').then((value) {
+      audioPath = '$appDocPath/$audioName.mp3';
+      await flutterSoundRecorder.startRecorder(toFile: '$appDocPath/$audioName.mp3').then((value) {
         print('startRecorder');
         setState(() {});
       });

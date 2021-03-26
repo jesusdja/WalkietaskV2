@@ -14,6 +14,33 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
 
   print('SUBIENDO ${listDocuments.length} documentos.');
 
+  //List data = listDocuments[1].split('|');
+
+  // print('');
+  // if(data.length > 2 && data[2] != ''){
+  //   try{
+  //     String urlAdjunto = '';
+  //     if(data.length > 2 && data[2] != ''){ urlAdjunto = data[2]; }
+  //
+  //     final file = File(urlAdjunto);
+  //     file.openRead();
+  //     bool exist = await file.exists();
+  //     if(exist){
+  //       print('SE ELIMINO AVATAR DE USUARIO');
+  //     }
+  //
+  //     var responseImage = await conexionHttp().httpTestUploadAudio(urlAdjunto);
+  //     var valueImage = jsonDecode(responseImage.body);
+  //     if(valueImage['status_code'] == 200){
+  //       print('USUARIO MODIFICADO');
+  //     }
+  //   }catch(e){
+  //     print(e.toString());
+  //     print('ERROR AL SUBIR ARCHIVO');
+  //   }
+  // }
+  // print('');
+
   //await SharedPrefe().setStringListValue('WalListDocument',[]);
 
   for(int x = 0; x < listDocuments.length; x++){
@@ -26,7 +53,6 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
       'user_id': myUser,
       'status_id' : '1',
     };
-    //await Future.delayed(Duration(seconds: 3));
     blocIndicatorProgress.inList.add({'progressIndicator' : 0.2, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
 
     if(data.length > 0 && data[0] != ''){  jsonBody['user_responsability_id'] = data[0] == '0' ? myUser : data[0]; }
@@ -38,27 +64,32 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
         String urlAudio = '';
         if(data.length > 2 && data[2] != ''){
           urlAudio = data[2];
-          Map<String,String> result = await subirAudio(urlAudio);
-          errorInAudio = result['subir'].toString().contains('true');
-          if(result['subir'] == 'true'){
-            String pathUrlAudio = result['location'];
-            //pathUrlAudio = pathUrlAudio.replaceAll('%', '/');
-            jsonBody['url_audio'] = pathUrlAudio;
+          var responseAudio = await conexionHttp().httpUploadAudio(urlAudio);
+          var valueAudio = jsonDecode(responseAudio.body);
+          if(responseAudio.statusCode == 200){
+            print('SE SUBIO AUDIO ${valueAudio['link_audio']}');
+            jsonBody['url_audio'] = valueAudio['link_audio'];
+          }else{
+            errorInAudio = false;
           }
+          //AMAZON WEB SERVICES
+          // Map<String,String> result = await subirAudio(urlAudio);
+          // errorInAudio = result['subir'].toString().contains('true');
+          // if(result['subir'] == 'true'){
+          //   String pathUrlAudio = result['location'];
+          //   jsonBody['url_audio'] = pathUrlAudio;
+          // }
         }
       }catch(e){
         print(e.toString());
       }
-      /*jsonBody['url_audio'] = data[2];*/
     }
 
-    //await Future.delayed(Duration(seconds: 3));
     blocIndicatorProgress.inList.add({'progressIndicator' : 0.3, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
 
     if(data.length > 3 && data[3] != '' && data[3] != '0'){  jsonBody['project_id'] = data[3]; }
     if(data.length > 4 && data[4] != ''){  jsonBody['description'] = data[4]; }
 
-    //await Future.delayed(Duration(seconds: 3));
     blocIndicatorProgress.inList.add({'progressIndicator' : 0.4, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
 
     if(data.length > 5 && data[5] != ''){  jsonBody['deadline'] = data[5]; }
@@ -67,19 +98,25 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
         List data = listDocuments[x].split('|');
         String urlAdjunto = '';
         if(data.length > 6 && data[6] != ''){ urlAdjunto = data[6]; }
-        Map<String,String> result = await subirArchivo(urlAdjunto);
-        if(result['subir'] == 'true'){
-          String pathUrlAttachment = result['location'];
-          //pathUrlAttachment = pathUrlAttachment.replaceAll('%', '/');
-          jsonBody['url_attachment'] = pathUrlAttachment;
+        var responseAttach = await conexionHttp().httpUploadAttachment(urlAdjunto);
+        var valueAttach = jsonDecode(responseAttach.body);
+        if(responseAttach.statusCode == 200){
+          print('SE SUBIO ATTACHMENT ${valueAttach['link_attachment']}');
+          jsonBody['url_attachment'] = valueAttach['link_attachment'];
+        }else{
+          errorInAudio = false;
         }
+        //AMAZON WEB SERVICES
+        // Map<String,String> result = await subirArchivo(urlAdjunto);
+        // if(result['subir'] == 'true'){
+        //   String pathUrlAttachment = result['location'];
+        //   jsonBody['url_attachment'] = pathUrlAttachment;
+        // }
       }catch(e){
         print(e.toString());
       }
-      /*jsonBody['url_attachment'] = data[6];*/
     }
 
-    //await Future.delayed(Duration(seconds: 3));
     blocIndicatorProgress.inList.add({'progressIndicator' : 0.5, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
 
     if(errorInAudio){

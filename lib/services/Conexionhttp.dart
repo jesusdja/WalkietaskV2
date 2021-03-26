@@ -769,6 +769,44 @@ class conexionHttp{
     return response;
   }
 
+  Future<http.Response> httpUploadAudio(String path) async {
+    String token  = await obtenerToken();
+    Map<String, String> headers = {
+      'Authorization': 'Bearer $token'
+    };
+    var response;
+    try {
+      final imageUp = http.MultipartRequest('POST',Uri.parse('$enlace/api/auth/uploadaudiofile'));
+      imageUp.headers.addAll(headers);
+      final file = await http.MultipartFile.fromPath('audio', path,);
+      imageUp.files.add(file);
+      final streamedResponse = await imageUp.send();
+      response = await http.Response.fromStream(streamedResponse);
+    } catch (ex) {
+      print(ex.toString());
+    }
+    return response;
+  }
+
+  Future<http.Response> httpUploadAttachment(String path) async {
+    String token  = await obtenerToken();
+    Map<String, String> headers = {
+      'Authorization': 'Bearer $token'
+    };
+    var response;
+    try {
+      final imageUp = http.MultipartRequest('POST',Uri.parse('$enlace/api/auth/uploadattachmentfile'));
+      imageUp.headers.addAll(headers);
+      final file = await http.MultipartFile.fromPath('attachment', path,);
+      imageUp.files.add(file);
+      final streamedResponse = await imageUp.send();
+      response = await http.Response.fromStream(streamedResponse);
+    } catch (ex) {
+      print(ex.toString());
+    }
+    return response;
+  }
+
   Future<http.Response> httpDeleteTask(int id) async {
 
     String token  = await obtenerToken();
