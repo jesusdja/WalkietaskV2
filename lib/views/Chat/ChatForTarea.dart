@@ -28,11 +28,13 @@ import 'package:walkietaskv2/utils/download_file.dart';
 
 class ChatForTarea extends StatefulWidget {
 
-  ChatForTarea({this.tareaRes,this.listaCasosRes, this.blocTaskSend});
+  ChatForTarea({this.tareaRes,this.listaCasosRes, this.blocTaskSend, this.isChat, this.textChat});
 
   final Tarea tareaRes;
   final List<Caso> listaCasosRes;
   final BlocTask blocTaskSend;
+  final bool isChat;
+  final String textChat;
 
   @override
   _ChatForTareaState createState() => _ChatForTareaState();
@@ -75,10 +77,16 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
   UpdateData updateData = new UpdateData();
 
+  bool isChat = false;
+  String textChat = '';
+
   @override
   void initState() {
     super.initState();
     blocTaskSend = widget.blocTaskSend;
+
+    isChat = widget.isChat ?? false;
+    textChat = widget.textChat ?? '';
 
     audioPlayer = new AudioPlayer();
     listenerAudio();

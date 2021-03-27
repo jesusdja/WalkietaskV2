@@ -47,6 +47,7 @@ dependencies:
   flushbar: ^1.10.4
   transparent_image: ^1.0.0
   wakelock: ^0.2.1+1
+  scrollable_positioned_list: ^0.1.10
 
 
 dev_dependencies:

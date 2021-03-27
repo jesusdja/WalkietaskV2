@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Chat/ChatTareas.dart';
@@ -22,9 +23,9 @@ import 'package:walkietaskv2/views/binnacle/widgets/binnacle_invitation.dart';
 import 'package:walkietaskv2/views/binnacle/widgets/binnacle_projects.dart';
 import 'package:walkietaskv2/views/binnacle/widgets/binnacle_task.dart';
 
-class BinnaclePage extends StatefulWidget {
+class BinnaclePage2 extends StatefulWidget {
 
-  BinnaclePage({ this.myUser, @required this.blocTaskReceived, @required this.listCase });
+  BinnaclePage2({ this.myUser, @required this.blocTaskReceived, @required this.listCase });
 
   final Usuario myUser;
   final BlocTask blocTaskReceived;
@@ -34,7 +35,7 @@ class BinnaclePage extends StatefulWidget {
   _BinnaclePageState createState() => _BinnaclePageState();
 }
 
-class _BinnaclePageState extends State<BinnaclePage> {
+class _BinnaclePageState extends State<BinnaclePage2> {
 
   double alto = 0;
   double ancho = 0;
@@ -379,7 +380,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
       element = InkWell(
         onTap: () {
           if(data['type'] != 'deleted'){
-            clickTask(Tarea.fromMap(data['info']));
+            clickTask(Tarea.fromMap(data['info']), false, '');
           }else{
             showAlert('No se puede abrir una tarea eliminada.', WalkieTaskColors.color_E07676);
           }
@@ -397,13 +398,20 @@ class _BinnaclePageState extends State<BinnaclePage> {
     }
 
     if(data['category'] == 'chat'){
-      element = BinnacleChat(type: data['type'],info: data,myUser: myUser,);
+      element = InkWell(
+        onTap: (){
+          if(data['task'] != null){
+            clickTask(Tarea.fromMap(data['task']), true, data['info']['texto']);
+          }
+        },
+        child: BinnacleChat(type: data['type'],info: data,myUser: myUser,),
+      );
     }
 
     return element;
   }
 
-  void clickTask(Tarea tarea) async {
+  void clickTask(Tarea tarea, bool isChat, String textChat) async {
 
     readTask(tarea);
 
@@ -440,5 +448,100 @@ class _BinnaclePageState extends State<BinnaclePage> {
         }catch(_){}
       }
     }
+  }
+}
+
+class BinnaclePage extends StatefulWidget {
+
+  BinnaclePage({ this.myUser, @required this.blocTaskReceived, @required this.listCase });
+
+  final Usuario myUser;
+  final BlocTask blocTaskReceived;
+  final List<Caso> listCase;
+
+  @override
+  _MyApp4State createState() => _MyApp4State();
+}
+
+class _MyApp4State extends State<BinnaclePage> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData.light(),
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: Center(
+            child: Home()),
+      ),
+    );
+  }
+}
+
+class Home extends StatelessWidget {
+  const Home({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) {
+                return ListPage();
+              },
+            ),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(80.0),
+          child: Text("Click me"),
+        ));
+  }
+}
+
+class ListPage extends StatelessWidget {
+  ListPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("List"),
+        ),
+        body: Body());
+  }
+}
+
+class Body extends StatefulWidget {
+  @override
+  _BodyState createState() => _BodyState();
+}
+
+class _BodyState extends State<Body> {
+  _BodyState();
+
+  final ItemPositionsListener itemPositionsListener =
+  ItemPositionsListener.create();
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+        onWillPop: () {
+          var position = itemPositionsListener.itemPositions.value.first.index;
+          print(position);
+          //trigger leaving and use own data
+          Navigator.pop(context, false);
+
+          //we need to return a future
+          return Future.value(false);
+        },
+        child: ScrollablePositionedList.builder(
+            initialScrollIndex: 400,
+            itemPositionsListener: itemPositionsListener,
+            itemCount: 500,
+            reverse: true,
+            itemBuilder: (context, index) => Text('Item $index')));
   }
 }
