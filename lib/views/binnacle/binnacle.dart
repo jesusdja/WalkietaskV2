@@ -17,6 +17,7 @@ import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Chat/ChatForTarea.dart';
 import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
+import 'package:walkietaskv2/views/binnacle/widgets/binnacle_chat.dart';
 import 'package:walkietaskv2/views/binnacle/widgets/binnacle_invitation.dart';
 import 'package:walkietaskv2/views/binnacle/widgets/binnacle_projects.dart';
 import 'package:walkietaskv2/views/binnacle/widgets/binnacle_task.dart';
@@ -115,7 +116,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
         element.mensajes.forEach((key,value){
           String type = 'toUser';
           if(value['from'] != widget.myUser.id.toString()){ type = 'fromUser'; }
-          listChat.add( { 'id' : element.id, 'category' : 'chat', 'type' : type, 'idTarea' : element.idTarea, 'created_at' : '${value['fecha']} ${value['hora']}', 'info' : value } );
+          listChat.add( { 'id' : element.id, 'category' : 'chat', 'type' : type, 'idTarea' : element.idTarea, 'created_at' : '${value['fecha']} ${value['hora']}', 'info' : value , 'task' : element.task, 'userFrom' : element.userFrom} );
         });
       });
 
@@ -123,7 +124,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
         element.mensajes.forEach((key,value){
           String type = 'toUser';
           if(value['from'] != widget.myUser.id.toString()){ type = 'fromUser'; }
-          listChat.add( { 'id' : element.id, 'category' : 'chat', 'type' : type, 'idTarea' : element.idTarea, 'created_at' : '${value['fecha']} ${value['hora']}', 'info' : value } );
+          listChat.add( { 'id' : element.id, 'category' : 'chat', 'type' : type, 'idTarea' : element.idTarea, 'created_at' : '${value['fecha']} ${value['hora']}', 'info' : value, 'task' : element.task, 'userFrom' : element.userFrom } );
         });
       });
 
@@ -375,49 +376,28 @@ class _BinnaclePageState extends State<BinnaclePage> {
     );
 
     if(data['category'] == 'task'){
-      // element = InkWell(
-      //   onTap: () {
-      //     if(data['type'] != 'deleted'){
-      //       clickTask(Tarea.fromMap(data['info']));
-      //     }else{
-      //       showAlert('No se puede abrir una tarea eliminada.', WalkieTaskColors.color_E07676);
-      //     }
-      //   },
-      //   child: BinnacleTask(type: data['type'],info: data,myUser: myUser,),
-      // );
-
-      element = Container(
-        width: ancho,
-        margin: EdgeInsets.only(left: ancho * 0.1),
-        child: Text('${data['id']} - ${data['created_at']}'),
+      element = InkWell(
+        onTap: () {
+          if(data['type'] != 'deleted'){
+            clickTask(Tarea.fromMap(data['info']));
+          }else{
+            showAlert('No se puede abrir una tarea eliminada.', WalkieTaskColors.color_E07676);
+          }
+        },
+        child: BinnacleTask(type: data['type'],info: data,myUser: myUser,),
       );
     }
 
     if(data['category'] == 'project'){
-      //element = BinnacleProjects(type: data['type'],info: data,myUser: myUser,);
-      element = Container(
-        width: ancho,
-        margin: EdgeInsets.only(left: ancho * 0.1),
-        child: Text('${data['id']} - ${data['created_at']}'),
-      );
+      element = BinnacleProjects(type: data['type'],info: data,myUser: myUser,);
     }
 
     if(data['category'] == 'invitation' || data['category'] == 'contact'){
-      //element = BinnacleInvitation(type: data['type'],info: data,myUser: myUser,);
-
-      element = Container(
-        width: ancho,
-        margin: EdgeInsets.only(left: ancho * 0.1),
-        child: Text('${data['id']} - ${data['created_at']}'),
-      );
+      element = BinnacleInvitation(type: data['type'],info: data,myUser: myUser,);
     }
 
     if(data['category'] == 'chat'){
-      element = Container(
-        width: ancho,
-        margin: EdgeInsets.only(left: ancho * 0.1),
-        child: Text('${data['id']} - ${data['created_at']}'),
-      );
+      element = BinnacleChat(type: data['type'],info: data,myUser: myUser,);
     }
 
     return element;

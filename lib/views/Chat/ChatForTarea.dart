@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:intl/intl.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
@@ -156,13 +157,15 @@ class _ChatForTareaState extends State<ChatForTarea> {
         if(widget.tareaRes.user_id != widget.tareaRes.user_responsability_id){
           idUserFrom = tarea.user_responsability_id.toString();
         }
-
+        Usuario usuarioFrom = await DatabaseProvider.db.getCodeIdUser(widget.tareaRes.user_responsability_id.toString());
         ChatTareas chatTarea2 = new ChatTareas(
-            id: '',
-            idTarea: tarea.id.toString(),
-            idUser: '$idUser',
-            idFromUser: idUserFrom,
-            mensajes: new Map<String,dynamic>()
+          id: '',
+          idTarea: tarea.id.toString(),
+          idUser: '$idUser',
+          idFromUser: idUserFrom,
+          mensajes: new Map<String,dynamic>(),
+          task: widget.tareaRes.toMap(),
+          userFrom: usuarioFrom.toMap(),
         );
         ChatTareas chatTareaNew = await chatTareasdb.crearTareaChat(chatTarea2);
         if(chatTareaNew != null){
