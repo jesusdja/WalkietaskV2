@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:intl/intl.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Chat/ChatMessenger.dart';
@@ -28,13 +29,13 @@ import 'package:walkietaskv2/utils/download_file.dart';
 
 class ChatForTarea extends StatefulWidget {
 
-  ChatForTarea({this.tareaRes,this.listaCasosRes, this.blocTaskSend, this.isChat, this.textChat});
+  ChatForTarea({this.tareaRes,this.listaCasosRes, this.blocTaskSend, this.isChat, this.chat});
 
   final Tarea tareaRes;
   final List<Caso> listaCasosRes;
   final BlocTask blocTaskSend;
   final bool isChat;
-  final String textChat;
+  final Map<String,dynamic> chat;
 
   @override
   _ChatForTareaState createState() => _ChatForTareaState();
@@ -78,7 +79,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
   UpdateData updateData = new UpdateData();
 
   bool isChat = false;
-  String textChat = '';
+  Map<String,dynamic> chat = {};
+  bool _visible = false;
 
   @override
   void initState() {
@@ -86,7 +88,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
     blocTaskSend = widget.blocTaskSend;
 
     isChat = widget.isChat ?? false;
-    textChat = widget.textChat ?? '';
+    chat = widget.chat ?? {};
 
     audioPlayer = new AudioPlayer();
     listenerAudio();
@@ -111,6 +113,9 @@ class _ChatForTareaState extends State<ChatForTarea> {
     inicializarUser();
     inicializar();
     _inicializarPatronBlocTaskSend();
+    if(isChat){
+      goToSms();
+    }
   }
 
   @override
@@ -345,6 +350,9 @@ class _ChatForTareaState extends State<ChatForTarea> {
     );
   }
 
+  final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
+  ItemScrollController _scrollController = ItemScrollController();
+
   Widget _mensajes(){
     return tarea == null ? Container() : Container(
       child: StreamBuilder<QuerySnapshot>(
@@ -365,11 +373,12 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
           return chatTarea != null ?
 
-          ListView.builder(
+          ScrollablePositionedList.builder(
             padding: EdgeInsets.all(10.0),
             itemCount: chatTarea.mensajes.length,
             reverse: true,
-            controller: listScrollController,
+            itemPositionsListener: itemPositionsListener,
+            itemScrollController: _scrollController,
             itemBuilder: (context, index){
               bool izq = false;
               int pos = chatTarea.mensajes.length - index - 1;
@@ -397,7 +406,38 @@ class _ChatForTareaState extends State<ChatForTarea> {
                 dateStr = '$d/$m/${dateS.year} $h:$min $horario';
               }
 
-              return _cardSMS(Colors.red,'${chatTarea.mensajes['$pos']['texto']}', dateStr,izq,userFrom);
+              bool isChatExito = false;
+              if(widget.isChat){
+                if(chatTarea.mensajes['$pos']['texto'] == widget.chat['info']['texto'] &&
+                    chatTarea.mensajes['$pos']['fecha'] == widget.chat['info']['fecha'] &&
+                    chatTarea.mensajes['$pos']['hora'] == widget.chat['info']['hora']){
+                  isChatExito = true;
+                }
+              }
+
+
+              return isChatExito ?
+             Stack(
+               children: [
+                 Padding(
+                   padding: const EdgeInsets.all(8.0),
+                   child: _cardSMS(Colors.red,'${chatTarea.mensajes['$pos']['texto']}', dateStr,izq,userFrom, false),
+                 ),
+                 AnimatedOpacity(
+                   opacity: _visible ? 1.0 : 0.0,
+                   duration: Duration(milliseconds: 400),
+                   child: Card(
+                     color: WalkieTaskColors.color_FFF5B3,
+                     child: Padding(
+                       padding: const EdgeInsets.all(3),
+                       child: _cardSMS(Colors.red,'${chatTarea.mensajes['$pos']['texto']}', dateStr,izq,userFrom, true),
+                     ),
+                   ),
+                 ),
+               ],
+             )
+                    :
+                _cardSMS(Colors.red,'${chatTarea.mensajes['$pos']['texto']}', dateStr,izq,userFrom, false);
             },
           ) :
           Container();
@@ -406,7 +446,37 @@ class _ChatForTareaState extends State<ChatForTarea> {
     );
   }
 
-  Widget _cardSMS(Color colorCard, String texto, String dateSrt,bool lateralDer,Usuario userFrom){
+  Future<void> goToSms() async {
+    try{
+      await Future.delayed(Duration(seconds: 2));
+      List<ChatTareas> listChat = [];
+      var result =  await tareasColeccion.where('idTarea',isEqualTo: tarea.id.toString()).get();
+      listChat = result.docs.map((e) => ChatTareas.fromMap(e.data())).toList();
+      int pos = 0; int pos2 = 1;
+      listChat[0].mensajes.forEach((key, value) {
+        if(value['texto'] == widget.chat['info']['texto'] && value['fecha'] == widget.chat['info']['fecha'] && value['hora'] == widget.chat['info']['hora']){
+          pos =   pos2;
+        }else{
+          pos2++;
+        }
+      });
+      int sum = 0; int sumT = 0;
+      for(int x = listChat[0].mensajes.length; x > 0; x = x - 5){
+        if(x > pos && pos > (x - 5)){ sumT = sum; x = 0; }else{ sum = sum + 5; }
+      }
+      _scrollController.scrollTo(index: sumT, duration: Duration(seconds: 1),);
+    }catch(e){
+      print('Error en goToSms');
+    }
+    await Future.delayed(Duration(seconds: 1));
+    _visible = true;
+    setState(() {});
+    await Future.delayed(Duration(seconds: 2));
+    _visible = false;
+    setState(() {});
+  }
+
+  Widget _cardSMS(Color colorCard, String texto, String dateSrt,bool lateralDer,Usuario userFrom, bool opa){
     Image imagenAvatar = avatarUser ?? Image.network('$avatarImage');
     if(userFrom != null && userFrom.avatar_100 != null && userFrom.avatar_100 != ''){
       imagenAvatar = Image.network(userFrom.avatar_100);
@@ -418,7 +488,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
       margin: lateralDer ? EdgeInsets.only(right: ancho * 0.2) : EdgeInsets.only(left: ancho * 0.2),
       //height: MediaQuery.of(context).size.height * 0.05,
       child: Card(
-        color: lateralDer ? Colors.white : colorfondotext,
+        color: opa ? WalkieTaskColors.color_FFF5B3 : lateralDer ? Colors.white : colorfondotext,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
           child: Column(

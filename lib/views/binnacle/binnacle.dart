@@ -23,9 +23,9 @@ import 'package:walkietaskv2/views/binnacle/widgets/binnacle_invitation.dart';
 import 'package:walkietaskv2/views/binnacle/widgets/binnacle_projects.dart';
 import 'package:walkietaskv2/views/binnacle/widgets/binnacle_task.dart';
 
-class BinnaclePage2 extends StatefulWidget {
+class BinnaclePage extends StatefulWidget {
 
-  BinnaclePage2({ this.myUser, @required this.blocTaskReceived, @required this.listCase });
+  BinnaclePage({ this.myUser, @required this.blocTaskReceived, @required this.listCase });
 
   final Usuario myUser;
   final BlocTask blocTaskReceived;
@@ -35,7 +35,7 @@ class BinnaclePage2 extends StatefulWidget {
   _BinnaclePageState createState() => _BinnaclePageState();
 }
 
-class _BinnaclePageState extends State<BinnaclePage2> {
+class _BinnaclePageState extends State<BinnaclePage> {
 
   double alto = 0;
   double ancho = 0;
@@ -380,7 +380,7 @@ class _BinnaclePageState extends State<BinnaclePage2> {
       element = InkWell(
         onTap: () {
           if(data['type'] != 'deleted'){
-            clickTask(Tarea.fromMap(data['info']), false, '');
+            clickTask(Tarea.fromMap(data['info']), false, {});
           }else{
             showAlert('No se puede abrir una tarea eliminada.', WalkieTaskColors.color_E07676);
           }
@@ -401,7 +401,7 @@ class _BinnaclePageState extends State<BinnaclePage2> {
       element = InkWell(
         onTap: (){
           if(data['task'] != null){
-            clickTask(Tarea.fromMap(data['task']), true, data['info']['texto']);
+            clickTask(Tarea.fromMap(data['task']), true, data);
           }
         },
         child: BinnacleChat(type: data['type'],info: data,myUser: myUser,),
@@ -411,7 +411,7 @@ class _BinnaclePageState extends State<BinnaclePage2> {
     return element;
   }
 
-  void clickTask(Tarea tarea, bool isChat, String textChat) async {
+  void clickTask(Tarea tarea, bool isChat, Map<String,dynamic> chat) async {
 
     readTask(tarea);
 
@@ -429,6 +429,8 @@ class _BinnaclePageState extends State<BinnaclePage2> {
               tareaRes: tarea,
               listaCasosRes: widget.listCase,
               blocTaskSend: widget.blocTaskReceived,
+              isChat: isChat,
+              chat: chat,
             )));
       }
     }catch(e){
@@ -451,9 +453,9 @@ class _BinnaclePageState extends State<BinnaclePage2> {
   }
 }
 
-class BinnaclePage extends StatefulWidget {
+class BinnaclePage2 extends StatefulWidget {
 
-  BinnaclePage({ this.myUser, @required this.blocTaskReceived, @required this.listCase });
+  BinnaclePage2({ this.myUser, @required this.blocTaskReceived, @required this.listCase });
 
   final Usuario myUser;
   final BlocTask blocTaskReceived;
@@ -463,7 +465,7 @@ class BinnaclePage extends StatefulWidget {
   _MyApp4State createState() => _MyApp4State();
 }
 
-class _MyApp4State extends State<BinnaclePage> {
+class _MyApp4State extends State<BinnaclePage2> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -504,8 +506,9 @@ class Home extends StatelessWidget {
 class ListPage extends StatelessWidget {
   ListPage();
 
-  final ItemPositionsListener itemPositionsListener =
-  ItemPositionsListener.create();
+  final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
+  ItemScrollController _scrollController = ItemScrollController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -517,6 +520,7 @@ class ListPage extends StatelessWidget {
           onPressed: (){
             var position = itemPositionsListener.itemPositions.value.first.index;
             print(position);
+            _scrollController.scrollTo(index: 150, duration: Duration(seconds: 1));
           },
         ),
         body: WillPopScope(
@@ -532,6 +536,7 @@ class ListPage extends StatelessWidget {
             child: ScrollablePositionedList.builder(
                 initialScrollIndex: 400,
                 itemPositionsListener: itemPositionsListener,
+                itemScrollController: _scrollController,
                 itemCount: 500,
                 reverse: true,
                 itemBuilder: (context, index) => Text('Item $index'),
