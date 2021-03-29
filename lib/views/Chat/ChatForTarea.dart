@@ -419,19 +419,13 @@ class _ChatForTareaState extends State<ChatForTarea> {
               return isChatExito ?
              Stack(
                children: [
-                 Padding(
-                   padding: const EdgeInsets.all(8.0),
-                   child: _cardSMS(Colors.red,'${chatTarea.mensajes['$pos']['texto']}', dateStr,izq,userFrom, false),
-                 ),
+                 _cardSMS(Colors.red,'${chatTarea.mensajes['$pos']['texto']}', dateStr,izq,userFrom, false),
                  AnimatedOpacity(
                    opacity: _visible ? 1.0 : 0.0,
                    duration: Duration(milliseconds: 400),
                    child: Card(
                      color: WalkieTaskColors.color_FFF5B3,
-                     child: Padding(
-                       padding: const EdgeInsets.all(3),
-                       child: _cardSMS(Colors.red,'${chatTarea.mensajes['$pos']['texto']}', dateStr,izq,userFrom, true),
-                     ),
+                     child: _cardSMS(Colors.red,'${chatTarea.mensajes['$pos']['texto']}', dateStr,izq,userFrom, true),
                    ),
                  ),
                ],
@@ -462,7 +456,11 @@ class _ChatForTareaState extends State<ChatForTarea> {
       });
       int sum = 0; int sumT = 0;
       for(int x = listChat[0].mensajes.length; x > 0; x = x - 5){
-        if(x > pos && pos > (x - 5)){ sumT = sum; x = 0; }else{ sum = sum + 5; }
+        if(x >= pos && pos >= (x - 5)){
+          sumT = sum; x = 0;
+        }else{
+          sum = sum + 5;
+        }
       }
       _scrollController.scrollTo(index: sumT, duration: Duration(seconds: 1),);
     }catch(e){
