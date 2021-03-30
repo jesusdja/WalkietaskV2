@@ -79,7 +79,7 @@ class _InvitationsSentState extends State<InvitationsSent> {
           DateTime date = DateTime.parse(invitation.createdAt);
           String mes = date.month.toString(); if(mes.length < 2){ mes = '0$mes'; }
           String dia = date.day.toString(); if(dia.length < 2){ dia = '0$mes'; }
-          String dateInvited = 'Enviada el $dia-$mes-${date.year}';
+          String dateInvited = '${translate(context: context, text: 'sentOn')} $dia-$mes-${date.year}';
 
           String nameUser = '${userInvited.name} ${userInvited.surname}';
           if(invitation.external == 1){
@@ -131,7 +131,7 @@ class _InvitationsSentState extends State<InvitationsSent> {
                           :
                       RoundedButton(
                         backgroundColor: WalkieTaskColors.primary,
-                        title: 'Reenviar',
+                        title: translate(context: context, text: 'resend'),
                         radius: 5.0,
                         textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 0.5),
                         height: alto * 0.035,
@@ -143,17 +143,17 @@ class _InvitationsSentState extends State<InvitationsSent> {
                             var response = await connectionHttp.httpResetInvitationSent(invitation.userIdInvited);
                             var value = jsonDecode(response.body);
                             if(value['status_code'] == 200){
-                              showAlert('Enviada con exito.',WalkieTaskColors.color_89BD7D);
+                              showAlert(translate(context: context, text: 'sent'),WalkieTaskColors.color_89BD7D);
                             }else{
                               if(value['message'] != null){
                                 showAlert(value['message'],WalkieTaskColors.color_E07676);
                               }else{
-                                showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                                showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
                               }
                             }
                           }catch(e){
                             print(e.toString());
-                            showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                            showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
                           }
                           mapInvitationReset[invitation.id] = false;
                           setState(() {});
@@ -176,7 +176,7 @@ class _InvitationsSentState extends State<InvitationsSent> {
                           :
                       RoundedButton(
                         backgroundColor: WalkieTaskColors.color_DD7777,
-                        title: 'Eliminar',
+                        title: translate(context: context, text: 'delete'),
                         radius: 5.0,
                         textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 0.5),
                         height: alto * 0.035,
@@ -191,19 +191,19 @@ class _InvitationsSentState extends State<InvitationsSent> {
                               int res = await DatabaseProvider.db.deleteInvitation(invitation.id);
                               if(res != 0){
                                 widget.blocInvitation.inList.add(true);
-                                showAlert('Eliminada con exito.',WalkieTaskColors.color_89BD7D);
+                                showAlert(translate(context: context, text: 'deleted.'),WalkieTaskColors.color_89BD7D);
                                 setState(() {});
                               }
                             }else{
                               if(value['message'] != null){
                                 showAlert(value['message'],WalkieTaskColors.color_E07676);
                               }else{
-                                showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                                showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
                               }
                             }
                           }catch(e){
                             print(e.toString());
-                            showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                            showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
                           }
                           mapInvitationDelete[invitation.id] = false;
                           setState(() {});

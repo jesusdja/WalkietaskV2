@@ -261,7 +261,7 @@ class _MyProyectsState extends State<MyProyects> {
                             setState(() {});
 
                             bool res = false;
-                            res = await alertDeleteElement(context, '¿Esta seguro que desea Eliminar el proyecto "${project.name}"?');
+                            res = await alertDeleteElement(context, '¿${translate(context: context, text: 'sureDeleteProject')} "${project.name}"?');
                             if(res != null && res){
                               try{
                                 var response = await connectionHttp.httpDeleteProject(project.id);
@@ -364,7 +364,7 @@ class _MyProyectsState extends State<MyProyects> {
                     setState(() {});
 
                     bool res = false;
-                    res = await alertDeleteElement(context,'¿${translate(context: context, text: 'sureDeleteUser')} ${mapUserProject['users']['name']}');
+                    res = await alertDeleteElement(context,'¿${translate(context: context, text: 'sureDeleteUser ')} ${mapUserProject['users']['name']}');
                     if(res != null && res){
                       try{
                         var response = await connectionHttp.httpDeleteUserForProject(idProjects,mapUserProject['users']['id']);

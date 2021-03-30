@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
 Future<bool> alert(BuildContext context) async{
@@ -9,7 +10,7 @@ Future<bool> alert(BuildContext context) async{
       builder: ( context ) {
         return AlertDialog(
           title: Text(''),
-          content: Text('¿Estás seguro que desea cerrar sesión?',textAlign: TextAlign.center,
+          content: Text(translate(context: context, text: 'sureLogOut'),textAlign: TextAlign.center,
             style: WalkieTaskStyles().stylePrimary(size: size.height * 0.025, color: WalkieTaskColors.color_969696,spacing: 0.5,fontWeight: FontWeight.bold),),
           actions: <Widget>[
             FlatButton(
@@ -22,7 +23,7 @@ Future<bool> alert(BuildContext context) async{
             ),
             SizedBox(width: MediaQuery.of(context).size.width * 0.02,),
             FlatButton(
-              child: Text('Cancelar',
+              child: Text(translate(context: context, text: 'cancel'),
                 style: WalkieTaskStyles().stylePrimary(size: size.height * 0.02, color: WalkieTaskColors.primary,fontWeight: FontWeight.bold),),
               onPressed: (){
                 Navigator.of(context).pop(false);
@@ -36,9 +37,10 @@ Future<bool> alert(BuildContext context) async{
   return res;
 }
 
-Future<bool> alertDeleteElement(BuildContext context, String question, {String button1 = 'Ok', String button2 = 'Cancelar'}) async{
+Future<bool> alertDeleteElement(BuildContext context, String question, {String button1 = 'Ok', String button2 = ''}) async{
 
   Size size = MediaQuery.of(context).size;
+  button2 = button2.isEmpty ? translate(context: context, text: 'cancel') : button2;
 
   bool res = await showDialog(
       context: context,

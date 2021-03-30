@@ -6,6 +6,7 @@ import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
@@ -62,7 +63,7 @@ class _SendInvitationState extends State<SendInvitation> {
       appBar: AppBar(
         title: Container(
           width: ancho,
-          child: Text('Contactos',
+          child: Text(translate(context: context, text: 'contacts'),
             style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.03, color: WalkieTaskColors.color_969696),textAlign: TextAlign.right,),
         ),
         elevation: 0,
@@ -75,7 +76,7 @@ class _SendInvitationState extends State<SendInvitation> {
         ),
       ),
       body: loadData ?
-      Cargando('Enviando invitación',context)
+      Cargando(translate(context: context, text: 'sendingInformation'),context)
       :
       _contenido(),
     );
@@ -91,17 +92,17 @@ class _SendInvitationState extends State<SendInvitation> {
           children: <Widget>[
             Container(
               width: ancho,
-              child: Text('Invitación a usuarios', textAlign: TextAlign.center, style: _textStyleTitle,),
+              child: Text(translate(context: context, text: 'invitationToUsers'), textAlign: TextAlign.center, style: _textStyleTitle,),
             ),
             SizedBox(height: alto * 0.02,),
             Container(
               width: ancho,
-              child: Text('Contacto de Walkietask', textAlign: TextAlign.left, style: _textStyleSubTitle,),
+              child: Text(translate(context: context, text: 'walkietaskContact'), textAlign: TextAlign.left, style: _textStyleSubTitle,),
             ),
             SizedBox(height: alto * 0.01,),
             Container(
               width: ancho,
-              child: Text('Para invitar a quien ya tiene cuenta en Walkietask', textAlign: TextAlign.left, style: _textStyleDescription,),
+              child: Text(translate(context: context, text: 'toInviteAccount'), textAlign: TextAlign.left, style: _textStyleDescription,),
             ),
             SizedBox(height: alto * 0.04,),
             Container(
@@ -111,7 +112,7 @@ class _SendInvitationState extends State<SendInvitation> {
                   Expanded(
                     child: Container(
                       margin: EdgeInsets.only(right: ancho * 0.02),
-                      child: Text('Usuario o correo:', textAlign: TextAlign.right,style: _textStylehiden,),
+                      child: Text('${translate(context: context, text: 'usernameOrEmail:')}:', textAlign: TextAlign.right,style: _textStylehiden,),
                     ),
                   ),
                   Expanded(
@@ -142,7 +143,7 @@ class _SendInvitationState extends State<SendInvitation> {
                 alignment: Alignment.centerRight,
                 child: RoundedButton(
                   backgroundColor: WalkieTaskColors.primary,
-                  title: 'Invitar',
+                  title: translate(context: context, text: 'invite'),
                   onPressed: () => inviteUser(),
                   radius: 5.0,
                   textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 1.2),
@@ -161,17 +162,17 @@ class _SendInvitationState extends State<SendInvitation> {
             SizedBox(height: alto * 0.1,),
             Container(
               width: ancho,
-              child: Text('Invitación a Walkietask', textAlign: TextAlign.center, style: _textStyleTitle,),
+              child: Text(translate(context: context, text: 'walkietaskInvitation'), textAlign: TextAlign.center, style: _textStyleTitle,),
             ),
             SizedBox(height: alto * 0.02,),
             Container(
               width: ancho,
-              child: Text('Invitar contacto nuevo a Walkietask', textAlign: TextAlign.left, style: _textStyleSubTitle,),
+              child: Text(translate(context: context, text: 'inviteNewContact'), textAlign: TextAlign.left, style: _textStyleSubTitle,),
             ),
             SizedBox(height: alto * 0.01,),
             Container(
               width: ancho,
-              child: Text('Para invitar a quien todavía no tenga cuenta en Walkietask', textAlign: TextAlign.left, style: _textStyleDescription,),
+              child: Text(translate(context: context, text: 'toInviteNoAccount'), textAlign: TextAlign.left, style: _textStyleDescription,),
             ),
             SizedBox(height: alto * 0.04,),
             Container(
@@ -180,7 +181,7 @@ class _SendInvitationState extends State<SendInvitation> {
                 children: <Widget>[
                   Container(
                     margin: EdgeInsets.only(right: ancho * 0.02),
-                    child: Text('Correo:', textAlign: TextAlign.right,style: _textStylehiden,),
+                    child: Text('${translate(context: context, text: 'email')}:', textAlign: TextAlign.right,style: _textStylehiden,),
                   ),
                   Expanded(
                     child: Container(
@@ -206,7 +207,7 @@ class _SendInvitationState extends State<SendInvitation> {
             SizedBox(height: alto * 0.02,),
             Container(
               width: ancho,
-              child: Text('Mensaje (opcional)', textAlign: TextAlign.left,style: _textStylehiden,),
+              child: Text('${translate(context: context, text: 'message')} (${translate(context: context, text: 'optional')})', textAlign: TextAlign.left,style: _textStylehiden,),
             ),
             SizedBox(height: alto * 0.01,),
             Container(
@@ -232,7 +233,7 @@ class _SendInvitationState extends State<SendInvitation> {
                 alignment: Alignment.centerRight,
                 child: RoundedButton(
                   backgroundColor: WalkieTaskColors.primary,
-                  title: 'Invitar',
+                  title: translate(context: context, text: 'invite'),
                   onPressed: () => inviteNewUser(),
                   radius: 5.0,
                   textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022,color: WalkieTaskColors.white,fontWeight: FontWeight.bold, spacing: 1.2),
@@ -261,7 +262,7 @@ class _SendInvitationState extends State<SendInvitation> {
         var response = await connectionHttp.httpSendInvitation(jsonBody);
         var value = jsonDecode(response.body);
         if(value['status_code'] == 201){
-          showAlert('Enviada con exito.',WalkieTaskColors.color_89BD7D);
+          showAlert('${translate(context: context, text: 'sent_success')}.',WalkieTaskColors.color_89BD7D);
           setState(() {
             result = true;
             _controllerUser.text = '';
@@ -270,16 +271,16 @@ class _SendInvitationState extends State<SendInvitation> {
           if(value['message'] != null){
             showAlert(value['message'],WalkieTaskColors.color_E07676);
           }else{
-            showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+            showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
           }
 
         }
       }catch(e){
         print(e.toString());
-        showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+        showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
       }
     }else{
-      showAlert('Debe agregar un usuario o correo.',WalkieTaskColors.color_E07676);
+      showAlert(translate(context: context, text: 'addUsernameOrEmail.'),WalkieTaskColors.color_E07676);
     }
 
     setState(() {
@@ -302,7 +303,7 @@ class _SendInvitationState extends State<SendInvitation> {
         var response = await connectionHttp.httpSendInvitationNewUser(jsonBody);
         var value = jsonDecode(response.body);
         if(value['status_code'] == 201){
-          showAlert('Enviada con exito.',WalkieTaskColors.color_89BD7D);
+          showAlert('${translate(context: context, text: 'sent_success')}.',WalkieTaskColors.color_89BD7D);
           setState(() {
             result = true;
             _controllerNewUser.text = '';
@@ -312,15 +313,15 @@ class _SendInvitationState extends State<SendInvitation> {
           if(value['message'] != null){
             showAlert(value['message'],WalkieTaskColors.color_E07676);
           }else{
-            showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+            showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
           }
         }
       }catch(e){
         print(e.toString());
-        showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+        showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
       }
     }else{
-      showAlert('Debe agregar un correo.',WalkieTaskColors.color_E07676);
+      showAlert('${translate(context: context, text: 'addEmail.')}.',WalkieTaskColors.color_E07676);
     }
 
     setState(() {
