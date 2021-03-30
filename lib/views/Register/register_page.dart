@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Register/widgets/form_register.dart';
 
@@ -14,7 +15,7 @@ class RegisterPage extends StatelessWidget {
     double sizeW = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: WalkieTaskColors.white,
-      appBar: appBarWidget( sizeH,()=>Navigator.of(context).pop(),'Crear Cuenta'),
+      appBar: appBarWidget( sizeH,()=>Navigator.of(context).pop(),translate(context: context,text: 'createAccount')),
       body: Container(
         margin: EdgeInsets.only(left: 24,right: 24),
         height: sizeH,

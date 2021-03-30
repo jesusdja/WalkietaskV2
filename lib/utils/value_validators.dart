@@ -1,4 +1,7 @@
-Map<String, dynamic> validateUserAddress(String input) {
+import 'package:flutter/cupertino.dart';
+import 'package:walkietaskv2/utils/Globales.dart';
+
+Map<String, dynamic> validateUserAddress(String input,BuildContext context) {
   Map<String, dynamic> result = {'valid' : false, 'sms' : 'No es valido.'};
   const emailRegex = r"""^[a-zA-Z]+""";
   const userRegex = ""r'^[a-zA-Z0-9]+$'"";
@@ -10,22 +13,22 @@ Map<String, dynamic> validateUserAddress(String input) {
         return result;
       }else{
         result['valid'] = false;
-        result['sms'] = 'Solo se permiten letras y numeros.';
+        result['sms'] = translate(context: context,text: 'onlyLettersNumbers');
         return result;
       }
     }else{
       result['valid'] = false;
-      result['sms'] = 'Usuario debe contener entre 5 y 10 caracteres.';
+      result['sms'] = translate(context: context, text: 'usernameHaveCharacters');
       return result;
     }
   } else {
     result['valid'] = false;
-    result['sms'] = 'Usuario invalido. Debe comenzar con una letra.';
+    result['sms'] = translate(context: context, text: 'invalidUserLetter');
     return result;
   }
 }
 
-Map<String, dynamic> validateEmailAddress(String input) {
+Map<String, dynamic> validateEmailAddress(String input,BuildContext context) {
   Map<String, dynamic> result = {'valid' : false, 'sms' : 'No es valido.'};
   const emailRegex =
   r"""^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+""";
@@ -35,13 +38,13 @@ Map<String, dynamic> validateEmailAddress(String input) {
     return result;
   } else {
     result['valid'] = false;
-    result['sms'] = 'Correo invalido.';
+    result['sms'] = translate(context: context, text: 'invalidEmail');
     return result;
   }
 }
 
 
-Map<String, dynamic> validatePassword(String input) {
+Map<String, dynamic> validatePassword(String input,BuildContext context) {
   Map<String, dynamic> result = {'valid' : false, 'sms' : 'No es valido.'};
   // String pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
   String oneNumber = r'^.*[0-9].*$';
@@ -49,19 +52,19 @@ Map<String, dynamic> validatePassword(String input) {
   String oneUpperCase = r'^.*[A-Z].*$';
   if (input.length < 8) {
     result['valid'] = false;
-    result['sms'] = 'Usá mínimo 8 caracteres';
+    result['sms'] = translate(context: context, text: 'invalidPass_1');
     return result;
   } else if (!RegExp(oneNumber).hasMatch(input)) {
     result['valid'] = false;
-    result['sms'] = 'Debe contener al menos un número';
+    result['sms'] = translate(context: context, text: 'invalidPass_2');
     return result;
   } else if (!RegExp(oneLowerCase).hasMatch(input)) {
     result['valid'] = false;
-    result['sms'] = 'Debe contener al menos una minúscula';
+    result['sms'] = translate(context: context, text: 'invalidPass_3');
     return result;
   } else if (!RegExp(oneUpperCase).hasMatch(input)) {
     result['valid'] = false;
-    result['sms'] = 'Debe contener al menos una mayúscula';
+    result['sms'] = translate(context: context, text: 'invalidPass_4');
     return result;
   }
   result['valid'] = true;

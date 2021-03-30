@@ -507,10 +507,10 @@ class _ProfileHomeState extends State<ProfileHome> {
 
     if(mapData[2]){
       if(controllerEmail.text.isNotEmpty){
-        if(validateEmailAddress(controllerEmail.text)['valid']){
+        if(validateEmailAddress(controllerEmail.text,context)['valid']){
           body['email'] = controllerEmail.text;
         }else{
-          showAlert(validateEmailAddress(controllerEmail.text)['sms'],WalkieTaskColors.color_E07676);
+          showAlert(validateEmailAddress(controllerEmail.text,context)['sms'],WalkieTaskColors.color_E07676);
           notError = false;
         }
       }else{
@@ -532,11 +532,11 @@ class _ProfileHomeState extends State<ProfileHome> {
     if(mapData[3] && mapData[4]){
       if(controllerPass.text.isNotEmpty){
         if(controllerPass2.text.isNotEmpty){
-          if(validatePassword(controllerPass2.text)['valid']){
+          if(validatePassword(controllerPass2.text,context)['valid']){
             body['old_password'] = controllerPass.text;
             body['password'] = controllerPass2.text;
           }else{
-            showAlert(validatePassword(controllerPass2.text)['sms'],WalkieTaskColors.color_E07676);
+            showAlert(validatePassword(controllerPass2.text,context)['sms'],WalkieTaskColors.color_E07676);
             notError = false;
           }
         }else{
@@ -569,7 +569,7 @@ class _ProfileHomeState extends State<ProfileHome> {
       }catch(_){}
     }
 
-    if((body.length > 1 || validateEmailAddress(controllerEmail.text)['valid']) && notError){
+    if((body.length > 1 || validateEmailAddress(controllerEmail.text,context)['valid']) && notError){
       try{
         var response = await conexionHttp().httpUpdateUser(body);
         var value = jsonDecode(response.body);

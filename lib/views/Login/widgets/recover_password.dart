@@ -134,7 +134,7 @@ class _RecoverPasswordState extends State<RecoverPassword> {
             setState(() {
               isAccepted = true;
             });
-            if(validateEmailAddress(_controllerEmail.text)['valid']){
+            if(validateEmailAddress(_controllerEmail.text,context)['valid']){
               try{
                 var response = await conexionHispanos.httpRecoverPass(_controllerEmail.text);
                 var value = jsonDecode(response.body);

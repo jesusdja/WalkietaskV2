@@ -9,6 +9,7 @@ import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Permisos.dart';
 import 'package:walkietaskv2/services/auth.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
@@ -92,36 +93,36 @@ class _FormRegisterState extends State<FormRegister> {
     Map<String, FocusNode> mapError = {};
 
     Widget userErrorW = Container();
-    if(showErrorCheck  && !validateUserAddress(user)['valid']){
-      userErrorW = _error(sizeW,validateUserAddress(user)['sms']);
+    if(showErrorCheck  && !validateUserAddress(user,context)['valid']){
+      userErrorW = _error(sizeW,validateUserAddress(user,context)['sms']);
       checkUser = 0;
     }
 
     if(showError && user.isEmpty){
-      userErrorW = _error(sizeW,'Este espacio es requerido.');
+      userErrorW = _error(sizeW,translate(context: context,text: 'requiredField'));
       checkUser = 0;
     }
 
     Widget nameErrorW = Container();
     if (showError && name.isEmpty) {
-      nameErrorW = _error(sizeW, 'Este espacio es requerido');
+      nameErrorW = _error(sizeW, translate(context: context,text: 'requiredField'));
       if (mapError.isEmpty) mapError['error'] = focusNodeName;
     }
     Widget lastNameErrorW = Container();
     if (showError && surname.isEmpty) {
-      lastNameErrorW = _error(sizeW,'Este espacio es requerido',);
+      lastNameErrorW = _error(sizeW,translate(context: context,text: 'requiredField'),);
       if (mapError.isEmpty) mapError['error'] = focusNodeLastName;
     }
 
     Widget emailErrorW = Container();
-    if (showError && !validateEmailAddress(email)['valid']) {
-      emailErrorW = _error(sizeW,validateEmailAddress(email)['sms'],);
+    if (showError && !validateEmailAddress(email,context)['valid']) {
+      emailErrorW = _error(sizeW,validateEmailAddress(email,context)['sms'],);
       if (mapError.isEmpty) mapError['error'] = focusNodeEmail;
     }
 
     Widget passErrorW = Container();
-    if (showError && !validatePassword(pass)['valid']) {
-      passErrorW = _error(sizeW,validatePassword(pass)['sms'],);
+    if (showError && !validatePassword(pass,context)['valid']) {
+      passErrorW = _error(sizeW,validatePassword(pass,context)['sms'],);
       if (mapError.isEmpty) mapError['error'] = focusNodePass;
     }
 
@@ -149,7 +150,7 @@ class _FormRegisterState extends State<FormRegister> {
               Container(
                 width: sizeW,
                 child: Text(
-                  'Crea tu cuenta para poder comenzar a enviar y recibir walkietasks.',
+                  translate(context: context, text: 'createAccountReceivingWalkietasks'),
                   style: textStyle1,
                   textAlign: TextAlign.left,
                 ),
@@ -159,7 +160,7 @@ class _FormRegisterState extends State<FormRegister> {
               ),
               Container(
                 width: sizeW,
-                child: Text('Tus datos:',
+                child: Text(translate(context: context, text: 'yourInformation'),
                   style: textStyle2
                 ),
               ),
@@ -174,7 +175,7 @@ class _FormRegisterState extends State<FormRegister> {
                       width: sizeW * 0.25,
                       margin: EdgeInsets.only(right: sizeW * 0.025),
                       child: Text(
-                        'Nombre:',
+                        '${translate(context: context, text: 'name')}:',
                         style: textStyle1,
                         textAlign: TextAlign.right,
                       ),
@@ -209,7 +210,7 @@ class _FormRegisterState extends State<FormRegister> {
                       width: sizeW * 0.25,
                       margin: EdgeInsets.only(right: sizeW * 0.025),
                       child: Text(
-                        'Apellido:',
+                        '${translate(context: context, text: 'lastName')}:',
                         style: textStyle1,
                         textAlign: TextAlign.right,
                       ),
@@ -244,7 +245,7 @@ class _FormRegisterState extends State<FormRegister> {
                       width: sizeW * 0.25,
                       margin: EdgeInsets.only(right: sizeW * 0.025),
                       child: Text(
-                        'Correo:',
+                        '${translate(context: context, text: 'email')}:',
                         style: textStyle1,
                         textAlign: TextAlign.right,
                       ),
@@ -275,7 +276,7 @@ class _FormRegisterState extends State<FormRegister> {
               ),
               Container(
                 width: sizeW,
-                child: Text('Usuario:',
+                child: Text('${translate(context: context,text: 'username')}:',
                     style: textStyle2
                 ),
               ),
@@ -297,7 +298,7 @@ class _FormRegisterState extends State<FormRegister> {
                       width: sizeW * 0.25,
                       margin: EdgeInsets.only(right: sizeW * 0.025),
                       child: Text(
-                        'Usuario:',
+                        '${translate(context: context,text: 'username')}:',
                         style: textStyle1,
                         textAlign: TextAlign.right,
                       ),
@@ -307,7 +308,7 @@ class _FormRegisterState extends State<FormRegister> {
                         focusNode: focusNodeUser,
                         initialValue: user,
                         onChanged: (String value) {
-                          if (value.isNotEmpty && validateUserAddress(user)['valid']) {
+                          if (value.isNotEmpty && validateUserAddress(user,context)['valid']) {
                             showErrorCheck = false;
                             user = value;
                             _blocUserCheck.check(value);
@@ -445,8 +446,8 @@ class _FormRegisterState extends State<FormRegister> {
             });
 
             if(name.isNotEmpty && !showErrorCheck && surname.isNotEmpty &&
-                validateEmailAddress(email)['valid'] &&
-                validatePassword(pass)['valid']){
+                validateEmailAddress(email,context)['valid'] &&
+                validatePassword(pass,context)['valid']){
               conexionHttp connectionHttp = new conexionHttp();
               try{
                 Map<String,dynamic> body = {
