@@ -5,6 +5,7 @@ import 'package:provider/provider.dart' as provider;
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/auth.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
@@ -84,7 +85,7 @@ class _RegisterCodeState extends State<RegisterCode> {
 
     return Scaffold(
       backgroundColor: WalkieTaskColors.white,
-      appBar: appBarWidget( sizeH,()=>Navigator.of(context).pop(),'Activa tu cuenta'),
+      appBar: appBarWidget( sizeH,()=>Navigator.of(context).pop(),translate(context: context, text: 'activateAccount')),
       body: Container(
         margin: EdgeInsets.only(left: 24,right: 24),
         height: sizeH,
@@ -107,7 +108,7 @@ class _RegisterCodeState extends State<RegisterCode> {
                   Container(
                     width: sizeW,
                     child: Text(
-                      'Para activar tu cuenta hemos enviado un correo a $meEmail con un número de activación.\nDigitalo aquí:',
+                      '${translate(context: context, text: 'activateYourAccount')} $meEmail ${translate(context: context, text: 'activationNumber')}',
                       style: textStyle1,
                       textAlign: TextAlign.left,
                     ),
@@ -120,12 +121,11 @@ class _RegisterCodeState extends State<RegisterCode> {
                   Container(
                     width: sizeW,
                     child: Text(
-                      '¿No recibiste el email?\nRevisa tu carpeta de SPAM',
+                      translate(context: context, text: 'noReceiveTheEmail'),
                       style: textStyle1,
                       textAlign: TextAlign.center,
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -147,7 +147,7 @@ class _RegisterCodeState extends State<RegisterCode> {
           width: sizeW * 0.2,
           height: sizeH * 0.05,
           radius: 5.0,
-          title: 'Aceptar',
+          title: translate(context: context, text: 'ok'),
           textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: sizeH * 0.02, color: WalkieTaskColors.white,fontWeight: FontWeight.bold),
           backgroundColor: WalkieTaskColors.primary,
           onPressed: () async{
@@ -155,19 +155,18 @@ class _RegisterCodeState extends State<RegisterCode> {
               isAccepted = true;
             });
             if(mapCode[1] && mapCode[2] && mapCode[3] && mapCode[4]){
-              conexionHttp conexionHispanos = new conexionHttp();
               String code = '${controller_1.text}${controller_2.text}${controller_3.text}${controller_4.text}';
               try{
-                var response = await conexionHispanos.httpConfirmUser(code);
+                var response = await conexionHttp().httpConfirmUser(code);
                 var value3 = jsonDecode(response.body);
                 if(value3['status_code'] == 404){
-                  showAlert('Código de activación inválido.',Colors.red[400]);
+                  showAlert(translate(context: context, text: 'invalidActivationCode.'),Colors.red[400]);
                 }else{
                   int statusCode = 0;
                   if(value3['status_code'] == 200){
                     statusCode = 1;
                   }else{
-                    showAlert('Codigo vencido. Registrar nuevamente.',Colors.red[400]);
+                    showAlert(translate(context: context, text: 'codeHasExpired'),Colors.red[400]);
                     await Future.delayed(Duration(seconds: 3));
                   }
                   try{
@@ -175,15 +174,15 @@ class _RegisterCodeState extends State<RegisterCode> {
                     auth.init();
                   }catch(ex){
                     print(ex);
-                    showAlert('Error al enviar datos.',Colors.red[400]);
+                    showAlert(translate(context: context, text: 'errorSendingInformation'),Colors.red[400]);
                   }
                 }
               }catch(e){
                 print(e.toString());
-                showAlert('Parece que no hay señal de internet, por favor intentar de nuevo cuando lo haya.',Colors.red[400]);
+                showAlert(translate(context: context, text: 'noInternetConnection'),Colors.red[400]);
               }
             }else{
-              showAlert('Se debe agregar todos los campos.',Colors.red[400]);
+              showAlert(translate(context: context, text: 'pleaseCompleteFields'),Colors.red[400]);
             }
             setState(() {
               isAccepted = false;

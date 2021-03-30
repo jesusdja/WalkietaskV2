@@ -283,7 +283,7 @@ class _FormRegisterState extends State<FormRegister> {
               Container(
                 width: sizeW,
                 child: Text(
-                  'El nombre con el que aparecerás en Walkietask',
+                  translate(context: context, text: 'nameYouWalkietask'),
                   style: textStyle3
                 ),
               ),
@@ -343,7 +343,7 @@ class _FormRegisterState extends State<FormRegister> {
                       width: sizeW * 0.25,
                       margin: EdgeInsets.only(top: sizeH * 0.01, right: sizeW * 0.025),
                       child: Text(
-                        'Contraseña:',
+                        '${translate(context: context, text: 'Password')}:',
                         style: textStyle1,
                         textAlign: TextAlign.right,
                       ),
@@ -375,7 +375,7 @@ class _FormRegisterState extends State<FormRegister> {
                           Container(
                             width: sizeW,
                             child: Text(
-                                'Debe incluir minúsculas, mayúsculas y números.',
+                                translate(context: context, text: 'includeLowerUpper'),
                                 style: textStyle3
                             ),
                           ),
@@ -436,7 +436,7 @@ class _FormRegisterState extends State<FormRegister> {
           width: sizeW * 0.2,
           height: sizeH * 0.05,
           radius: 5.0,
-          title: 'Aceptar',
+          title: translate(context: context, text: 'ok'),
           textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: sizeH * 0.02, color: WalkieTaskColors.white,fontWeight: FontWeight.bold),
           backgroundColor: WalkieTaskColors.primary,
           onPressed: () async{
@@ -487,10 +487,10 @@ class _FormRegisterState extends State<FormRegister> {
                         Navigator.of(context).pop();
                       }catch(ex){
                         print(ex);
-                        showAlert('Error al enviar datos.',Colors.red[400]);
+                        showAlert(translate(context: context, text: 'errorSendingInformation'),Colors.red[400]);
                       }
                     }else{
-                      showAlert('Error al enviar datos.',Colors.red[400]);
+                      showAlert(translate(context: context, text: 'errorSendingInformation'),Colors.red[400]);
                     }
                   }
                 }else{
@@ -506,16 +506,16 @@ class _FormRegisterState extends State<FormRegister> {
                         });
                       });
                     }catch(e){
-                      showAlert('Error al enviar datos.',Colors.red[400]);
+                      showAlert(translate(context: context, text: 'errorSendingInformation'),Colors.red[400]);
                     }
                   }else{
-                    showAlert('Error al enviar datos.',Colors.red[400]);
+                    showAlert(translate(context: context, text: 'errorSendingInformation'),Colors.red[400]);
                   }
                 }
 
               }catch(e){
                 print(e.toString());
-                showAlert('Error al enviar datos.',Colors.red[400]);
+                showAlert(translate(context: context, text: 'errorSendingInformation'),Colors.red[400]);
               }
             }else{
               isError = true;
