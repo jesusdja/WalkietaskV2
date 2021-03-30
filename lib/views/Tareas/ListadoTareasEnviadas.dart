@@ -145,13 +145,13 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
       child: Row(
         children: <Widget>[
           Expanded(
-            child: _appBArMenuText('ULTIMAS',0),
+            child: _appBArMenuText(translate(context: context, text: 'last'),0),
           ),
           Expanded(
-            child: _appBArMenuText('USUARIO',1),
+            child: _appBArMenuText(translate(context: context, text: 'user'),1),
           ),
           Expanded(
-            child: _appBArMenuText('PROYECTOS',2),
+            child: _appBArMenuText(translate(context: context,text: 'projects').toUpperCase(),2),
           ),
         ],
       ),
@@ -207,7 +207,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
             width: ancho,
             height: alto * 0.8,
             child: Center(
-              child: Text('No existen tareas enviadas', style: textStylePrimary,),
+              child: Text(translate(context: context, text: 'noSentTasks'), style: textStylePrimary,),
             ),
           ) :SingleChildScrollView(
             child: Column(
@@ -248,7 +248,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
               sizeCircule: alto * 0.025,
             ),
           ),
-          Text('Fecha de entrega', style: WalkieTaskStyles().styleHelveticaneueRegular(color: WalkieTaskColors.primary, size: alto * 0.018, fontWeight: FontWeight.bold),),
+          Text(translate(context: context, text: 'deadline'), style: WalkieTaskStyles().styleHelveticaneueRegular(color: WalkieTaskColors.primary, size: alto * 0.018, fontWeight: FontWeight.bold),),
         ],
       ),
     );
@@ -275,12 +275,10 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
               actionExtentRatio: 0.25,
               child: _tareas(tarea, tarea.is_priority != 0),
               actions: <Widget>[
-                _buttonSliderAction(tarea.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.04,),WalkieTaskColors.yellow,WalkieTaskColors.white,1,tarea),
-                //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
+                _buttonSliderAction(tarea.is_priority == 0 ? translate(context: context, text: 'highlight') : translate(context: context, text: 'forget'),Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.04,),WalkieTaskColors.yellow,WalkieTaskColors.white,1,tarea),
               ],
               secondaryActions: <Widget>[
-                //_buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,tarea),
-                _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,tarea),
+                _buttonSliderAction(translate(context: context,text: 'ready'),Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,tarea),
               ],
             ),
           );
@@ -305,7 +303,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
 
     String daysLeft = getDayDiff(tarea.deadline);
 
-    String proyectName = '(Sin proyecto asignado)';
+    String proyectName = translate(context: context, text: 'noAssignedProject');
     if(tarea.project_id != null && tarea.project_id != 0 && mapCasos[tarea.project_id] != null){
       proyectName = mapCasos[tarea.project_id].name;
     }
@@ -314,7 +312,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
     if(mapIdUser[tarea.user_responsability_id] != null){
       nameUser = '${mapIdUser[tarea.user_responsability_id].name} ${mapIdUser[tarea.user_responsability_id].surname}';
       if(widget.myUserRes.id == mapIdUser[tarea.user_responsability_id].id){
-        nameUser = 'Recordatorio personal';
+        nameUser = translate(context: context, text: 'remindersPersonal');
       }
     }
 
@@ -373,7 +371,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text('$nameUser', style: activity ? textStylePrimaryBold : textStylePrimary),
-                    Text(tarea.name.isNotEmpty ? tarea.name : 'Tarea sin título. Tap para nombrarla',
+                    Text(tarea.name.isNotEmpty ? tarea.name : translate(context: context, text: 'untitledTask'),
                       style: tarea.name.isNotEmpty ? (activity ? textStylePrimaryBold : textStylePrimary) : textStyleNotTitle,),
                     Text(proyectName,style: textStyleProject,),
                   ],
@@ -446,7 +444,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
 
     String nameUser = '${user.name} ${user.surname}';
     if(widget.myUserRes.id == user.id){
-      nameUser = 'Recordatorio personal';
+      nameUser = translate(context: context, text: 'remindersPersonal');
     }
 
     return Container(
@@ -485,7 +483,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                     ),
                   ),
                   Container(
-                    child: Text('($cantTask ${cantTask < 1 ? 'tarea' : 'Tareas'})',
+                    child: Text('($cantTask ${cantTask < 1 ? translate(context: context, text: 'tasks').substring(0,translate(context: context, text: 'tasks').length - 1) : translate(context: context, text: 'tasks')})',
                         style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 1)),
                   ),
                   Container(
@@ -531,7 +529,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
         bool working = task.working == 1;
         bool favorite = task.is_priority == 1;
 
-        String proyectName = '(Sin proyecto asignado)';
+        String proyectName = translate(context: context, text: 'noAssignedProject');
         if(task.project_id != null && task.project_id != 0 && mapCasos[task.project_id] != null){
           proyectName = mapCasos[task.project_id].name;
         }
@@ -558,12 +556,12 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                   actionPane: SlidableDrawerActionPane(),
                   actionExtentRatio: 0.25,
                   actions: <Widget>[
-                    _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.03,),WalkieTaskColors.yellow,WalkieTaskColors.white,1,task),
+                    _buttonSliderAction(task.is_priority == 0 ? translate(context: context, text: 'highlight') : translate(context: context, text: 'forget'),Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.03,),WalkieTaskColors.yellow,WalkieTaskColors.white,1,task),
                     //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
                   ],
                   secondaryActions: <Widget>[
                     //_buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.03,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
-                    _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.03,),colorSliderListo,WalkieTaskColors.white,4,task),
+                    _buttonSliderAction(translate(context: context,text: 'ready'),Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.03,),colorSliderListo,WalkieTaskColors.white,4,task),
                   ],
                   child: InkWell(
                     onTap: () =>clickTarea(task),
@@ -587,7 +585,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    Text(task.name.isEmpty ? 'Nombre no asignado' : task.name,
+                                    Text(task.name.isEmpty ? translate(context: context, text: 'noName') : task.name,
                                         style: textStylePrimaryBold),
                                     Text(proyectName,
                                       style: textStylePrimary,),
@@ -658,7 +656,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
 
   Widget _tareasProyect(Caso proyect, List<Tarea> listTask,){
 
-    String nameProyect = proyect == null ? 'Sin proyecto asignado' : proyect.name;
+    String nameProyect = proyect == null ? translate(context: context, text: 'noProjectAssigned') : proyect.name;
     int keyOpen = proyect == null ? 0 : proyect.id;
 
     List<Widget> listTaskWidget = listTaskGetProyect(proyect, listTask);
@@ -691,7 +689,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                     ),
                   ),
                   Container(
-                    child: Text('($cantTask ${cantTask < 1 ? 'tarea' : 'Tareas'})',
+                    child: Text('($cantTask ${cantTask < 1 ? translate(context: context, text: 'tasks').substring(0,translate(context: context, text: 'tasks').length - 1) : translate(context: context, text: 'tasks')})',
                         style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 1)),
                   ),
                   Container(
@@ -745,12 +743,12 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                   actionExtentRatio: 0.25,
                   child: _tareas(task, task.is_priority != 0),
                   actions: <Widget>[
-                    _buttonSliderAction(task.is_priority == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),WalkieTaskColors.yellow,WalkieTaskColors.white,1,task),
+                    _buttonSliderAction(task.is_priority == 0 ? translate(context: context, text: 'highlight') : translate(context: context, text: 'forget'),Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),WalkieTaskColors.yellow,WalkieTaskColors.white,1,task),
                     //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,task),
                   ],
                   secondaryActions: <Widget>[
-                    _buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
-                    _buttonSliderAction('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,task),
+                    //_buttonSliderAction('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: 30,),colorSliderTrabajando,WalkieTaskColors.white,3,task),
+                    _buttonSliderAction(translate(context: context,text: 'ready'),Icon(Icons.check,color: WalkieTaskColors.white,size: 30,),colorSliderListo,WalkieTaskColors.white,4,task),
                   ],
                 ),
               ),
@@ -822,7 +820,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
         if(accion == 3){
           try{
             if(tarea.working == 0){
-              showAlert('Tarea iniciada',WalkieTaskColors.color_89BD7D);
+              showAlert(translate(context: context, text: 'TaskStarted'),WalkieTaskColors.color_89BD7D);
               tarea.working = 1;
               tarea.updated_at = DateTime.now().toString();
               if(await DatabaseProvider.db.updateTask(tarea) == 1){
@@ -830,7 +828,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
                 await conexionHispanos.httpTaskInit(tarea.id);
               }
             }else{
-              showAlert('Tarea ya se encuentra iniciada',WalkieTaskColors.color_89BD7D);
+              showAlert(translate(context: context, text: 'TaskAlreadyStarted'),WalkieTaskColors.color_89BD7D);
             }
           }catch(e){
             print(e.toString());
@@ -838,7 +836,7 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
           blocTaskSend.inList.add(true);
         }
         if(accion == 4){
-          showAlert('Tarea finalizada',WalkieTaskColors.color_89BD7D);
+          showAlert(translate(context: context, text: 'TaskFinished'),WalkieTaskColors.color_89BD7D);
           try{
             tarea.finalized = 1;
             tarea.updated_at = DateTime.now().toString();

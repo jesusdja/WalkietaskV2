@@ -52,7 +52,6 @@ class _AddProyectsState extends State<AddProyects> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     controlleBuscador = TextEditingController();
     controlleNewName = TextEditingController();
@@ -73,7 +72,7 @@ class _AddProyectsState extends State<AddProyects> {
       appBar: AppBar(
         title: Container(
           width: ancho,
-          child: Text(widget.proyect != null ? '' : 'Nuevo proyecto',
+          child: Text(widget.proyect != null ? '' : translate(context: context, text: 'newProject'),
             style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.03, color: WalkieTaskColors.color_969696), textAlign: TextAlign.right,),
         ),
         elevation: 0,
@@ -96,7 +95,7 @@ class _AddProyectsState extends State<AddProyects> {
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: cargando ? Cargando('Cargando',context) : contenido(),
+        child: cargando ? Cargando(translate(context: context, text: 'loading'),context) : contenido(),
       ),
     );
   }
@@ -111,7 +110,7 @@ class _AddProyectsState extends State<AddProyects> {
             SizedBox(height: alto * 0.03,),
             Container(
               width: ancho,
-              child: Text('Nombre', style: textStylePrimaryBold,),
+              child: Text(translate(context: context, text: 'name'), style: textStylePrimaryBold,),
             ),
             SizedBox(height: alto * 0.005,),
             Container(
@@ -137,7 +136,7 @@ class _AddProyectsState extends State<AddProyects> {
             SizedBox(height: alto * 0.025,),
             Container(
               width: ancho,
-              child: Text('Usuarios invitados:', style: textStylePrimaryBold,),
+              child: Text('${translate(context: context, text: 'invitedUsers')}:', style: textStylePrimaryBold,),
             ),
             SizedBox(height: alto * 0.01,),
             buscador(),
@@ -146,7 +145,7 @@ class _AddProyectsState extends State<AddProyects> {
             SizedBox(height: alto * 0.05,),
             RoundedButton(
               backgroundColor: WalkieTaskColors.primary,
-              title: 'Aceptar',
+              title: translate(context: context, text: 'ok'),
               onPressed: () => _sumit(),
               radius: 5.0,
               textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022,color: WalkieTaskColors.white,fontWeight: FontWeight.bold),
@@ -164,7 +163,7 @@ class _AddProyectsState extends State<AddProyects> {
       child: Row(
         children: <Widget>[
           Container(
-            child: Text('Buscar',style: textStylePrimary),
+            child: Text(translate(context: context, text: 'search'),style: textStylePrimary),
           ),
           Expanded(
             child: Container(
@@ -328,7 +327,7 @@ class _AddProyectsState extends State<AddProyects> {
               Navigator.push(context, new MaterialPageRoute(
                   builder: (BuildContext context) => new AddProyectsSumit(widget.blocPage)));
             }else{
-              showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+              showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
             }
           }else{
             //******************************
@@ -342,15 +341,15 @@ class _AddProyectsState extends State<AddProyects> {
               setState(() {});
               Navigator.of(context).pop(true);
             }else{
-              showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+              showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
             }
           }
         }catch(e){
           print(e.toString());
-          showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+          showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
         }
     }else{
-      showAlert('Se debe agregar un nombre de proyecto.',WalkieTaskColors.color_E07676);
+      showAlert(translate(context: context, text: 'youMustNameProject'),WalkieTaskColors.color_E07676);
     }
     setState(() {
       cargando = false;

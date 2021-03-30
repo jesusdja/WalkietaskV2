@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/bloc/blocPage.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
@@ -35,7 +36,7 @@ class AddProyectsSumitState extends State<AddProyectsSumit> {
       appBar: AppBar(
         title: Container(
           width: ancho,
-          child: Text('Proyecto creado',
+          child: Text(translate(context: context, text: 'projectCreated'),
             style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.03, color: WalkieTaskColors.color_969696), textAlign: TextAlign.right,),
         ),
         elevation: 0,
@@ -73,14 +74,14 @@ class AddProyectsSumitState extends State<AddProyectsSumit> {
             SizedBox(height: alto * 0.1,),
             Container(
               width: ancho,
-              child: Text('Genial.\nYa notificamos a los usuarios.\nAhora a trabajar :)'
+              child: Text(translate(context: context, text: 'notifiedUsers')
               ,textAlign: TextAlign.center,
               style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022, color: WalkieTaskColors.color_4D4D4D, fontWeight: FontWeight.bold, spacing: 1),),
             ),
             SizedBox(height: alto * 0.08,),
             RoundedButton(
               backgroundColor: WalkieTaskColors.primary,
-              title: 'Enviar una tarea',
+              title: translate(context: context, text: 'sendTask'),
               radius: 5.0,
               textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022,color: WalkieTaskColors.white,fontWeight: FontWeight.bold),
               width: ancho * 0.35,
@@ -93,7 +94,7 @@ class AddProyectsSumitState extends State<AddProyectsSumit> {
             SizedBox(height: alto * 0.03,),
             RoundedButton(
               backgroundColor: WalkieTaskColors.primary,
-              title: 'Regresar',
+              title: translate(context: context, text: 'back'),
               radius: 5.0,
               textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022,color: WalkieTaskColors.white,fontWeight: FontWeight.bold),
               width: ancho * 0.35,

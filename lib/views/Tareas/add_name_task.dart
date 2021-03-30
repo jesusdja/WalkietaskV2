@@ -8,6 +8,7 @@ import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
@@ -58,7 +59,7 @@ class _AddNameTaskState extends State<AddNameTask> {
       appBar: AppBar(
         title: Container(
           width: ancho,
-          child: Text('Nombrar tarea',
+          child: Text(translate(context: context, text: 'nameTask'),
             style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.03, color: WalkieTaskColors.color_969696), textAlign: TextAlign.right,),
         ),
         elevation: 0,
@@ -92,9 +93,9 @@ class _AddNameTaskState extends State<AddNameTask> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Nombrar la tarea', style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.03,color: WalkieTaskColors.primary),),
+            Text(translate(context: context, text: 'nameTask'), style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.03,color: WalkieTaskColors.primary),),
             SizedBox(height: alto * 0.01,),
-            Text('Así podrás reconocerla entre las demás',style:WalkieTaskStyles().stylePrimary(size: alto * 0.02,spacing: 1.25,color: WalkieTaskColors.color_4D4D4D, fontWeight: FontWeight.bold), ),
+            Text(translate(context: context, text: 'recognize'),style:WalkieTaskStyles().stylePrimary(size: alto * 0.02,spacing: 1.25,color: WalkieTaskColors.color_4D4D4D, fontWeight: FontWeight.bold), ),
             SizedBox(height: alto * 0.03,),
             isAudio ? _sound() : Container(),
             SizedBox(height: alto * 0.03,),
@@ -114,7 +115,7 @@ class _AddNameTaskState extends State<AddNameTask> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text('Nombre de la tarea:',style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.color_969696, spacing: 0.5),),
+          Text('${translate(context: context, text: 'nameTask_2')}:',style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.color_969696, spacing: 0.5),),
           SizedBox(height: alto * 0.01,),
           Container(
             height: alto * 0.04,
@@ -150,7 +151,7 @@ class _AddNameTaskState extends State<AddNameTask> {
               ) :
               RoundedButton(
                 backgroundColor: WalkieTaskColors.primary,
-                title: 'Aceptar',
+                title: translate(context: context, text: 'ok'),
                 radius: 5.0,
                 textStyle: WalkieTaskStyles().stylePrimary(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 1),
                 width: ancho * 0.2,
@@ -174,7 +175,7 @@ class _AddNameTaskState extends State<AddNameTask> {
                       showAlert('Error al enviar datos.',WalkieTaskColors.color_E07676);
                     }
                   }else{
-                    showAlert('Se debe agregar un nombre a la tarea.',WalkieTaskColors.color_E07676);
+                    showAlert(translate(context: context, text: 'nameTask_3'),WalkieTaskColors.color_E07676);
                   }
                   load = false;
                   setState(() {});

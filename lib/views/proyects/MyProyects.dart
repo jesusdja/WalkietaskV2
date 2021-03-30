@@ -97,7 +97,7 @@ class _MyProyectsState extends State<MyProyects> {
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: cargando ? Cargando('Cargando',context) : contenido(),
+        child: cargando ? Cargando(translate(context: context, text: 'loading'),context) : contenido(),
       ),
     );
   }
@@ -216,7 +216,7 @@ class _MyProyectsState extends State<MyProyects> {
                         width: ancho * 0.2,
                         height: alto * 0.04,
                         radius: 5.0,
-                        title: 'Agregar',
+                        title: translate(context: context, text: 'add_2'),
                         textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.04, color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 1.5),
                         backgroundColor: WalkieTaskColors.primary,
                         onPressed: () async {
@@ -252,7 +252,7 @@ class _MyProyectsState extends State<MyProyects> {
                           width: ancho * 0.2,
                           height: alto * 0.04,
                           radius: 5.0,
-                          title: 'Eliminar "${project.name}"',
+                          title: '${translate(context: context, text: 'delete')} "${project.name}"',
                           textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.03, color: WalkieTaskColors.color_E07676,fontWeight: FontWeight.bold,spacing: 2),
                           backgroundColor: WalkieTaskColors.white,
                           maxLines: 1,
@@ -270,14 +270,14 @@ class _MyProyectsState extends State<MyProyects> {
                                   int res = await DatabaseProvider.db.deleteProjectCase(project.id);
                                   if(res != 0){
                                     await _inicializarCasos();
-                                    showAlert('Proyecto eliminado.',WalkieTaskColors.color_89BD7D);
+                                    showAlert(translate(context: context, text: 'projectDeleted'),WalkieTaskColors.color_89BD7D);
                                   }
                                 }else{
-                                  showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                                  showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
                                 }
                               }catch(e){
                                 print(e.toString());
-                                showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                                showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
                               }
                             }
                             deleteProject[project.id] = false;
@@ -356,7 +356,7 @@ class _MyProyectsState extends State<MyProyects> {
                   width: ancho * 0.18,
                   height: alto * 0.03,
                   radius: 5.0,
-                  title: 'Eliminar',
+                  title: translate(context: context, text: 'delete'),
                   textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.035, color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 1.5),
                   backgroundColor: WalkieTaskColors.color_E07676,
                   onPressed: () async {
@@ -364,20 +364,20 @@ class _MyProyectsState extends State<MyProyects> {
                     setState(() {});
 
                     bool res = false;
-                    res = await alertDeleteElement(context,'¿Estas segudo que deseas eliminar el usuario ${mapUserProject['users']['name']}');
+                    res = await alertDeleteElement(context,'¿${translate(context: context, text: 'sureDeleteUser')} ${mapUserProject['users']['name']}');
                     if(res != null && res){
                       try{
                         var response = await connectionHttp.httpDeleteUserForProject(idProjects,mapUserProject['users']['id']);
                         var value = jsonDecode(response.body);
                         if(value['status_code'] == 200){
                           await _getGuests();
-                          showAlert('Usuario eliminado del proyecto con exito.!',WalkieTaskColors.color_89BD7D);
+                          showAlert(translate(context: context, text: 'userDeleted'),WalkieTaskColors.color_89BD7D);
                         }else{
-                          showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                          showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
                         }
                       }catch(e){
                         print(e.toString());
-                        showAlert('Error de conexión',WalkieTaskColors.color_E07676);
+                        showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
                       }
                     }
                     deleteProjectUser['$idProjects-${mapUserProject['users']['id']}'] = false;
