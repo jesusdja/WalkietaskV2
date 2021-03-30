@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
@@ -43,7 +44,7 @@ class _RecoverPasswordState extends State<RecoverPassword> {
 
     return Scaffold(
       backgroundColor: WalkieTaskColors.white,
-      appBar: appBarWidget( sizeH,()=>Navigator.of(context).pop(),'¿Olvidaste tu clave?'),
+      appBar: appBarWidget( sizeH,()=>Navigator.of(context).pop(),translate(context: context,text: 'ForgotYourPassword')),
       body: Container(
         margin: EdgeInsets.only(left: 24,right: 24),
         height: sizeH,
@@ -66,7 +67,7 @@ class _RecoverPasswordState extends State<RecoverPassword> {
                   Container(
                     width: sizeW,
                     child: Text(
-                      'No hay problema. Digita tu email o tu usuario de Walkietask y te enviaremos un email para recuperarla.',
+                      translate(context: context, text: 'typeRecoveryEmail'),
                       style: textStyle1,
                       textAlign: TextAlign.left,
                     ),
@@ -75,7 +76,7 @@ class _RecoverPasswordState extends State<RecoverPassword> {
                   Container(
                     width: sizeW,
                     child: Text(
-                      'Correo o usuario:',
+                      translate(context: context,text: 'emailOrUsername'),
                       style: textStyle1,
                       textAlign: TextAlign.center,
                     ),
@@ -126,7 +127,7 @@ class _RecoverPasswordState extends State<RecoverPassword> {
           width: sizeW * 0.2,
           height: sizeH * 0.045,
           radius: 5.0,
-          title: 'Aceptar',
+          title: translate(context: context,text: 'ok'),
           textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: sizeH * 0.02, color: WalkieTaskColors.white,fontWeight: FontWeight.bold),
           backgroundColor: WalkieTaskColors.primary,
           onPressed: () async{
@@ -142,17 +143,17 @@ class _RecoverPasswordState extends State<RecoverPassword> {
                   setState(() {});
                   showAlert('Enviado.!',WalkieTaskColors.color_89BD7D);
                 }else{
-                  String error = 'Problemas para enviar datos.';
+                  String error = translate(context: context, text: 'problemSendingInformation');
                   if(value['message'] != null) error = value['message'];
                   showAlert(error,Colors.red[400]);
                 }
               }catch(e){
                 print(e.toString());
-                showAlert('Error en conexión',Colors.red[400]);
+                showAlert(translate(context: context,text: 'connectionError'),Colors.red[400]);
                 setState(() {});
               }
             }else{
-              showAlert('Debe ingresar un correo válido.!',Colors.red[400]);
+              showAlert(translate(context: context, text: 'enterValidEmail'),Colors.red[400]);
             }
 
 

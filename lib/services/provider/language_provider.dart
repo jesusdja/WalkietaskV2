@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 
 class LanguageProvider extends ChangeNotifier {
-  Locale _appLocale = Locale('es');
+  Locale _appLocale = Locale('en');
 
-  Locale get appLocal => _appLocale ?? Locale("es");
+  Locale get appLocal => _appLocale ?? Locale("en");
   fetchLocale() async {
     if (await SharedPrefe().getValue('language_code') == null) {
-      _appLocale = Locale('es');
+      _appLocale = Locale('en');
       return Null;
     }
     String lg = await SharedPrefe().getValue('language_code');

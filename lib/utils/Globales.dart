@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:walkietaskv2/main.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 
 String avatarImage = 'http://www.nabu.me.php72-7.phx1-1.websitetestlink.com/uploads/system/avatar.png';
@@ -8,6 +9,10 @@ Future<String> obtenerToken() async {
 
   String token  = await SharedPrefe().getValue('unityToken');
   return token;
+}
+
+String translate({@required BuildContext context, @required String text}){
+  return AppLocalizations.of(context).translate(text);
 }
 
 Future<bool> checkConectivity() async {

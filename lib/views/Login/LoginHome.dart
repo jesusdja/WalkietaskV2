@@ -10,6 +10,7 @@ import 'package:walkietaskv2/services/auth.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
@@ -64,7 +65,7 @@ class _LoginHomeState extends State<LoginHome> {
       child: Scaffold(
         backgroundColor: Colors.white,
         body: WillPopScope(
-          child: cargando ? Cargando('Verificando datos',context) :
+          child: cargando ? Cargando(translate(context: context,text: 'VerifyingInformation'),context) :
           SingleChildScrollView(
             child: Column(
               children: <Widget>[
@@ -90,11 +91,11 @@ class _LoginHomeState extends State<LoginHome> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text(
-            '¿No tienes cuenta?',
+            translate(context: context, text: 'haveAnAccount'),
             style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02,spacing: 0.5),
           ),
           InkWell(
-            child: Text('créala aquí. Es gratis.',
+            child: Text(translate(context: context, text: 'SignInHereFree'),
               style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02,spacing: 0.5),
             ),
             onTap: () {
@@ -125,13 +126,13 @@ class _LoginHomeState extends State<LoginHome> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Container(
-                        child: Text('Correo:',
+                        child: Text('${translate(context: context, text: 'email')}:',
                           style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.022),
                         )
                     ),
                     SizedBox(height: alto * 0.04,),
                     Container(
-                      child: Text('Contraseña:',
+                      child: Text('${translate(context: context,text: 'Password')}:',
                         style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.022),
                       ),
                     ),
@@ -209,7 +210,7 @@ class _LoginHomeState extends State<LoginHome> {
                   :
               RoundedButton(
                 backgroundColor: WalkieTaskColors.primary,
-                title: 'Entrar',
+                title: translate(context: context,text: 'LogIn'),
                 onPressed: () => _save(),
                 radius: 5.0,
                 textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.018,color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 1),
@@ -221,7 +222,7 @@ class _LoginHomeState extends State<LoginHome> {
             width: ancho,
             child: InkWell(
               child: Text(
-                '¿Olvidaste tu clave?',
+                translate(context: context, text: 'ForgotYourPassword'),
                 style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.02),
                 textAlign: TextAlign.right,
               ),
@@ -283,7 +284,7 @@ class _LoginHomeState extends State<LoginHome> {
             }
             if(value3['status_code'] != 500 && value3['status_code'] != 200){
               userCheck = 0;
-              showAlert('Codigo vencido. Registrar nuevamente.',Colors.red[400]);
+              showAlert(translate(context: context,text: 'codeHasExpired'),Colors.red[400]);
               await Future.delayed(Duration(seconds: 3));
             }
             await SharedPrefe().setIntValue('unityLogin',userCheck);
@@ -300,8 +301,7 @@ class _LoginHomeState extends State<LoginHome> {
               print(ex);
             }
           }else{
-            print('No se encontro mi usuario');
-            showAlert('Error en conexión',Colors.red[400]);
+            showAlert(translate(context: context,text: 'connectionError'),Colors.red[400]);
             cargando = false;
             setState(() {});
           }
@@ -313,12 +313,12 @@ class _LoginHomeState extends State<LoginHome> {
         }
       }catch(e){
         print(e.toString());
-        showAlert('Error en conexión',Colors.red[400]);
+        showAlert(translate(context: context,text: 'connectionError'),Colors.red[400]);
         cargando = false;
         setState(() {});
       }
     }else{
-      showAlert('Campos no pueden estar vacios.!',Colors.red[400]);
+      showAlert(translate(context: context,text: 'PleaseFillOutAllFields'),Colors.red[400]);
       setState(() {
         cargando = false;
       });
