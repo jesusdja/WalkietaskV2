@@ -152,13 +152,13 @@ class _CreateTaskState extends State<CreateTask> {
             Container(
               padding: EdgeInsets.only(top: alto * 0.05, left: ancho * 0.06, right: ancho * 0.06),
               width: ancho,
-              child: Text('Aquí aparecerán los usuarios a los que podrás enviar tareas o de los que las recibirás.',style: textStylePrimary, textAlign: TextAlign.left,),
+              child: Text(translate(context: context, text: 'usersSendTasks.'),style: textStylePrimary, textAlign: TextAlign.left,),
             ),
             SizedBox(height: alto * 0.02,),
             Container(
               padding: EdgeInsets.only(left: ancho * 0.06, right: ancho * 0.06),
               width: ancho,
-              child: Text('Comienza invitando gente aquí',
+              child: Text(translate(context: context, text: 'invitingPeopleHere'),
                 style: textStylePrimary, textAlign: TextAlign.left,),
             ),
             SizedBox(height: alto * 0.04,),
@@ -181,7 +181,7 @@ class _CreateTaskState extends State<CreateTask> {
             Container(
               padding: EdgeInsets.only(left: ancho * 0.06, right: ancho * 0.06),
               width: ancho,
-              child: Text('También puedes enviarte recordatorios personales, ya sea de audio o texto:',
+              child: Text('${translate(context: context, text: 'sendPersonalReminders')}:',
                 style: textStylePrimary, textAlign: TextAlign.left,),
             ),
             SizedBox(height: alto * 0.02,),
@@ -209,7 +209,7 @@ class _CreateTaskState extends State<CreateTask> {
                 children: [
                   Container(
                     width: ancho,
-                    child: Text('Buscar', style: textStylePrimaryTitleBold,),
+                    child: Text(translate(context: context, text: 'search'), style: textStylePrimaryTitleBold,),
                   ),
                   SizedBox(height: alto * 0.01,),
                   buscador(),
@@ -246,7 +246,7 @@ class _CreateTaskState extends State<CreateTask> {
 
       bool favorite = user.fijo == 1;
 
-      String dateDiff = 'Sin fecha';
+      String dateDiff = translate(context: context, text: 'noDate');
       int cantRecived = 0;
       int cantSend = 0;
       bool redColor = false;
@@ -331,8 +331,8 @@ class _CreateTaskState extends State<CreateTask> {
                         )
                             :
                         Text(dateDiff,style: textStylePrimaryLitleBold,),
-                        Text('Recibidas: $cantRecived',style: textStylePrimaryLitle,textAlign: TextAlign.right,),
-                        Text('Enviadas: $cantSend',style: textStylePrimaryLitle, textAlign: TextAlign.right,),
+                        Text('${translate(context: context, text: 'received')}: $cantRecived',style: textStylePrimaryLitle,textAlign: TextAlign.right,),
+                        Text('${translate(context: context, text: 'sent_2')}: $cantSend',style: textStylePrimaryLitle, textAlign: TextAlign.right,),
                       ],
                     ),
                   ),
@@ -340,7 +340,7 @@ class _CreateTaskState extends State<CreateTask> {
               ),
             ),
             actions: <Widget>[
-              _buttonSliderAction(user.fijo == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1, user),
+              _buttonSliderAction(user.fijo == 0 ? translate(context: context, text: 'highlight') : translate(context: context, text: 'forget'),Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1, user),
             ],
           ),
         ),
@@ -372,7 +372,7 @@ class _CreateTaskState extends State<CreateTask> {
 
   Widget _reminderPersonal(){
 
-    String dateDiff = 'Sin fecha';
+    String dateDiff = translate(context: context, text: 'noDate');
     int cant = 0;
     bool redColor = false;
     if(widget.myUserRes != null && mapDataUserHome[widget.myUserRes.id] != null){
@@ -407,7 +407,7 @@ class _CreateTaskState extends State<CreateTask> {
               child: Container(
                 margin: EdgeInsets.only(left: ancho * 0.02),
                 width: ancho,
-                child: Text('Yo (Recordatorios personales)',
+                child: Text(translate(context: context, text: 'mePersonalReminders'),
                   style: textStylePrimaryBoldName, textAlign: TextAlign.left,),
               ),
             ),
@@ -438,7 +438,7 @@ class _CreateTaskState extends State<CreateTask> {
                   )
                       :
                   Text(dateDiff.replaceAll('-', ''),style: textStylePrimaryLitleBold,),
-                  Text('Recordatorios: $cant',style: textStylePrimaryLitle,),
+                  Text('${translate(context: context, text: 'reminders')}: $cant',style: textStylePrimaryLitle,),
                 ],
               ),
             ),
@@ -487,7 +487,7 @@ class _CreateTaskState extends State<CreateTask> {
                 sizeBorder: 1.2,
                 sizeHeight: alto * 0.045,
                 textAlign: TextAlign.left,
-                hintText: 'Buscar',
+                hintText: translate(context: context, text: 'search'),
                 prefixIcon: InkWell(
                   child: iconBuscador ? Icon(Icons.clear) : Icon(Icons.search),
                   onTap: (){
@@ -544,7 +544,7 @@ class _CreateTaskState extends State<CreateTask> {
                 Container(
                   width: ancho,
                   margin: EdgeInsets.only(left: ancho * 0.05, right: ancho * 0.1),
-                  child: Text('Tareas', style: textStylePrimaryTitleBold,),
+                  child: Text(translate(context: context, text: 'tasks'), style: textStylePrimaryTitleBold,),
                 ),
                 SizedBox(height: alto * 0.015,),
                 Container(
@@ -593,7 +593,7 @@ class _CreateTaskState extends State<CreateTask> {
 
       bool favorite = user.fijo == 1;
 
-      String dateDiff = 'Sin fecha';
+      String dateDiff = translate(context: context, text: 'noDate');
       int cantRecived = 0;
       int cantSend = 0;
       bool redColor = false;
@@ -675,8 +675,8 @@ class _CreateTaskState extends State<CreateTask> {
                         )
                             :
                         Text(dateDiff.replaceAll('-', ''),style: textStylePrimaryLitleBold,),
-                        Text('Recibidas: $cantRecived',style: textStylePrimaryLitle,),
-                        Text('Enviadas: $cantSend',style: textStylePrimaryLitle,),
+                        Text('${translate(context: context, text: 'received')}: $cantRecived',style: textStylePrimaryLitle,),
+                        Text('${translate(context: context, text: 'sent_2')}: $cantSend',style: textStylePrimaryLitle,),
                       ],
                     ),
                   ),
@@ -684,7 +684,7 @@ class _CreateTaskState extends State<CreateTask> {
               ),
             ),
             actions: <Widget>[
-              _buttonSliderAction(user.fijo == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),WalkieTaskColors.yellow,WalkieTaskColors.white,1, user),
+              _buttonSliderAction(user.fijo == 0 ? translate(context: context, text: 'highlight') : translate(context: context, text: 'forget'),Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),WalkieTaskColors.yellow,WalkieTaskColors.white,1, user),
             ],
           ),
         ),
@@ -703,7 +703,7 @@ class _CreateTaskState extends State<CreateTask> {
         Container(
           width: ancho,
           margin: EdgeInsets.only(left: ancho * 0.1, right: ancho * 0.1),
-          child: Text('No se encontraron coincidencias con usuarios.', style: textStylePrimary,)
+          child: Text('${translate(context: context, text: 'NoMatchesFoundUsers')}.', style: textStylePrimary,)
         ),
       );
     }
@@ -754,12 +754,12 @@ class _CreateTaskState extends State<CreateTask> {
                   actionPane: SlidableDrawerActionPane(),
                   actionExtentRatio: 0.25,
                   actions: <Widget>[
-                    _buttonSliderActionTask(task.is_priority_responsability == 0 ? 'DESTACAR' : 'OLVIDAR',Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.03,),Colors.yellow[600],WalkieTaskColors.white,1,task, isRecived),
+                    _buttonSliderActionTask(task.is_priority_responsability == 0 ? translate(context: context,text: 'highlight') : translate(context: context,text: 'forget'),Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.03,),Colors.yellow[600],WalkieTaskColors.white,1,task, isRecived),
                     //_buttonSliderAction('COMENTAR',Icon(Icons.message,color: WalkieTaskColors.white,size: 30,),Colors.deepPurple[200],WalkieTaskColors.white,2,tarea),
                   ],
                   secondaryActions: <Widget>[
-                    isRecived ? _buttonSliderActionTask('TRABAJANDO',Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.03,),colorSliderTrabajando,WalkieTaskColors.white,3,task, isRecived) : null,
-                    _buttonSliderActionTask('LISTO',Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.03,),colorSliderListo,WalkieTaskColors.white,4,task, isRecived),
+                    isRecived ? _buttonSliderActionTask(translate(context: context,text: 'working'),Icon(Icons.build,color: WalkieTaskColors.white,size: alto * 0.03,),colorSliderTrabajando,WalkieTaskColors.white,3,task, isRecived) : null,
+                    _buttonSliderActionTask(translate(context: context,text: 'ready'),Icon(Icons.check,color: WalkieTaskColors.white,size: alto * 0.03,),colorSliderListo,WalkieTaskColors.white,4,task, isRecived),
                   ],
                   child: InkWell(
                     onTap: (){
@@ -834,7 +834,7 @@ class _CreateTaskState extends State<CreateTask> {
         Container(
             width: ancho,
             margin: EdgeInsets.only(left: ancho * 0.1, right: ancho * 0.1),
-            child: Text('No se encontraron resultados', style: textStylePrimary,)
+            child: Text(translate(context: context, text: 'NoResults'), style: textStylePrimary,)
         ),
       );
     }
@@ -903,7 +903,7 @@ class _CreateTaskState extends State<CreateTask> {
         if(accion == 3){
           try{
             if(tarea.working == 0){
-              showAlert('Tarea iniciada',WalkieTaskColors.color_89BD7D);
+              showAlert(translate(context: context, text: 'TaskStarted'),WalkieTaskColors.color_89BD7D);
               tarea.working = 1;
               if(await DatabaseProvider.db.updateTask(tarea) == 1){
                 if(isRecived){
@@ -914,14 +914,14 @@ class _CreateTaskState extends State<CreateTask> {
                 await conexionHttp().httpTaskInit(tarea.id);
               }
             }else{
-              showAlert('Tarea ya se encuentra iniciada',WalkieTaskColors.color_89BD7D);
+              showAlert(translate(context: context, text: 'TaskAlreadyStarted'),WalkieTaskColors.color_89BD7D);
             }
           }catch(e){
             print(e.toString());
           }
         }
         if(accion == 4){
-          showAlert('Tarea finalizada',WalkieTaskColors.color_89BD7D);
+          showAlert(translate(context: context, text: 'TaskFinished'),WalkieTaskColors.color_89BD7D);
           try{
             tarea.finalized = 1;
             if(await DatabaseProvider.db.updateTask(tarea) == 1){

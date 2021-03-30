@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:wakelock/wakelock.dart';
 import 'package:walkietaskv2/App.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
@@ -9,7 +8,6 @@ import 'package:walkietaskv2/bloc/blocPage.dart';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/bloc/blocUser.dart';
-import 'package:walkietaskv2/main.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
@@ -20,7 +18,6 @@ import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Sqlite/sqlite_instance.dart';
-import 'package:walkietaskv2/services/provider/language_provider.dart';
 import 'package:walkietaskv2/services/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
@@ -54,7 +51,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
   Usuario myUser;
 
-  String titulo = 'Tareas';
+  String titulo = '';
 
   double alto = 0;
   double ancho = 0;
@@ -296,6 +293,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     ancho = MediaQuery.of(context).size.width;
     contextHome = context;
 
+    translateTitle(context);
+
     reconection();
 
     viewUpdateNoti();
@@ -323,20 +322,30 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           bottom: _indicatorProgress(),
         ),
         body: Container(child: contenido(),),
-        // floatingActionButton: FloatingActionButton(
-        //   child: Text(AppLocalizations.of(context).translate('Message')),
-        //   onPressed: (){
-        //     var appLanguage = Provider.of<LanguageProvider>(context,listen: false);
-        //     appLanguage.changeLanguage(Locale("es"));
-        //     setState(() {});
-        //
-        //     Navigator.pushReplacement(context, new MaterialPageRoute(
-        //         builder: (BuildContext context) => new App()));
-        //   },
-        // ),
         bottomNavigationBar: navigatorBotton(),
       ),
     );
+  }
+
+  void translateTitle(BuildContext context){
+    switch (page) {
+      case bottonSelect.opcion1:
+        titulo = translate(context: context, text: 'tasks');
+        break;
+      case bottonSelect.opcion2:
+        titulo = translate(context: context, text: 'receivedTasks');
+        break;
+      case bottonSelect.opcion3:
+        titulo = translate(context: context, text: 'sentTasks');
+        break;
+      case bottonSelect.opcion4:
+        titulo = translate(context: context, text: 'projects');
+        break;
+      case bottonSelect.opcion5:
+        titulo = translate(context: context, text: 'contacts');
+        break;
+    }
+    setState(() {});
   }
 
   Widget contenido(){
@@ -362,7 +371,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           mapDataUserHome: mapDataUserHome,
           updateData: updateData,
           blocAudioChangePage: blocAudioChangePage,
-        ) : Container(child: Cargando('Actualizando tareas.',context),);
+        ) : Container(child: Cargando(translate(context: context,text: 'updatingTasks'),context),);
       case bottonSelect.opcion2:
         return loadTaskSend ? listRecibidos.length != 0 ?
         ListadoTareasRecibidas(
@@ -374,8 +383,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           push: push,
           blocAudioChangePage: blocAudioChangePage,
         ) :
-        Center(child: Text('No existen tareas recibidas',style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
-        Container(child: Cargando('Buscando tareas recibidas',context),) ;
+        Center(child: Text(translate(context: context,text: 'noReceivedTasks'),style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
+        Container(child: Cargando(translate(context: context, text: 'searchingForReceivedTasks'),context),) ;
       case bottonSelect.opcion3:
         return loadTaskRecived ?
         listEnviados.length != 0 ?
@@ -388,8 +397,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           push: push,
           blocAudioChangePage: blocAudioChangePage,
         ) :
-        Center(child: Text('No existen tareas enviadas',style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
-        Container(child: Cargando('Buscando tareas enviadas',context),);
+        Center(child: Text(translate(context: context,text: 'noSentTasks'),style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),),) :
+        Container(child: Cargando(translate(context: context, text: 'searchingForSubmittedTasks'),context),);
       case bottonSelect.opcion4:
         return MyProyects(
           myUserRes: myUser,
@@ -418,19 +427,19 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           child: Row(
             children: <Widget>[
               Expanded(
-                child: navigatorBottonContenido(bottonSelect.opcion1,'','Tareas','Inicio',false),
+                child: navigatorBottonContenido(bottonSelect.opcion1,'',translate(context: context,text: 'home'),false),
               ),
               Expanded(
-                child: navigatorBottonContenido(bottonSelect.opcion2,'-1','Tareas recibidas', 'Recibidas',notiRecived),
+                child: navigatorBottonContenido(bottonSelect.opcion2,'-1', translate(context: context,text: 'received'),notiRecived),
               ),
               Expanded(
-                child: navigatorBottonContenido(bottonSelect.opcion3,'-3','Tareas enviadas', 'Enviadas',notiSend),
+                child: navigatorBottonContenido(bottonSelect.opcion3,'-3', translate(context: context,text: 'sent_2'),notiSend),
               ),
               Expanded(
-                child: navigatorBottonContenido(bottonSelect.opcion4,'-4','Proyectos', 'Proyectos',false),
+                child: navigatorBottonContenido(bottonSelect.opcion4,'-4', translate(context: context,text: 'projects'),false),
               ),
               Expanded(
-                child: navigatorBottonContenido(bottonSelect.opcion5,'-5','Contactos', 'Contactos',notiContacts),
+                child: navigatorBottonContenido(bottonSelect.opcion5,'-5', translate(context: context,text: 'contacts'),notiContacts),
               ),
             ],
           ),
@@ -439,12 +448,12 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           width: ancho,
           height: alto * 0.05,
           color: Colors.red[300],
-          child: Center(child: Text('Sin conexion, intentando reconectar . . . '),),
+          child: Center(child: Text('${translate(context: context,text: 'noConnectionReconnect')} . . . '),),
         ) : Container(),
       ],
     );
   }
-  Widget navigatorBottonContenido(bottonSelect index,String num,String tit, subTitle, bool noti){
+  Widget navigatorBottonContenido(bottonSelect index,String num, subTitle, bool noti){
     return Stack(
       children: [
         InkWell(
@@ -457,18 +466,14 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                 Container(
                   width: ancho,
                   height: alto * 0.035,
-                  child: Image.asset(
-                    'assets/image/Attachment$num.png',
-                    color: !mapNavigatorBotton[index] ? null : WalkieTaskColors.primary,
-                    fit: BoxFit.fitHeight,
-                  ),
+                  child: Image.asset('assets/image/Attachment$num.png',color: !mapNavigatorBotton[index] ? null : WalkieTaskColors.primary,fit: BoxFit.fitHeight,),
                 ),
                 Text(subTitle, style: WalkieTaskStyles().stylePrimary(size: alto * 0.016,color: !mapNavigatorBotton[index] ? WalkieTaskColors.color_ACACAC : WalkieTaskColors.primary, fontWeight: FontWeight.bold),)
               ],
             ),
           ),
           onTap: () async {
-            _onTapNavigator(index, tit);
+            _onTapNavigator(index);
           },
         ),
         noti ? Container(
@@ -481,7 +486,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       ],
     );
   }
-  void _onTapNavigator(bottonSelect index, String tit){
+  void _onTapNavigator(bottonSelect index){
     if(!mapNavigatorBotton[index]){
       mapNavigatorBotton[index] = true;
       Map<bottonSelect,bool> auxMap = mapNavigatorBotton;
@@ -489,7 +494,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         if(key != index){mapNavigatorBotton[key] = false;}
       });
     }
-    titulo = tit;
     page = index;
     blocAudioChangePage.inList.add({'page' : index});
 
@@ -650,21 +654,22 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
             ),
             SizedBox(height: alto * 0.02,),
             _divider,
-            _textDrawer('Contactos', (){
-              _onTapNavigator(bottonSelect.opcion5, 'Contactos');
+            _textDrawer(translate(context: context, text: 'contacts'), (){
+              _onTapNavigator(bottonSelect.opcion5);
             }),
             _divider,
-            _textDrawer('Proyectos', (){
-              _onTapNavigator(bottonSelect.opcion4, 'Proyectos');
+            _textDrawer(translate(context: context, text: 'projects'), (){
+              _onTapNavigator(bottonSelect.opcion4);
             }),
             _divider,
-            _textDrawer('Mi Cuenta', () async {
+            _textDrawer(translate(context: context, text: 'myAccount'), () async {
               var res = await Navigator.push(context, new MaterialPageRoute(
                   builder: (BuildContext context) => ProfileHome(
                     myUser: myUser,
                   )));
 
               if(res[0]){
+                titulo = '';
                 myUser = await updateData.getMyUser();
                 await updateData.actualizarListaUsuarios(blocUser, blocConection);
                 if(res[1]){
@@ -675,7 +680,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
               }
             }),
             _divider,
-            _textDrawer('Bitácora', () async {
+            _textDrawer(translate(context: context, text: 'activity'), () async {
               Navigator.push(context, new MaterialPageRoute(
                   builder: (BuildContext context) => BinnaclePage(
                     myUser: myUser,
@@ -684,9 +689,9 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                   )));
             }),
             _divider,
-            _textDrawer('Acerca de', (){}),
+            _textDrawer(translate(context: context, text: 'about'), (){}),
             _divider,
-            _textDrawer('Salir', () async {
+            _textDrawer(translate(context: context, text: 'logOut'), () async {
               bool res = false;
               res = await alert(context);
               if(res != null && res){
@@ -1045,10 +1050,10 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
               }else{
                 //ENVIADO O RECIBIDO
                 if(isSend){
-                  _onTapNavigator(bottonSelect.opcion3, 'Tareas enviadas');
+                  _onTapNavigator(bottonSelect.opcion3);
                   clickTarea(task);
                 }else{
-                  _onTapNavigator(bottonSelect.opcion2, 'Tareas recibidas');
+                  _onTapNavigator(bottonSelect.opcion2);
                   clickTarea(task);
                 }
               }

@@ -174,7 +174,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
           children: [
             SizedBox(height: alto * 0.1,),
             Container(
-              child: Text(isPersonal ? 'Enviarás un recordatorio personal.' : 'Enviarás una tarea a ${user.name}.', style: textStylePrimary,),
+              child: Text(isPersonal ? translate(context: context, text: 'sendPersonalReminder') : '${translate(context: context, text: 'sendTaskTo')} ${user.name}.', style: textStylePrimary,),
             ),
             Container(
               margin: EdgeInsets.only(top: alto * 0.01),
@@ -199,7 +199,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
             Container(
               margin: EdgeInsets.only(top: alto * 0.02,right: ancho * 0.05,bottom: alto * 0.01),
               width: ancho * 0.85,
-              child: Text('Titulo',textAlign: TextAlign.left,
+              child: Text(translate(context: context, text: 'title'),textAlign: TextAlign.left,
                   style: textStylePrimary),
             ),
             _tituloTarea(),
@@ -222,7 +222,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
         Container(
           margin: EdgeInsets.only(top: alto * 0.02,right: ancho * 0.05,bottom: alto * 0.01),
           width: ancho,
-          child: Text('Titulo',textAlign: TextAlign.left,
+          child: Text(translate(context: context, text: 'title'),textAlign: TextAlign.left,
               style: textStylePrimary),
         )
     );
@@ -230,7 +230,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
     widgets.add(Container(
           width: ancho,
           margin: EdgeInsets.only(top: alto * 0.02,right: ancho * 0.05,bottom: alto * 0.01),
-          child: Text('Descripción adicional',textAlign: TextAlign.left,
+          child: Text(translate(context: context, text: 'additionalDescription'),textAlign: TextAlign.left,
               style: textStylePrimary),
         ));
     widgets.add(Container(
@@ -276,7 +276,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
             flex: 1,
             child: Container(
               margin: EdgeInsets.only(right: ancho * 0.03),
-              child: Text('Fecha',textAlign: TextAlign.right,
+              child: Text(translate(context: context, text: 'date'),textAlign: TextAlign.right,
                   style: textStylePrimary),
             ),
           ),
@@ -296,7 +296,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
                   if(dif.inDays >= 0){
                     setState(() => fechaTask = newDateTime);
                   }else{
-                    showAlert('Fecha debe ser mayor o igual a hoy.',Colors.red[400]);
+                    showAlert(translate(context: context, text: 'dateMust'),Colors.red[400]);
                   }
                 }
               },
@@ -339,7 +339,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
             flex: 1,
             child: Container(
               margin: EdgeInsets.only(right: ancho * 0.03),
-              child: Text('Adjunto',textAlign: TextAlign.right,
+              child: Text(translate(context: context, text: 'attachment'),textAlign: TextAlign.right,
                   style: textStylePrimary),
             ),
           ),
@@ -427,7 +427,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
     return Container(
       child: Row(
         children: <Widget>[
-          Text('Asignar a proyecto:',textAlign: TextAlign.right,
+          Text(translate(context: context, text: 'assignToProject:'),textAlign: TextAlign.right,
               style: textStylePrimary),
           Expanded(
             child: Container(
@@ -484,7 +484,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
         child: Center(
           child: Container(
             width: ancho,
-            child: Text('No asignar a ninguno',textAlign: TextAlign.left,
+            child: Text(translate(context: context, text: 'noAssignToProject'),textAlign: TextAlign.left,
               style: seleccionado ? textStylePrimaryBold : textStylePrimary,
             ),
           ),
@@ -599,7 +599,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
                 Expanded(
                     child: Container(
                       margin: EdgeInsets.only(top: opcionesOpen ? alto * 0 : 0.05,right: ancho * 0.02),
-                      child: Text('Más opciones',textAlign: TextAlign.right,style: textStylePrimary,),
+                      child: Text(translate(context: context, text: 'moreOptions'),textAlign: TextAlign.right,style: textStylePrimary,),
                     )
                 ),
                 InkWell(
@@ -665,7 +665,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
                 ],
               ),
             ) : Container(),
-            Text(opcionesOpen ? '${user.name} ${user.surname}' : 'Todo listo para enviar tarea', style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.025, color: WalkieTaskColors.black, spacing: 0.5, ),)
+            Text(opcionesOpen ? '${user.name} ${user.surname}' : translate(context: context, text: 'readyToSendTask'), style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.025, color: WalkieTaskColors.black, spacing: 0.5, ),)
           ],
         ),
       ),
@@ -707,7 +707,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   mostrarImage('SendTask'),
-                  Text('Enviar', style: textStyleBlueLitle,)
+                  Text(translate(context: context, text: 'sending'), style: textStyleBlueLitle,)
                 ],
               ),
             ),
@@ -739,8 +739,8 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  pause ? mostrarImage('Pausa') : mostrarImage('playOpa'),
-                  pause ? Text('Pausa',style: textStyleLitle,) : Text('Reproducir',style: textStyleGreenLitle,),
+                  pause ? mostrarImage(translate(context: context, text: 'pause')) : mostrarImage('playOpa'),
+                  pause ? Text(translate(context: context, text: 'pause'),style: textStyleLitle,) : Text(translate(context: context, text: 'play'),style: textStyleGreenLitle,),
                 ],
               ),
             ),
@@ -753,7 +753,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   mostrarImage('deleteOpa'),
-                  Text('Eliminar',style: textStyleRedLitle,)
+                  Text(translate(context: context, text: 'delete'),style: textStyleRedLitle,)
                 ],
               ),
             ),
@@ -869,7 +869,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
     setState(() {});
     try{
       if(!isAudio && titleTask.isEmpty){
-        showAlert('Las tareas de texto deben llevar título.',WalkieTaskColors.color_E07676);
+        showAlert(translate(context: context, text: 'textTasksTitle'),WalkieTaskColors.color_E07676);
       }else{
         //VERIFICAR SI SE SELECCIONO UN INTEGRANTE
         int userSend = user.id;
@@ -910,7 +910,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
             print('EL AUDIO = $exit');
             if(!exit){
               errorAudio = false;
-              showAlert('Problemas para cargar el audio. Intente de nuevo.',WalkieTaskColors.color_E07676);
+              showAlert(translate(context: context, text: 'ProblemsLoadingAudio'),WalkieTaskColors.color_E07676);
             }
           }
           if(errorAudio){
@@ -918,7 +918,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
             await SharedPrefe().setStringListValue('WalListDocument',listShared);
             uploadBackDocuments(widget.blocIndicatorProgress);
             Navigator.of(context).pop(true);
-            showAlert('Tarea enviada',WalkieTaskColors.color_89BD7D);
+            showAlert(translate(context: context, text: 'taskSent'),WalkieTaskColors.color_89BD7D);
           }
         }else{
           showAlert('Seleccionar integrante.',WalkieTaskColors.color_E07676);
@@ -926,7 +926,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
       }
     }catch(e){
       print(e.toString());
-      showAlert('Error al enviar datos.',WalkieTaskColors.color_E07676);
+      showAlert(translate(context: context, text: 'errorSendingInformation'),WalkieTaskColors.color_E07676);
     }
     enviandoTarea = false;
     setState(() {});
@@ -960,11 +960,11 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
           });
         }
       }else{
-        showAlert('Error al actualizar lista de proyectos, verificar conexión e intentar nuevamente.', WalkieTaskColors.color_E07676);
+        showAlert(translate(context: context, text: 'errorUpdatingContactList'), WalkieTaskColors.color_E07676);
       }
     }catch(e){
       print(e.toString());
-      showAlert('Error al actualizar lista de proyectos, verificar conexión e intentar nuevamente.', WalkieTaskColors.color_E07676);
+      showAlert(translate(context: context, text: 'errorUpdatingContactList'), WalkieTaskColors.color_E07676);
     }
     if(mounted){
       setState(() {

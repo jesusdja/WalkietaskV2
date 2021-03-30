@@ -10,6 +10,7 @@ import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
@@ -105,7 +106,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
           Expanded(
             child: grabando ? _textGrabando() :
             Container(
-              child: Text('Nueva tarea para ${user.name}:', style: textStyleBlue,maxLines: 2,),
+              child: Text('${translate(context: context, text: 'newTask')} ${user.name}:', style: textStyleBlue,maxLines: 2,),
             ),
           ),
           grabando ? Container( height: 20, ) : _buttonText(),
@@ -154,7 +155,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
                     ),
                   ),
                 ),
-                Text('Texto', style: textStyleBlueLitle,)
+                Text(translate(context: context,text: 'text'), style: textStyleBlueLitle,)
               ],
             ),
           ),
@@ -205,7 +206,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
                     ),
                   ),
                 ),
-                Text('Audio', style: grabando ? textStyleRedLitle : textStyleBlueLitle,)
+                Text(translate(context: context,text: 'audio'), style: grabando ? textStyleRedLitle : textStyleBlueLitle,)
               ],
             ),
           ),
@@ -275,7 +276,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
           widget.blocTab.inList.add(true);
         }
       }else{
-        showAlert('El mensaje es muy corto o no contiene audio.',WalkieTaskColors.color_E07676);
+        showAlert(translate(context: context,text: 'noAudio'),WalkieTaskColors.color_E07676);
       }
 
       minutos = '00';
@@ -292,7 +293,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
 
   Widget _textGrabando(){
     return Container(
-      child: Text('Grabando ... $minutos:$segundos', style: textStyleRed,maxLines: 2,),
+      child: Text('${translate(context: context, text: 'recording')}... $minutos:$segundos', style: textStyleRed,maxLines: 2,),
     );
   }
 
