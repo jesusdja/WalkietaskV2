@@ -140,7 +140,7 @@ class _SoundTaskState extends State<SoundTask> {
       }
     }catch(e){
       print(e.toString());
-      showAlert('Problemas para reproducir audio.',WalkieTaskColors.color_E07676);
+      showAlert('${e.toString()}',WalkieTaskColors.color_E07676);
     }
   }
 

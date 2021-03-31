@@ -31,6 +31,7 @@ import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/utils/finish_app.dart';
 import 'package:walkietaskv2/views/Chat/ChatForTarea.dart';
+import 'package:walkietaskv2/views/Home/about.dart';
 import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
 import 'package:walkietaskv2/views/Tareas/Create/crear_tarea.dart';
 import 'package:walkietaskv2/views/Tareas/ListadoTareasRecibidas.dart';
@@ -689,7 +690,10 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                   )));
             }),
             _divider,
-            _textDrawer(translate(context: context, text: 'about'), (){}),
+            _textDrawer(translate(context: context, text: 'about'), (){
+              Navigator.push(context, new MaterialPageRoute(
+                  builder: (BuildContext context) => Abbout()));
+            }),
             _divider,
             _textDrawer(translate(context: context, text: 'logOut'), () async {
               bool res = false;

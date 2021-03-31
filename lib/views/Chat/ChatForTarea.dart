@@ -407,7 +407,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
               }
 
               bool isChatExito = false;
-              if(widget.isChat){
+              if(widget.isChat != null && widget.isChat){
                 if(chatTarea.mensajes['$pos']['texto'] == widget.chat['info']['texto'] &&
                     chatTarea.mensajes['$pos']['fecha'] == widget.chat['info']['fecha'] &&
                     chatTarea.mensajes['$pos']['hora'] == widget.chat['info']['hora']){
@@ -817,7 +817,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
             Container(
               margin: EdgeInsets.only(bottom: alto * 0.02),
               width: ancho,
-              child: Text('Proyecto: $caso',style: WalkieTaskStyles().styleHelveticaNeueBold(
+              child: Text('${translate(context: context, text: 'projects').substring(0,translate(context: context, text: 'projects').length - 1)}: $caso',style: WalkieTaskStyles().styleHelveticaNeueBold(
                   size: alto * 0.022, color: WalkieTaskColors.color_3C3C3C,spacing: 0.5
               )),
             ) : Container(),
@@ -895,14 +895,14 @@ class _ChatForTareaState extends State<ChatForTarea> {
           children: <Widget>[
             Container(
               width: ancho,
-              child: Text('Editar tarea',
+              child: Text(translate(context: context, text: 'editTask'),
                 style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.025, color: WalkieTaskColors.color_3C3C3C),
               ),
             ),
             SizedBox(height: alto * 0.025,),
             Container(
               width: ancho,
-              child: Text('Titulo:',
+              child: Text('${translate(context: context, text: 'title')}:',
                 style: WalkieTaskStyles().stylePrimary(size: alto * 0.022, color: WalkieTaskColors.color_3C3C3C, spacing: 1),
               ),
             ),
@@ -924,7 +924,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
             SizedBox(height: alto * 0.02,),
             Container(
               width: ancho,
-              child: Text('Descripción',
+              child: Text(translate(context: context, text: 'description'),
                 style: WalkieTaskStyles().stylePrimary(size: alto * 0.022, color: WalkieTaskColors.color_3C3C3C, spacing: 1),
               ),
             ),
@@ -953,7 +953,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                 children: <Widget>[
                   Container(
                     margin: EdgeInsets.only(right: ancho * 0.03),
-                    child: Text('Fecha',textAlign: TextAlign.right,
+                    child: Text(translate(context: context, text: 'date'),textAlign: TextAlign.right,
                       style: WalkieTaskStyles().stylePrimary(size: alto * 0.022, color: WalkieTaskColors.color_3C3C3C, spacing: 1),),
                   ),
                   Container(
@@ -973,7 +973,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                           if(dif.inDays >= 0){
                             setState(() => fechaTask = newDateTime);
                           }else{
-                            showAlert('Fecha debe ser mayor o igual a hoy.',Colors.red[400]);
+                            showAlert(translate(context: context, text: 'dateMust'),Colors.red[400]);
                           }
                         }
                       },
@@ -1026,7 +1026,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                     width: ancho * 0.2,
                     height: alto * 0.04,
                     radius: 5.0,
-                    title: 'Aceptar',
+                    title: translate(context: context, text: 'ok'),
                     textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.035, color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 1.5),
                     backgroundColor: WalkieTaskColors.primary,
                     onPressed: () => _saveEditTask(),
@@ -1036,7 +1036,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                     borderColor: WalkieTaskColors.white,
                     height: alto * 0.04,
                     radius: 5.0,
-                    title: 'Cancelar',
+                    title: translate(context: context, text: 'cancel'),
                     textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.04, color: WalkieTaskColors.color_969696,fontWeight: FontWeight.bold,spacing: 1.5),
                     backgroundColor: WalkieTaskColors.white,
                     onPressed: () async{

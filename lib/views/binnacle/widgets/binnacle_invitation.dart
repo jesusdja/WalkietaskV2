@@ -5,7 +5,7 @@ import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
-class BinnacleInvitation extends StatelessWidget {
+class BinnacleInvitation extends StatefulWidget {
 
   final String type;
   final Map<String,dynamic> info;
@@ -18,6 +18,11 @@ class BinnacleInvitation extends StatelessWidget {
   });
 
   @override
+  _BinnacleInvitationState createState() => _BinnacleInvitationState();
+}
+
+class _BinnacleInvitationState extends State<BinnacleInvitation> {
+  @override
   Widget build(BuildContext context) {
 
     Size size = MediaQuery.of(context).size;
@@ -26,24 +31,24 @@ class BinnacleInvitation extends StatelessWidget {
 
     Widget _rowData = Container();
 
-    if(info['category'] == 'contact'){
-      if( type == 'deleted'){
+    if(widget.info['category'] == 'contact'){
+      if( widget.type == 'deleted'){
         _rowData = contactDeleted(size: size, styleTitle: styleTitle, styleSubTitle: styleSubTitle);
       }
     }else{
-      if( type == 'sent'){
+      if( widget.type == 'sent'){
         _rowData = invitationSend(size: size, styleTitle: styleTitle, styleSubTitle: styleSubTitle);
       }
-      if( type == 'received'){
+      if( widget.type == 'received'){
         _rowData = invitationReceived(size: size, styleTitle: styleTitle, styleSubTitle: styleSubTitle);
       }
-      if( type == 'accepted'){
+      if( widget.type == 'accepted'){
         _rowData = invitationAccepted(size: size, styleTitle: styleTitle, styleSubTitle: styleSubTitle);
       }
-      if( type == 'declined'){
+      if( widget.type == 'declined'){
         _rowData = invitationDeclined(size: size, styleTitle: styleTitle, styleSubTitle: styleSubTitle);
       }
-      if( type == 'deleted'){
+      if( widget.type == 'deleted'){
         _rowData = invitationDeleted(size: size, styleTitle: styleTitle, styleSubTitle: styleSubTitle);
       }
     }
@@ -71,23 +76,23 @@ class BinnacleInvitation extends StatelessWidget {
   Widget contactDeleted({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
 
     bool isProperty = false;
-    String title = 'Eliminaste a un usuario de tu lista de contactos';
-    String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
+    String title = translate(context: context, text: 'youDeletedUserFromList');
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
 
-    if(info['info'] != null){
-      title = 'Eliminaste a ${info['info']['contact']['name']} ${info['info']['contact']['surname'] ?? ''} de tu lista de contactos';
+    if(widget.info['info'] != null){
+      title = translate(context: context, text: 'youDeletedFromYourList').replaceAll('___', '${widget.info['info']['contact']['name']} ${widget.info['info']['contact']['surname'] ?? ''}');
     }
 
-    if(myUser.id == info['user_action_id']){
+    if(widget.myUser.id == widget.info['user_action_id']){
       //TAREA NUEVA QUE YO CREE
       isProperty = true;
     }else{
       //TAREA NUEVA QUE SE ME FUE ASIGNADA
       urlAvatar = avatarImage;
-      title = 'Te eliminaron de su lista de contactos';
-      if(info['info'] != null){
-        title = '${info['useraction']['name']} ${info['useraction']['surname'] ?? ''} te elimino de su lista de contactos';
-        urlAvatar = info['useraction']['avatar_100']  ?? avatarImage;
+      title = translate(context: context, text: 'youWereDeletedFromList');
+      if(widget.info['info'] != null){
+        title = '${widget.info['useraction']['name']} ${widget.info['useraction']['surname'] ?? ''} ${translate(context: context, text: 'deletedYouFromHisList')}';
+        urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
       }
     }
 
@@ -119,20 +124,20 @@ class BinnacleInvitation extends StatelessWidget {
   Widget invitationSend({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
 
     bool isProperty = false;
-    String title = 'Enviaste una invitación';
-    String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
+    String title = translate(context: context, text: 'youSentAnInvitation');
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
 
-    if(info['info'] != null){
-      title = 'Enviaste una invitación a ${info['info']['contact']['name']} ${info['info']['contact']['surname'] ?? ''}';
+    if(widget.info['info'] != null){
+      title = '${translate(context: context, text: 'youSentInvitation')} ${widget.info['info']['contact']['name']} ${widget.info['info']['contact']['surname'] ?? ''}';
     }
 
-    if(myUser.id == info['user_action_id']){
+    if(widget.myUser.id == widget.info['user_action_id']){
       //TAREA NUEVA QUE YO CREE
       isProperty = true;
     }else{
       //TAREA NUEVA QUE SE ME FUE ASIGNADA
-      urlAvatar = info['useraction']['avatar_100']  ?? avatarImage;
-      title = 'Recibiste una invitación de ${info['useraction']['name']} ${info['useraction']['surname'] ?? ''}';
+      urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+      title = '${translate(context: context, text: 'youReceivedInvitationFrom')} ${widget.info['useraction']['name']} ${widget.info['useraction']['surname'] ?? ''}';
     }
 
 
@@ -163,8 +168,8 @@ class BinnacleInvitation extends StatelessWidget {
   Widget invitationReceived({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
 
     bool isProperty = false;
-    String title = 'Recibiste una invitación de ${info['useraction']['name']} ${info['useraction']['surname'] ?? ''}';
-    String urlAvatar = info['useraction']['avatar_100']  ?? avatarImage;
+    String title = '${translate(context: context, text: 'youReceivedInvitationFrom')} ${widget.info['useraction']['name']} ${widget.info['useraction']['surname'] ?? ''}';
+    String urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
 
     return Container(
       width: size.width,
@@ -193,22 +198,22 @@ class BinnacleInvitation extends StatelessWidget {
   Widget invitationAccepted({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
 
     bool isProperty = false;
-    String title = 'Aceptaste la invitacion';
-    String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
+    String title = translate(context: context, text: 'youAcceptedInvitation');
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
 
-    if(info['info'] != null){
-      title = 'Aceptaste la invitacion de ${info['info']['user']['name']} ${info['info']['user']['surname'] ?? ''}';
+    if(widget.info['info'] != null){
+      title = '${translate(context: context, text: 'youAcceptedInvitationOf')} ${widget.info['info']['user']['name']} ${widget.info['info']['user']['surname'] ?? ''}';
     }
 
-    if(myUser.id == info['user_action_id']){
+    if(widget.myUser.id == widget.info['user_action_id']){
       //TAREA NUEVA QUE YO CREE
       isProperty = true;
     }else{
       //TAREA NUEVA QUE SE ME FUE ASIGNADA
       urlAvatar = avatarImage;
-      if(info['info'] != null){
-        urlAvatar = info['info']['contact']['avatar_100']  ?? avatarImage;
-        title = '${info['info']['contact']['name']} ${info['info']['contact']['surname'] ?? ''} acepto la invitacion';
+      if(widget.info['info'] != null){
+        urlAvatar = widget.info['info']['contact']['avatar_100']  ?? avatarImage;
+        title = '${widget.info['info']['contact']['name']} ${widget.info['info']['contact']['surname'] ?? ''} ${translate(context: context,text: 'acceptedInvitation')}';
       }
     }
 
@@ -240,21 +245,21 @@ class BinnacleInvitation extends StatelessWidget {
   Widget invitationDeclined({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
 
     bool isProperty = false;
-    String title = 'Rechazo la invitación';
-    String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
+    String title = translate(context: context, text: 'rejectedInvitation');
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
 
-    if(info['info'] != null){
-      title = 'Rechazaste una invitación de ${info['info']['contact']['name']} ${info['info']['contact']['surname'] ?? ''}';
+    if(widget.info['info'] != null){
+      title = '${translate(context: context, text: 'youRejectedInvitationFrom')} ${widget.info['info']['contact']['name']} ${widget.info['info']['contact']['surname'] ?? ''}';
     }
 
-    if(myUser.id == info['user_action_id']){
+    if(widget.myUser.id == widget.info['user_action_id']){
       //TAREA NUEVA QUE YO CREE
       isProperty = true;
     }else{
       //TAREA NUEVA QUE SE ME FUE ASIGNADA
-      urlAvatar = info['useraction']['avatar_100']  ?? avatarImage;
-      if(info['info'] != null){
-        title = '${info['info']['user']['name']} ${info['info']['user']['surname'] ?? ''} rechazo la invitación';
+      urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+      if(widget.info['info'] != null){
+        title = '${widget.info['info']['user']['name']} ${widget.info['info']['user']['surname'] ?? ''} ${translate(context: context, text: 'rejectedInvitation')}';
       }
 
     }
@@ -287,21 +292,21 @@ class BinnacleInvitation extends StatelessWidget {
   Widget invitationDeleted({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
 
     bool isProperty = false;
-    String title = 'Elimino la invitación';
-    String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
+    String title = translate(context: context, text: 'deletedInvitation');
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
 
-    if(info['info'] != null){
-      title = 'Eliminaste una invitación para ${info['info']['contact']['name']} ${info['info']['contact']['surname'] ?? ''}';
+    if(widget.info['info'] != null){
+      title = '${translate(context: context, text: 'youDeletedInvitationSentTo')} ${widget.info['info']['contact']['name']} ${widget.info['info']['contact']['surname'] ?? ''}';
     }
 
-    if(myUser.id == info['user_action_id']){
+    if(widget.myUser.id == widget.info['user_action_id']){
       //TAREA NUEVA QUE YO CREE
       isProperty = true;
     }else{
       //TAREA NUEVA QUE SE ME FUE ASIGNADA
-      urlAvatar = info['useraction']['avatar_100']  ?? avatarImage;
-      if(info['info'] != null){
-        title = '${info['info']['user']['name']} ${info['info']['user']['surname'] ?? ''} elimino la invitación';
+      urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+      if(widget.info['info'] != null){
+        title = '${widget.info['info']['user']['name']} ${widget.info['info']['user']['surname'] ?? ''} ${translate(context: context, text: 'deletedTheInvitation')}';
       }
 
     }

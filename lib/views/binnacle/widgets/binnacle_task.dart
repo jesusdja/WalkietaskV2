@@ -5,7 +5,7 @@ import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
-class BinnacleTask extends StatelessWidget {
+class BinnacleTask extends StatefulWidget {
 
   final String type;
   final Map<String,dynamic> info;
@@ -18,6 +18,11 @@ class BinnacleTask extends StatelessWidget {
   });
 
   @override
+  _BinnacleTaskState createState() => _BinnacleTaskState();
+}
+
+class _BinnacleTaskState extends State<BinnacleTask> {
+  @override
   Widget build(BuildContext context) {
 
     Size size = MediaQuery.of(context).size;
@@ -26,25 +31,25 @@ class BinnacleTask extends StatelessWidget {
 
     Widget _rowData = Container();
 
-    if( type == 'new'){
+    if( widget.type == 'new'){
       _rowData = taskNew(size: size, styleTitle: styleTitle, styleSubTitle: styleSubTitle);
     }
-    if( type == 'personalreminder'){
+    if( widget.type == 'personalreminder'){
       _rowData = taskPersonalReminder(size: size, styleTitle: styleTitle, styleSubTitle: styleSubTitle);
     }
-    if( type == 'deleted'){
+    if( widget.type == 'deleted'){
       _rowData = taskDelete(size: size, styleTitle: styleTitle, styleSubTitle: styleSubTitle);
     }
-    if( type == 'edited'){
+    if( widget.type == 'edited'){
       _rowData = taskEdit(size: size, styleTitle: styleTitle, styleSubTitle: styleSubTitle);
     }
-    if( type == 'priority'){
+    if( widget.type == 'priority'){
       _rowData = taskPriority(size: size, styleTitle: styleTitle, styleSubTitle: styleSubTitle);
     }
-    if( type == 'working'){
+    if( widget.type == 'working'){
       _rowData = taskWorking(size: size, styleTitle: styleTitle, styleSubTitle: styleSubTitle);
     }
-    if( type == 'finalized'){
+    if( widget.type == 'finalized'){
       _rowData = taskFinalized(size: size, styleTitle: styleTitle, styleSubTitle: styleSubTitle);
     }
 
@@ -72,26 +77,26 @@ class BinnacleTask extends StatelessWidget {
   Widget taskNew({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
 
     bool isProperty = false;
-    String title = 'Enviaste una tarea';
-    String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
+    String title = translate(context: context, text: 'taskSentTo');
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
     String nameTask = '';
-    String projectName = '(Sin proyecto asignado)';
+    String projectName = translate(context: context, text: 'noAssignedProject');
 
-    if(info['info'] != null){
-      title = 'Enviaste una tarea a ${info['info']['userresponsabilities']['name']} ${info['info']['userresponsabilities']['surname'] ?? ''}';
-      nameTask = info['info']['name'];
-      if(info['info']['projects'] != null ){
-        projectName = info['info']['projects']['name'];
+    if(widget.info['info'] != null){
+      title = '$title ${widget.info['info']['userresponsabilities']['name']} ${widget.info['info']['userresponsabilities']['surname'] ?? ''}';
+      nameTask = widget.info['info']['name'];
+      if(widget.info['info']['projects'] != null ){
+        projectName = widget.info['info']['projects']['name'];
       }
     }
 
-    if(myUser.id == info['user_action_id']){
+    if(widget.myUser.id == widget.info['user_action_id']){
       //TAREA NUEVA QUE YO CREE
       isProperty = true;
     }else{
       //TAREA NUEVA QUE SE ME FUE ASIGNADA
-      urlAvatar = info['useraction']['avatar_100']  ?? avatarImage;
-      title = 'Recibiste una tarea de ${info['useraction']['name']} ${info['useraction']['surname'] ?? ''}';
+      urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+      title = '${translate(context: context, text: 'taskReceived')} ${widget.info['useraction']['name']} ${widget.info['useraction']['surname'] ?? ''}';
     }
 
 
@@ -128,15 +133,15 @@ class BinnacleTask extends StatelessWidget {
   }
 
   Widget taskPersonalReminder({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
-    String title = 'Enviaste recordatorio personal';
-    String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
+    String title = translate(context: context, text: 'youSentPersonalReminder');
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
     String nameTask = '';
-    String projectName = '(Sin proyecto asignado)';
+    String projectName = translate(context: context, text: 'noAssignedProject');
 
-    if(info['info'] != null){
-      nameTask = info['info']['name'];
-      if(info['info']['projects'] != null ){
-        projectName = info['info']['projects']['name'];
+    if(widget.info['info'] != null){
+      nameTask = widget.info['info']['name'];
+      if(widget.info['info']['projects'] != null ){
+        projectName = widget.info['info']['projects']['name'];
       }
     }
 
@@ -175,23 +180,23 @@ class BinnacleTask extends StatelessWidget {
   Widget taskDelete({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
 
     bool isProperty = false;
-    String title = 'Eliminaste una tarea';
-    String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
+    String title = translate(context: context, text: 'youDeletedTask');
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
     String nameTask = '';
-    String projectName = '(Sin proyecto asignado)';
+    String projectName = translate(context: context, text: 'noAssignedProject');
 
-    if(info['info'] != null){
-      nameTask = info['info']['name'];
-      if(info['info']['projects'] != null ){
-        projectName = info['info']['projects']['name'];
+    if(widget.info['info'] != null){
+      nameTask = widget.info['info']['name'];
+      if(widget.info['info']['projects'] != null ){
+        projectName = widget.info['info']['projects']['name'];
       }
     }
 
-    if(myUser.id == info['user_action_id']){
+    if(widget.myUser.id == widget.info['user_action_id']){
       isProperty = true;
     }else{
-      urlAvatar = info['useraction']['avatar_100']  ?? avatarImage;
-      title = '${info['useraction']['name']} ${info['useraction']['surname'] ?? ''} elimino una tarea';
+      urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+      title = '${widget.info['useraction']['name']} ${widget.info['useraction']['surname'] ?? ''} ${translate(context: context, text: 'deletedTask')}';
     }
 
 
@@ -230,23 +235,23 @@ class BinnacleTask extends StatelessWidget {
   Widget taskEdit({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
 
     bool isProperty = false;
-    String title = 'Editaste una tarea';
-    String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
+    String title = translate(context: context,text: 'youEditedTask');
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
     String nameTask = '';
-    String projectName = '(Sin proyecto asignado)';
+    String projectName = translate(context: context, text: 'noAssignedProject');
 
-    if(info['info'] != null){
-      nameTask = info['info']['name'];
-      if(info['info']['projects'] != null ){
-        projectName = info['info']['projects']['name'];
+    if(widget.info['info'] != null){
+      nameTask = widget.info['info']['name'];
+      if(widget.info['info']['projects'] != null ){
+        projectName = widget.info['info']['projects']['name'];
       }
     }
 
-    if(myUser.id == info['user_action_id']){
+    if(widget.myUser.id == widget.info['user_action_id']){
       isProperty = true;
     }else{
-      urlAvatar = info['useraction']['avatar_100']  ?? avatarImage;
-      title = '${info['useraction']['name']} ${info['useraction']['surname'] ?? ''} Editó una tarea';
+      urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+      title = '${widget.info['useraction']['name']} ${widget.info['useraction']['surname'] ?? ''} ${translate(context: context, text: 'editedTask')}';
     }
 
 
@@ -284,15 +289,15 @@ class BinnacleTask extends StatelessWidget {
 
   Widget taskPriority({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
 
-    String title = 'Indicaste como favorito la siguente tarea';
-    String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
+    String title = translate(context: context, text: 'youHighlightedTask');
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
     String nameTask = '';
-    String projectName = '(Sin proyecto asignado)';
+    String projectName = translate(context: context, text: 'noAssignedProject');
 
-    if(info['info'] != null){
-      nameTask = info['info']['name'];
-      if(info['info']['projects'] != null ){
-        projectName = info['info']['projects']['name'];
+    if(widget.info['info'] != null){
+      nameTask = widget.info['info']['name'];
+      if(widget.info['info']['projects'] != null ){
+        projectName = widget.info['info']['projects']['name'];
       }
     }
 
@@ -331,23 +336,23 @@ class BinnacleTask extends StatelessWidget {
   Widget taskWorking({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
 
     bool isProperty = false;
-    String title = 'Comenzaste a trabajar en una tarea';
-    String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
+    String title = translate(context: context, text: 'youStartedWorkingTask');
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
     String nameTask = '';
-    String projectName = '(Sin proyecto asignado)';
+    String projectName = translate(context: context, text: 'noAssignedProject');
 
-    if(info['info'] != null){
-      nameTask = info['info']['name'];
-      if(info['info']['projects'] != null ){
-        projectName = info['info']['projects']['name'];
+    if(widget.info['info'] != null){
+      nameTask = widget.info['info']['name'];
+      if(widget.info['info']['projects'] != null ){
+        projectName = widget.info['info']['projects']['name'];
       }
     }
 
-    if(myUser.id == info['user_action_id']){
+    if(widget.myUser.id == widget.info['user_action_id']){
       isProperty = true;
     }else{
-      urlAvatar = info['useraction']['avatar_100']  ?? avatarImage;
-      title = '${info['useraction']['name']} ${info['useraction']['surname'] ?? ''} comenzo a trabajar en una tarea';
+      urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+      title = '${widget.info['useraction']['name']} ${widget.info['useraction']['surname'] ?? ''} ${translate(context: context, text: 'startedWorkingTask')}';
     }
 
 
@@ -386,23 +391,23 @@ class BinnacleTask extends StatelessWidget {
   Widget taskFinalized({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
 
     bool isProperty = false;
-    String title = 'Finalizaste una tarea';
-    String urlAvatar = info['usernotification']['avatar_100']  ?? avatarImage;
+    String title = translate(context: context, text: 'youCompletedTask');
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
     String nameTask = '';
-    String projectName = '(Sin proyecto asignado)';
+    String projectName = translate(context: context, text: 'noAssignedProject');
 
-    if(info['info'] != null){
-      nameTask = info['info']['name'];
-      if(info['info']['projects'] != null ){
-        projectName = info['info']['projects']['name'];
+    if(widget.info['info'] != null){
+      nameTask = widget.info['info']['name'];
+      if(widget.info['info']['projects'] != null ){
+        projectName = widget.info['info']['projects']['name'];
       }
     }
 
-    if(myUser.id == info['user_action_id']){
+    if(widget.myUser.id == widget.info['user_action_id']){
       isProperty = true;
     }else{
-      urlAvatar = info['useraction']['avatar_100']  ?? avatarImage;
-      title = '${info['useraction']['name']} ${info['useraction']['surname'] ?? ''} finalizo una tarea';
+      urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+      title = '${widget.info['useraction']['name']} ${widget.info['useraction']['surname'] ?? ''} ${translate(context: context, text: 'completedTask')}';
     }
 
 

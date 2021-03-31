@@ -126,6 +126,7 @@
   "oldPassword:" : "Old password",
   "oldPasswordNoEmpty" : "Old password can´t be empty",
   "onlyLettersNumbers" : "Only letters and numbers allowed",
+  "openDeletedTask" : "Can't open a deleted task",
   "optional" : "optional",
   "Password" : "Password",
   "pause" : "Pause",
@@ -231,5 +232,12 @@
   "youSentInvitation" : "You sent an invitation to",
   "youSentPersonalReminder" : "You sent a personal reminder",
   "youStartedWorkingTask" : "You started working on a task",
-  "youWereDeletedFromList" : "You were deleted from a contact list"
+  "youWereDeletedFromList" : "You were deleted from a contact list",
+
+
+  "chat_1" : "You answered in the chat",
+  "chat_2" : "Answered you in the chat",
+  "chat_3" : "replied in chat",
+  "text_title" : "About",
+  "text_about" : "Walkietask was created by Imprevia / Nóvaq.\nIf you want to report a bug please write us to dev@imprevia.com."
 }

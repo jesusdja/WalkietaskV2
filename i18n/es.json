@@ -126,6 +126,7 @@
   "oldPassword:" : "Clave anterior",
   "oldPasswordNoEmpty" : "Clave anterior no puede estar vacio",
   "onlyLettersNumbers" : "Solo se permiten letras y numeros.",
+  "openDeletedTask" : "No se puede abrir una tarea eliminada",
   "optional" : "Opcional",
   "Password" : "Contraseña",
   "pause" : "Pausa",
@@ -231,5 +232,11 @@
   "youSentInvitation" : "Enviaste una invitación a ",
   "youSentPersonalReminder" : "Enviaste recordatorio personal",
   "youStartedWorkingTask" : "Comenzaste a trabajar en una tarea",
-  "youWereDeletedFromList" : "Te eliminaron de su lista de contactos"
+  "youWereDeletedFromList" : "Te eliminaron de su lista de contactos",
+
+  "chat_1" : "Tú respondiste en el chat",
+  "chat_2" : "Te respondió en el chat",
+  "chat_3" : "respondió en el chat",
+  "text_title" : "Acerca de",
+  "text_about" : "Walkietask fue creado por Imprevia / Nóvaq.\nSi desea reportar un error por favor hacerlo a dev@imprevia.com."
 }

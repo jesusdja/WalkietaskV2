@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:provider/provider.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Chat/ChatTareas.dart';
@@ -11,6 +11,7 @@ import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Firebase/chatTareasFirebase.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
+import 'package:walkietaskv2/services/provider/language_provider.dart';
 import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
@@ -49,7 +50,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
 
   List<Map<String,dynamic>> listChat = [];
 
-  Map<int,String> dateMap = {
+  Map<int,String> dateMapEs = {
     1 : 'enero',
     2 : 'febrero',
     3 : 'Marzo',
@@ -59,10 +60,27 @@ class _BinnaclePageState extends State<BinnaclePage> {
     7 : 'julio',
     8 : 'agosto',
     9 : 'septiembre',
-    10 : 'octubre',
-    11 : 'noviembre',
+    10: 'octubre',
+    11: 'noviembre',
     12: 'diciembre',
   };
+
+  Map<int,String> dateMapEn = {
+    1: 'January',
+    2: 'February',
+    3: 'March',
+    4: 'April',
+    5: 'may',
+    6: 'June',
+    7: 'July',
+    8: 'August',
+    9: 'September',
+    10: 'October',
+    11: 'November',
+    12: 'December',
+  };
+
+  Locale locale = Locale('es');
 
   CollectionReference taskCollection = FirebaseFirestore.instance.collection('Tareas');
   ChatTareaFirebase chatTaskData = ChatTareaFirebase();
@@ -101,11 +119,11 @@ class _BinnaclePageState extends State<BinnaclePage> {
           binnaclesMap[f].add(element);
         });
       }else{
-        showAlert('Error al obtener datos de bitácora', WalkieTaskColors.color_E07676);
+        showAlert(translate(context: context, text: 'errorLoadingBinnacle') ?? '', WalkieTaskColors.color_E07676);
       }
     }catch(e){
       print(e.toString());
-      showAlert('Error al obtener datos de bitácora', WalkieTaskColors.color_E07676);
+      showAlert(translate(context: context, text: 'errorLoadingBinnacle') ?? '', WalkieTaskColors.color_E07676);
     }
 
     //CARGAR DATA FIREBASE
@@ -140,7 +158,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
 
     }catch(e){
       print(e.toString());
-      showAlert('Error al obtener datos del chat', WalkieTaskColors.color_E07676);
+      showAlert(translate(context: context, text: 'errorSendingInformation') ?? '', WalkieTaskColors.color_E07676);
     }
 
 
@@ -170,7 +188,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
       });
     }catch(e){
       print(e.toString());
-      showAlert('Error al obtener datos del chat', WalkieTaskColors.color_E07676);
+      showAlert(translate(context: context, text: 'errorSendingInformation') ?? '', WalkieTaskColors.color_E07676);
     }
 
     loadData = false;
@@ -192,6 +210,9 @@ class _BinnaclePageState extends State<BinnaclePage> {
       data2.add(data1[x - 1]);
     }
 
+    var appLanguage = Provider.of<LanguageProvider>(context);
+    locale = appLanguage.appLocal;
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(new FocusNode());
@@ -200,12 +221,12 @@ class _BinnaclePageState extends State<BinnaclePage> {
         appBar: _appBar(),
         body: loadData ?
         Center(
-          child: Container(child: Cargando('Cargando bitácora',context),),
+          child: Container(child: Cargando(translate(context: context, text: 'loadingActivityBinnacle'),context),),
         )
         :
         binnaclesMap.isEmpty ?
         Center(
-          child: Text('Sin datos en la bitácora.', style: WalkieTaskStyles().stylePrimary(size: alto * 0.025, spacing: 0.5),),
+          child: Text(translate(context: context, text: 'noInformation'), style: WalkieTaskStyles().stylePrimary(size: alto * 0.025, spacing: 0.5),),
         ) :
         Container(
           child: ListView.builder(
@@ -224,7 +245,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
     return AppBar(
       title: Container(
         width: ancho,
-        child: Text('Bitácora de actividades',
+        child: Text(translate(context: context, text: 'activityLog'),
           style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.025, color: WalkieTaskColors.color_3C3C3C),textAlign: TextAlign.left,),
       ),
       elevation: 0,
@@ -283,12 +304,12 @@ class _BinnaclePageState extends State<BinnaclePage> {
       List value = binnaclesMap[keyDate];
 
       DateTime date = DateTime.parse(keyDate);
-      String title = '${date.day} de ${dateMap[date.month]}, ${date.year}';
+      String title = locale == Locale('es') ? '${date.day} de ${dateMapEs[date.month]}, ${date.year}' : '${dateMapEn[date.month]} ${date.day}, ${date.year}';
       if(date.difference(DateTime.now()).inDays == 0){
-        title = 'Hoy ($title)';
+        title = '${translate(context: context, text: 'today')} ($title)';
       }
       if(date.difference(DateTime.now()).inDays == (-1)){
-        title = 'Ayer ($title)';
+        title = '${translate(context: context, text: 'yesterday')} ($title)';
       }
 
       List elementDay = [];
@@ -382,7 +403,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
           if(data['type'] != 'deleted'){
             clickTask(Tarea.fromMap(data['info']), false, {});
           }else{
-            showAlert('No se puede abrir una tarea eliminada.', WalkieTaskColors.color_E07676);
+            showAlert('${translate(context: context, text: 'openDeletedTask')}.', WalkieTaskColors.color_E07676);
           }
         },
         child: BinnacleTask(type: data['type'],info: data,myUser: myUser,),
@@ -450,98 +471,5 @@ class _BinnaclePageState extends State<BinnaclePage> {
         }catch(_){}
       }
     }
-  }
-}
-
-class BinnaclePage2 extends StatefulWidget {
-
-  BinnaclePage2({ this.myUser, @required this.blocTaskReceived, @required this.listCase });
-
-  final Usuario myUser;
-  final BlocTask blocTaskReceived;
-  final List<Caso> listCase;
-
-  @override
-  _MyApp4State createState() => _MyApp4State();
-}
-
-class _MyApp4State extends State<BinnaclePage2> {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData.light(),
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Center(
-            child: Home()),
-      ),
-    );
-  }
-}
-
-class Home extends StatelessWidget {
-  const Home({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) {
-                return ListPage();
-              },
-            ),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(80.0),
-          child: Text("Click me"),
-        ));
-  }
-}
-
-class ListPage extends StatelessWidget {
-  ListPage();
-
-  final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
-  ItemScrollController _scrollController = ItemScrollController();
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("List"),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: (){
-            var position = itemPositionsListener.itemPositions.value.first.index;
-            print(position);
-            _scrollController.scrollTo(index: 150, duration: Duration(seconds: 1));
-          },
-        ),
-        body: WillPopScope(
-            onWillPop: () {
-              var position = itemPositionsListener.itemPositions.value.first.index;
-              print(position);
-              //trigger leaving and use own data
-              //Navigator.pop(context, false);
-
-              //we need to return a future
-              return Future.value(true);
-            },
-            child: ScrollablePositionedList.builder(
-                initialScrollIndex: 400,
-                itemPositionsListener: itemPositionsListener,
-                itemScrollController: _scrollController,
-                itemCount: 500,
-                reverse: true,
-                itemBuilder: (context, index) => Text('Item $index'),
-            ),
-        ),
-    );
   }
 }

@@ -6,7 +6,7 @@ import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
-class BinnacleChat extends StatelessWidget {
+class BinnacleChat extends StatefulWidget {
 
   final String type;
   final Map<String,dynamic> info;
@@ -19,6 +19,11 @@ class BinnacleChat extends StatelessWidget {
   });
 
   @override
+  _BinnacleChatState createState() => _BinnacleChatState();
+}
+
+class _BinnacleChatState extends State<BinnacleChat> {
+  @override
   Widget build(BuildContext context) {
 
     Size size = MediaQuery.of(context).size;
@@ -27,11 +32,11 @@ class BinnacleChat extends StatelessWidget {
 
     Widget _rowData = Container();
 
-    if( type == 'toUser'){
+    if( widget.type == 'toUser'){
       _rowData = chatToUser(size: size, styleTitle: styleTitle, styleSubTitle: styleSubTitle);
     }
 
-    if( type == 'fromUser'){
+    if( widget.type == 'fromUser'){
       _rowData = chatFromUser(size: size, styleTitle: styleTitle, styleSubTitle: styleSubTitle);
     }
 
@@ -59,13 +64,13 @@ class BinnacleChat extends StatelessWidget {
   Widget chatToUser({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
 
     bool isProperty = true;
-    String title = 'Tú respondiste en el chat';
-    String textChat = '"${info['info']['texto']}"' ?? '';
-    String urlAvatar = myUser.avatar_100 ?? avatarImage;
-    String taskName = 'Tarea: ';
+    String title = translate(context: context, text: 'chat_1');
+    String textChat = '"${widget.info['info']['texto']}"' ?? '';
+    String urlAvatar = widget.myUser.avatar_100 ?? avatarImage;
+    String taskName = '${translate(context: context, text: 'tasks').substring(0,translate(context: context, text: 'tasks').length - 1)}: ';
 
-    if(info['task'] != null){
-      taskName = info['task']['name'];
+    if(widget.info['task'] != null){
+      taskName = '$taskName ${widget.info['task']['name']}';
     }
 
     return Container(
@@ -103,18 +108,18 @@ class BinnacleChat extends StatelessWidget {
   Widget chatFromUser({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
 
     bool isProperty = false;
-    String title = 'Te respondió en el chat';
-    String textChat = '"${info['info']['texto']}"' ?? '';
-    String urlAvatar = myUser.avatar_100 ?? avatarImage;
-    String taskName = 'Tarea: ';
+    String title = translate(context: context, text: 'chat_2');
+    String textChat = '"${widget.info['info']['texto']}"' ?? '';
+    String urlAvatar = widget.myUser.avatar_100 ?? avatarImage;
+    String taskName = '${translate(context: context, text: 'tasks').substring(0,translate(context: context, text: 'tasks').length - 1)}: ';
 
-    if(info['task'] != null){
-      taskName = info['task']['name'];
+    if(widget.info['task'] != null){
+      taskName = widget.info['task']['name'];
     }
 
-    if(info['userFrom'] != null){
-      urlAvatar = info['userFrom']['avatar_100'] ?? avatarImage;
-      title = '${info['userFrom']['name']} ${info['userFrom']['surname']} respondió en el chat';
+    if(widget.info['userFrom'] != null){
+      urlAvatar = widget.info['userFrom']['avatar_100'] ?? avatarImage;
+      title = '${widget.info['userFrom']['name']} ${widget.info['userFrom']['surname']} ${translate(context: context, text: 'chat_3')}';
     }
 
     return Container(
