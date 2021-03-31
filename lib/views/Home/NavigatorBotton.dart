@@ -1409,13 +1409,13 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     bool inContactReceived = false;
 
     listRecibidos.forEach((task) {
-      if(task.read == 0 && task.finalized != 1 && page != bottonSelect.opcion2){
+      if(task.read == 0 && task.finalized != 1){
         inReceived = true;
       }
     });
 
     listInvitation.forEach((invitation) {
-      if(invitation.inv == 1 && invitation.read == 0 && page != bottonSelect.opcion5){
+      if(invitation.inv == 1 && invitation.read == 0){
         inContactReceived = true;
       }
     });
