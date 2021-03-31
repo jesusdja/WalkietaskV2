@@ -111,7 +111,7 @@ class _ProfileHomeState extends State<ProfileHome> {
     return loadSave ?
     Scaffold(
       body: Center(
-        child: Container(child: Cargando('Guardando datos de usuario',context),),
+        child: Container(child: Cargando(translate(context: context, text: 'SavingUserData'),context),),
       ),
     )
         :
@@ -123,7 +123,7 @@ class _ProfileHomeState extends State<ProfileHome> {
         appBar: AppBar(
           title: Container(
             width: ancho,
-            child: Text('Mi Cuenta',
+            child: Text(translate(context: context, text: 'myAccount'),
               style: WalkieTaskStyles().styleNunitoRegular(size: alto * 0.03, color: WalkieTaskColors.color_969696),textAlign: TextAlign.right,),
           ),
           elevation: 0,
@@ -136,7 +136,7 @@ class _ProfileHomeState extends State<ProfileHome> {
 
               if(edit){
                 bool res = false;
-                res = await alertDeleteElement(context, '¿Descartar cambios realizados?', button1: 'Descartar',);
+                res = await alertDeleteElement(context, translate(context: context, text: 'discardChanges'), button1: translate(context: context,text: 'discard'),);
                 if(res != null && res){
                   Navigator.of(context).pop( result );
                 }
@@ -150,32 +150,32 @@ class _ProfileHomeState extends State<ProfileHome> {
           child: Column(
             children: [
               SizedBox(height: alto * 0.035,),
-              _textTitle('Foto de perdil:'),
+              _textTitle(translate(context: context, text: 'profilePicture:')),
               SizedBox(height: alto * 0.03,),
               _profilePhoto(),
               SizedBox(height: alto * 0.06,),
-              _textTitle('Tus datos:'),
+              _textTitle('${translate(context: context, text: 'yourInformation')}:'),
               SizedBox(height: alto * 0.03,),
               _dataUser(),
               SizedBox(height: alto * 0.05,),
-              _textTitle('Modificar clave de acceso:'),
+              _textTitle('${translate(context: context, text: 'modifyPassword:')}:'),
               SizedBox(height: alto * 0.02,),
               _dataUserPassword(),
               Container(
                 width: ancho,
                 padding: EdgeInsets.symmetric(horizontal: ancho * 0.06),
-                child: Text('Debe incluir minuscula, mayúscula y número.', style: WalkieTaskStyles().stylePrimary(size: alto * 0.015),textAlign: TextAlign.right,),
+                child: Text('${translate(context: context, text: 'includeLowerAndUpper')}.', style: WalkieTaskStyles().stylePrimary(size: alto * 0.015),textAlign: TextAlign.right,),
               ),
               SizedBox(height: alto * 0.05,),
-              _textTitle('Recibir notificaciones:'),
+              _textTitle('${translate(context: context, text: 'receiveNotifications:')}:'),
               SizedBox(height: alto * 0.02,),
               columnSwitchRN(),
               SizedBox(height: alto * 0.04,),
-              _textTitle('Posición de botón de recordatorio:'),
+              _textTitle('${translate(context: context, text: 'remindersButtonPlacement')}:'),
               SizedBox(height: alto * 0.02,),
               _selectRemenber(),
               SizedBox(height: alto * 0.04,),
-              _textTitle('Seleccionar idioma:'),
+              _textTitle('${translate(context: context, text: 'selectLanguage')}:'),
               SizedBox(height: alto * 0.02,),
               _selectLanguage(),
               SizedBox(height: alto * 0.1,),
@@ -186,7 +186,7 @@ class _ProfileHomeState extends State<ProfileHome> {
                 width: ancho * 0.3,
                 height: alto * 0.05,
                 radius: 5.0,
-                title: 'Guardar',
+                title: translate(context: context, text: 'save'),
                 textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.04, color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 1.5),
                 backgroundColor: edit ? WalkieTaskColors.primary : WalkieTaskColors.color_B7B7B7,
                 onPressed: () async {
@@ -217,11 +217,11 @@ class _ProfileHomeState extends State<ProfileHome> {
       width: ancho,
       child: Column(
         children: [
-          _rowDataUser(controller:  controllerName, title: 'Nombre:', pos: 0),
+          _rowDataUser(controller:  controllerName, title: '${translate(context: context,text: 'name')}:', pos: 0),
           SizedBox(height: alto * 0.02,),
-          _rowDataUser(controller: controllerLastName, title: 'Apellido:', pos: 1),
+          _rowDataUser(controller: controllerLastName, title: '${translate(context: context,text: 'lastName')}:', pos: 1),
           SizedBox(height: alto * 0.02,),
-          _rowDataUser(controller: controllerEmail, title: 'Correo:', pos: 2),
+          _rowDataUser(controller: controllerEmail, title: '${translate(context: context,text: 'email')}:', pos: 2),
         ],
       ),
     );
@@ -232,9 +232,9 @@ class _ProfileHomeState extends State<ProfileHome> {
       width: ancho,
       child: Column(
         children: [
-          _rowDataUser(controller: controllerPass, title: 'Clave anterior:', obscure: true, pos: 3),
+          _rowDataUser(controller: controllerPass, title: '${translate(context: context,text: 'oldPassword:')}:', obscure: true, pos: 3),
           SizedBox(height: alto * 0.02,),
-          _rowDataUser(controller: controllerPass2, title: 'Nueva clave:', obscure: true, pos: 4),
+          _rowDataUser(controller: controllerPass2, title: '${translate(context: context,text: 'newPassword:')}:', obscure: true, pos: 4),
         ],
       ),
     );
@@ -285,9 +285,9 @@ class _ProfileHomeState extends State<ProfileHome> {
       margin: EdgeInsets.symmetric(horizontal: ancho * 0.1),
       child: Column(
         children: [
-          receivedNotification('Nuevas tareas'),
-          receivedNotification('Invitación a proyectos'),
-          receivedNotification('Recordatorios diarios'),
+          receivedNotification('${translate(context: context,text: 'newTasks')}'),
+          receivedNotification('${translate(context: context,text: 'invitationToProjects')}'),
+          receivedNotification('${translate(context: context,text: 'dailyReminders')}'),
         ],
       ),
     );
@@ -309,7 +309,7 @@ class _ProfileHomeState extends State<ProfileHome> {
               sizeH: alto * 0.025,
               sizeW: ancho * 0.11,
               onChanged: (bool val) async {
-                showAlert('Por los momentos esta función se encuentra bloqueada.',WalkieTaskColors.color_E07676);
+                showAlert('${translate(context: context,text: 'functionBlocked')}.',WalkieTaskColors.color_E07676);
               },
               colorBgOff: WalkieTaskColors.color_DD7777,
               colorBgOn: WalkieTaskColors.color_89BD7D,
@@ -348,7 +348,7 @@ class _ProfileHomeState extends State<ProfileHome> {
           SizedBox(height: alto * 0.01,),
           InkWell(
             onTap: () => _onTapPhoto(),
-            child: Text('Cambiar', style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.black, spacing: 0.5),),
+            child: Text('${translate(context: context,text: 'change')}', style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.black, spacing: 0.5),),
           ),
         ],
       ),
@@ -491,7 +491,7 @@ class _ProfileHomeState extends State<ProfileHome> {
       if(controllerName.text.isNotEmpty){
         body['name'] = controllerName.text;
       }else{
-        showAlert('El nombre no puede estar vacio',WalkieTaskColors.color_E07676);
+        showAlert('${translate(context: context,text: 'nameNpEmpty')}',WalkieTaskColors.color_E07676);
         notError = false;
       }
     }
@@ -500,7 +500,7 @@ class _ProfileHomeState extends State<ProfileHome> {
       if(controllerLastName.text.isNotEmpty){
         body['surname'] = controllerLastName.text;
       }else{
-        showAlert('El apellido no puede estar vacio',WalkieTaskColors.color_E07676);
+        showAlert('${translate(context: context,text: 'lastNameNoEmpty')}',WalkieTaskColors.color_E07676);
         notError = false;
       }
     }
@@ -514,18 +514,18 @@ class _ProfileHomeState extends State<ProfileHome> {
           notError = false;
         }
       }else{
-        showAlert('El correo no puede estar vacio',WalkieTaskColors.color_E07676);
+        showAlert('${translate(context: context,text: 'EmailNoEmpty')}',WalkieTaskColors.color_E07676);
         notError = false;
       }
     }
 
     if(mapData[3] && !mapData[4]){
-      showAlert('Debe agregar una nueva clave',WalkieTaskColors.color_E07676);
+      showAlert('${translate(context: context,text: 'mustNewPassword')}',WalkieTaskColors.color_E07676);
       notError = false;
     }
 
     if(!mapData[3] && mapData[4]){
-      showAlert('Debe agregar clave anterior',WalkieTaskColors.color_E07676);
+      showAlert('${translate(context: context,text: 'mustOldPassword')}',WalkieTaskColors.color_E07676);
       notError = false;
     }
 
@@ -540,11 +540,11 @@ class _ProfileHomeState extends State<ProfileHome> {
             notError = false;
           }
         }else{
-          showAlert('Nueva clave no puede estar vacio',WalkieTaskColors.color_E07676);
+          showAlert('${translate(context: context,text: 'newPasswordNoEmpty')}',WalkieTaskColors.color_E07676);
           notError = false;
         }
       }else{
-        showAlert('Clave anterior no puede estar vacio',WalkieTaskColors.color_E07676);
+        showAlert('${translate(context: context,text: 'oldPasswordNoEmpty')}',WalkieTaskColors.color_E07676);
         notError = false;
       }
     }
@@ -592,10 +592,10 @@ class _ProfileHomeState extends State<ProfileHome> {
 
 
           Navigator.of(context).pop(result);
-          showAlert('Usuario editado con exito',WalkieTaskColors.color_89BD7D);
+          showAlert('${translate(context: context,text: 'userUpdatedSuccessfully')}',WalkieTaskColors.color_89BD7D);
         }else{
 
-          String error = 'Error al enviar los datos.';
+          String error = '${translate(context: context,text: 'errorSendingInformation')}';
           if(value['message'] != null){
             error = value['message'];
           }
@@ -603,14 +603,14 @@ class _ProfileHomeState extends State<ProfileHome> {
         }
       }catch(e){
         print(e.toString());
-        showAlert('Error al enviar los datos.',WalkieTaskColors.color_E07676);
+        showAlert('${translate(context: context,text: 'errorSendingInformation')}',WalkieTaskColors.color_E07676);
       }
     }else{
       if(mapData[6] || mapData[7]){
         Map result = {0 : true, 1: false};
         result[1] = true;
         Navigator.of(context).pop(result);
-        showAlert('Usuario editado con exito',WalkieTaskColors.color_89BD7D);
+        showAlert('${translate(context: context,text: 'userUpdatedSuccessfully')}',WalkieTaskColors.color_89BD7D);
       }
     }
 
