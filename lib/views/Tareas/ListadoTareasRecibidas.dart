@@ -225,7 +225,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
             child: _appBArMenuText(translate(context: context, text: 'user'),1),
           ),
           Expanded(
-            child: _appBArMenuText(translate(context: context, text: 'projects'),2),
+            child: _appBArMenuText(translate(context: context, text: 'projects').toUpperCase(),2),
           ),
         ],
       ),

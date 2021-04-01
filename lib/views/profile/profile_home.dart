@@ -448,9 +448,9 @@ class _ProfileHomeState extends State<ProfileHome> {
 
   Widget containerLanguage(int index){
 
-    String language = 'Español';
+    String language = translate(context: context, text: 'lang_es');
     if(index == 1){
-      language = 'Ingles';
+      language = translate(context: context, text: 'lang_en');
     }
 
     return Container(

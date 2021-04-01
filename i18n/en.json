@@ -179,7 +179,7 @@
   "startedWorkingTask" : "started working on a task",
   "sureDeleteProject" : "Are you sure you want to delete ",
   "sureDeleteUser " : "Are you sure you want to delete user ",
-  "sureLogOut?" : "Are you sure you want to log out?",
+  "sureLogOut" : "Are you sure you want to log out?",
   "taskYouWantDelete" : "You actually want to delete the task",
   "taskDeleted" : "Task deleted",
   "taskModified" : "Task modified",
@@ -233,11 +233,11 @@
   "youSentPersonalReminder" : "You sent a personal reminder",
   "youStartedWorkingTask" : "You started working on a task",
   "youWereDeletedFromList" : "You were deleted from a contact list",
-
-
   "chat_1" : "You answered in the chat",
   "chat_2" : "Answered you in the chat",
   "chat_3" : "replied in chat",
   "text_title" : "About",
-  "text_about" : "Walkietask was created by Imprevia / Nóvaq.\nIf you want to report a bug please write us to dev@imprevia.com."
+  "text_about" : "Walkietask was created by Imprevia / Nóvaq.\nIf you want to report a bug please write us to dev@imprevia.com.",
+  "lang_es" : "Spanish",
+  "lang_en" : "English"
 }

@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
@@ -18,6 +19,7 @@ import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Firebase/Notification/http_notifications.dart';
 import 'package:walkietaskv2/services/Firebase/chatTareasFirebase.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
+import 'package:walkietaskv2/services/provider/language_provider.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/WidgetsUtils.dart';
@@ -880,6 +882,9 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
   Widget _editTarea(BuildContext context){
 
+    var appLanguage = Provider.of<LanguageProvider>(context);
+
+
     return Container(
       margin: EdgeInsets.only(left: ancho * 0.02,right: ancho * 0.02,top: alto * 0.01),
       padding: EdgeInsets.only(top: alto * 0.01, bottom: alto * 0.01,left: ancho * 0.05, right: ancho * 0.05),
@@ -966,7 +971,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                           initialDate: new DateTime.now(),
                           firstDate: new DateTime(2018),
                           lastDate: new DateTime(2025),
-                          locale: Locale('es', 'ES'),
+                          locale: appLanguage.appLocal,
                         );
                         if (newDateTime != null) {
                           Duration dif = newDateTime.difference(DateTime.now());

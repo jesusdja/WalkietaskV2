@@ -6,10 +6,12 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/services/provider/language_provider.dart';
 import 'package:walkietaskv2/services/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
@@ -217,6 +219,8 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
   Widget _taskSendOpen(){
     List<Widget> widgets = [];
 
+    var appLanguage = Provider.of<LanguageProvider>(context);
+
     widgets.add(SizedBox(height: alto * 0.01,));
     widgets.add(
         Container(
@@ -289,7 +293,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
                     initialDate: new DateTime.now(),
                     firstDate: new DateTime(2018),
                     lastDate: new DateTime(2025),
-                    locale: Locale('es', 'ES')
+                    locale: appLanguage.appLocal
                 );
                 if (newDateTime != null) {
                   Duration dif = newDateTime.difference(DateTime.now());
