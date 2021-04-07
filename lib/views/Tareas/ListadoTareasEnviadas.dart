@@ -65,7 +65,6 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     blocTaskSend = widget.blocTaskSendRes;
     widget.listaCasosRes.forEach((element) { mapCasos[element.id] = element;});

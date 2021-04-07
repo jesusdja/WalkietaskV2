@@ -24,7 +24,6 @@ class AddProyectsSumitState extends State<AddProyectsSumit> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

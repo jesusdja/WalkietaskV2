@@ -27,7 +27,6 @@ class _RecoverPasswordState extends State<RecoverPassword> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

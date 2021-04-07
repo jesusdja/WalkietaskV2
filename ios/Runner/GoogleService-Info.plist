@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>490041223077-7db0nu0lrbjr3bg2iv03hmpekumufc6a.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.490041223077-7db0nu0lrbjr3bg2iv03hmpekumufc6a</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>490041223077-nt9nnftnmiq75pmepe2cnodg1o5tv7r5.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCMdSBZFqT8gaK0KnneYlBShrICVSOekrU</string>
+	<key>GCM_SENDER_ID</key>
+	<string>490041223077</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.imprevia.walkietaskv2</string>
+	<key>PROJECT_ID</key>
+	<string>walkietask</string>
+	<key>STORAGE_BUCKET</key>
+	<string>walkietask.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:490041223077:ios:22d579d67ecf3d7696aa4c</string>
+	<key>DATABASE_URL</key>
+	<string>https://walkietask.firebaseio.com</string>
+</dict>
+</plist>

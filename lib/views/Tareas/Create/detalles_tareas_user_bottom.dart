@@ -16,6 +16,7 @@ import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Tareas/Create/new_task_user.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as pth;
 
 class BottomDetailsTask extends StatefulWidget {
 
@@ -327,7 +328,12 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
       print(e.toString());
     }
 
-    Directory appDocDi25 = await getExternalStorageDirectory();
+    Directory appDocDi25;
+    if (!Platform.isAndroid) {
+      appDocDi25 = await getApplicationDocumentsDirectory();
+    }else{
+      appDocDi25 = await getExternalStorageDirectory();
+    }
     appDocPath = appDocDi25.path;
     setState(() {});
   }

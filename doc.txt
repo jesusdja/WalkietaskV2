@@ -1,0 +1,6 @@
+** ANDROID **
+1 - Configurar flutter_downloader
+** IOS **
+1 - Se cambio el IOS develop a 10.0
+2 - Se agrego configuracion de audioplayers a Info.plis
+3 - Se agrego configuracion de flutter_downloader a Info.plis y AppDelegate.m

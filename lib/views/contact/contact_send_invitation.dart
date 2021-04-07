@@ -42,7 +42,6 @@ class _SendInvitationState extends State<SendInvitation> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     myUser = widget.myUserRes;
     mapIdUsers = widget.mapIdUsersRes;
