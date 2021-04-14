@@ -12,6 +12,10 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>Walkietask</string>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+    <array>
+        <string>com.imprevia.walkietaskv2</string>
+    </array>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
