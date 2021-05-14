@@ -349,6 +349,46 @@ class conexionHttp{
         'X-Requested-With': 'XMLHttpRequest',
         'Authorization': 'Bearer $token'
       };
+      final request = http.MultipartRequest('POST',Uri.parse('$enlace/api/auth/tasks/saveTasks'));
+
+      request.headers.addAll(headers);
+
+      if(jsonBody['url_audio'] != null && jsonBody['url_audio'] != ''){
+        final fileAudio = await http.MultipartFile.fromPath('audio', jsonBody['url_audio'],);
+        request.files.add(fileAudio);
+      }
+
+      if(jsonBody['url_attachment'] != null && jsonBody['url_attachment'] != ''){
+        final fileAttachment = await http.MultipartFile.fromPath('attachment', jsonBody['url_attachment'],);
+        request.files.add(fileAttachment);
+      }
+
+      jsonBody.forEach((key, value) {
+        if(key != 'url_audio' && key != 'url_attachment'){
+          request.fields[key] = value;
+        }
+      });
+
+      print('');
+
+      final streamedResponse = await request.send();
+      response = await http.Response.fromStream(streamedResponse);
+
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
+
+  Future<http.Response> httpCrearTarea2(Map jsonBody) async{
+    var response;
+    try{
+      String token  = await obtenerToken();
+      Map<String,String> headers = {
+        'Content-Type':'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Authorization': 'Bearer $token'
+      };
       response = await http.post('$enlace/api/auth/tasks/saveTasks',
         headers: headers,
         body: jsonBody,
