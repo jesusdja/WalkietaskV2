@@ -334,6 +334,18 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
       ),
     ));
     widgets.add(SizedBox(height: alto * 0.02,));
+
+
+    bool viewImage = false;
+    if(_pathAdjunto != null && _fileNameAdjunto != null && _fileNameAdjunto.isNotEmpty){
+      String adjunto = _fileNameAdjunto.replaceAll('%', '/');
+      adjunto = adjunto.split('/').last;
+      String format = adjunto.split('.').last;
+      if(format == 'png' || format == 'jpg' || format == 'jpeg'){
+        viewImage = true;
+      }
+    }
+
     widgets.add(Container(
       width: ancho,
       margin: EdgeInsets.only(top: alto * 0.01,left: ancho * 0.05,right: ancho * 0.05),
@@ -347,6 +359,43 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
                   style: textStylePrimary),
             ),
           ),
+          viewImage ?
+          Stack(
+            overflow: Overflow.visible,
+            children: [
+              Container(
+                height: alto * 0.2,
+                width: alto * 0.2,
+                margin: EdgeInsets.only(right: ancho * 0.03),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.0),
+                  border: Border.all(
+                    color: Colors.grey,
+                    width: 1.5,
+                    style: BorderStyle.solid,
+                  ),
+                  image: DecorationImage(
+                    image: ViewImage().assetsImage(_pathAdjunto, color: WalkieTaskColors.primary).image,
+                    fit: BoxFit.fitHeight,
+                  ),
+                ),
+              ),
+              Positioned(
+                right: -(ancho * 0.001),
+                top: -(alto * 0.01),
+                child: InkResponse(
+                  onTap: () {
+                    setState(() { _pathAdjunto = null; });
+                  },
+                  child: CircleAvatar(
+                    child: Icon(Icons.close, size: alto * 0.02,),
+                    backgroundColor: WalkieTaskColors.grey,
+                    radius: alto * 0.02,
+                  ),
+                ),
+              ),
+            ],
+          ) :
           Expanded(
             flex: 1,
             child: InkWell(
@@ -366,9 +415,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
                     InkWell(
                       child: Icon(Icons.clear),
                       onTap: (){
-                        setState(() {
-                          _pathAdjunto = null;
-                        });
+                        setState(() { _pathAdjunto = null; });
                       },
                     ),
                   ],

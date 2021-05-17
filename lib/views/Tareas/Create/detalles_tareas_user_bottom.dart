@@ -16,7 +16,7 @@ import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Tareas/Create/new_task_user.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as pth;
+import 'package:wakelock/wakelock.dart';
 
 class BottomDetailsTask extends StatefulWidget {
 
@@ -231,6 +231,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
         print('startRecorder');
         setState(() {});
       });
+      Wakelock.enable();
     } catch (err) {
       print('startRecorder error: $err');
     }
@@ -242,6 +243,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
         await flutterSoundRecorder.stopRecorder().then((value) {
           setState(() {});
         });
+        Wakelock.disable();
       }catch(ex){
         print('ERROR EN STOP ${ex.toString()}');
       }

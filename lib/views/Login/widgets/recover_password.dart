@@ -138,9 +138,8 @@ class _RecoverPasswordState extends State<RecoverPassword> {
                 var response = await conexionHispanos.httpRecoverPass(_controllerEmail.text);
                 var value = jsonDecode(response.body);
                 if(value['status_code'] == 200){
-                  _controllerEmail.text = '';
-                  setState(() {});
                   showAlert('Enviado.!',WalkieTaskColors.color_89BD7D);
+                  Navigator.of(context).pop();
                 }else{
                   String error = translate(context: context, text: 'problemSendingInformation');
                   if(value['message'] != null) error = value['message'];

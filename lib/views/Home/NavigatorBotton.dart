@@ -170,14 +170,14 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
     uploadData();
 
-    Wakelock.enable();
+    //Wakelock.enable();
   }
 
   @override
   void dispose() {
     super.dispose();
 
-    Wakelock.disable();
+    //Wakelock.disable();
 
     try{
       streamSubscriptionUser?.cancel();

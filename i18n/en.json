@@ -180,7 +180,7 @@
   "sureDeleteProject" : "Are you sure you want to delete ",
   "sureDeleteUser " : "Are you sure you want to delete user ",
   "sureLogOut" : "Are you sure you want to log out?",
-  "taskYouWantDelete" : "You actually want to delete the task",
+  "taskYouWantDelete" : "Do you really want to delete",
   "taskDeleted" : "Task deleted",
   "taskModified" : "Task modified",
   "taskReceived" : "Task received from",
