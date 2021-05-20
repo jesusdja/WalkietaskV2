@@ -68,6 +68,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   List<Usuario> listaUser;
   List<Caso> listaCasos;
   List<InvitationModel> listInvitation;
+  List<Map<String,dynamic>> listNotifications;
   List<dynamic> listDocuments= [];
 
   BlocUser blocUser;
@@ -151,6 +152,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     _inicializarTaskSend();
     _inicializarCasos();
     _inicializarInvitation();
+    _inicializarListNotification();
 
     updateData.actualizarListaUsuarios(blocUser, blocConection);
     updateData.actualizarListaRecibidos(blocTaskReceived, blocConection, blocVerifyFirst: blocVerifyFirst);
@@ -850,6 +852,10 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     setState(() {});
     validateInvitation(listInvitation);
   }
+  _inicializarListNotification() async {
+    listNotifications = await  updateData.getNotifications();
+    setState(() {});
+  }
 
   //*******************************************
   //*******************************************
@@ -995,23 +1001,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
               updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
               updateData.actualizarListaEnviados(blocTaskSend, blocConection);
             }
-            // if (page == bottonSelect.opcion1 || page == bottonSelect.opcion3 || page == bottonSelect.opcion4) {
-            //   if (isTask) {
-            //     updateNoti(0, true);
-            //   } else {
-            //     updateNoti(1, true);
-            //     updateNoti(2, true);
-            //   }
-            // }
-            // if (page == bottonSelect.opcion2) {
-            //   if (!isTask) {
-            //     updateNoti(1, true);
-            //     updateNoti(2, true);
-            //   }
-            // }
-            // if (page == bottonSelect.opcion5) {
-            //   updateNoti(isTask ? 0 : 2, true);
-            // }
           }
 
           if(argumento['table'] != null && argumento['table'].contains('contacts')){
@@ -1342,21 +1331,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
   Future<void> verifyNewTaskInvitation() async {
     setState(() {});
-    // int first = await SharedPrefe().getValue('first');
-    // if(first == null || first == 0){
-    //   await SharedPrefe().setIntValue('first', 1);
-    //   //TAREAS
-    //   List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListTask') ?? [];
-    //   if(listTaskNew.isNotEmpty){
-    //     updateNoti(0, true);
-    //   }
-    //   //INVITACIONES
-    //   bool yesVery = await SharedPrefe().getValue('notiContacts') ?? false;
-    //   if(yesVery){
-    //     updateNoti(1, true);
-    //     updateNoti(2, true);
-    //   }
-    // }
   }
 
   validateInvitation(List<InvitationModel> list) async {

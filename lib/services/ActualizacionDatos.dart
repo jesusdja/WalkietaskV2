@@ -414,6 +414,20 @@ class UpdateData{
       blocVerifyFirst.inList.add(1);
     }
   }
+
+  Future<List<Map<String,dynamic>>> getNotifications() async {
+    List<Map<String,dynamic>> notifications = [];
+    try{
+      var response = await conexionHispanos.httpMyNotifications();
+      var value = jsonDecode(response.body);
+      if(value['status_code'] == 200){
+        notifications = value['notifications'];
+      }
+    }catch(e){
+      print('getNotifications: ${e.toString()}');
+    }
+    return notifications;
+  }
 }
 
 

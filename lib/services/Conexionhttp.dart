@@ -904,4 +904,18 @@ class conexionHttp{
     }
     return response;
   }
+
+  Future<http.Response> httpMyNotifications() async{
+    String token  = await obtenerToken();
+    Map<String, String> requestHeaders = {
+      'Authorization': 'Bearer $token'
+    };
+    var response;
+    try{
+      response = http.get('$enlace/api/auth/notifications/unread',headers: requestHeaders);
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
 }
