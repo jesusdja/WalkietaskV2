@@ -263,22 +263,9 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         await Future.delayed(Duration(seconds: 3));
       }
     }
-
-    refreshListNoti();
-
     getPhoto();
 
     setState(() {});
-  }
-
-  void refreshListNoti() async{
-    try{
-      notiRecived = await SharedPrefe().getValue('notiRecived') ?? false;
-      notiContacts = await SharedPrefe().getValue('notiContacts') ?? false;
-      notiSend = await SharedPrefe().getValue('notiSend') ?? false;
-    } catch (e) {
-      print(e.toString());
-    }
   }
 
   Future<void> getPhoto() async {
@@ -299,8 +286,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     translateTitle(context);
 
     reconection();
-
-    viewUpdateNoti();
 
     return WillPopScope(
       onWillPop: exit,
@@ -853,8 +838,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     validateInvitation(listInvitation);
   }
   _inicializarListNotification() async {
-    listNotifications = await  updateData.getNotifications();
-    setState(() {});
+    getDataNotiForServer('0');
   }
 
   //*******************************************
@@ -909,7 +893,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         if(newVal){
           _inicializarTaskRecived();
         }else{
-          //updateNoti(0, false);
           setState(() {});
         }
       });
@@ -984,136 +967,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       try{
         int counter = await SharedPrefe().getValue('unityLogin');
         if(counter == 1){
-          if(argumento['table'] != null && (argumento['table'] == 'tasks' ||
-              argumento['table'].contains('contacts'))) {
-            bool isTask = argumento['table'].contains('tasks');
-            if (isTask) {
-              try{
-                List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListTask');
-                if (listTaskNew == null) {
-                  listTaskNew = [];
-                }
-                List<String> listTaskNewString = [];
-                listTaskNew.forEach((element) { listTaskNewString.add(element);});
-                listTaskNewString.add(argumento['idDoc']);
-                await SharedPrefe().setStringListValue('notiListTask', listTaskNewString);
-              }catch(_){}
-              updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
-              updateData.actualizarListaEnviados(blocTaskSend, blocConection);
-            }
-          }
-
-          if(argumento['table'] != null && argumento['table'].contains('contacts')){
-            if (page != bottonSelect.opcion5) {
-              updateNoti(1, true);
-              updateNoti(2, true);
-            }
-            if (page == bottonSelect.opcion5) {
-              updateNoti(2, true);
-            }
-          }
-
-          if(argumento['table'] != null && argumento['table'].contains('sms')){
-            if(argumento['idDoc'] != null){
-              Tarea task = await DatabaseProvider.db.getCodeIdTask(argumento['idDoc']);
-              task.updated_at = DateTime.now().toString();
-              await DatabaseProvider.db.updateTask(task);
-              bool isSend = task.user_id == myUser.id;
-
-              if(argumento['type'] == '1'){
-                List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListChat');
-                if (listTaskNew == null) {
-                  listTaskNew = [];
-                }
-                List<String> listTaskNewString = [];
-                listTaskNew.forEach((element) { listTaskNewString.add(element);});
-                listTaskNewString.add(argumento['idDoc']);
-                await SharedPrefe().setStringListValue('notiListChat', listTaskNewString);
-                blocTaskReceived.inList.add(true);
-                if(task != null){
-                  //ENVIADO
-                  if(isSend && page != bottonSelect.opcion3){
-                    updateNoti(3, true);
-                  }
-                  //RECIBIDO
-                  if(!isSend && page != bottonSelect.opcion2){
-                    updateNoti(0, true);
-                  }
-                }
-              }else{
-                //ENVIADO O RECIBIDO
-                if(isSend){
-                  _onTapNavigator(bottonSelect.opcion3);
-                  clickTarea(task);
-                }else{
-                  _onTapNavigator(bottonSelect.opcion2);
-                  clickTarea(task);
-                }
-              }
-            }
-          }
-
-          if(argumento['type'] == '1' &&
-              (   argumento['table']  ==  'sms' ||
-                  argumento['table'] == 'tasks' ||
-                  argumento['table'] == 'tasksFinalized'||
-                  argumento['table'] == 'workingTask'||
-                  argumento['table'] == 'updateTask'
-              )
-          ){
-
-            updateData.actualizarListaUsuarios(blocUser, blocConection);
-            updateData.actualizarListaRecibidos(blocTaskReceived, blocConection, blocVerifyFirst: blocVerifyFirst);
-            updateData.actualizarListaEnviados(blocTaskSend, blocConection);
-            updateData.actualizarCasos(blocCasos);
-
-            int idOpenTask = await SharedPrefe().getValue('openTask');
-            int idTaskPush = 0;
-            if(argumento['idDoc'] != null){
-              idTaskPush = int.parse(argumento['idDoc']);
-            }
-            if(idOpenTask != idTaskPush){
-              Tarea task;
-              while(task == null){
-                task = await DatabaseProvider.db.getCodeIdTask(idTaskPush.toString());
-              }
-              String subTitle = 'Nueva tarea: ';
-              String description = task.name;
-              bool isOnTap = true;
-              if(argumento['table'] == 'tasksFinalized'){
-                subTitle = 'Terminó la tarea ';
-                isOnTap = false;
-                description = '"$description"';
-              }
-              if(argumento['table'] == 'sms'){
-                subTitle = 'Chat en "${task.name}": ';
-                description = argumento['description'];
-              }
-              if(argumento['table'] == 'sms'){
-                subTitle = 'Nueva mensaje:  ';
-                description = argumento['description'];
-              }
-              if(argumento['table'] == 'workingTask'){
-                subTitle = 'Comenzó a trabajar en la tarea:  ';
-              }
-              if(argumento['table'] == 'updateTask'){
-                subTitle = 'Editó la tarea:  ';
-              }
-              viewNotiLocal(task, subTitle, description, isOnTap);
-            }
-          }
-
-          if(argumento['type'] == '1' &&
-              (argumento['table'] == 'projects' ||
-               argumento['table'] == 'addToProject')){
-            String subTitle = 'Te agregó a un proyecto: ';
-            viewNotiLocalProjects(subTitle, argumento['idDoc']);
-          }
-
-          if(argumento['type'] == '1' &&
-             argumento['table'] == 'reminderTask') {
-            viewNotiLocalPersonal('Genial', 'Sigue así. ', 'Lo estás haciendo bien.');
-          }
+          getDataNotiForServer(argumento['type']);
         }
       }catch(e){
         print(e.toString());
@@ -1122,211 +976,182 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     });
   }
 
-  void viewNotiLocal(Tarea task, String subTitle, String sms, bool isOnTap){
-    bool isRecived = true;
-    if(myUser.id == task.user_id){
-      isRecived = false;
-    }
+  Future<void> getDataNotiForServer(String type) async{
+    listNotifications = await  updateData.getNotifications();
 
-    Image avatarUser = Image.network(avatarImage);
-    String nameUser = '';
-    if(isRecived){
-      if(mapIdUser[task.user_id] != null){
-        if(mapIdUser[task.user_id].avatar_100 != ''){
-          avatarUser = Image.network(mapIdUser[task.user_id].avatar_100);
-        }
-        nameUser = mapIdUser[task.user_id].name;
+    bool checkReceived = false;
+    bool checkSend = false;
+    bool checkContacts = false;
+    for(int x = 0; x < listNotifications.length; x++){
+      if(listNotifications[x]['type'] == 'tasks'){
+        checkReceived = true;
       }
-    }else{
-      if(mapIdUser[task.user_responsability_id] != null){
-        if(mapIdUser[task.user_responsability_id].avatar_100 != ''){
-          avatarUser = Image.network(mapIdUser[task.user_responsability_id].avatar_100);
-        }
-        nameUser = mapIdUser[task.user_responsability_id].name;
+      if(checkReceived){
+        x = listNotifications.length;
       }
     }
 
-    Widget imageAvatar = Container(
-      margin: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-      padding: const EdgeInsets.all(1.5), // borde width
-      decoration: new BoxDecoration(
-        color: WalkieTaskColors.primary, // border color
-        shape: BoxShape.circle,
-      ),
-      child: CircleAvatar(
-        radius: alto * 0.025,
-        backgroundImage: avatarUser.image,
-      ),
-    );
-    Widget messageText = Container(
-      child: RichText(
-        text: TextSpan(children: [
-          TextSpan(text: subTitle, style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, fontWeight: FontWeight.bold, color: WalkieTaskColors.yellow, spacing: 0.5),),
-          TextSpan(text: sms,style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, color: WalkieTaskColors.white, spacing: 0.5)),
-        ]),
-      ),
-    );
-    Widget titleText = Container(
-      child: Text(nameUser,style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.white, spacing: 0.5, fontWeight: FontWeight.bold),),
-    );
-    flushBarNotification(
-        context: context,
-        avatar: imageAvatar,
-        titleText: titleText,
-        messageText: messageText,
-        onTap: (flushbar) {
-          if(isOnTap){
+    if(type == '0'){
+      if(checkReceived){
+        updateNoti(0,true);
+      }
+    }
+    if(type == '1'){
+
+    }
+    if(type == '2' || type == '3'){
+
+    }
+
+    setState(() {});
+
+
+    /*
+    if(argumento['table'] != null && (argumento['table'] == 'tasks' ||
+        argumento['table'].contains('contacts'))) {
+      bool isTask = argumento['table'].contains('tasks');
+      if (isTask) {
+        try{
+          List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListTask');
+          if (listTaskNew == null) {
+            listTaskNew = [];
+          }
+          List<String> listTaskNewString = [];
+          listTaskNew.forEach((element) { listTaskNewString.add(element);});
+          listTaskNewString.add(argumento['idDoc']);
+          await SharedPrefe().setStringListValue('notiListTask', listTaskNewString);
+        }catch(_){}
+        updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
+        updateData.actualizarListaEnviados(blocTaskSend, blocConection);
+      }
+    }
+
+    if(argumento['table'] != null && argumento['table'].contains('contacts')){
+      if (page != bottonSelect.opcion5) {
+        updateNoti(1, true);
+        updateNoti(2, true);
+      }
+      if (page == bottonSelect.opcion5) {
+        updateNoti(2, true);
+      }
+    }
+
+    if(argumento['table'] != null && argumento['table'].contains('sms')){
+      if(argumento['idDoc'] != null){
+        Tarea task = await DatabaseProvider.db.getCodeIdTask(argumento['idDoc']);
+        task.updated_at = DateTime.now().toString();
+        await DatabaseProvider.db.updateTask(task);
+        bool isSend = task.user_id == myUser.id;
+
+        if(argumento['type'] == '1'){
+          List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListChat');
+          if (listTaskNew == null) {
+            listTaskNew = [];
+          }
+          List<String> listTaskNewString = [];
+          listTaskNew.forEach((element) { listTaskNewString.add(element);});
+          listTaskNewString.add(argumento['idDoc']);
+          await SharedPrefe().setStringListValue('notiListChat', listTaskNewString);
+          blocTaskReceived.inList.add(true);
+          if(task != null){
+            //ENVIADO
+            if(isSend && page != bottonSelect.opcion3){
+              updateNoti(3, true);
+            }
+            //RECIBIDO
+            if(!isSend && page != bottonSelect.opcion2){
+              updateNoti(0, true);
+            }
+          }
+        }else{
+          //ENVIADO O RECIBIDO
+          if(isSend){
+            _onTapNavigator(bottonSelect.opcion3);
             clickTarea(task);
-            _deleteDataNewFirebase(task.id.toString());
-            _deleteDataNewChat(task.id.toString());
+          }else{
+            _onTapNavigator(bottonSelect.opcion2);
+            clickTarea(task);
           }
         }
-    );
-  }
+      }
+    }
 
-  Future<void> viewNotiLocalProjects(String subTitle, String idProjects) async {
+    if(argumento['type'] == '1' &&
+        (   argumento['table']  ==  'sms' ||
+            argumento['table'] == 'tasks' ||
+            argumento['table'] == 'tasksFinalized'||
+            argumento['table'] == 'workingTask'||
+            argumento['table'] == 'updateTask'
+        )
+    ){
 
-    Image avatarUser = Image.network(avatarImage);
-    String nameUser = '';
-    int idUser = 0;
-    String nameProyects = '';
+      updateData.actualizarListaUsuarios(blocUser, blocConection);
+      updateData.actualizarListaRecibidos(blocTaskReceived, blocConection, blocVerifyFirst: blocVerifyFirst);
+      updateData.actualizarListaEnviados(blocTaskSend, blocConection);
+      updateData.actualizarCasos(blocCasos);
 
-    try{
-      var response = await conexionHttp().httpGetListGuestsForProjects();
-      var value = jsonDecode(response.body);
-      if(value['status_code'] == 200){
-        if(value['projects'] != null){
-          List listHttp = value['projects'];
-          listHttp.forEach((element) {
-            if(element['id'].toString() ==  idProjects){
-              nameProyects = element['name'];
-              idUser = element['user_id'];
-            }
-          });
+      int idOpenTask = await SharedPrefe().getValue('openTask');
+      int idTaskPush = 0;
+      if(argumento['idDoc'] != null){
+        idTaskPush = int.parse(argumento['idDoc']);
+      }
+      if(idOpenTask != idTaskPush){
+        Tarea task;
+        while(task == null){
+          task = await DatabaseProvider.db.getCodeIdTask(idTaskPush.toString());
         }
-      }
-    }catch(e){}
-
-    if(mapIdUser[idUser] != null){
-      if(mapIdUser[idUser].avatar_100 != ''){
-        avatarUser = Image.network(mapIdUser[idUser].avatar_100);
-      }
-      nameUser = mapIdUser[idUser].name;
-    }
-
-    Widget imageAvatar = Container(
-      margin: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-      padding: const EdgeInsets.all(1.5), // borde width
-      decoration: new BoxDecoration(
-        color: WalkieTaskColors.primary, // border color
-        shape: BoxShape.circle,
-      ),
-      child: CircleAvatar(
-        radius: alto * 0.025,
-        backgroundImage: avatarUser.image,
-      ),
-    );
-    Widget messageText = Container(
-      child: RichText(
-        text: TextSpan(children: [
-          TextSpan(text: subTitle, style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, fontWeight: FontWeight.bold, color: WalkieTaskColors.yellow, spacing: 0.5),),
-          TextSpan(text: nameProyects,style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, color: WalkieTaskColors.white, spacing: 0.5)),
-        ]),
-      ),
-    );
-    Widget titleText = Container(
-      child: Text(nameUser,style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.white, spacing: 0.5, fontWeight: FontWeight.bold),),
-    );
-    flushBarNotification(
-        context: context,
-        avatar: imageAvatar,
-        titleText: titleText,
-        messageText: messageText,
-        onTap: (flushbar) {}
-    );
-  }
-
-  Future<void> viewNotiLocalPersonal(String title, String subTitle, String description) async {
-
-    Image avatarUser = Image.network(avatarImage);
-    if(myUser != null){
-      if(myUser.avatar_100 != ''){
-        avatarUser = Image.network(myUser.avatar_100);
+        String subTitle = 'Nueva tarea: ';
+        String description = task.name;
+        bool isOnTap = true;
+        if(argumento['table'] == 'tasksFinalized'){
+          subTitle = 'Terminó la tarea ';
+          isOnTap = false;
+          description = '"$description"';
+        }
+        if(argumento['table'] == 'sms'){
+          subTitle = 'Chat en "${task.name}": ';
+          description = argumento['description'];
+        }
+        if(argumento['table'] == 'sms'){
+          subTitle = 'Nueva mensaje:  ';
+          description = argumento['description'];
+        }
+        if(argumento['table'] == 'workingTask'){
+          subTitle = 'Comenzó a trabajar en la tarea:  ';
+        }
+        if(argumento['table'] == 'updateTask'){
+          subTitle = 'Editó la tarea:  ';
+        }
+        viewNotiLocal(task, subTitle, description, isOnTap);
       }
     }
 
-    Widget imageAvatar = Container(
-      margin: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-      padding: const EdgeInsets.all(1.5), // borde width
-      decoration: new BoxDecoration(
-        color: WalkieTaskColors.primary, // border color
-        shape: BoxShape.circle,
-      ),
-      child: CircleAvatar(
-        radius: alto * 0.025,
-        backgroundImage: avatarUser.image,
-      ),
-    );
-    Widget titleText = Container(
-      child: Text(title,style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.white, spacing: 0.5, fontWeight: FontWeight.bold),),
-    );
-    Widget messageText = Container(
-      child: RichText(
-        text: TextSpan(children: [
-          TextSpan(text: subTitle, style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, fontWeight: FontWeight.bold, color: WalkieTaskColors.yellow, spacing: 0.5),),
-          TextSpan(text: description,style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, color: WalkieTaskColors.white, spacing: 0.5)),
-        ]),
-      ),
-    );
-    flushBarNotification(
-        context: context,
-        avatar: imageAvatar,
-        titleText: titleText,
-        messageText: messageText,
-        onTap: (flushbar) {}
-    );
+    if(argumento['type'] == '1' &&
+        (argumento['table'] == 'projects' ||
+            argumento['table'] == 'addToProject')){
+      String subTitle = 'Te agregó a un proyecto: ';
+      viewNotiLocalProjects(subTitle, argumento['idDoc']);
+    }
+
+    if(argumento['type'] == '1' &&
+        argumento['table'] == 'reminderTask') {
+      viewNotiLocalPersonal('Genial', 'Sigue así. ', 'Lo estás haciendo bien.');
+    }
+
+     */
   }
 
   Future<void> updateNoti(int index, bool value) async {
     if(index == 0){
       notiRecived = value;
-      await SharedPrefe().setBoolValue('notiRecived', value);
-      setState(() {});
     }
     if(index == 1){
       notiContacts = value;
-      await SharedPrefe().setBoolValue('notiContacts', value);
-    }
-    if(index == 2){
-      await SharedPrefe().setBoolValue('notiContacts_received', value);
     }
     if(index == 3){
       notiSend = value;
-      await SharedPrefe().setBoolValue('notiSend', value);
     }
     setState(() {});
-  }
-
-  void clickTarea(Tarea tarea) async {
-    try{
-      if(tarea.name.isEmpty){
-        var result  = await Navigator.push(context, new MaterialPageRoute(
-            builder: (BuildContext context) => new AddNameTask(tareaRes: tarea,)));
-        if(result){
-          blocTaskSend.inList.add(true);
-        }
-      }else{
-        Navigator.push(context, new MaterialPageRoute(
-            builder: (BuildContext context) =>
-            new ChatForTarea(
-              tareaRes: tarea,
-              listaCasosRes: listaCasos,
-              blocTaskSend: blocTaskSend,
-            )));
-      }
-    }catch(e){
-      print(e.toString());
-    }
   }
 
   Future<void> verifyNewTaskInvitation() async {
@@ -1341,67 +1166,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           print(res);
         }catch(_){}
       }
-    }
-  }
-
-  Future<void> _deleteDataNewFirebase(String id) async {
-    List<String> list = [];
-    try{
-      List<String> listViewTaskNew = await SharedPrefe().getValue('notiListTask') ?? [];
-      listViewTaskNew.forEach((element) {
-        if(element != id){
-          list.add(element);
-        }
-      });
-      await SharedPrefe().setStringListValue('notiListTask', list);
-      listViewTaskNew = list;
-      setState(() {});
-    }catch(e){
-      print(e.toString());
-    }
-    setState(() {});
-  }
-
-  Future<void> _deleteDataNewChat(String id) async {
-    try{
-      List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListChat');
-      if (listTaskNew == null) {
-        listTaskNew = [];
-      }
-      List<String> listTaskNewString = [];
-      listTaskNew.forEach((element) {
-        if(element != id){
-          listTaskNewString.add(element);
-        }
-      });
-      await SharedPrefe().setStringListValue('notiListChat', listTaskNewString);
-    }catch(_){}
-  }
-
-  Future<void> viewUpdateNoti() async {
-    bool inReceived = false;
-    bool inContactReceived = false;
-
-    listRecibidos.forEach((task) {
-      if(task.read == 0 && task.finalized != 1){
-        inReceived = true;
-      }
-    });
-
-    listInvitation.forEach((invitation) {
-      if(invitation.inv == 1 && invitation.read == 0){
-        inContactReceived = true;
-      }
-    });
-
-    if(inReceived){
-      notiRecived = true;
-      await SharedPrefe().setBoolValue('notiRecived', true);
-    }
-    if(inContactReceived){
-      notiContacts = true;
-      await SharedPrefe().setBoolValue('notiContacts', true);
-      await SharedPrefe().setBoolValue('notiContacts_received', true);
     }
   }
 

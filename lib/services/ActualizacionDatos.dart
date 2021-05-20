@@ -421,7 +421,11 @@ class UpdateData{
       var response = await conexionHispanos.httpMyNotifications();
       var value = jsonDecode(response.body);
       if(value['status_code'] == 200){
-        notifications = value['notifications'];
+        List noti = value['notifications'] as List;
+        noti.forEach((element) {
+          Map<String,dynamic> map = element as Map<String,dynamic>;
+          notifications.add(map);
+        });
       }
     }catch(e){
       print('getNotifications: ${e.toString()}');
