@@ -582,32 +582,6 @@ class _ChatForTareaState extends State<ChatForTarea> {
             child: IconButton(
               icon: Icon(Icons.send,color: WalkieTaskColors.color_4D9DFA,),
               onPressed: () async {
-/*
-
-                try {
-                  int idSend = 0;
-                  if (idMyUser != tarea.user_id.toString()) {
-                    idSend = tarea.user_id;
-                  } else {
-                    if (idMyUser != tarea.user_responsability_id.toString()) {
-                      idSend = tarea.user_responsability_id;
-                    }
-                  }
-                  if (idSend != 0) {
-                    Usuario userSendNoti = await DatabaseProvider.db.getCodeIdUser(idSend.toString());
-                    if (userSendNoti.fcmToken != null && userSendNoti.fcmToken.isNotEmpty) {
-                      var rese = await HttpPushNotifications().httpSendMessagero(userSendNoti.fcmToken, tarea.id.toString(), description: 'Este es el sms',);
-                      tarea.updated_at = DateTime.now().toString();
-                      await DatabaseProvider.db.updateTask(tarea);
-                      updateData.actualizarListaRecibidos(blocTaskSend, null);
-                      updateData.actualizarListaEnviados(blocTaskSend, null);
-                    }
-                  }
-                }catch(e){
-                  print(e.toString());
-                }
-*/
-
 
                 if(textChatSend.isNotEmpty){
 
@@ -627,12 +601,16 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
                   bool res = await tareaFB.agregarMensaje(chatTarea.id,chatTarea.mensajes);
                   if(res){
-                    listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+                    try{
+                      listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+                    }catch(e){
+                      print('');
+                    }
+
                     String sms = textChatSend;
                     textChatSend = '';
                     _controllerChatSms.text = '';
                     buttonSend = false;
-                    //FocusScope.of(context).requestFocus(new FocusNode());
                     setState(() {});
                     try {
                       int idSend = 0;
@@ -644,13 +622,34 @@ class _ChatForTareaState extends State<ChatForTarea> {
                         }
                       }
                       if (idSend != 0) {
-                        Usuario userSendNoti = await DatabaseProvider.db.getCodeIdUser(idSend.toString());
-                        if (userSendNoti.fcmToken != null && userSendNoti.fcmToken.isNotEmpty) {
+                        //ENVIAR NOTIFICACION PUSH
+                        try{
+                          Usuario userSendNoti = await DatabaseProvider.db.getCodeIdUser(idSend.toString());
+                          if (userSendNoti.fcmToken != null && userSendNoti.fcmToken.isNotEmpty) {
                             await HttpPushNotifications().httpSendMessagero(userSendNoti.fcmToken, tarea.id.toString(), description: sms,);
                             tarea.updated_at = DateTime.now().toString();
                             await DatabaseProvider.db.updateTask(tarea);
                             updateData.actualizarListaRecibidos(blocTaskSend, null);
                             updateData.actualizarListaEnviados(blocTaskSend, null);
+                          }
+                        }catch(e){
+                          print(e.toString());
+                        }
+                        //ENVIAR NOTIFICACION AL SERVER
+                        try{
+                          Usuario myUser = await DatabaseProvider.db.getCodeIdUser(idMyUser);
+                          Map<String,dynamic> body = {
+                            "title" : '${myUser.name} ${myUser.surname}',
+                            "message" : 'Te envío un mensaje',
+                            "alert" : "1",
+                            "user_send_id" : myUser.id.toString(),
+                            "user_receive_id" : idSend.toString(),
+                            "doc_id" : "0",
+                            "task_id" : tarea.id.toString(),
+                          };
+                          await conexionHttp().httpMyNotificationsChatSend(body);
+                        }catch(e){
+                          print(e.toString());
                         }
                       }
                     }catch(e){
@@ -661,37 +660,6 @@ class _ChatForTareaState extends State<ChatForTarea> {
               },
             ),
           )
-              // :
-          // Container(
-          //   child: Row(
-          //     children: [
-          //       Container(
-          //         height: alto * 0.03,
-          //         width: alto * 0.035,
-          //         decoration: BoxDecoration(
-          //           image: DecorationImage(
-          //             image: ViewImage().assetsImage("assets/image/Attachment.png").image,
-          //             fit: BoxFit.contain,
-          //           ),
-          //         ),
-          //       ),
-          //       //IconButton(icon: Icon(Icons.mic,color: Colors.grey,), onPressed: (){}),
-          //       SizedBox(width: ancho * 0.01,),
-          //       //IconButton(icon: Icon(Icons.camera_alt,color: Colors.grey,), onPressed: (){}),
-          //       Container(
-          //         height: alto * 0.03,
-          //         width: alto * 0.035,
-          //         decoration: BoxDecoration(
-          //           image: DecorationImage(
-          //             image: ViewImage().assetsImage("assets/image/chat_cam.png",color: Colors.black).image,
-          //             fit: BoxFit.contain,
-          //           ),
-          //         ),
-          //       ),
-          //       SizedBox(width: ancho * 0.03,),
-          //     ],
-          //   ),
-          // )
         ],
       ),
     );

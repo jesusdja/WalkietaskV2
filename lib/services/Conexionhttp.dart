@@ -918,4 +918,20 @@ class conexionHttp{
     }
     return response;
   }
+
+  Future<http.Response> httpMyNotificationsChatSend(Map<String,dynamic> body) async{
+    String token  = await obtenerToken();
+    Map<String,String> headers = {
+      'Content-Type':'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Authorization': 'Bearer $token'
+    };
+    var response;
+    try{
+      response = http.post('$enlace/api/auth/notification/savechat',headers: headers, body: body,);
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
 }
