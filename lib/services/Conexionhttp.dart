@@ -369,8 +369,6 @@ class conexionHttp{
         }
       });
 
-      print('');
-
       final streamedResponse = await request.send();
       response = await http.Response.fromStream(streamedResponse);
 
@@ -929,6 +927,22 @@ class conexionHttp{
     var response;
     try{
       response = http.post('$enlace/api/auth/notification/savechat',headers: headers, body: body,);
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
+
+  Future<http.Response> httpBinacleSaveChat(Map<String,dynamic> body) async{
+    String token  = await obtenerToken();
+    Map<String,String> headers = {
+      'Content-Type':'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Authorization': 'Bearer $token'
+    };
+    var response;
+    try{
+      response = http.post('$enlace/api/auth/binnacle/savechatinfo',headers: headers, body: body,);
     }catch(ex){
       print(ex.toString());
     }

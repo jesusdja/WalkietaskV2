@@ -166,7 +166,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
         chatTarea = chatTareaVery;
         setState(() {});
       }else{
-        String idUser = await SharedPrefe().getValue('unityIdMyUser');
+        String idUser = widget.tareaRes.user_id.toString();
 
         String idUserFrom = '';
         if(widget.tareaRes.user_id != widget.tareaRes.user_responsability_id){
@@ -477,7 +477,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
   }
 
   Widget _cardSMS(Color colorCard, String texto, String dateSrt,bool lateralDer,Usuario userFrom, bool opa){
-    Image imagenAvatar = avatarUser ?? Image.network('$avatarImage');
+    Image imagenAvatar = lateralDer ? Image.network('$avatarImage') : avatarUser ?? Image.network('$avatarImage');
     if(userFrom != null && userFrom.avatar_100 != null && userFrom.avatar_100 != ''){
       imagenAvatar = Image.network(userFrom.avatar_100);
     }
@@ -635,19 +635,13 @@ class _ChatForTareaState extends State<ChatForTarea> {
                         }catch(e){
                           print(e.toString());
                         }
-                        //ENVIAR NOTIFICACION AL SERVER
+                        //ENVIAR CHAT A BITACORA
                         try{
-                          Usuario myUser = await DatabaseProvider.db.getCodeIdUser(idMyUser);
                           Map<String,dynamic> body = {
-                            "title" : '${myUser.name} ${myUser.surname}',
-                            "message" : 'Te envío un mensaje',
-                            "alert" : "1",
-                            "user_send_id" : myUser.id.toString(),
-                            "user_receive_id" : idSend.toString(),
-                            "doc_id" : "0",
-                            "task_id" : tarea.id.toString(),
+                            "user_id" : idSend.toString(),
+                            "document_id" : tarea.id.toString(),
                           };
-                          await conexionHttp().httpMyNotificationsChatSend(body);
+                          await conexionHttp().httpBinacleSaveChat(body);
                         }catch(e){
                           print(e.toString());
                         }

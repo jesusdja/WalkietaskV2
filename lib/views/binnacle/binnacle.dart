@@ -109,14 +109,16 @@ class _BinnaclePageState extends State<BinnaclePage> {
       var response = await conexionHttp().httpBinnacle();
       var value = jsonDecode(response.body);
       if(value['status_code'] == 200){
-        List binnaclesList = value['binnacles'] ?? [];
+        List binnaclesList = value['binnacles']['data'] ?? [];
         binnaclesList.forEach((element) {
-          DateTime t = DateTime.parse(element['created_at']);
-          String day = t.day >= 10 ? '${t.day}' : '0${t.day}';
-          String month = t.month >= 10 ? '${t.month}' : '0${t.month}';
-          String f = '${t.year}-$month-$day';
-          if(binnaclesMap[f] == null){ binnaclesMap[f] = []; }
-          binnaclesMap[f].add(element);
+          if(element['type'] != 'chat'){
+            DateTime t = DateTime.parse(element['created_at']);
+            String day = t.day >= 10 ? '${t.day}' : '0${t.day}';
+            String month = t.month >= 10 ? '${t.month}' : '0${t.month}';
+            String f = '${t.year}-$month-$day';
+            if(binnaclesMap[f] == null){ binnaclesMap[f] = []; }
+            binnaclesMap[f].add(element);
+          }
         });
       }else{
         showAlert(translate(context: context, text: 'errorLoadingBinnacle') ?? '', WalkieTaskColors.color_E07676);
