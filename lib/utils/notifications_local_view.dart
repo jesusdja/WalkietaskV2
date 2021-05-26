@@ -211,3 +211,41 @@ void clickTareaNotiLocal({@required Tarea tarea, @required BuildContext context,
     print(e.toString());
   }
 }
+
+void errorUploadImage({
+  @required double ancho, @required double alto, @required BuildContext context,
+  String title = '', String subtitle = '', String sms = '',
+}){
+  Widget imageAvatar = Container(
+    margin: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+    padding: const EdgeInsets.all(1.5), // borde width
+    decoration: new BoxDecoration(
+      color: WalkieTaskColors.primary, // border color
+      shape: BoxShape.circle,
+    ),
+    child: CircleAvatar(
+      radius: alto * 0.025,
+      child: Center(
+        child: Icon(Icons.cancel_outlined),
+      ),
+    ),
+  );
+  Widget messageText = Container(
+    child: RichText(
+      text: TextSpan(children: [
+        TextSpan(text: subtitle, style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, fontWeight: FontWeight.bold, color: WalkieTaskColors.yellow, spacing: 0.5),),
+        TextSpan(text: sms,style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, color: WalkieTaskColors.white, spacing: 0.5)),
+      ]),
+    ),
+  );
+  Widget titleText = Container(
+    child: Text(title,style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.white, spacing: 0.5, fontWeight: FontWeight.bold),),
+  );
+  flushBarNotification(
+      context: context,
+      avatar: imageAvatar,
+      titleText: titleText,
+      messageText: messageText,
+      onTap: (flushbar) {}
+  );
+}

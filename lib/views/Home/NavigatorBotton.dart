@@ -25,6 +25,7 @@ import 'package:walkietaskv2/utils/DialogAlert.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/avatar_widget.dart';
 import 'package:walkietaskv2/utils/flushbar_notification.dart';
+import 'package:walkietaskv2/utils/notifications_local_view.dart';
 import 'package:walkietaskv2/utils/order_tasks.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
@@ -333,7 +334,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         titulo = translate(context: context, text: 'contacts');
         break;
     }
-    setState(() {});
   }
 
   Widget contenido(){
@@ -838,7 +838,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     validateInvitation(listInvitation);
   }
   _inicializarListNotification() async {
-    getDataNotiForServer('0');
+    //getDataNotiForServer({'type' : '0'});
   }
 
   //*******************************************
@@ -902,13 +902,17 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     try {
       // ignore: cancel_subscriptions
       streamSubscriptionProgress = blocIndicatorProgress.outList.listen((newVal) {
-        progressIndicator = double.parse('${newVal['progressIndicator']}');
-        cant = int.parse('${newVal['cant']}');
-        viewIndicatorProgress = newVal['viewIndicatorProgress'];
-        if(progressIndicator == 1.0){
-          _inicializarTaskSend();
+        if(newVal['errorSpace'] != null && newVal['errorSpace']){
+          errorUploadImage(context: context, ancho: ancho, alto: alto,sms: newVal['erroSMS']);
+        }else{
+          progressIndicator = double.parse('${newVal['progressIndicator']}');
+          cant = int.parse('${newVal['cant']}');
+          viewIndicatorProgress = newVal['viewIndicatorProgress'];
+          if(progressIndicator == 1.0){
+            _inicializarTaskSend();
+          }
+          setState(() {});
         }
-        setState(() {});
       });
     } catch (e) {}
   }
@@ -967,7 +971,169 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       try{
         int counter = await SharedPrefe().getValue('unityLogin');
         if(counter == 1){
-          getDataNotiForServer(argumento['type']);
+          if(argumento['table'] != null && (argumento['table'] == 'tasks' ||
+              argumento['table'].contains('contacts'))) {
+            bool isTask = argumento['table'].contains('tasks');
+            if (isTask) {
+              try{
+                List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListTask');
+                if (listTaskNew == null) {
+                  listTaskNew = [];
+                }
+                List<String> listTaskNewString = [];
+                listTaskNew.forEach((element) { listTaskNewString.add(element);});
+                listTaskNewString.add(argumento['idDoc']);
+                await SharedPrefe().setStringListValue('notiListTask', listTaskNewString);
+              }catch(_){}
+              updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
+              updateData.actualizarListaEnviados(blocTaskSend, blocConection);
+            }
+          }
+
+          if(argumento['table'] != null && argumento['table'].contains('contacts')){
+            updateData.actualizarListaContact(blocUser);
+            updateData.actualizarListaInvitationSent(blocInvitation, blocConection);
+            updateData.actualizarListaInvitationReceived(blocInvitation, blocConection);
+            if (page != bottonSelect.opcion5) {
+              updateNoti(1, true);
+              updateNoti(2, true);
+            }
+            if (page == bottonSelect.opcion5) {
+              updateNoti(2, true);
+            }
+          }
+
+          if(argumento['table'] != null && argumento['table'].contains('sms')){
+            if(argumento['idDoc'] != null){
+              Tarea task = await DatabaseProvider.db.getCodeIdTask(argumento['idDoc']);
+              task.updated_at = DateTime.now().toString();
+              await DatabaseProvider.db.updateTask(task);
+              bool isSend = task.user_id == myUser.id;
+
+              if(argumento['type'] == '1'){
+                List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListChat');
+                if (listTaskNew == null) {
+                  listTaskNew = [];
+                }
+                List<String> listTaskNewString = [];
+                listTaskNew.forEach((element) { listTaskNewString.add(element);});
+                listTaskNewString.add(argumento['idDoc']);
+                await SharedPrefe().setStringListValue('notiListChat', listTaskNewString);
+                blocTaskReceived.inList.add(true);
+                if(task != null){
+                  //ENVIADO
+                  if(isSend && page != bottonSelect.opcion3){
+                    updateNoti(3, true);
+                  }
+                  //RECIBIDO
+                  if(!isSend && page != bottonSelect.opcion2){
+                    updateNoti(0, true);
+                  }
+                }
+              }else{
+                //ENVIADO O RECIBIDO
+                if(isSend){
+                  _onTapNavigator(bottonSelect.opcion3);
+                }else{
+                  _onTapNavigator(bottonSelect.opcion2);
+                }
+                clickTareaNotiLocal(tarea: task,listaCasos: listaCasos,context: context, blocTaskSend: blocTaskSend);
+              }
+            }
+          }
+
+          if(argumento['type'] == '1' &&
+              (   argumento['table']  ==  'sms' ||
+                  argumento['table'] == 'tasks' ||
+                  argumento['table'] == 'tasksFinalized'||
+                  argumento['table'] == 'workingTask'||
+                  argumento['table'] == 'updateTask'
+              )
+          ){
+
+            updateData.actualizarListaUsuarios(blocUser, blocConection);
+            updateData.actualizarListaRecibidos(blocTaskReceived, blocConection, blocVerifyFirst: blocVerifyFirst);
+            updateData.actualizarListaEnviados(blocTaskSend, blocConection);
+            updateData.actualizarCasos(blocCasos);
+
+            int idOpenTask = await SharedPrefe().getValue('openTask');
+            int idTaskPush = 0;
+            if(argumento['idDoc'] != null){
+              idTaskPush = int.parse(argumento['idDoc']);
+            }
+            if(idOpenTask != idTaskPush){
+              Tarea task;
+              while(task == null){
+                task = await DatabaseProvider.db.getCodeIdTask(idTaskPush.toString());
+              }
+              String subTitle = 'Nueva tarea: ';
+              String description = task.name;
+              bool isOnTap = true;
+              if(argumento['table'] == 'tasksFinalized'){
+                subTitle = 'Terminó la tarea ';
+                isOnTap = false;
+                description = '"$description"';
+              }
+              if(argumento['table'] == 'sms'){
+                subTitle = 'Chat en "${task.name}": ';
+                description = argumento['description'];
+              }
+              if(argumento['table'] == 'sms'){
+                subTitle = 'Nueva mensaje:  ';
+                description = argumento['description'];
+              }
+              if(argumento['table'] == 'workingTask'){
+                subTitle = 'Comenzó a trabajar en la tarea:  ';
+              }
+              if(argumento['table'] == 'updateTask'){
+                subTitle = 'Editó la tarea:  ';
+              }
+              viewNotiLocal(
+                  task: task,
+                  subTitle: subTitle,
+                  sms: description,
+                  isOnTap: isOnTap,
+                  listaCasos: listaCasos,
+                  blocTaskSend: blocTaskSend,
+                  context: context,
+                  alto: alto,
+                  ancho: ancho,
+                  avatarImage: avatarImage,
+                  mapIdUser: mapIdUser,
+                  myUser: myUser
+              );
+            }
+          }
+
+          if(argumento['type'] == '1' &&
+              (argumento['table'] == 'projects' ||
+                  argumento['table'] == 'addToProject')){
+            String subTitle = 'Te agregó a un proyecto: ';
+            viewNotiLocalProjects(
+                subTitle: subTitle,
+                idProjects: argumento['idDoc'],
+                mapIdUser: mapIdUser,
+                avatarImage: avatarImage,
+                ancho: ancho,
+                alto: alto,
+                context: context
+            );
+          }
+
+          if(argumento['type'] == '1' &&
+              argumento['table'] == 'reminderTask') {
+            viewNotiLocalPersonal(
+                title: 'Genial',
+                subTitle:  'Sigue así. ',
+                description: 'Lo estás haciendo bien.',
+                context: context,
+                alto: alto,
+                ancho: ancho,
+                avatarImage: avatarImage,
+                mapIdUser: mapIdUser,
+                myUser: myUser
+            );
+          }
         }
       }catch(e){
         print(e.toString());
@@ -976,8 +1142,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     });
   }
 
-  Future<void> getDataNotiForServer(String type) async{
-    listNotifications = await  updateData.getNotifications();
+  Future<void> getDataNotiForServer(Map<String,dynamic> argumento) async{
+    //listNotifications = await  updateData.getNotifications();
 
     bool checkReceived = false;
     bool checkSend = false;
@@ -986,159 +1152,51 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       if(listNotifications[x]['type'] == 'tasks'){
         checkReceived = true;
       }
+      if(listNotifications[x]['type'] == 'contacts'){
+        checkContacts = true;
+      }
       if(checkReceived){
         x = listNotifications.length;
       }
     }
 
-    if(type == '0'){
+    if(checkReceived){ updateData.actualizarListaRecibidos(blocTaskReceived, blocConection); }
+    if(checkSend){ updateData.actualizarListaEnviados(blocTaskSend, blocConection); }
+    if(checkContacts){
+      updateData.actualizarListaContact(blocUser);
+      updateData.actualizarListaInvitationSent(blocInvitation, blocConection);
+      updateData.actualizarListaInvitationReceived(blocInvitation, blocConection);
+    }
+
+    if(argumento['type'] == '0'){
       if(checkReceived){
         updateNoti(0,true);
       }
-    }
-    if(type == '1'){
-
-    }
-    if(type == '2' || type == '3'){
-
-    }
-
-    setState(() {});
-
-
-    /*
-    if(argumento['table'] != null && (argumento['table'] == 'tasks' ||
-        argumento['table'].contains('contacts'))) {
-      bool isTask = argumento['table'].contains('tasks');
-      if (isTask) {
-        try{
-          List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListTask');
-          if (listTaskNew == null) {
-            listTaskNew = [];
-          }
-          List<String> listTaskNewString = [];
-          listTaskNew.forEach((element) { listTaskNewString.add(element);});
-          listTaskNewString.add(argumento['idDoc']);
-          await SharedPrefe().setStringListValue('notiListTask', listTaskNewString);
-        }catch(_){}
-        updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
-        updateData.actualizarListaEnviados(blocTaskSend, blocConection);
+      if(checkReceived){
+        updateNoti(1,true);
       }
-    }
-
-    if(argumento['table'] != null && argumento['table'].contains('contacts')){
-      if (page != bottonSelect.opcion5) {
-        updateNoti(1, true);
-        updateNoti(2, true);
+    }else{
+      if(checkReceived){
+        updateNoti(0,true);
       }
-      if (page == bottonSelect.opcion5) {
-        updateNoti(2, true);
-      }
-    }
-
-    if(argumento['table'] != null && argumento['table'].contains('sms')){
-      if(argumento['idDoc'] != null){
-        Tarea task = await DatabaseProvider.db.getCodeIdTask(argumento['idDoc']);
-        task.updated_at = DateTime.now().toString();
-        await DatabaseProvider.db.updateTask(task);
-        bool isSend = task.user_id == myUser.id;
-
-        if(argumento['type'] == '1'){
-          List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListChat');
-          if (listTaskNew == null) {
-            listTaskNew = [];
-          }
-          List<String> listTaskNewString = [];
-          listTaskNew.forEach((element) { listTaskNewString.add(element);});
-          listTaskNewString.add(argumento['idDoc']);
-          await SharedPrefe().setStringListValue('notiListChat', listTaskNewString);
-          blocTaskReceived.inList.add(true);
-          if(task != null){
-            //ENVIADO
-            if(isSend && page != bottonSelect.opcion3){
-              updateNoti(3, true);
-            }
-            //RECIBIDO
-            if(!isSend && page != bottonSelect.opcion2){
-              updateNoti(0, true);
-            }
-          }
-        }else{
-          //ENVIADO O RECIBIDO
-          if(isSend){
-            _onTapNavigator(bottonSelect.opcion3);
-            clickTarea(task);
-          }else{
-            _onTapNavigator(bottonSelect.opcion2);
-            clickTarea(task);
-          }
-        }
-      }
-    }
-
-    if(argumento['type'] == '1' &&
-        (   argumento['table']  ==  'sms' ||
+      if(argumento['type'] == '1'){
+        if(
+        argumento['table']  ==  'sms' ||
             argumento['table'] == 'tasks' ||
             argumento['table'] == 'tasksFinalized'||
             argumento['table'] == 'workingTask'||
             argumento['table'] == 'updateTask'
-        )
-    ){
+        ){
 
-      updateData.actualizarListaUsuarios(blocUser, blocConection);
-      updateData.actualizarListaRecibidos(blocTaskReceived, blocConection, blocVerifyFirst: blocVerifyFirst);
-      updateData.actualizarListaEnviados(blocTaskSend, blocConection);
-      updateData.actualizarCasos(blocCasos);
 
-      int idOpenTask = await SharedPrefe().getValue('openTask');
-      int idTaskPush = 0;
-      if(argumento['idDoc'] != null){
-        idTaskPush = int.parse(argumento['idDoc']);
-      }
-      if(idOpenTask != idTaskPush){
-        Tarea task;
-        while(task == null){
-          task = await DatabaseProvider.db.getCodeIdTask(idTaskPush.toString());
         }
-        String subTitle = 'Nueva tarea: ';
-        String description = task.name;
-        bool isOnTap = true;
-        if(argumento['table'] == 'tasksFinalized'){
-          subTitle = 'Terminó la tarea ';
-          isOnTap = false;
-          description = '"$description"';
+
+        if(argumento['type'] == '2' || argumento['type'] == '3'){
+
         }
-        if(argumento['table'] == 'sms'){
-          subTitle = 'Chat en "${task.name}": ';
-          description = argumento['description'];
-        }
-        if(argumento['table'] == 'sms'){
-          subTitle = 'Nueva mensaje:  ';
-          description = argumento['description'];
-        }
-        if(argumento['table'] == 'workingTask'){
-          subTitle = 'Comenzó a trabajar en la tarea:  ';
-        }
-        if(argumento['table'] == 'updateTask'){
-          subTitle = 'Editó la tarea:  ';
-        }
-        viewNotiLocal(task, subTitle, description, isOnTap);
       }
     }
-
-    if(argumento['type'] == '1' &&
-        (argumento['table'] == 'projects' ||
-            argumento['table'] == 'addToProject')){
-      String subTitle = 'Te agregó a un proyecto: ';
-      viewNotiLocalProjects(subTitle, argumento['idDoc']);
-    }
-
-    if(argumento['type'] == '1' &&
-        argumento['table'] == 'reminderTask') {
-      viewNotiLocalPersonal('Genial', 'Sigue así. ', 'Lo estás haciendo bien.');
-    }
-
-     */
+    setState(() {});
   }
 
   Future<void> updateNoti(int index, bool value) async {

@@ -375,8 +375,8 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
                     style: BorderStyle.solid,
                   ),
                   image: DecorationImage(
-                    image: ViewImage().assetsImage(_pathAdjunto, color: WalkieTaskColors.primary).image,
-                    fit: BoxFit.fitHeight,
+                    image: Image.asset(_pathAdjunto, color: WalkieTaskColors.primary).image,
+                    fit: BoxFit.fitWidth,
                   ),
                 ),
               ),

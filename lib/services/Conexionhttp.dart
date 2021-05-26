@@ -368,9 +368,6 @@ class conexionHttp{
           request.fields[key] = value;
         }
       });
-
-      print('');
-
       final streamedResponse = await request.send();
       response = await http.Response.fromStream(streamedResponse);
 

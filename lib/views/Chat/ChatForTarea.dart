@@ -477,7 +477,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
   }
 
   Widget _cardSMS(Color colorCard, String texto, String dateSrt,bool lateralDer,Usuario userFrom, bool opa){
-    Image imagenAvatar = avatarUser ?? Image.network('$avatarImage');
+    Image imagenAvatar = lateralDer ? Image.network('$avatarImage') : (avatarUser ?? Image.network('$avatarImage'));
+    //Image imagenAvatar = (avatarUser ?? Image.network('$avatarImage'));
     if(userFrom != null && userFrom.avatar_100 != null && userFrom.avatar_100 != ''){
       imagenAvatar = Image.network(userFrom.avatar_100);
     }
