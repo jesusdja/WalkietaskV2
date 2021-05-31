@@ -888,14 +888,14 @@ class conexionHttp{
     return response;
   }
 
-  Future<http.Response> httpBinnacle() async{
+  Future<http.Response> httpBinnacle(int page) async{
     String token  = await obtenerToken();
     var response;
     Map<String, String> requestHeaders = {
       'Authorization': 'Bearer $token'
     };
     try{
-      response = http.get('$enlace/api/auth/binnacle',
+      response = http.get('$enlace/api/auth/binnacle?page=$page',
           headers: requestHeaders);
     }catch(ex){
       print(ex.toString());

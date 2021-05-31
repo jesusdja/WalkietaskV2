@@ -47,8 +47,9 @@ class _BinnaclePageState extends State<BinnaclePage> {
   bool loadData = true;
 
   Map<String,List<dynamic>> binnaclesMap = {};
+  Map<String,List<dynamic>> binnaclesMapAux = {};
 
-  List<Map<String,dynamic>> listChat = [];
+
 
   Map<int,String> dateMapEs = {
     1 : 'enero',
@@ -85,12 +86,14 @@ class _BinnaclePageState extends State<BinnaclePage> {
   CollectionReference taskCollection = FirebaseFirestore.instance.collection('Tareas');
   ChatTareaFirebase chatTaskData = ChatTareaFirebase();
 
+  int page = 1;
+  int pageLast = 0;
+
   @override
   void initState() {
     super.initState();
     myUser = widget.myUser;
     initData();
-    initDataBinnacle();
   }
 
   Future<void> initData() async {
@@ -102,22 +105,30 @@ class _BinnaclePageState extends State<BinnaclePage> {
       }
     }
     setState(() {});
+    initDataBinnacle();
   }
 
   Future<void> initDataBinnacle() async {
+    binnaclesMap = {};
+    binnaclesMapAux.forEach((key, value) {
+      binnaclesMap[key] = value;
+    });
     try{
-      var response = await conexionHttp().httpBinnacle();
+      var response = await conexionHttp().httpBinnacle(page);
       var value = jsonDecode(response.body);
       if(value['status_code'] == 200){
         List binnaclesList = value['binnacles']['data'] ?? [];
+        page++;
+        pageLast = value['binnacles']['last_page'];
         binnaclesList.forEach((element) {
           if(element['type'] != 'chat'){
             DateTime t = DateTime.parse(element['created_at']);
             String day = t.day >= 10 ? '${t.day}' : '0${t.day}';
             String month = t.month >= 10 ? '${t.month}' : '0${t.month}';
             String f = '${t.year}-$month-$day';
-            if(binnaclesMap[f] == null){ binnaclesMap[f] = []; }
+            if(binnaclesMap[f] == null){ binnaclesMap[f] = []; binnaclesMapAux[f] = []; }
             binnaclesMap[f].add(element);
+            binnaclesMapAux[f].add(element);
           }
         });
       }else{
@@ -128,40 +139,52 @@ class _BinnaclePageState extends State<BinnaclePage> {
       showAlert(translate(context: context, text: 'errorLoadingBinnacle') ?? '', WalkieTaskColors.color_E07676);
     }
 
-    //CARGAR DATA FIREBASE
-    try{
-      List<ChatTareas> listChatToUser = await chatTaskData.getChatForUser(myUser.id.toString());
-      List<ChatTareas> listChatFromUSer = await chatTaskData.getChatForUserFrom(myUser.id.toString());
-
-      listChatToUser.forEach((element) {
-        element.mensajes.forEach((key,value){
-          String type = 'toUser';
-          if(value['from'] != widget.myUser.id.toString()){ type = 'fromUser'; }
-          listChat.add( { 'id' : element.id, 'category' : 'chat', 'type' : type, 'idTarea' : element.idTarea, 'created_at' : '${value['fecha']} ${value['hora']}', 'info' : value , 'task' : element.task, 'userFrom' : element.userFrom} );
-        });
-      });
-
-      listChatFromUSer.forEach((element) {
-        element.mensajes.forEach((key,value){
-          String type = 'toUser';
-          if(value['from'] != widget.myUser.id.toString()){ type = 'fromUser'; }
-          listChat.add( { 'id' : element.id, 'category' : 'chat', 'type' : type, 'idTarea' : element.idTarea, 'created_at' : '${value['fecha']} ${value['hora']}', 'info' : value, 'task' : element.task, 'userFrom' : element.userFrom } );
-        });
-      });
-
-      listChat.forEach((elementChat) {
-        DateTime t = DateTime.parse(elementChat['created_at']);
-        String day = t.day >= 10 ? '${t.day}' : '0${t.day}';
-        String month = t.month >= 10 ? '${t.month}' : '0${t.month}';
-        String f = '${t.year}-$month-$day';
-        if(binnaclesMap[f] == null){ binnaclesMap[f] = []; }
-        binnaclesMap[f].add(elementChat);
-      });
-
-    }catch(e){
-      print(e.toString());
-      showAlert(translate(context: context, text: 'errorSendingInformation') ?? '', WalkieTaskColors.color_E07676);
-    }
+    // //CARGAR DATA FIREBASE
+    // try{
+    //   List<ChatTareas> listChatToUser = await chatTaskData.getChatForUser(myUser.id.toString());
+    //   List<ChatTareas> listChatFromUSer = await chatTaskData.getChatForUserFrom(myUser.id.toString());
+    //
+    //   List<Map<String,dynamic>> listChat = [];
+    //   DateTime dateLast = DateTime.now();
+    //   binnaclesMap.forEach((key, value) {
+    //     if(DateTime.parse(key).isBefore(dateLast)){
+    //       dateLast = DateTime.parse(key);
+    //     }
+    //   });
+    //
+    //   listChatToUser.forEach((element) {
+    //     element.mensajes.forEach((key,value){
+    //       if(DateTime.parse('${value['fecha']} ${value['hora']}').isAfter(dateLast)){
+    //         String type = 'toUser';
+    //         if(value['from'] != widget.myUser.id.toString()){ type = 'fromUser'; }
+    //         listChat.add( { 'id' : element.id, 'category' : 'chat', 'type' : type, 'idTarea' : element.idTarea, 'created_at' : '${value['fecha']} ${value['hora']}', 'info' : value , 'task' : element.task, 'userFrom' : element.userFrom} );
+    //       }
+    //     });
+    //   });
+    //
+    //   listChatFromUSer.forEach((element) {
+    //     element.mensajes.forEach((key,value){
+    //       if(DateTime.parse('${value['fecha']} ${value['hora']}').isAfter(dateLast)){
+    //         String type = 'toUser';
+    //         if(value['from'] != widget.myUser.id.toString()){ type = 'fromUser'; }
+    //         listChat.add( { 'id' : element.id, 'category' : 'chat', 'type' : type, 'idTarea' : element.idTarea, 'created_at' : '${value['fecha']} ${value['hora']}', 'info' : value, 'task' : element.task, 'userFrom' : element.userFrom } );
+    //       }
+    //     });
+    //   });
+    //
+    //   listChat.forEach((elementChat) {
+    //     DateTime t = DateTime.parse(elementChat['created_at']);
+    //     String day = t.day >= 10 ? '${t.day}' : '0${t.day}';
+    //     String month = t.month >= 10 ? '${t.month}' : '0${t.month}';
+    //     String f = '${t.year}-$month-$day';
+    //     if(binnaclesMap[f] == null){ binnaclesMap[f] = []; }
+    //     binnaclesMap[f].add(elementChat);
+    //   });
+    //
+    // }catch(e){
+    //   print(e.toString());
+    //   showAlert(translate(context: context, text: 'errorSendingInformation') ?? '', WalkieTaskColors.color_E07676);
+    // }
 
 
     //ORDENAR LAS LISTAS POR FECHA
@@ -196,6 +219,10 @@ class _BinnaclePageState extends State<BinnaclePage> {
     loadData = false;
     if(mounted){
       setState(() {});
+    }
+
+    if(page <= pageLast){
+      initDataBinnacle();
     }
   }
 
