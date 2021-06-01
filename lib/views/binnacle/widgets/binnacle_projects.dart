@@ -145,7 +145,7 @@ class _BinnacleProjectsState extends State<BinnacleProjects> {
     bool isProperty = false;
 
     String projectName = translate(context: context, text: 'noName');
-    if(widget.info['info'] != null && widget.info['info']['projects']['name'] != null ){
+    if(widget.info['info'] != null && widget.info['info']['projects'] != null && widget.info['info']['projects']['name'] != null ){
       projectName = widget.info['info']['projects']['name'];
     }
 
@@ -195,7 +195,7 @@ class _BinnacleProjectsState extends State<BinnacleProjects> {
     bool isProperty = false;
 
     String projectName = translate(context: context, text: 'noName');
-    if(widget.info['info'] != null && widget.info['info']['projects']['name'] != null ){
+    if(widget.info['info'] != null && widget.info['info']['projects'] != null && widget.info['info']['projects']['name'] != null ){
       projectName = widget.info['info']['projects']['name'];
     }
 

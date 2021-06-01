@@ -640,6 +640,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                           Map<String,dynamic> body = {
                             "user_id" : idSend.toString(),
                             "document_id" : tarea.id.toString(),
+                            "message" : sms,
                           };
                           await conexionHttp().httpBinacleSaveChat(body);
                         }catch(e){

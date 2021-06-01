@@ -47,7 +47,6 @@ class _BinnaclePageState extends State<BinnaclePage> {
   bool loadData = true;
 
   Map<String,List<dynamic>> binnaclesMap = {};
-  Map<String,List<dynamic>> binnaclesMapAux = {};
 
 
 
@@ -109,10 +108,6 @@ class _BinnaclePageState extends State<BinnaclePage> {
   }
 
   Future<void> initDataBinnacle() async {
-    binnaclesMap = {};
-    binnaclesMapAux.forEach((key, value) {
-      binnaclesMap[key] = value;
-    });
     try{
       var response = await conexionHttp().httpBinnacle(page);
       var value = jsonDecode(response.body);
@@ -120,17 +115,46 @@ class _BinnaclePageState extends State<BinnaclePage> {
         List binnaclesList = value['binnacles']['data'] ?? [];
         page++;
         pageLast = value['binnacles']['last_page'];
-        binnaclesList.forEach((element) {
-          if(element['type'] != 'chat'){
+        for(int x = 0; x < binnaclesList.length; x++){
+          Map<String,dynamic> element = binnaclesList[x];
+          if(element['category'] != 'chat'){
             DateTime t = DateTime.parse(element['created_at']);
             String day = t.day >= 10 ? '${t.day}' : '0${t.day}';
             String month = t.month >= 10 ? '${t.month}' : '0${t.month}';
             String f = '${t.year}-$month-$day';
-            if(binnaclesMap[f] == null){ binnaclesMap[f] = []; binnaclesMapAux[f] = []; }
+            if(binnaclesMap[f] == null){ binnaclesMap[f] = []; }
             binnaclesMap[f].add(element);
-            binnaclesMapAux[f].add(element);
+          }else{
+            String type = 'toUser';
+            if(element['user_action_id'] != widget.myUser.id.toString()){ type = 'fromUser'; }
+            Map<String,dynamic> listChat = {};
+            DateTime t = DateTime.parse(element['created_at']);
+            String day = t.day >= 10 ? '${t.day}' : '0${t.day}';
+            String month = t.month >= 10 ? '${t.month}' : '0${t.month}';
+            String f = '${t.year}-$month-$day';
+
+            Tarea taskSms = await DatabaseProvider.db.getCodeIdTask(element['document_id'].toString());
+
+            listChat = {
+              'id' : element['id'],
+              'category' : 'chat',
+              'type' : type,
+              'idTarea' : element['document_id'],
+              'created_at' : element['created_at'],
+              'info' : {
+                'fecha': f,
+                'hora': '${t.hour}:${t.minute}',
+                'from': element['usernotification']['id'],
+                'texto': element['message'] ?? 'NO DANA',
+              },
+              'task' : taskSms.toMap(),
+              'userFrom' : element['usernotification']
+            } ;
+
+            if(binnaclesMap[f] == null){ binnaclesMap[f] = []; }
+            binnaclesMap[f].add(listChat);
           }
-        });
+        }
       }else{
         showAlert(translate(context: context, text: 'errorLoadingBinnacle') ?? '', WalkieTaskColors.color_E07676);
       }
@@ -199,9 +223,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
           int pos = 0;
           String dateMore = listElementForDay2[0]['created_at'];
           for(int x = 0; x < listElementForDay2.length; x++){
-            Duration diff1 = DateTime.parse(dateMore).difference(DateTime.now());
-            Duration diff2 = DateTime.parse(listElementForDay2[x]['created_at']).difference(DateTime.now());
-            if(diff2 > diff1){
+            if(DateTime.parse(listElementForDay2[x]['created_at']).isAfter(DateTime.parse(dateMore))){
               dateMore = listElementForDay2[x]['created_at'];
               pos = x;
             }

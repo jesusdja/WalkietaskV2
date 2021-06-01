@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/App.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
@@ -22,13 +23,15 @@ import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/DialogAlert.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/avatar_widget.dart';
-import 'package:walkietaskv2/utils/notifications_local_view.dart';
+import 'package:walkietaskv2/utils/flushbar_notification.dart';
 import 'package:walkietaskv2/utils/order_tasks.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/utils/finish_app.dart';
+import 'package:walkietaskv2/views/Chat/ChatForTarea.dart';
 import 'package:walkietaskv2/views/Home/about.dart';
+import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
 import 'package:walkietaskv2/views/Tareas/Create/crear_tarea.dart';
 import 'package:walkietaskv2/views/Tareas/ListadoTareasRecibidas.dart';
 import 'package:walkietaskv2/views/Tareas/ListadoTareasEnviadas.dart';
@@ -64,7 +67,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   List<Usuario> listaUser;
   List<Caso> listaCasos;
   List<InvitationModel> listInvitation;
-  List<Map<String,dynamic>> listNotifications;
   List<dynamic> listDocuments= [];
 
   BlocUser blocUser;
@@ -166,15 +168,11 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     _notificationListener();
 
     uploadData();
-
-    //Wakelock.enable();
   }
 
   @override
   void dispose() {
     super.dispose();
-
-    //Wakelock.disable();
 
     try{
       streamSubscriptionUser?.cancel();
@@ -258,9 +256,22 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         await Future.delayed(Duration(seconds: 3));
       }
     }
+
+    refreshListNoti();
+
     getPhoto();
 
     setState(() {});
+  }
+
+  void refreshListNoti() async{
+    try{
+      notiRecived = await SharedPrefe().getValue('notiRecived') ?? false;
+      notiContacts = await SharedPrefe().getValue('notiContacts') ?? false;
+      notiSend = await SharedPrefe().getValue('notiSend') ?? false;
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Future<void> getPhoto() async {
@@ -281,6 +292,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     translateTitle(context);
 
     reconection();
+
+    viewUpdateNoti();
 
     return WillPopScope(
       onWillPop: exit,
@@ -777,8 +790,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       ),
     ) :
     PreferredSize(
-      preferredSize: Size.fromHeight(0),
-      child: Container()
+        preferredSize: Size.fromHeight(0),
+        child: Container()
     );
   }
 
@@ -885,6 +898,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         if(newVal){
           _inicializarTaskRecived();
         }else{
+          //updateNoti(0, false);
           setState(() {});
         }
       });
@@ -1019,10 +1033,10 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                 //ENVIADO O RECIBIDO
                 if(isSend){
                   _onTapNavigator(bottonSelect.opcion3);
-                  clickTareaNotiLocal(context: context, blocTaskSend: blocTaskSend, listaCasos: listaCasos, tarea: task);
+                  clickTarea(task);
                 }else{
                   _onTapNavigator(bottonSelect.opcion2);
-                  clickTareaNotiLocal(context: context, blocTaskSend: blocTaskSend, listaCasos: listaCasos, tarea: task);
+                  clickTarea(task);
                 }
               }
             }
@@ -1074,20 +1088,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
               if(argumento['table'] == 'updateTask'){
                 subTitle = 'Editó la tarea:  ';
               }
-              viewNotiLocal(
-                listaCasos: listaCasos,
-                blocTaskSend: blocTaskSend,
-                context: context,
-                sms: description,
-                alto: alto,
-                ancho: ancho,
-                myUser: myUser,
-                mapIdUser: mapIdUser,
-                avatarImage: avatarImage,
-                subTitle: subTitle,
-                isOnTap: isOnTap,
-                task: task
-              );
+              viewNotiLocal(task, subTitle, description, isOnTap);
             }
           }
 
@@ -1095,30 +1096,12 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
               (argumento['table'] == 'projects' ||
                   argumento['table'] == 'addToProject')){
             String subTitle = 'Te agregó a un proyecto: ';
-            viewNotiLocalProjects(
-              subTitle: subTitle,
-              avatarImage: avatarImage,
-              mapIdUser: mapIdUser,
-              ancho: ancho,
-              alto: alto,
-              context: context,
-              idProjects: argumento['idDoc']
-            );
+            viewNotiLocalProjects(subTitle, argumento['idDoc']);
           }
 
           if(argumento['type'] == '1' &&
               argumento['table'] == 'reminderTask') {
-            viewNotiLocalPersonal(
-              context: context,
-              alto: alto,
-              ancho: ancho,
-              mapIdUser: mapIdUser,
-              avatarImage: avatarImage,
-              subTitle: 'Sigue así. ',
-              title: 'Genial',
-              myUser: myUser,
-              description: 'Lo estás haciendo bien.'
-            );
+            viewNotiLocalPersonal('Genial', 'Sigue así. ', 'Lo estás haciendo bien.');
           }
         }
       }catch(e){
@@ -1128,21 +1111,230 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     });
   }
 
+  void viewNotiLocal(Tarea task, String subTitle, String sms, bool isOnTap){
+    bool isRecived = true;
+    if(myUser.id == task.user_id){
+      isRecived = false;
+    }
+
+    Image avatarUser = Image.network(avatarImage);
+    String nameUser = '';
+    if(isRecived){
+      if(mapIdUser[task.user_id] != null){
+        if(mapIdUser[task.user_id].avatar_100 != ''){
+          avatarUser = Image.network(mapIdUser[task.user_id].avatar_100);
+        }
+        nameUser = mapIdUser[task.user_id].name;
+      }
+    }else{
+      if(mapIdUser[task.user_responsability_id] != null){
+        if(mapIdUser[task.user_responsability_id].avatar_100 != ''){
+          avatarUser = Image.network(mapIdUser[task.user_responsability_id].avatar_100);
+        }
+        nameUser = mapIdUser[task.user_responsability_id].name;
+      }
+    }
+
+    Widget imageAvatar = Container(
+      margin: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+      padding: const EdgeInsets.all(1.5), // borde width
+      decoration: new BoxDecoration(
+        color: WalkieTaskColors.primary, // border color
+        shape: BoxShape.circle,
+      ),
+      child: CircleAvatar(
+        radius: alto * 0.025,
+        backgroundImage: avatarUser.image,
+      ),
+    );
+    Widget messageText = Container(
+      child: RichText(
+        text: TextSpan(children: [
+          TextSpan(text: subTitle, style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, fontWeight: FontWeight.bold, color: WalkieTaskColors.yellow, spacing: 0.5),),
+          TextSpan(text: sms,style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, color: WalkieTaskColors.white, spacing: 0.5)),
+        ]),
+      ),
+    );
+    Widget titleText = Container(
+      child: Text(nameUser,style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.white, spacing: 0.5, fontWeight: FontWeight.bold),),
+    );
+    flushBarNotification(
+        context: context,
+        avatar: imageAvatar,
+        titleText: titleText,
+        messageText: messageText,
+        onTap: (flushbar) {
+          if(isOnTap){
+            clickTarea(task);
+            _deleteDataNewFirebase(task.id.toString());
+            _deleteDataNewChat(task.id.toString());
+          }
+        }
+    );
+  }
+
+  Future<void> viewNotiLocalProjects(String subTitle, String idProjects) async {
+
+    Image avatarUser = Image.network(avatarImage);
+    String nameUser = '';
+    int idUser = 0;
+    String nameProyects = '';
+
+    try{
+      var response = await conexionHttp().httpGetListGuestsForProjects();
+      var value = jsonDecode(response.body);
+      if(value['status_code'] == 200){
+        if(value['projects'] != null){
+          List listHttp = value['projects'];
+          listHttp.forEach((element) {
+            if(element['id'].toString() ==  idProjects){
+              nameProyects = element['name'];
+              idUser = element['user_id'];
+            }
+          });
+        }
+      }
+    }catch(e){}
+
+    if(mapIdUser[idUser] != null){
+      if(mapIdUser[idUser].avatar_100 != ''){
+        avatarUser = Image.network(mapIdUser[idUser].avatar_100);
+      }
+      nameUser = mapIdUser[idUser].name;
+    }
+
+    Widget imageAvatar = Container(
+      margin: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+      padding: const EdgeInsets.all(1.5), // borde width
+      decoration: new BoxDecoration(
+        color: WalkieTaskColors.primary, // border color
+        shape: BoxShape.circle,
+      ),
+      child: CircleAvatar(
+        radius: alto * 0.025,
+        backgroundImage: avatarUser.image,
+      ),
+    );
+    Widget messageText = Container(
+      child: RichText(
+        text: TextSpan(children: [
+          TextSpan(text: subTitle, style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, fontWeight: FontWeight.bold, color: WalkieTaskColors.yellow, spacing: 0.5),),
+          TextSpan(text: nameProyects,style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, color: WalkieTaskColors.white, spacing: 0.5)),
+        ]),
+      ),
+    );
+    Widget titleText = Container(
+      child: Text(nameUser,style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.white, spacing: 0.5, fontWeight: FontWeight.bold),),
+    );
+    flushBarNotification(
+        context: context,
+        avatar: imageAvatar,
+        titleText: titleText,
+        messageText: messageText,
+        onTap: (flushbar) {}
+    );
+  }
+
+  Future<void> viewNotiLocalPersonal(String title, String subTitle, String description) async {
+
+    Image avatarUser = Image.network(avatarImage);
+    if(myUser != null){
+      if(myUser.avatar_100 != ''){
+        avatarUser = Image.network(myUser.avatar_100);
+      }
+    }
+
+    Widget imageAvatar = Container(
+      margin: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+      padding: const EdgeInsets.all(1.5), // borde width
+      decoration: new BoxDecoration(
+        color: WalkieTaskColors.primary, // border color
+        shape: BoxShape.circle,
+      ),
+      child: CircleAvatar(
+        radius: alto * 0.025,
+        backgroundImage: avatarUser.image,
+      ),
+    );
+    Widget titleText = Container(
+      child: Text(title,style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.white, spacing: 0.5, fontWeight: FontWeight.bold),),
+    );
+    Widget messageText = Container(
+      child: RichText(
+        text: TextSpan(children: [
+          TextSpan(text: subTitle, style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, fontWeight: FontWeight.bold, color: WalkieTaskColors.yellow, spacing: 0.5),),
+          TextSpan(text: description,style: WalkieTaskStyles().stylePrimary(size: alto * 0.018, color: WalkieTaskColors.white, spacing: 0.5)),
+        ]),
+      ),
+    );
+    flushBarNotification(
+        context: context,
+        avatar: imageAvatar,
+        titleText: titleText,
+        messageText: messageText,
+        onTap: (flushbar) {}
+    );
+  }
+
   Future<void> updateNoti(int index, bool value) async {
     if(index == 0){
       notiRecived = value;
+      await SharedPrefe().setBoolValue('notiRecived', value);
+      setState(() {});
     }
     if(index == 1){
       notiContacts = value;
+      await SharedPrefe().setBoolValue('notiContacts', value);
+    }
+    if(index == 2){
+      await SharedPrefe().setBoolValue('notiContacts_received', value);
     }
     if(index == 3){
       notiSend = value;
+      await SharedPrefe().setBoolValue('notiSend', value);
     }
     setState(() {});
   }
 
+  void clickTarea(Tarea tarea) async {
+    try{
+      if(tarea.name.isEmpty){
+        var result  = await Navigator.push(context, new MaterialPageRoute(
+            builder: (BuildContext context) => new AddNameTask(tareaRes: tarea,)));
+        if(result){
+          blocTaskSend.inList.add(true);
+        }
+      }else{
+        Navigator.push(context, new MaterialPageRoute(
+            builder: (BuildContext context) =>
+            new ChatForTarea(
+              tareaRes: tarea,
+              listaCasosRes: listaCasos,
+              blocTaskSend: blocTaskSend,
+            )));
+      }
+    }catch(e){
+      print(e.toString());
+    }
+  }
+
   Future<void> verifyNewTaskInvitation() async {
     setState(() {});
+    // int first = await SharedPrefe().getValue('first');
+    // if(first == null || first == 0){
+    //   await SharedPrefe().setIntValue('first', 1);
+    //   //TAREAS
+    //   List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListTask') ?? [];
+    //   if(listTaskNew.isNotEmpty){
+    //     updateNoti(0, true);
+    //   }
+    //   //INVITACIONES
+    //   bool yesVery = await SharedPrefe().getValue('notiContacts') ?? false;
+    //   if(yesVery){
+    //     updateNoti(1, true);
+    //     updateNoti(2, true);
+    //   }
+    // }
   }
 
   validateInvitation(List<InvitationModel> list) async {
@@ -1153,6 +1345,67 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           print(res);
         }catch(_){}
       }
+    }
+  }
+
+  Future<void> _deleteDataNewFirebase(String id) async {
+    List<String> list = [];
+    try{
+      List<String> listViewTaskNew = await SharedPrefe().getValue('notiListTask') ?? [];
+      listViewTaskNew.forEach((element) {
+        if(element != id){
+          list.add(element);
+        }
+      });
+      await SharedPrefe().setStringListValue('notiListTask', list);
+      listViewTaskNew = list;
+      setState(() {});
+    }catch(e){
+      print(e.toString());
+    }
+    setState(() {});
+  }
+
+  Future<void> _deleteDataNewChat(String id) async {
+    try{
+      List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListChat');
+      if (listTaskNew == null) {
+        listTaskNew = [];
+      }
+      List<String> listTaskNewString = [];
+      listTaskNew.forEach((element) {
+        if(element != id){
+          listTaskNewString.add(element);
+        }
+      });
+      await SharedPrefe().setStringListValue('notiListChat', listTaskNewString);
+    }catch(_){}
+  }
+
+  Future<void> viewUpdateNoti() async {
+    bool inReceived = false;
+    bool inContactReceived = false;
+
+    listRecibidos.forEach((task) {
+      if(task.read == 0 && task.finalized != 1){
+        inReceived = true;
+      }
+    });
+
+    listInvitation.forEach((invitation) {
+      if(invitation.inv == 1 && invitation.read == 0){
+        inContactReceived = true;
+      }
+    });
+
+    if(inReceived){
+      notiRecived = true;
+      await SharedPrefe().setBoolValue('notiRecived', true);
+    }
+    if(inContactReceived){
+      notiContacts = true;
+      await SharedPrefe().setBoolValue('notiContacts', true);
+      await SharedPrefe().setBoolValue('notiContacts_received', true);
     }
   }
 

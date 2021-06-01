@@ -27,8 +27,7 @@ class _AppState extends State<App>{
   @override
   Widget build(BuildContext context) {
 
-    var appLanguage = Provider.of<LanguageProvider>(context);
-    appLanguage.fetchLocale();
+
 
     return provider.ChangeNotifierProvider(
       create: (_) => AuthService.instance(),
