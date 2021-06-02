@@ -410,9 +410,11 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
               bool isChatExito = false;
               if(widget.isChat != null && widget.isChat){
+                print('');
                 if(chatTarea.mensajes['$pos']['texto'] == widget.chat['info']['texto'] &&
-                    chatTarea.mensajes['$pos']['fecha'] == widget.chat['info']['fecha'] &&
-                    chatTarea.mensajes['$pos']['hora'] == widget.chat['info']['hora']){
+                    chatTarea.mensajes['$pos']['fecha'] == widget.chat['info']['fecha']
+                    && chatTarea.mensajes['$pos']['hora'] == widget.chat['info']['hora']
+                ){
                   isChatExito = true;
                 }
               }
@@ -641,6 +643,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                             "user_id" : idSend.toString(),
                             "document_id" : tarea.id.toString(),
                             "message" : sms,
+                            'type' : 'smstask'
                           };
                           await conexionHttp().httpBinacleSaveChat(body);
                         }catch(e){

@@ -117,6 +117,9 @@ class _BinnaclePageState extends State<BinnaclePage> {
         pageLast = value['binnacles']['last_page'];
         for(int x = 0; x < binnaclesList.length; x++){
           Map<String,dynamic> element = binnaclesList[x];
+
+          print(element['category']);
+
           if(element['category'] != 'chat'){
             DateTime t = DateTime.parse(element['created_at']);
             String day = t.day >= 10 ? '${t.day}' : '0${t.day}';
@@ -124,9 +127,12 @@ class _BinnaclePageState extends State<BinnaclePage> {
             String f = '${t.year}-$month-$day';
             if(binnaclesMap[f] == null){ binnaclesMap[f] = []; }
             binnaclesMap[f].add(element);
-          }else{
+          }
+
+          if(element['category'] == 'chat'){
             String type = 'toUser';
-            if(element['user_action_id'] != widget.myUser.id.toString()){ type = 'fromUser'; }
+            if(element['user_action_id'].toString() != widget.myUser.id.toString()){ type = 'fromUser'; }
+
             Map<String,dynamic> listChat = {};
             DateTime t = DateTime.parse(element['created_at']);
             String day = t.day >= 10 ? '${t.day}' : '0${t.day}';
@@ -145,7 +151,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
                 'fecha': f,
                 'hora': '${t.hour}:${t.minute}',
                 'from': element['usernotification']['id'],
-                'texto': element['message'] ?? 'NO DANA',
+                'texto': element['message'] ?? '',
               },
               'task' : taskSms.toMap(),
               'userFrom' : element['usernotification']
@@ -162,53 +168,6 @@ class _BinnaclePageState extends State<BinnaclePage> {
       print(e.toString());
       showAlert(translate(context: context, text: 'errorLoadingBinnacle') ?? '', WalkieTaskColors.color_E07676);
     }
-
-    // //CARGAR DATA FIREBASE
-    // try{
-    //   List<ChatTareas> listChatToUser = await chatTaskData.getChatForUser(myUser.id.toString());
-    //   List<ChatTareas> listChatFromUSer = await chatTaskData.getChatForUserFrom(myUser.id.toString());
-    //
-    //   List<Map<String,dynamic>> listChat = [];
-    //   DateTime dateLast = DateTime.now();
-    //   binnaclesMap.forEach((key, value) {
-    //     if(DateTime.parse(key).isBefore(dateLast)){
-    //       dateLast = DateTime.parse(key);
-    //     }
-    //   });
-    //
-    //   listChatToUser.forEach((element) {
-    //     element.mensajes.forEach((key,value){
-    //       if(DateTime.parse('${value['fecha']} ${value['hora']}').isAfter(dateLast)){
-    //         String type = 'toUser';
-    //         if(value['from'] != widget.myUser.id.toString()){ type = 'fromUser'; }
-    //         listChat.add( { 'id' : element.id, 'category' : 'chat', 'type' : type, 'idTarea' : element.idTarea, 'created_at' : '${value['fecha']} ${value['hora']}', 'info' : value , 'task' : element.task, 'userFrom' : element.userFrom} );
-    //       }
-    //     });
-    //   });
-    //
-    //   listChatFromUSer.forEach((element) {
-    //     element.mensajes.forEach((key,value){
-    //       if(DateTime.parse('${value['fecha']} ${value['hora']}').isAfter(dateLast)){
-    //         String type = 'toUser';
-    //         if(value['from'] != widget.myUser.id.toString()){ type = 'fromUser'; }
-    //         listChat.add( { 'id' : element.id, 'category' : 'chat', 'type' : type, 'idTarea' : element.idTarea, 'created_at' : '${value['fecha']} ${value['hora']}', 'info' : value, 'task' : element.task, 'userFrom' : element.userFrom } );
-    //       }
-    //     });
-    //   });
-    //
-    //   listChat.forEach((elementChat) {
-    //     DateTime t = DateTime.parse(elementChat['created_at']);
-    //     String day = t.day >= 10 ? '${t.day}' : '0${t.day}';
-    //     String month = t.month >= 10 ? '${t.month}' : '0${t.month}';
-    //     String f = '${t.year}-$month-$day';
-    //     if(binnaclesMap[f] == null){ binnaclesMap[f] = []; }
-    //     binnaclesMap[f].add(elementChat);
-    //   });
-    //
-    // }catch(e){
-    //   print(e.toString());
-    //   showAlert(translate(context: context, text: 'errorSendingInformation') ?? '', WalkieTaskColors.color_E07676);
-    // }
 
 
     //ORDENAR LAS LISTAS POR FECHA
@@ -472,6 +431,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
     if(data['category'] == 'chat'){
       element = InkWell(
         onTap: (){
+          print('');
           if(data['task'] != null){
             clickTask(Tarea.fromMap(data['task']), true, data);
           }
