@@ -115,9 +115,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
     inicializarUser();
     inicializar();
     _inicializarPatronBlocTaskSend();
-    if(isChat){
-      goToSms();
-    }
+
   }
 
   @override
@@ -186,9 +184,14 @@ class _ChatForTareaState extends State<ChatForTarea> {
         if(chatTareaNew != null){
           chatTarea = chatTareaNew;
           setState(() {});
+
         }else{
           print('NO CREADO');
         }
+      }
+
+      if(isChat){
+        goToSms(chatTarea.mensajes);
       }
     }catch(_){}
   }
@@ -410,7 +413,6 @@ class _ChatForTareaState extends State<ChatForTarea> {
 
               bool isChatExito = false;
               if(widget.isChat != null && widget.isChat){
-                print('');
                 if(chatTarea.mensajes['$pos']['texto'] == widget.chat['info']['texto'] &&
                     chatTarea.mensajes['$pos']['fecha'] == widget.chat['info']['fecha']
                     && chatTarea.mensajes['$pos']['hora'] == widget.chat['info']['hora']
@@ -418,8 +420,6 @@ class _ChatForTareaState extends State<ChatForTarea> {
                   isChatExito = true;
                 }
               }
-
-
               return isChatExito ?
              Stack(
                children: [
@@ -444,29 +444,27 @@ class _ChatForTareaState extends State<ChatForTarea> {
     );
   }
 
-  Future<void> goToSms() async {
+  Future<void> goToSms(Map<String,dynamic> listChat) async {
     try{
-      await Future.delayed(Duration(seconds: 2));
-      List<ChatTareas> listChat = [];
-      var result =  await tareasColeccion.where('idTarea',isEqualTo: tarea.id.toString()).get();
-      listChat = result.docs.map((e) => ChatTareas.fromMap(e.data())).toList();
-      int pos = 0; int pos2 = 1;
-      listChat[0].mensajes.forEach((key, value) {
-        if(value['texto'] == widget.chat['info']['texto'] && value['fecha'] == widget.chat['info']['fecha'] && value['hora'] == widget.chat['info']['hora']){
-          pos =   pos2;
-        }else{
-          pos2++;
-        }
-      });
-      int sum = 0; int sumT = 0;
-      for(int x = listChat[0].mensajes.length; x > 0; x = x - 5){
-        if(x >= pos && pos >= (x - 5)){
-          sumT = sum; x = 0;
-        }else{
-          sum = sum + 5;
-        }
+    await Future.delayed(Duration(seconds: 3));
+    int pos = 0; int pos2 = 1;
+    for(int x = listChat.length - 1; x >= 0; x--){
+      if(listChat['$x']['texto'] == widget.chat['info']['texto'] && listChat['$x']['fecha'] == widget.chat['info']['fecha'] && listChat['$x']['hora'] == widget.chat['info']['hora']){
+        pos = pos2;
+      }else{
+        pos2++;
       }
-      _scrollController.scrollTo(index: sumT, duration: Duration(seconds: 1),);
+    }
+    int sum = 0; int sumT = 0;
+    for(int x = listChat.length; x > 0; x = x - 5){
+      if(x >= pos && pos >= (x - 5)){
+        sumT = sum; x = 0;
+      }else{
+        sum = sum + 5;
+      }
+    }
+    pos = pos == 0 ? 0 : pos - 1;
+    _scrollController.scrollTo(index: pos , duration: Duration(seconds: 1),);
     }catch(e){
       print('Error en goToSms');
     }
@@ -584,12 +582,11 @@ class _ChatForTareaState extends State<ChatForTarea> {
             child: IconButton(
               icon: Icon(Icons.send,color: WalkieTaskColors.color_4D9DFA,),
               onPressed: () async {
-
                 if(textChatSend.isNotEmpty){
 
                   DateTime now = DateTime.now();
                   String formattedDate = DateFormat('yyyy-MM-dd').format(now);
-                  String formattedHours = DateFormat('kk:mm').format(now);
+                  String formattedHours = DateFormat('kk:mm:ss').format(now);
 
                   ChatMessenger mensaje = new ChatMessenger(
                       fecha: formattedDate,
@@ -643,7 +640,8 @@ class _ChatForTareaState extends State<ChatForTarea> {
                             "user_id" : idSend.toString(),
                             "document_id" : tarea.id.toString(),
                             "message" : sms,
-                            'type' : 'smstask'
+                            'type' : 'smstask',
+                            'created_at' : '$formattedDate $formattedHours'
                           };
                           await conexionHttp().httpBinacleSaveChat(body);
                         }catch(e){

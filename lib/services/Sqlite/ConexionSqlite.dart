@@ -231,6 +231,22 @@ class DatabaseProvider{
     return res;
   }
 
+  //OBTENER TODAS LAS TAREAS
+  Future<List<Caso>> getMyProjects() async {
+    List<Caso> listCaso = new List<Caso>();
+    final db = await database;
+    try{
+      List<Map> list = await db.rawQuery('SELECT * FROM Casos WHERE nameCompany = "true"');
+      list.forEach((mapa){
+        Caso caso = new Caso.fromMap(mapa);
+        listCaso.add(caso);
+      });
+    }catch(e){
+      print(e.toString());
+    }
+    return listCaso;
+  }
+
 //**********************
 //**********************
 //*******INVITATION*****

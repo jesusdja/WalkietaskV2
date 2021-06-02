@@ -253,9 +253,18 @@ class UpdateData{
 
       for(int x = 0; x < listcasos.length; x++){
         Caso caso = Caso.fromJson(listcasos[x]);
+        caso.nameCompany = 'false';
+        if(listcasos[x]['userprojects'] != null){
+          String idUser = await SharedPrefe().getValue('unityIdMyUser');
+          for(int x1 = 0; x1 < listcasos[x]['userprojects'].length; x1++){
+            if('${listcasos[x]['userprojects'][x1]['user_id']}' == '$idUser'){
+              caso.nameCompany = 'true';
+            }
+          }
+        }
         //EXTRAER VARIABLE DE USUARIO FIJO
         Caso casoVery = await  DatabaseProvider.db.getCodeIdCase('${caso.id}');
-        caso.nameCompany = listcasos[x]['customers'] != null ? listcasos[x]['customers']['name'] : '';
+        //caso.nameCompany = listcasos[x]['customers'] != null ? listcasos[x]['customers']['name'] : '';
         if(casoVery == null || caso != casoVery ) {
           entre = true;
           if (casoVery == null) {

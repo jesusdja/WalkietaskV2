@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
-import 'package:walkietaskv2/models/Chat/ChatTareas.dart';
+import 'package:intl/intl.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
@@ -117,9 +117,6 @@ class _BinnaclePageState extends State<BinnaclePage> {
         pageLast = value['binnacles']['last_page'];
         for(int x = 0; x < binnaclesList.length; x++){
           Map<String,dynamic> element = binnaclesList[x];
-
-          print(element['category']);
-
           if(element['category'] != 'chat'){
             DateTime t = DateTime.parse(element['created_at']);
             String day = t.day >= 10 ? '${t.day}' : '0${t.day}';
@@ -134,10 +131,10 @@ class _BinnaclePageState extends State<BinnaclePage> {
             if(element['user_action_id'].toString() != widget.myUser.id.toString()){ type = 'fromUser'; }
 
             Map<String,dynamic> listChat = {};
-            DateTime t = DateTime.parse(element['created_at']);
-            String day = t.day >= 10 ? '${t.day}' : '0${t.day}';
-            String month = t.month >= 10 ? '${t.month}' : '0${t.month}';
-            String f = '${t.year}-$month-$day';
+            DateTime time = DateTime.parse(element['created_at']);
+
+            String formattedDate = DateFormat('yyyy-MM-dd').format(time);
+            String formattedHours = DateFormat('kk:mm:ss').format(time);
 
             Tarea taskSms = await DatabaseProvider.db.getCodeIdTask(element['document_id'].toString());
 
@@ -148,8 +145,8 @@ class _BinnaclePageState extends State<BinnaclePage> {
               'idTarea' : element['document_id'],
               'created_at' : element['created_at'],
               'info' : {
-                'fecha': f,
-                'hora': '${t.hour}:${t.minute}',
+                'fecha': formattedDate,
+                'hora': formattedHours,
                 'from': element['usernotification']['id'],
                 'texto': element['message'] ?? '',
               },
@@ -157,8 +154,8 @@ class _BinnaclePageState extends State<BinnaclePage> {
               'userFrom' : element['usernotification']
             } ;
 
-            if(binnaclesMap[f] == null){ binnaclesMap[f] = []; }
-            binnaclesMap[f].add(listChat);
+            if(binnaclesMap[formattedDate] == null){ binnaclesMap[formattedDate] = []; }
+            binnaclesMap[formattedDate].add(listChat);
           }
         }
       }else{
@@ -455,7 +452,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
           widget.blocTaskReceived.inList.add(true);
         }
       }else{
-        Navigator.push(context, new MaterialPageRoute(
+        await Navigator.push(context, new MaterialPageRoute(
             builder: (BuildContext context) =>
             new ChatForTarea(
               tareaRes: tarea,
@@ -464,6 +461,11 @@ class _BinnaclePageState extends State<BinnaclePage> {
               isChat: isChat,
               chat: chat,
             )));
+        loadData = true;
+        if(mounted){
+          setState(() {});
+        }
+        initDataBinnacle();
       }
     }catch(e){
       print(e.toString());

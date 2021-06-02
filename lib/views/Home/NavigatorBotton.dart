@@ -66,8 +66,10 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   List<Tarea> listEnviados;
   List<Usuario> listaUser;
   List<Caso> listaCasos;
+  List<Caso> listProjects = [];
   List<InvitationModel> listInvitation;
   List<dynamic> listDocuments= [];
+  List<dynamic> listWidgetsHome = [];
 
   BlocUser blocUser;
   BlocTask blocTaskSend;
@@ -830,22 +832,53 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       mapIdUser[listaUser[x].id] = listaUser[x];
     }
     loadListUser = true;
-
     listaUser = orderUserForDate(listaUser);
-
     setState(() {});
+    _inicializarDataHome();
   }
   _inicializarCasos() async {
     listaCasos = await  DatabaseProvider.db.getAllCase();
+    listProjects = await  DatabaseProvider.db.getMyProjects();
     loadCasos = true;
     setState(() {});
+    _inicializarDataHome();
   }
   _inicializarInvitation() async {
     listInvitation = await  DatabaseProvider.db.getAllInvitation();
     setState(() {});
     validateInvitation(listInvitation);
   }
+  _inicializarDataHome() async {
+    listWidgetsHome = [];
+    List<Map<String,dynamic>> mapAll = [];
+    List<Map<String,dynamic>> mapAllAux = [];
 
+    listaUser.forEach((element) {
+      mapAll.add({'info' : element,'type' : 'user','date' : element.updatedAt});
+      mapAllAux.add({'info' : element,'type' : 'user','date' : element.updatedAt});
+    });
+
+    listProjects.forEach((element) {
+      mapAll.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at});
+      mapAllAux.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at});
+    });
+
+    if(mapAll.isNotEmpty){
+      for(int j = 0; j < mapAll.length; j++){
+        DateTime dateOne = DateTime.parse(mapAllAux[0]['date']);
+        int pos = 0;
+        for(int x1 = 0; x1 < mapAllAux.length; x1++){
+          DateTime dateTwo = DateTime.parse(mapAllAux[x1]['date']);
+          if(dateTwo.isAfter(dateOne)){
+            pos = x1;
+          }
+        }
+        listWidgetsHome.add(mapAllAux[pos]);
+        mapAllAux.removeAt(pos);
+      }
+    }
+    setState(() {});
+  }
   //*******************************************
   //*******************************************
   //*************ESCUCHAR APIS*****************
