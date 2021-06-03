@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
+import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/bloc/blocUser.dart';
@@ -43,6 +46,7 @@ class CreateTask extends StatefulWidget {
     @required this.updateData,
     @required this.blocAudioChangePage,
     @required this.listWidgetsHome,
+    @required this.blocCasos,
   });
 
   final Map<int,Usuario> mapIdUserRes;
@@ -52,6 +56,7 @@ class CreateTask extends StatefulWidget {
   final List<Tarea> listRecibidos;
   final Usuario myUserRes;
   final BlocUser blocUserRes;
+  final BlocCasos blocCasos;
   final BlocTask blocTaskSend;
   final BlocTask blocTaskReceived;
   final BlocProgress blocIndicatorProgress;
@@ -240,7 +245,7 @@ class _CreateTaskState extends State<CreateTask> {
 
     users.add(SizedBox(height: alto * 0.03,));
 
-    //listWidgetsHome.add({ 'info' : element, 'type' : 'project' || 'user', 'date' : element.updated_at, 'cantTask' : cant});
+    //listWidgetsHome.add({ 'info' : element, 'type' : 'project' || 'user', 'date' : element.updated_at, 'cantTask' : cant, 'cantAssigned' : cantAssigned});
     listWidgetsHome.forEach((element) {
       if(element['type'] == 'user'){
         Usuario user = element['info'];
@@ -358,13 +363,15 @@ class _CreateTaskState extends State<CreateTask> {
               child: Divider(),
             )
         );
-      }else{
+      }
+      if(element['type'] == 'project'){
         Caso project = element['info'];
         if(widget.myUserRes == null || widget.myUserRes.id == null || project == null ) return Container();
 
         String nameProject = project.name ?? '';
         bool favorite = project.is_priority == 1;
         String cantTask = element['cantTask'] ?? '0';
+        String cantAssigned = element['cantAssigned'] ?? '0';
 
         users.add(
           InkWell(
@@ -412,7 +419,7 @@ class _CreateTaskState extends State<CreateTask> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text('${translate(context: context, text: 'tasks')}: $cantTask',style: textStylePrimaryLitle,textAlign: TextAlign.right,),
-                          Text('${translate(context: context, text: 'assigned')}: 0',style: textStylePrimaryLitle, textAlign: TextAlign.right,),
+                          Text('${translate(context: context, text: 'assigned')}: $cantAssigned',style: textStylePrimaryLitle, textAlign: TextAlign.right,),
                         ],
                       ),
                     ),
@@ -420,7 +427,7 @@ class _CreateTaskState extends State<CreateTask> {
                 ),
               ),
               actions: <Widget>[
-                //_buttonSliderAction(favorite ? translate(context: context, text: 'highlight') : translate(context: context, text: 'forget'),Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1, user),
+                _buttonSliderActionProjects(favorite ? translate(context: context, text: 'highlight') : translate(context: context, text: 'forget'),Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1, project),
               ],
             ),
           ),
@@ -433,124 +440,6 @@ class _CreateTaskState extends State<CreateTask> {
         );
       }
     });
-
-    // listUser.forEach((user) {
-    //
-    //   if(widget.myUserRes == null || widget.myUserRes.id == null || user.id == widget.myUserRes.id || user.contact == 0) return Container();
-    //
-    //   Image avatarUser = Image.network(avatarImage);
-    //   if(user.avatar_100.isNotEmpty){
-    //     avatarUser = Image.network(user.avatar_100);
-    //   }
-    //
-    //   bool favorite = user.fijo == 1;
-    //
-    //   String dateDiff = translate(context: context, text: 'noDate');
-    //   int cantRecived = 0;
-    //   int cantSend = 0;
-    //   bool redColor = false;
-    //   if(mapDataUserHome[user.id] != null){
-    //     if(mapDataUserHome[user.id][0] != ''){
-    //       dateDiff = getDayDiff(mapDataUserHome[user.id][0]);
-    //       redColor = dateDiff.contains('-');
-    //       dateDiff = dateDiff.replaceAll('-', '');
-    //     }
-    //
-    //     mapDataUserHome[user.id][1].forEach((task){
-    //       if(task.finalized != 1){ cantRecived++; }
-    //     });
-    //     mapDataUserHome[user.id][2].forEach((task){
-    //       if(task.finalized != 1){ cantSend++; }
-    //     });
-    //   }
-    //
-    //   users.add(
-    //     InkWell(
-    //       onTap: () => _onTapUser(user, false),
-    //       child: Slidable(
-    //         actionPane: SlidableDrawerActionPane(),
-    //         actionExtentRatio: 0.25,
-    //         child: Container(
-    //           width: ancho,
-    //           margin: EdgeInsets.only(bottom: alto * 0.01, right: ancho * 0.03, left: ancho * 0.03),
-    //           child: Row(
-    //             children: [
-    //               Container(
-    //                 margin: EdgeInsets.only(right: ancho * 0.03),
-    //                 child: Stack(
-    //                   children: <Widget>[
-    //                     Center(
-    //                       child: Container(
-    //                         decoration: new BoxDecoration(
-    //                           color: bordeCirculeAvatar, // border color
-    //                           shape: BoxShape.circle,
-    //                         ),
-    //                         child: CircleAvatar(
-    //                           radius: alto * 0.03,
-    //                           backgroundImage: avatarUser.image,
-    //                           //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
-    //                         ),
-    //                       ),
-    //                     ),
-    //                     favorite ? Align(
-    //                       alignment: Alignment.center,
-    //                       child: Container(
-    //                         margin: EdgeInsets.only(top: alto * 0.035, left: ancho * 0.08),
-    //                         child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
-    //                       ),
-    //                     ) : Container(),
-    //                   ],
-    //                 ),
-    //               ),
-    //               Expanded(child: Text('${user.name} ${user.surname}', style: textStylePrimaryBoldName,)),
-    //               Container(
-    //                 width: ancho * 0.3,
-    //                 child: Column(
-    //                   crossAxisAlignment: CrossAxisAlignment.end,
-    //                   children: [
-    //                     redColor ?
-    //                     Container(
-    //                       child: Row(
-    //                         mainAxisAlignment: MainAxisAlignment.end,
-    //                         children: [
-    //                           Container(
-    //                             padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-    //                             height: alto * 0.02,
-    //                             decoration: BoxDecoration(
-    //                               image: DecorationImage(
-    //                                 image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
-    //                                 fit: BoxFit.contain,
-    //                               ),
-    //                             ),
-    //                           ),
-    //                           SizedBox(width: ancho * 0.02),
-    //                           Text(dateDiff,style: textStylePrimaryLitleRed,)
-    //                         ],
-    //                       ),
-    //                     )
-    //                         :
-    //                     Text(dateDiff,style: textStylePrimaryLitleBold,),
-    //                     Text('${translate(context: context, text: 'received')}: $cantRecived',style: textStylePrimaryLitle,textAlign: TextAlign.right,),
-    //                     Text('${translate(context: context, text: 'sent_2')}: $cantSend',style: textStylePrimaryLitle, textAlign: TextAlign.right,),
-    //                   ],
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //         actions: <Widget>[
-    //           _buttonSliderAction(user.fijo == 0 ? translate(context: context, text: 'highlight') : translate(context: context, text: 'forget'),Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1, user),
-    //         ],
-    //       ),
-    //     ),
-    //   );
-    //   users.add(
-    //       Container(
-    //         padding: EdgeInsets.only(left: ancho * 0.06, right: ancho * 0.06),
-    //         child: Divider(),
-    //       )
-    //   );
-    // });
 
     if(posPersonal == 0){
       users.add(_reminderPersonal());
@@ -1138,6 +1027,29 @@ class _CreateTaskState extends State<CreateTask> {
     );
   }
 
+  Widget _buttonSliderActionProjects(String titulo,Icon icono,Color color,Color colorText,int accion, Caso project){
+    return IconSlideAction(
+      color: color,
+      iconWidget: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          icono,
+          Text('$titulo',style: estiloLetras(alto * 0.013, Colors.white,fontFamily: 'helveticaneue2'),),
+        ],
+      ),
+      onTap: () async {
+        int res = 0;
+        project.is_priority = project.is_priority == 1 ? 0 : 1;
+        res = await  DatabaseProvider.db.updateCase(project);
+        if(res == 1){
+          widget.blocCasos.inList.add(true);
+          updateDateProject(project.id);
+        }
+      },
+    );
+  }
+
   void clickTarea(Tarea tarea) async {
     widget.blocAudioChangePage.inList.add({'page' : bottonSelect.opcion1});
     try{
@@ -1160,6 +1072,18 @@ class _CreateTaskState extends State<CreateTask> {
               listaCasosRes: listaCasos,
               blocTaskSend: widget.blocTaskReceived,
             )));
+      }
+    }catch(e){
+      print(e.toString());
+    }
+  }
+
+  Future<void> updateDateProject(int idPRojects) async{
+    try{
+      var response = await conexionHttp().httpUpdateDateProject(idPRojects);
+      var value = jsonDecode(response.body);
+      if(value['status_code'] == 200){
+        UpdateData().actualizarCasos(widget.blocCasos);
       }
     }catch(e){
       print(e.toString());

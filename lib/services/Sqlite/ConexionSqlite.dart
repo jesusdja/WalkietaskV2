@@ -211,6 +211,8 @@ class DatabaseProvider{
   Future<int> updateCase(Caso caso) async {
     var dbClient = await  database;
     int res = 0;
+    String date = DateTime.now().toString();
+    caso.updated_at = date;
     try{
       res = await dbClient.update('Casos', caso.toMap(),where: 'id = ?', whereArgs: [caso.id]);
     }catch(e){
@@ -218,6 +220,7 @@ class DatabaseProvider{
     }
     return res;
   }
+
   //ELIMINAR PROYECTO
   Future<int> deleteProjectCase(int id) async {
     int res = 0;
@@ -472,7 +475,7 @@ class DatabaseProvider{
     Map<String,String> result = {};
     final db = await database;
     try{
-      List<Map> list = await db.rawQuery('SELECT project_id, COUNT(project_id) as cant FROM Tareas GROUP BY project_id');
+      List<Map> list = await db.rawQuery('SELECT project_id, COUNT(project_id) as cant FROM Tareas WHERE finalized = 0 GROUP BY project_id');
       list.forEach((mapa){
         result[mapa['project_id'].toString()] = mapa['cant'].toString();
       });

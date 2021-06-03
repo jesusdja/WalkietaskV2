@@ -371,6 +371,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           updateData: updateData,
           blocAudioChangePage: blocAudioChangePage,
           listWidgetsHome: listWidgetsHome,
+          blocCasos: blocCasos,
         ) : Container(child: Cargando(translate(context: context,text: 'updatingTasks'),context),);
       case bottonSelect.opcion2:
         return loadTaskSend ? listRecibidos.length != 0 ?
@@ -855,6 +856,15 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     List<Map<String,dynamic>> mapAllAux = [];
     Map<String,String> countTaskForProject = await DatabaseProvider.db.getTaskForProjects();
 
+    Map<int,List<Tarea>> mapTaskAsinged = {};
+    listRecibidos.forEach((element) {
+      int idProject = element.project_id ?? 0;
+      if(mapTaskAsinged[idProject] == null){ mapTaskAsinged[idProject] = [];}
+      if(element.finalized == 0){
+        mapTaskAsinged[idProject].add(element);
+      }
+    });
+
     listaUser.forEach((element) {
       mapAll.add({'info' : element,'type' : 'user','date' : element.updatedAt});
       mapAllAux.add({'info' : element,'type' : 'user','date' : element.updatedAt});
@@ -865,12 +875,16 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       if(countTaskForProject[element.id.toString()] != null){
         cant = countTaskForProject[element.id.toString()].toString();
       }
-      mapAll.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTask' : cant});
-      mapAllAux.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTask' : cant});
+      String cantAssigned = '0';
+      if(mapTaskAsinged[element.id] != null){
+        cantAssigned = '${mapTaskAsinged[element.id].length}';
+      }
+      mapAll.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTask' : cant, 'cantAssigned' : cantAssigned});
+      mapAllAux.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTask' : cant, 'cantAssigned' : cantAssigned});
     });
 
     if(mapAll.isNotEmpty){
-      listWidgetsHome = [];
+      List listWidgetsHomeAux = [];
       for(int j = 0; j < mapAll.length; j++){
         DateTime dateOne = DateTime.parse(mapAllAux[0]['date']);
         int pos = 0;
@@ -880,9 +894,27 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
             pos = x1;
           }
         }
-        listWidgetsHome.add(mapAllAux[pos]);
+        listWidgetsHomeAux.add(mapAllAux[pos]);
         mapAllAux.removeAt(pos);
       }
+
+      listWidgetsHome = [];
+      listWidgetsHomeAux.forEach((element) {
+        if(element['type'] == 'user' && element['info'].fijo == 1){
+          listWidgetsHome.add(element);
+        }
+        if(element['type'] == 'project' && element['info'].is_priority == 1){
+          listWidgetsHome.add(element);
+        }
+      });
+      listWidgetsHomeAux.forEach((element) {
+        if(element['type'] == 'user' && element['info'].fijo == 0){
+          listWidgetsHome.add(element);
+        }
+        if(element['type'] == 'project' && element['info'].is_priority == 0){
+          listWidgetsHome.add(element);
+        }
+      });
     }
     loadDataHome = true;
     setState(() {});

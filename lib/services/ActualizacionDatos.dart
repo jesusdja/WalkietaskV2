@@ -265,12 +265,15 @@ class UpdateData{
         //EXTRAER VARIABLE DE USUARIO FIJO
         Caso casoVery = await  DatabaseProvider.db.getCodeIdCase('${caso.id}');
         //caso.nameCompany = listcasos[x]['customers'] != null ? listcasos[x]['customers']['name'] : '';
-        if(casoVery == null || caso != casoVery ) {
-          entre = true;
-          if (casoVery == null) {
-            await DatabaseProvider.db.saveCase(caso);
-          } else {
-            await DatabaseProvider.db.updateCase(caso);
+        if(casoVery == null) {
+          caso.is_priority = casoVery.is_priority;
+          if(caso != casoVery ) {
+            entre = true;
+            if (casoVery == null) {
+              await DatabaseProvider.db.saveCase(caso);
+            } else {
+              await DatabaseProvider.db.updateCase(caso);
+            }
           }
         }
       }
