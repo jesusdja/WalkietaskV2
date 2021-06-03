@@ -950,4 +950,20 @@ class conexionHttp{
     }
     return response;
   }
+
+  Future<http.Response> httpUpdateDateProject(int idProject) async{
+    String token  = await obtenerToken();
+    Map<String,String> headers = {
+      'Content-Type':'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Authorization': 'Bearer $token'
+    };
+    var response;
+    try{
+      response = http.put('$enlace/api/auth/projects/$idProject/updatedate',headers: headers);
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
 }

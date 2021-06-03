@@ -53,8 +53,6 @@ class _MyProyectsState extends State<MyProyects> {
   TextStyle textStylePrimary;
   TextEditingController controlleBuscador;
 
-  conexionHttp connectionHttp = new conexionHttp();
-
   BlocCasos blocCasos;
   StreamSubscription streamSubscriptionCasos;
   UpdateData updateData = new UpdateData();
@@ -158,145 +156,147 @@ class _MyProyectsState extends State<MyProyects> {
         ] : _cardUsers(project.id);
 
         result.add(
-          Container(
-            width: ancho,
-            child: Column(
-              children: <Widget>[
-                Container(
-                  width: ancho,
-                  padding: EdgeInsets.only(left: ancho * 0.05, right: ancho * 0.05),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(project.name,
-                          style: WalkieTaskStyles().stylePrimary(size: alto * 0.023),),
-                      ),
-                      InkWell(
-                        child: Container(
-                          child: !openProjectView[project.id] ?
-                          Container(
-                            width: ancho * 0.10,
-                            height: alto * 0.05,
-                            child: Image.asset('assets/image/icon_close_option.png',fit: BoxFit.fill,color: Colors.grey,),
-                          ) :
-                          Container(
-                            width: ancho * 0.10,
-                            height: alto * 0.05,
-                            child: Image.asset('assets/image/icon_open_option.png',fit: BoxFit.fill,color: Colors.grey,),
+            Container(
+              width: ancho,
+              child: Column(
+                children: <Widget>[
+                  InkWell(
+                    onTap: (){
+                      bool value = !openProjectView[project.id];
+                      Map<int,bool> open = openProjectView;
+                      open.forEach((key, value) {
+                        openProjectView[key] = false;
+                      });
+                      openProjectView[project.id] = value;
+                      setState(() {});
+                    },
+                    child: Container(
+                      width: ancho,
+                      padding: EdgeInsets.only(left: ancho * 0.05, right: ancho * 0.05),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(project.name,
+                              style: WalkieTaskStyles().stylePrimary(size: alto * 0.023),),
                           ),
-                        ),
-                        onTap: (){
-                          bool value = !openProjectView[project.id];
-                          Map<int,bool> open = openProjectView;
-                          open.forEach((key, value) {
-                            openProjectView[key] = false;
-                          });
-                          openProjectView[project.id] = value;
-                          setState(() {});
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                !openProjectView[project.id] ? Container() :
-                Container(
-                  width: ancho,
-                  child: Column(
-                    children: listChildrem,
-                  ),
-                ),
-                !openProjectView[project.id] ? Container() :
-                Container(
-                  width: ancho,
-                  margin: EdgeInsets.only(left: ancho * 0.1),
-                  child: Row(
-                    children: <Widget>[
-                      RoundedButton(
-                        borderColor: WalkieTaskColors.primary,
-                        width: ancho * 0.2,
-                        height: alto * 0.04,
-                        radius: 5.0,
-                        title: translate(context: context, text: 'add_2'),
-                        textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.04, color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 1.5),
-                        backgroundColor: WalkieTaskColors.primary,
-                        onPressed: () async {
-                          bool res = await Navigator.push(context, new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                              new AddProyects(
-                                myUserRes: myUser,
-                                listUserRes: listUser,
-                                blocPage: widget.blocPage,
-                                proyect: project,
-                                listUsersExist: projectsUser[project.id] ?? [],
-                              )));
-                          if(res){
-                            await _getGuests();
-                          }
-                        },
-                      ),
-                      SizedBox(width: ancho * 0.1,),
-                      deleteProject[project.id] ?
-                      Container(
-                        width: ancho * 0.4,
-                        child: Center(
-                          child: Container(
-                            width: ancho * 0.06,
-                            height: alto * 0.03,
-                            child: Center(child: CircularProgressIndicator(),),
+                          Container(
+                            child: !openProjectView[project.id] ?
+                            Container(
+                              width: ancho * 0.10,
+                              height: alto * 0.05,
+                              child: Image.asset('assets/image/icon_close_option.png',fit: BoxFit.fill,color: Colors.grey,),
+                            ) :
+                            Container(
+                              width: ancho * 0.10,
+                              height: alto * 0.05,
+                              child: Image.asset('assets/image/icon_open_option.png',fit: BoxFit.fill,color: Colors.grey,),
+                            ),
                           ),
-                        ),
-                      ) :
-                      Expanded(
-                        child: RoundedButton(
-                          borderColor: WalkieTaskColors.white,
+                        ],
+                      ),
+                    ),
+                  ),
+                  !openProjectView[project.id] ? Container() :
+                  Container(
+                    width: ancho,
+                    child: Column(
+                      children: listChildrem,
+                    ),
+                  ),
+                  !openProjectView[project.id] ? Container() :
+                  Container(
+                    width: ancho,
+                    margin: EdgeInsets.only(left: ancho * 0.1),
+                    child: Row(
+                      children: <Widget>[
+                        RoundedButton(
+                          borderColor: WalkieTaskColors.primary,
                           width: ancho * 0.2,
                           height: alto * 0.04,
                           radius: 5.0,
-                          title: '${translate(context: context, text: 'delete')} "${project.name}"',
-                          textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.03, color: WalkieTaskColors.color_E07676,fontWeight: FontWeight.bold,spacing: 2),
-                          backgroundColor: WalkieTaskColors.white,
-                          maxLines: 1,
+                          title: translate(context: context, text: 'add_2'),
+                          textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.04, color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 1.5),
+                          backgroundColor: WalkieTaskColors.primary,
                           onPressed: () async {
-                            deleteProject[project.id] = true;
-                            setState(() {});
-
-                            bool res = false;
-                            res = await alertDeleteElement(context, '¿${translate(context: context, text: 'sureDeleteProject')} "${project.name}"?');
-                            if(res != null && res){
-                              try{
-                                var response = await connectionHttp.httpDeleteProject(project.id);
-                                var value = jsonDecode(response.body);
-                                if(value['status_code'] == 200){
-                                  int res = await DatabaseProvider.db.deleteProjectCase(project.id);
-                                  if(res != 0){
-                                    await _inicializarCasos();
-                                    showAlert(translate(context: context, text: 'projectDeleted'),WalkieTaskColors.color_89BD7D);
-                                  }
-                                }else{
-                                  showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
-                                }
-                              }catch(e){
-                                print(e.toString());
-                                showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
-                              }
+                            bool res = await Navigator.push(context, new MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                new AddProyects(
+                                  myUserRes: myUser,
+                                  listUserRes: listUser,
+                                  blocPage: widget.blocPage,
+                                  proyect: project,
+                                  listUsersExist: projectsUser[project.id] ?? [],
+                                )));
+                            if(res){
+                              await _getGuests();
+                              updateDateProject(project.id);
                             }
-                            deleteProject[project.id] = false;
-                            setState(() {});
                           },
                         ),
-                      ),
-                      SizedBox(width: ancho * 0.05,),
-                    ],
+                        SizedBox(width: ancho * 0.1,),
+                        deleteProject[project.id] ?
+                        Container(
+                          width: ancho * 0.4,
+                          child: Center(
+                            child: Container(
+                              width: ancho * 0.06,
+                              height: alto * 0.03,
+                              child: Center(child: CircularProgressIndicator(),),
+                            ),
+                          ),
+                        ) :
+                        Expanded(
+                          child: RoundedButton(
+                            borderColor: WalkieTaskColors.white,
+                            width: ancho * 0.2,
+                            height: alto * 0.04,
+                            radius: 5.0,
+                            title: '${translate(context: context, text: 'delete')} "${project.name}"',
+                            textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: ancho * 0.03, color: WalkieTaskColors.color_E07676,fontWeight: FontWeight.bold,spacing: 2),
+                            backgroundColor: WalkieTaskColors.white,
+                            maxLines: 1,
+                            onPressed: () async {
+                              deleteProject[project.id] = true;
+                              setState(() {});
+
+                              bool res = false;
+                              res = await alertDeleteElement(context, '¿${translate(context: context, text: 'sureDeleteProject')} "${project.name}"?');
+                              if(res != null && res){
+                                try{
+                                  var response = await conexionHttp().httpDeleteProject(project.id);
+                                  var value = jsonDecode(response.body);
+                                  if(value['status_code'] == 200){
+                                    int res = await DatabaseProvider.db.deleteProjectCase(project.id);
+                                    if(res != 0){
+                                      await _inicializarCasos();
+                                      showAlert(translate(context: context, text: 'projectDeleted'),WalkieTaskColors.color_89BD7D);
+                                    }
+                                  }else{
+                                    showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
+                                  }
+                                }catch(e){
+                                  print(e.toString());
+                                  showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
+                                }
+                              }
+                              deleteProject[project.id] = false;
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                        SizedBox(width: ancho * 0.05,),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          )
+                ],
+              ),
+            )
         );
         result.add(SizedBox(height: alto * 0.01,));
         result.add(Divider(thickness: 0.8,));
       }
     });
+
     return result;
   }
 
@@ -367,7 +367,7 @@ class _MyProyectsState extends State<MyProyects> {
                     res = await alertDeleteElement(context,'¿${translate(context: context, text: 'sureDeleteUser ')} ${mapUserProject['users']['name']}');
                     if(res != null && res){
                       try{
-                        var response = await connectionHttp.httpDeleteUserForProject(idProjects,mapUserProject['users']['id']);
+                        var response = await conexionHttp().httpDeleteUserForProject(idProjects,mapUserProject['users']['id']);
                         var value = jsonDecode(response.body);
                         if(value['status_code'] == 200){
                           await _getGuests();
@@ -382,6 +382,7 @@ class _MyProyectsState extends State<MyProyects> {
                     }
                     deleteProjectUser['$idProjects-${mapUserProject['users']['id']}'] = false;
                     setState(() {});
+                    updateDateProject(idProjects);
                   },
                 ),
               ],
@@ -395,7 +396,7 @@ class _MyProyectsState extends State<MyProyects> {
 
   Future<void> _getGuests() async {
     try{
-      var response = await connectionHttp.httpGetListGuestsForProjects();
+      var response = await conexionHttp().httpGetListGuestsForProjects();
       var value = jsonDecode(response.body);
       if(value['status_code'] == 200){
         if(value['projects'] != null){
@@ -439,5 +440,17 @@ class _MyProyectsState extends State<MyProyects> {
       deleteProject[element.id] = false;
     });
     setState(() {});
+  }
+
+  Future<void> updateDateProject(int idPRojects) async{
+    try{
+      var response = await conexionHttp().httpUpdateDateProject(idPRojects);
+      var value = jsonDecode(response.body);
+      if(value['status_code'] == 200){
+        UpdateData().actualizarCasos(blocCasos);
+      }
+    }catch(e){
+      print(e.toString());
+    }
   }
 }
