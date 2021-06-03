@@ -467,4 +467,18 @@ class DatabaseProvider{
     }
     return res;
   }
+  //OBTENER TODAS LAS TAREAS POR PROYECTO
+  Future<Map<String,String>> getTaskForProjects() async {
+    Map<String,String> result = {};
+    final db = await database;
+    try{
+      List<Map> list = await db.rawQuery('SELECT project_id, COUNT(project_id) as cant FROM Tareas GROUP BY project_id');
+      list.forEach((mapa){
+        result[mapa['project_id'].toString()] = mapa['cant'].toString();
+      });
+    }catch(e){
+      print(e.toString());
+    }
+    return result;
+  }
 }

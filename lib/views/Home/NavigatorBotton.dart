@@ -102,6 +102,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   bool loadListUser = false;
   bool loadCasos = false;
   bool loadMyUser = false;
+  bool loadDataHome = false;
   bool notiRecived = false;
   bool notiSend = false;
   bool notiContacts = false;
@@ -354,7 +355,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           mapDataUserHome = _dataToMapDataUserHome();
         }
 
-        return (loadTaskRecived && loadTaskSend && loadListUser && loadCasos && loadMyUser) ?
+        return (loadTaskRecived && loadTaskSend && loadListUser && loadCasos && loadMyUser && loadDataHome) ?
         CreateTask(
           myUserRes: myUser,
           listUserRes: listaUser,
@@ -369,6 +370,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           mapDataUserHome: mapDataUserHome,
           updateData: updateData,
           blocAudioChangePage: blocAudioChangePage,
+          listWidgetsHome: listWidgetsHome,
         ) : Container(child: Cargando(translate(context: context,text: 'updatingTasks'),context),);
       case bottonSelect.opcion2:
         return loadTaskSend ? listRecibidos.length != 0 ?
@@ -849,9 +851,9 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     validateInvitation(listInvitation);
   }
   _inicializarDataHome() async {
-    listWidgetsHome = [];
     List<Map<String,dynamic>> mapAll = [];
     List<Map<String,dynamic>> mapAllAux = [];
+    Map<String,String> countTaskForProject = await DatabaseProvider.db.getTaskForProjects();
 
     listaUser.forEach((element) {
       mapAll.add({'info' : element,'type' : 'user','date' : element.updatedAt});
@@ -859,11 +861,16 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     });
 
     listProjects.forEach((element) {
-      mapAll.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at});
-      mapAllAux.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at});
+      String cant = '0';
+      if(countTaskForProject[element.id.toString()] != null){
+        cant = countTaskForProject[element.id.toString()].toString();
+      }
+      mapAll.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTask' : cant});
+      mapAllAux.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTask' : cant});
     });
 
     if(mapAll.isNotEmpty){
+      listWidgetsHome = [];
       for(int j = 0; j < mapAll.length; j++){
         DateTime dateOne = DateTime.parse(mapAllAux[0]['date']);
         int pos = 0;
@@ -877,6 +884,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         mapAllAux.removeAt(pos);
       }
     }
+    loadDataHome = true;
     setState(() {});
   }
   //*******************************************
