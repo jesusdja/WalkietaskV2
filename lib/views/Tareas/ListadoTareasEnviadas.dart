@@ -311,8 +311,8 @@ class _ListadoTareasState extends State<ListadoTareasEnviadas> {
 
     Widget avatarUser = avatarWidget(alto: alto,text: nameUser.isEmpty ? '' : nameUser.substring(0,1).toUpperCase());
     if(mapIdUser != null){
-      if(mapIdUser[tarea.user_id] != null && mapIdUser[tarea.user_id].avatar_100 != ''){
-        avatarUser = avatarWidgetImage(alto: alto,pathImage: mapIdUser[tarea.user_id].avatar_100);
+      if(mapIdUser[tarea.user_responsability_id] != null && mapIdUser[tarea.user_responsability_id].avatar_100 != ''){
+        avatarUser = avatarWidgetImage(alto: alto,pathImage: mapIdUser[tarea.user_responsability_id].avatar_100);
       }
     }
 

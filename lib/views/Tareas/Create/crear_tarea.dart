@@ -393,12 +393,7 @@ class _CreateTaskState extends State<CreateTask> {
                                 color: bordeCirculeAvatar, // border color
                                 shape: BoxShape.circle,
                               ),
-                              child: CircleAvatar(
-                                radius: alto * 0.03,
-                                backgroundColor: WalkieTaskColors.primary,
-                                child: Center(child: Text('${nameProject.isEmpty ? '' : nameProject.substring(0,1).toUpperCase()}', style: WalkieTaskStyles().stylePrimary(fontWeight: FontWeight.bold,color: WalkieTaskColors.white,size: alto * 0.02),),),
-                                //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
-                              ),
+                              child: avatarWidgetProject(alto: alto, radius: 0.03, text: '${nameProject.isEmpty ? '' : nameProject.substring(0,1).toUpperCase()}'),
                             ),
                           ),
                           favorite ? Align(
