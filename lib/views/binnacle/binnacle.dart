@@ -97,7 +97,6 @@ class _BinnaclePageState extends State<BinnaclePage> {
 
   Future<void> initData() async {
     avatarUser = await getPhotoUser();
-    avatarUser = avatarUser ?? Image.network(avatarImage);
     if(myUser != null){
       if(myUser != null && myUser.avatar_100 != ''){
         avatarUser = Image.network(myUser.avatar_100);
@@ -249,6 +248,9 @@ class _BinnaclePageState extends State<BinnaclePage> {
   }
 
   Widget _appBar(){
+
+    String userName = myUser != null ? myUser.name ?? '' : '';
+
     return AppBar(
       title: Container(
         width: ancho,
@@ -266,13 +268,11 @@ class _BinnaclePageState extends State<BinnaclePage> {
       actions: [
         Container(
           margin: EdgeInsets.only(right: ancho * 0.02),
-          child: avatarUser != null ? CircleAvatar(
+          child: avatarUser != null ?
+          CircleAvatar(
             radius: alto * 0.025,
             backgroundImage: avatarUser.image,
-          ) : CircleAvatar(
-            radius: alto * 0.025,
-            backgroundColor: WalkieTaskColors.color_B7B7B7,
-          ),
+          ) : avatarWidget(alto: alto,text: userName.isEmpty ? '' : userName.substring(0,1).toUpperCase(),radius: 0.025),
         )
       ],
     );

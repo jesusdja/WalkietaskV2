@@ -251,9 +251,12 @@ class _CreateTaskState extends State<CreateTask> {
         Usuario user = element['info'];
         if(widget.myUserRes == null || widget.myUserRes.id == null || user.id == widget.myUserRes.id || user.contact == 0) return Container();
 
-        Image avatarUser = Image.network(avatarImage);
-        if(user.avatar_100.isNotEmpty){
-          avatarUser = Image.network(user.avatar_100);
+        String userName = user != null ? user.name ?? '' : '';
+        Widget avatarUserWidget = avatarWidget(alto: alto,text: userName.isEmpty ? '' : userName.substring(0,1).toUpperCase());
+        if(user != null){
+          if(user != null && user.avatar_100 != ''){
+            avatarUserWidget = avatarWidgetImage(alto: alto,pathImage: user.avatar_100);
+          }
         }
 
         bool favorite = user.fijo == 1;
@@ -298,11 +301,7 @@ class _CreateTaskState extends State<CreateTask> {
                                 color: bordeCirculeAvatar, // border color
                                 shape: BoxShape.circle,
                               ),
-                              child: CircleAvatar(
-                                radius: alto * 0.03,
-                                backgroundImage: avatarUser.image,
-                                //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
-                              ),
+                              child: avatarUserWidget,
                             ),
                           ),
                           favorite ? Align(
@@ -397,7 +396,7 @@ class _CreateTaskState extends State<CreateTask> {
                               child: CircleAvatar(
                                 radius: alto * 0.03,
                                 backgroundColor: WalkieTaskColors.primary,
-                                child: Center(child: Text('${nameProject.substring(0,1).toUpperCase()}', style: WalkieTaskStyles().stylePrimary(fontWeight: FontWeight.bold,color: WalkieTaskColors.white,size: alto * 0.02),),),
+                                child: Center(child: Text('${nameProject.isEmpty ? '' : nameProject.substring(0,1).toUpperCase()}', style: WalkieTaskStyles().stylePrimary(fontWeight: FontWeight.bold,color: WalkieTaskColors.white,size: alto * 0.02),),),
                                 //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
                               ),
                             ),
@@ -673,9 +672,12 @@ class _CreateTaskState extends State<CreateTask> {
       if((!user.name.toLowerCase().contains(controlleBuscador.text.toLowerCase())) &&
           (!user.surname.toLowerCase().contains(controlleBuscador.text.toLowerCase()))) return Container();
 
-      Image avatarUser = Image.network(avatarImage);
-      if(user.avatar_100.isNotEmpty){
-        avatarUser = Image.network(user.avatar_100);
+      String userName = user != null ? user.name ?? '' : '';
+      Widget avatarUserWidget = avatarWidget(alto: alto,text: userName.isEmpty ? '' : userName.substring(0,1).toUpperCase());
+      if(user != null){
+        if(user != null && user.avatar_100 != ''){
+          avatarUserWidget = avatarWidgetImage(alto: alto,pathImage: user.avatar_100);
+        }
       }
 
       bool favorite = user.fijo == 1;
@@ -717,11 +719,7 @@ class _CreateTaskState extends State<CreateTask> {
                               color: bordeCirculeAvatar, // border color
                               shape: BoxShape.circle,
                             ),
-                            child: CircleAvatar(
-                              radius: alto * 0.03,
-                              backgroundImage: avatarUser.image,
-                              //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
-                            ),
+                            child: avatarUserWidget,
                           ),
                         ),
                         favorite ? Align(

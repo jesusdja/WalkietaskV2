@@ -49,7 +49,7 @@ class _BinnacleProjectsState extends State<BinnacleProjects> {
     return _rowData;
   }
 
-  Widget viewImageAvatar({Size size, String urlAvatar}){
+  Widget viewImageAvatar({Size size, String urlAvatar, @required String nameUser}){
     return Container(
       padding: EdgeInsets.only(left: size.width * 0.01),
       child: Container(
@@ -58,11 +58,12 @@ class _BinnacleProjectsState extends State<BinnacleProjects> {
           color: bordeCirculeAvatar, // border color
           shape: BoxShape.circle,
         ),
-        child: CircleAvatar(
+        child: urlAvatar.isNotEmpty ? CircleAvatar(
           radius: size.height * 0.018,
           backgroundImage: Image.network(urlAvatar).image,
           //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
-        ),
+        ) :
+        avatarWidget(alto: size.height,text: nameUser.isEmpty ? '' : nameUser.substring(0,1).toUpperCase(), radius: 0.018),
       ),
     );
   }
@@ -70,8 +71,9 @@ class _BinnacleProjectsState extends State<BinnacleProjects> {
   Widget projectsNew({Size size, TextStyle styleTitle}){
 
     String title = translate(context: context, text: 'createdProject');
-    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? '';
     String nameTask = '';
+    String nameUser = widget.info['usernotification']['name'];
     if(widget.info['info'] != null){
       nameTask = widget.info['info']['name'];
     }
@@ -87,7 +89,7 @@ class _BinnacleProjectsState extends State<BinnacleProjects> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                viewImageAvatar(size: size, urlAvatar: urlAvatar, nameUser: nameUser),
                 Flexible(
                   fit: FlexFit.loose,
                   child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),
@@ -106,7 +108,8 @@ class _BinnacleProjectsState extends State<BinnacleProjects> {
 
   Widget projectsDeleted({Size size, TextStyle styleTitle}){
     String title = translate(context: context, text: 'deletedProject');
-    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? '';
+    String nameUser = widget.info['usernotification']['name'];
     String nameTask = translate(context: context, text: 'noName');
     if(widget.info['info'] != null && widget.info['info']['name'] != null){
       nameTask = widget.info['info']['name'];
@@ -123,7 +126,7 @@ class _BinnacleProjectsState extends State<BinnacleProjects> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                viewImageAvatar(size: size, urlAvatar: urlAvatar, nameUser: nameUser),
                 Flexible(
                   fit: FlexFit.loose,
                   child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),
@@ -150,14 +153,16 @@ class _BinnacleProjectsState extends State<BinnacleProjects> {
     }
 
     String title = translate(context: context, text: 'addedToProject').replaceAll('___', '${widget.info['usernotification']['name']} ${widget.info['usernotification']['surname'] ?? ''}');
-    String urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+    String urlAvatar = widget.info['useraction']['avatar_100']  ?? '';
+    String nameUser = widget.info['useraction']['name'];
 
     if(widget.myUser.id == widget.info['user_action_id']){
       //TAREA NUEVA QUE YO CREE
       isProperty = true;
     }else{
       //TAREA NUEVA QUE SE ME FUE ASIGNADA
-      urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+      urlAvatar = widget.info['useraction']['avatar_100']  ?? '';
+      nameUser = widget.info['useraction']['name'];
       title = translate(context: context, text: 'youAddedToProject');
     }
 
@@ -173,7 +178,7 @@ class _BinnacleProjectsState extends State<BinnacleProjects> {
             child: Row(
               mainAxisAlignment: isProperty ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
-                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                viewImageAvatar(size: size, urlAvatar: urlAvatar, nameUser: nameUser),
                 Flexible(
                   fit: FlexFit.loose,
                   child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),
@@ -200,14 +205,16 @@ class _BinnacleProjectsState extends State<BinnacleProjects> {
     }
 
     String title = translate(context: context, text: 'youDeletedFromYourList').replaceAll('___', '${widget.info['usernotification']['name']} ${widget.info['usernotification']['surname'] ?? ''}');
-    String urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+    String urlAvatar = widget.info['useraction']['avatar_100']  ?? '';
+    String nameUser = widget.info['useraction']['name'];
 
     if(widget.myUser.id == widget.info['user_action_id']){
       //TAREA NUEVA QUE YO CREE
       isProperty = true;
     }else{
       //TAREA NUEVA QUE SE ME FUE ASIGNADA
-      urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+      urlAvatar = widget.info['useraction']['avatar_100']  ?? '';
+      nameUser = widget.info['useraction']['name'];
       title = translate(context: context, text: 'youDeletedFromProject');
     }
 
@@ -223,7 +230,7 @@ class _BinnacleProjectsState extends State<BinnacleProjects> {
             child: Row(
               mainAxisAlignment: isProperty ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
-                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                viewImageAvatar(size: size, urlAvatar: urlAvatar, nameUser: nameUser),
                 Flexible(
                   fit: FlexFit.loose,
                   child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),

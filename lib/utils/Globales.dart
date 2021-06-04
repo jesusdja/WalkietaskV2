@@ -3,7 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:walkietaskv2/main.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 
-String avatarImage = 'http://www.nabu.me.php72-7.phx1-1.websitetestlink.com/uploads/system/avatar.png';
+//String avatarImage = 'http://www.nabu.me.php72-7.phx1-1.websitetestlink.com/uploads/system/avatar.png';
+Widget avatarWidget({@required double alto, @required String text, double radius = 0.03}){
+  return Container(
+    child: CircleAvatar(
+      radius: alto * radius,
+      child: Center(child: Text(text ?? '')),
+    ),
+  );
+}
+Widget avatarWidgetImage({@required double alto, @required String pathImage, double radius = 0.03}){
+  return Container(
+    child: CircleAvatar(
+      radius: alto * radius,
+      backgroundImage: Image.network(pathImage).image,
+    ),
+  );
+}
 
 Future<String> obtenerToken() async {
 

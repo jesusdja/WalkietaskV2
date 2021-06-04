@@ -309,9 +309,11 @@ class _MyProyectsState extends State<MyProyects> {
         String name = '${mapUserProject['users']['name']} ${mapUserProject['users']['surname']}';
         String email = mapUserProject['users']['email'];
 
-        Image avatarUser = Image.network(avatarImage);
+        Widget avatarUserWidget = avatarWidget(alto: alto,text: name.isEmpty ? '' : name.substring(0,1).toUpperCase(), radius: 0.025);
         if(avatar != null){
-          avatarUser = Image.network(avatar);
+          if(avatar != null && avatar != ''){
+            avatarUserWidget = avatarWidgetImage(alto: alto,pathImage: avatar,radius: 0.025);
+          }
         }
 
         users.add(
@@ -328,11 +330,7 @@ class _MyProyectsState extends State<MyProyects> {
                     color: bordeCirculeAvatar, // border color
                     shape: BoxShape.circle,
                   ),
-                  child: CircleAvatar(
-                    radius: alto * 0.025,
-                    backgroundImage: avatarUser.image,
-                    //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
-                  ),
+                  child: avatarUserWidget,
                 ),
                 Expanded(
                   child: Container(

@@ -81,7 +81,6 @@ class _ProfileHomeState extends State<ProfileHome> {
 
   Future<void> initData() async {
     avatarUser = await getPhotoUser();
-    avatarUser = avatarUser ?? Image.network(avatarImage);
     if(myUser != null){
       if(myUser != null && myUser.avatar_100 != ''){
         avatarUser = Image.network(myUser.avatar_100);

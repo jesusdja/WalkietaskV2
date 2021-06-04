@@ -158,16 +158,19 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
   }
 
   Widget _body(){
-
-    Image avatarUser = Image.network(avatarImage);
-    if(user.avatar_100.isNotEmpty){
-      avatarUser = Image.network(user.avatar_100);
-    }
-
-    return opcionesOpen ? _taskSendOpen() : _taskSendOut(avatarUser);
+    return opcionesOpen ? _taskSendOpen() : _taskSendOut();
   }
 
-  Widget _taskSendOut(Image avatarUser){
+  Widget _taskSendOut(){
+
+    String userName = user != null ? user.name ?? '' : '';
+    Widget avatarUserWidget = avatarWidget(alto: alto,text: userName.isEmpty ? '' : userName.substring(0,1).toUpperCase(),radius: 0.08);
+    if(user != null){
+      if(user != null && user.avatar_100 != ''){
+        avatarUserWidget = avatarWidgetImage(alto: alto,pathImage: user.avatar_100,radius: 0.08);
+      }
+    }
+
     return SingleChildScrollView(
       child: Container(
         width: ancho,
@@ -188,11 +191,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
                         color: bordeCirculeAvatar, // border color
                         shape: BoxShape.circle,
                       ),
-                      child: CircleAvatar(
-                        radius: alto * 0.08,
-                        backgroundImage: avatarUser.image,
-                        //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
-                      ),
+                      child: avatarUserWidget,
                     ),
                   ),
                 ],
@@ -684,9 +683,12 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
 
   AppBar _appBar(){
 
-    Image avatarUser = Image.network(avatarImage);
-    if(user.avatar_100.isNotEmpty){
-      avatarUser = Image.network(user.avatar_100);
+    String userName = user != null ? user.name ?? '' : '';
+    Widget avatarUserWidget = avatarWidget(alto: alto,text: userName.isEmpty ? '' : userName.substring(0,1).toUpperCase(),radius: 0.02);
+    if(user != null){
+      if(user != null && user.avatar_100 != ''){
+        avatarUserWidget = avatarWidgetImage(alto: alto,pathImage: user.avatar_100,radius: 0.02);
+      }
     }
 
     return AppBar(
@@ -706,11 +708,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
                         color: bordeCirculeAvatar, // border color
                         shape: BoxShape.circle,
                       ),
-                      child: CircleAvatar(
-                        radius: alto * 0.02,
-                        backgroundImage: avatarUser.image,
-                        //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
-                      ),
+                      child: avatarUserWidget,
                     ),
                   ),
                 ],

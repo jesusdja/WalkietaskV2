@@ -111,7 +111,6 @@ class _ChatForTareaState extends State<ChatForTarea> {
     _controllerChatSms = TextEditingController();
 
     chatTareasdb = new ChatTareaFirebase();
-    imagenUser = Image.network('$avatarImage');
     inicializarUser();
     inicializar();
     _inicializarPatronBlocTaskSend();
@@ -309,7 +308,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                     ],
                   )
               ),
-              imagenUser!= null ?
+
               Center(
                 child: Container(
                   margin: EdgeInsets.only(left: ancho * 0.02, right: ancho * 0.02),
@@ -317,13 +316,13 @@ class _ChatForTareaState extends State<ChatForTarea> {
                     color: WalkieTaskColors.white, // border color
                     shape: BoxShape.circle,
                   ),
-                  child: CircleAvatar(
+                  child: imagenUser!= null ? CircleAvatar(
                     radius: alto * 0.025,
                     backgroundColor: Colors.white,
                     backgroundImage: imagenUser.image,
-                  ),
+                  ) : avatarWidget(alto: alto, radius: 0.025, text: nombreUser.isEmpty ? '' : nombreUser.substring(0,1).toUpperCase()),
                 ),
-              ) : Container()
+              ),
             ],
           ),
         )
@@ -477,9 +476,12 @@ class _ChatForTareaState extends State<ChatForTarea> {
   }
 
   Widget _cardSMS(Color colorCard, String texto, String dateSrt,bool lateralDer,Usuario userFrom, bool opa){
-    Image imagenAvatar = lateralDer ? Image.network('$avatarImage') : avatarUser ?? Image.network('$avatarImage');
+    Image imagenAvatar = lateralDer ? null : avatarUser;
+    String initialName = '';
     if(userFrom != null && userFrom.avatar_100 != null && userFrom.avatar_100 != ''){
       imagenAvatar = Image.network(userFrom.avatar_100);
+    }else{
+      initialName = userFrom.name.isEmpty ? '' : userFrom.name.substring(0,1).toUpperCase();
     }
 
     TextStyle style = WalkieTaskStyles().stylePrimary(size: alto * 0.016);
@@ -499,10 +501,11 @@ class _ChatForTareaState extends State<ChatForTarea> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   lateralDer ? Container(
-                    child: CircleAvatar(
+                    child: imagenAvatar != null ? CircleAvatar(
                       radius: alto * 0.025,
                       backgroundImage: imagenAvatar.image,
-                    ),
+                    ) :
+                    avatarWidget(alto: alto, radius:  0.025, text: initialName),
                   ) : Container(),
                   Expanded(
                     child: Container(

@@ -599,12 +599,13 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
   Widget _drawerMenu(){
 
-    avatarUser = avatarUser ?? Image.network(avatarImage);
     if(myUser != null){
       if(myUser.avatar_100 != null && myUser.avatar_100 != ''){
         avatarUser = Image.network(myUser.avatar_100);
       }
     }
+
+    String nameUser = myUser == null ? '': myUser.name ?? '';
 
     Widget _divider = Divider(color: WalkieTaskColors.white,);
 
@@ -640,6 +641,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                     margin: EdgeInsets.only(top: alto * 0.05, left: ancho * 0.05),
                     child: Row(
                       children: <Widget>[
+                        avatarUser == null ?
+                        avatarWidget(radius: 0.1, alto: ancho, text: nameUser.isEmpty ? '' : nameUser.substring(0,1).toUpperCase()) :
                         avatarCirculeImage(WalkieTaskColors.grey,avatarUser,ancho * 0.1),
                         Expanded(
                           child: Container(
@@ -1190,19 +1193,21 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       isRecived = false;
     }
 
-    Image avatarUser = Image.network(avatarImage);
+    String userName = mapIdUser[task.user_id] != null ? mapIdUser[task.user_id].name ?? '' : '';
+    Widget avatarUserWidget = avatarWidget(alto: alto,text: userName.isEmpty ? '' : userName.substring(0,1).toUpperCase(),radius: 0.025);
+
     String nameUser = '';
     if(isRecived){
       if(mapIdUser[task.user_id] != null){
         if(mapIdUser[task.user_id].avatar_100 != ''){
-          avatarUser = Image.network(mapIdUser[task.user_id].avatar_100);
+          avatarUserWidget = avatarWidgetImage(alto: alto,pathImage: mapIdUser[task.user_id].avatar_100,radius: 0.025);
         }
         nameUser = mapIdUser[task.user_id].name;
       }
     }else{
       if(mapIdUser[task.user_responsability_id] != null){
         if(mapIdUser[task.user_responsability_id].avatar_100 != ''){
-          avatarUser = Image.network(mapIdUser[task.user_responsability_id].avatar_100);
+          avatarUserWidget = avatarWidgetImage(alto: alto,pathImage: mapIdUser[task.user_responsability_id].avatar_100,radius: 0.025);
         }
         nameUser = mapIdUser[task.user_responsability_id].name;
       }
@@ -1215,10 +1220,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         color: WalkieTaskColors.primary, // border color
         shape: BoxShape.circle,
       ),
-      child: CircleAvatar(
-        radius: alto * 0.025,
-        backgroundImage: avatarUser.image,
-      ),
+      child: avatarUserWidget,
     );
     Widget messageText = Container(
       child: RichText(
@@ -1248,7 +1250,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
   Future<void> viewNotiLocalProjects(String subTitle, String idProjects) async {
 
-    Image avatarUser = Image.network(avatarImage);
+
     String nameUser = '';
     int idUser = 0;
     String nameProyects = '';
@@ -1269,11 +1271,12 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       }
     }catch(e){}
 
+    nameUser = mapIdUser[idUser] != null ? mapIdUser[idUser].name : '';
+    Widget avatarUserWidget = avatarWidget(alto: alto,text: nameUser.isEmpty ? '' : nameUser.substring(0,1).toUpperCase(),radius: 0.025);
     if(mapIdUser[idUser] != null){
-      if(mapIdUser[idUser].avatar_100 != ''){
-        avatarUser = Image.network(mapIdUser[idUser].avatar_100);
+      if(mapIdUser[idUser] != null && mapIdUser[idUser].avatar_100 != ''){
+        avatarUserWidget = avatarWidgetImage(alto: alto,pathImage: mapIdUser[idUser].avatar_100,radius: 0.025);
       }
-      nameUser = mapIdUser[idUser].name;
     }
 
     Widget imageAvatar = Container(
@@ -1283,10 +1286,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         color: WalkieTaskColors.primary, // border color
         shape: BoxShape.circle,
       ),
-      child: CircleAvatar(
-        radius: alto * 0.025,
-        backgroundImage: avatarUser.image,
-      ),
+      child: avatarUserWidget,
     );
     Widget messageText = Container(
       child: RichText(
@@ -1310,11 +1310,10 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
   Future<void> viewNotiLocalPersonal(String title, String subTitle, String description) async {
 
-    Image avatarUser = Image.network(avatarImage);
-    if(myUser != null){
-      if(myUser.avatar_100 != ''){
-        avatarUser = Image.network(myUser.avatar_100);
-      }
+    String userName = myUser != null ? myUser.name ?? '' : '';
+    Widget avatarUserWidget = avatarWidget(alto: alto,text: userName.isEmpty ? '' : userName.substring(0,1).toUpperCase(),radius: 0.025);
+    if(myUser != null && myUser.avatar_100 != ''){
+      avatarUserWidget = avatarWidgetImage(alto: alto,pathImage: myUser.avatar_100,radius: 0.025);
     }
 
     Widget imageAvatar = Container(
@@ -1324,10 +1323,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         color: WalkieTaskColors.primary, // border color
         shape: BoxShape.circle,
       ),
-      child: CircleAvatar(
-        radius: alto * 0.025,
-        backgroundImage: avatarUser.image,
-      ),
+      child: avatarUserWidget,
     );
     Widget titleText = Container(
       child: Text(title,style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.white, spacing: 0.5, fontWeight: FontWeight.bold),),

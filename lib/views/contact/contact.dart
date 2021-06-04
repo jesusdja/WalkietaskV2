@@ -158,10 +158,13 @@ class _ContactsState extends State<Contacts> {
   }
 
   Widget _cardMyContacts(Usuario user){
-    Image avatarUser = Image.network(avatarImage);
-    if(user.avatar_100.isNotEmpty){
-      avatarUser = Image.network(user.avatar_100);
+
+    String userName = user != null ? user.name ?? '' : '';
+    Widget avatarUserWidget = avatarWidget(alto: alto,text: userName.isEmpty ? '' : userName.substring(0,1).toUpperCase(), radius: 0.03);
+    if(user != null && user.avatar_100 != ''){
+      avatarUserWidget = avatarWidgetImage(alto: alto,pathImage: user.avatar_100, radius: 0.03);
     }
+
     return Container(
       width: ancho,
       margin: EdgeInsets.only(bottom: alto * 0.04),
@@ -176,10 +179,7 @@ class _ContactsState extends State<Contacts> {
               color: bordeCirculeAvatar, // border color
               shape: BoxShape.circle,
             ),
-            child: CircleAvatar(
-              radius: alto * 0.03,
-              backgroundImage: avatarUser.image,
-            ),
+            child: avatarUserWidget,
           ),
           Expanded(
             child: Container(

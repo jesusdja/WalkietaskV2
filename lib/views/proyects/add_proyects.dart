@@ -253,9 +253,10 @@ class _AddProyectsState extends State<AddProyects> {
       }
     }
 
-    Image avatarUser = Image.network(avatarImage);
-    if(user.avatar_100 != ''){
-      avatarUser = Image.network(user.avatar_100);
+    String userName = user != null ? user.name ?? '' : '';
+    Widget avatarUserWidget = avatarWidget(alto: alto,text: userName.isEmpty ? '' : userName.substring(0,1).toUpperCase());
+    if(user != null && user.avatar_100 != ''){
+      avatarUserWidget = avatarWidgetImage(alto: alto,pathImage: user.avatar_100);
     }
     return Container(
       width: ancho,
@@ -264,11 +265,7 @@ class _AddProyectsState extends State<AddProyects> {
         children: <Widget>[
           Container(
             margin: EdgeInsets.only(left: ancho * 0.04, right: ancho * 0.02),
-            child: CircleAvatar(
-              backgroundColor: Colors.grey[500],
-              radius: ancho * 0.05,
-              backgroundImage: avatarUser.image,
-            ),
+            child: avatarUserWidget,
           ),
           Expanded(
             child: Text('${user.name} ${user.surname}', style: textStylePrimary,),

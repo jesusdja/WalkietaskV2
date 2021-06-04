@@ -56,7 +56,7 @@ class _BinnacleTaskState extends State<BinnacleTask> {
     return _rowData;
   }
 
-  Widget viewImageAvatar({Size size, String urlAvatar}){
+  Widget viewImageAvatar({Size size, String urlAvatar, @required String name}){
     return Container(
       padding: EdgeInsets.only(left: size.width * 0.01),
       child: Container(
@@ -65,11 +65,12 @@ class _BinnacleTaskState extends State<BinnacleTask> {
           color: bordeCirculeAvatar, // border color
           shape: BoxShape.circle,
         ),
-        child: CircleAvatar(
+        child: urlAvatar.isNotEmpty ? CircleAvatar(
           radius: size.height * 0.018,
           backgroundImage: Image.network(urlAvatar).image,
           //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
-        ),
+        ) :
+        avatarWidget(alto: size.height,text: name.isEmpty ? '' : name.substring(0,1).toUpperCase(),radius: 0.018),
       ),
     );
   }
@@ -78,7 +79,8 @@ class _BinnacleTaskState extends State<BinnacleTask> {
 
     bool isProperty = false;
     String title = translate(context: context, text: 'taskSentTo');
-    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? '';
+    String nameUser = widget.info['usernotification']['name'];
     String nameTask = '';
     String projectName = translate(context: context, text: 'noAssignedProject');
 
@@ -95,7 +97,8 @@ class _BinnacleTaskState extends State<BinnacleTask> {
       isProperty = true;
     }else{
       //TAREA NUEVA QUE SE ME FUE ASIGNADA
-      urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+      urlAvatar = widget.info['useraction']['avatar_100']  ?? '';
+      nameUser = widget.info['useraction']['name'];
       title = '${translate(context: context, text: 'taskReceived')} ${widget.info['useraction']['name']} ${widget.info['useraction']['surname'] ?? ''}';
     }
 
@@ -111,7 +114,7 @@ class _BinnacleTaskState extends State<BinnacleTask> {
             child: Row(
               mainAxisAlignment: isProperty ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
-                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                viewImageAvatar(size: size, urlAvatar: urlAvatar, name: nameUser),
                 Flexible(
                   fit: FlexFit.loose,
                   child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),
@@ -134,7 +137,8 @@ class _BinnacleTaskState extends State<BinnacleTask> {
 
   Widget taskPersonalReminder({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
     String title = translate(context: context, text: 'youSentPersonalReminder');
-    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? '';
+    String nameUser = widget.info['usernotification']['name'];
     String nameTask = '';
     String projectName = translate(context: context, text: 'noAssignedProject');
 
@@ -156,7 +160,7 @@ class _BinnacleTaskState extends State<BinnacleTask> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                viewImageAvatar(size: size, urlAvatar: urlAvatar, name: nameUser),
                 Flexible(
                   fit: FlexFit.loose,
                   child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),
@@ -181,7 +185,8 @@ class _BinnacleTaskState extends State<BinnacleTask> {
 
     bool isProperty = false;
     String title = translate(context: context, text: 'youDeletedTask');
-    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? '';
+    String nameUser = widget.info['usernotification']['name'];
     String nameTask = '';
     String projectName = translate(context: context, text: 'noAssignedProject');
 
@@ -195,7 +200,8 @@ class _BinnacleTaskState extends State<BinnacleTask> {
     if(widget.myUser.id == widget.info['user_action_id']){
       isProperty = true;
     }else{
-      urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+      urlAvatar = widget.info['useraction']['avatar_100']  ?? '';
+      nameUser = widget.info['useraction']['name'];
       title = '${widget.info['useraction']['name']} ${widget.info['useraction']['surname'] ?? ''} ${translate(context: context, text: 'deletedTask')}';
     }
 
@@ -211,7 +217,7 @@ class _BinnacleTaskState extends State<BinnacleTask> {
             child: Row(
               mainAxisAlignment: isProperty ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
-                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                viewImageAvatar(size: size, urlAvatar: urlAvatar, name: nameUser),
                 Flexible(
                   fit: FlexFit.loose,
                   child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),
@@ -236,7 +242,8 @@ class _BinnacleTaskState extends State<BinnacleTask> {
 
     bool isProperty = false;
     String title = translate(context: context,text: 'youEditedTask');
-    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? '';
+    String nameUser = widget.info['usernotification']['name'];
     String nameTask = '';
     String projectName = translate(context: context, text: 'noAssignedProject');
 
@@ -250,7 +257,8 @@ class _BinnacleTaskState extends State<BinnacleTask> {
     if(widget.myUser.id == widget.info['user_action_id']){
       isProperty = true;
     }else{
-      urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+      urlAvatar = widget.info['useraction']['avatar_100']  ?? '';
+      nameUser = widget.info['useraction']['name'];
       title = '${widget.info['useraction']['name']} ${widget.info['useraction']['surname'] ?? ''} ${translate(context: context, text: 'editedTask')}';
     }
 
@@ -266,7 +274,7 @@ class _BinnacleTaskState extends State<BinnacleTask> {
             child: Row(
               mainAxisAlignment: isProperty ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
-                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                viewImageAvatar(size: size, urlAvatar: urlAvatar, name: nameUser),
                 Flexible(
                   fit: FlexFit.loose,
                   child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),
@@ -290,7 +298,8 @@ class _BinnacleTaskState extends State<BinnacleTask> {
   Widget taskPriority({Size size, TextStyle styleTitle, TextStyle styleSubTitle}){
 
     String title = translate(context: context, text: 'youHighlightedTask');
-    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? '';
+    String nameUser = widget.info['usernotification']['name'];
     String nameTask = '';
     String projectName = translate(context: context, text: 'noAssignedProject');
 
@@ -312,7 +321,7 @@ class _BinnacleTaskState extends State<BinnacleTask> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                viewImageAvatar(size: size, urlAvatar: urlAvatar, name: nameUser),
                 Flexible(
                   fit: FlexFit.loose,
                   child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),
@@ -337,7 +346,8 @@ class _BinnacleTaskState extends State<BinnacleTask> {
 
     bool isProperty = false;
     String title = translate(context: context, text: 'youStartedWorkingTask');
-    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? '';
+    String nameUser = widget.info['usernotification']['name'];
     String nameTask = '';
     String projectName = translate(context: context, text: 'noAssignedProject');
 
@@ -351,7 +361,8 @@ class _BinnacleTaskState extends State<BinnacleTask> {
     if(widget.myUser.id == widget.info['user_action_id']){
       isProperty = true;
     }else{
-      urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+      urlAvatar = widget.info['useraction']['avatar_100']  ?? '';
+      nameUser = widget.info['useraction']['name'];
       title = '${widget.info['useraction']['name']} ${widget.info['useraction']['surname'] ?? ''} ${translate(context: context, text: 'startedWorkingTask')}';
     }
 
@@ -367,7 +378,7 @@ class _BinnacleTaskState extends State<BinnacleTask> {
             child: Row(
               mainAxisAlignment: isProperty ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
-                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                viewImageAvatar(size: size, urlAvatar: urlAvatar, name: nameUser),
                 Flexible(
                   fit: FlexFit.loose,
                   child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),
@@ -392,7 +403,8 @@ class _BinnacleTaskState extends State<BinnacleTask> {
 
     bool isProperty = false;
     String title = translate(context: context, text: 'youCompletedTask');
-    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? '';
+    String nameUser = widget.info['usernotification']['name'];
     String nameTask = '';
     String projectName = translate(context: context, text: 'noAssignedProject');
 
@@ -406,7 +418,8 @@ class _BinnacleTaskState extends State<BinnacleTask> {
     if(widget.myUser.id == widget.info['user_action_id']){
       isProperty = true;
     }else{
-      urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+      urlAvatar = widget.info['useraction']['avatar_100']  ?? '';
+      nameUser = widget.info['useraction']['name'];
       title = '${widget.info['useraction']['name']} ${widget.info['useraction']['surname'] ?? ''} ${translate(context: context, text: 'completedTask')}';
     }
 
@@ -422,7 +435,7 @@ class _BinnacleTaskState extends State<BinnacleTask> {
             child: Row(
               mainAxisAlignment: isProperty ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
-                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                viewImageAvatar(size: size, urlAvatar: urlAvatar, name: nameUser),
                 Flexible(
                   fit: FlexFit.loose,
                   child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),

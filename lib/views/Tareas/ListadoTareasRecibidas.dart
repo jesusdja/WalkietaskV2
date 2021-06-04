@@ -313,12 +313,6 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
 
     bool working = tarea.working == 1;
 
-    Image avatarUser = Image.network(avatarImage);
-    if(mapIdUser != null){
-      if(mapIdUser[tarea.user_id] != null && mapIdUser[tarea.user_id].avatar_100 != ''){
-        avatarUser = Image.network(mapIdUser[tarea.user_id].avatar_100);
-      }
-    }
 
     String daysLeft = getDayDiff(tarea.deadline);
 
@@ -332,6 +326,13 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
       nameUser = '${mapIdUser[tarea.user_id].name} ${mapIdUser[tarea.user_id].surname}';
       if(widget.myUserRes != null && widget.myUserRes.id != null && widget.myUserRes.id == mapIdUser[tarea.user_id].id){
         nameUser = translate(context: context, text: 'remindersPersonal');
+      }
+    }
+
+    Widget avatarUser = avatarWidget(alto: alto,text: nameUser.isEmpty ? '' : nameUser.substring(0,1).toUpperCase());
+    if(mapIdUser != null){
+      if(mapIdUser[tarea.user_id] != null && mapIdUser[tarea.user_id].avatar_100 != ''){
+        avatarUser = avatarWidgetImage(alto: alto,pathImage: mapIdUser[tarea.user_id].avatar_100);
       }
     }
 
@@ -371,11 +372,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                           color: bordeCirculeAvatar, // border color
                           shape: BoxShape.circle,
                         ),
-                        child: CircleAvatar(
-                          radius: alto * 0.03,
-                          backgroundImage: avatarUser.image,
-                          //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
-                        ),
+                        child: avatarUser,
                       ),
                     ),
                     favorite ? Container(
@@ -448,18 +445,19 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
 
   Widget _tareasUser(Usuario user, List<Tarea> listTask){
 
-    Image avatarUser = Image.network(avatarImage);
-    if(mapIdUser != null){
-      if(user != null && user.avatar_100 != ''){
-        avatarUser = Image.network(user.avatar_100);
-      }
-    }
 
     List<Widget> listTaskWidget = listTaskGet(user, listTask);
 
     String nameUser = '${user.name} ${user.surname}';
     if(widget.myUserRes.id == user.id){
       nameUser = translate(context: context, text: 'remindersPersonal');
+    }
+
+    Widget avatarUser = avatarWidget(alto: alto,text: nameUser.isEmpty ? '' : nameUser.substring(0,1).toUpperCase());
+    if(mapIdUser != null){
+      if(user != null && user.avatar_100 != ''){
+        avatarUser = avatarWidgetImage(alto: alto,pathImage: user.avatar_100);
+      }
     }
 
     int cantTask = 0;
@@ -488,10 +486,7 @@ class _ListadoTareasState extends State<ListadoTareasRecibidas> {
                       color: bordeCirculeAvatar, // border color
                       shape: BoxShape.circle,
                     ),
-                    child: CircleAvatar(
-                      radius: alto * 0.03,
-                      backgroundImage: avatarUser.image,
-                    ),
+                    child: avatarUser,
                   ),
                   Expanded(
                     child: Container(

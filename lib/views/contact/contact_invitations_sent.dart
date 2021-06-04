@@ -71,10 +71,6 @@ class _InvitationsSentState extends State<InvitationsSent> {
       try{
         userInvited = widget.mapIdUsersRes[invitation.userIdInvited];
         if(invitation.inv == 0 && userInvited != null){
-          Image avatarUser = Image.network(avatarImage);
-          if(userInvited.avatar_100.isNotEmpty){
-            avatarUser = Image.network(userInvited.avatar_100);
-          }
 
           DateTime date = DateTime.parse(invitation.createdAt);
           String mes = date.month.toString(); if(mes.length < 2){ mes = '0$mes'; }
@@ -84,6 +80,11 @@ class _InvitationsSentState extends State<InvitationsSent> {
           String nameUser = '${userInvited.name} ${userInvited.surname}';
           if(invitation.external == 1){
             nameUser = invitation.contact;
+          }
+
+          Widget avatarUserWidget = avatarWidget(alto: alto,text: nameUser.isEmpty ? '' : nameUser.substring(0,1).toUpperCase(),radius: 0.025);
+          if(userInvited != null && userInvited.avatar_100 != ''){
+            avatarUserWidget = avatarWidgetImage(alto: alto,pathImage: userInvited.avatar_100,radius: 0.025);
           }
 
           result.add(
@@ -101,10 +102,7 @@ class _InvitationsSentState extends State<InvitationsSent> {
                         color: bordeCirculeAvatar, // border color
                         shape: BoxShape.circle,
                       ),
-                      child: CircleAvatar(
-                        radius: alto * 0.025,
-                        backgroundImage: avatarUser.image,
-                      ),
+                      child: avatarUserWidget,
                     ),
                     Expanded(
                       child: Column(

@@ -55,7 +55,7 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
     return _rowData;
   }
 
-  Widget viewImageAvatar({Size size, String urlAvatar}){
+  Widget viewImageAvatar({Size size, String urlAvatar, @required String name}){
     return Container(
       padding: EdgeInsets.only(left: size.width * 0.01),
       child: Container(
@@ -64,11 +64,11 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
           color: bordeCirculeAvatar, // border color
           shape: BoxShape.circle,
         ),
-        child: CircleAvatar(
+        child: urlAvatar.isNotEmpty ? CircleAvatar(
           radius: size.height * 0.018,
           backgroundImage: Image.network(urlAvatar).image,
-          //child: Icon(Icons.account_circle,size: 49,color: Colors.white,),
-        ),
+        ) :
+        avatarWidget(alto: size.height,text: name.isEmpty ? '' : name.substring(0,1).toUpperCase(), radius: 0.018),
       ),
     );
   }
@@ -77,8 +77,8 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
 
     bool isProperty = false;
     String title = translate(context: context, text: 'youDeletedUserFromList');
-    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
-
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? '';
+    String nameUser = widget.info['usernotification']['name'];
     if(widget.info['info'] != null){
       title = translate(context: context, text: 'youDeletedFromYourList').replaceAll('___', '${widget.info['info']['contact']['name']} ${widget.info['info']['contact']['surname'] ?? ''}');
     }
@@ -88,11 +88,11 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
       isProperty = true;
     }else{
       //TAREA NUEVA QUE SE ME FUE ASIGNADA
-      urlAvatar = avatarImage;
       title = translate(context: context, text: 'youWereDeletedFromList');
       if(widget.info['info'] != null){
         title = '${widget.info['useraction']['name']} ${widget.info['useraction']['surname'] ?? ''} ${translate(context: context, text: 'deletedYouFromHisList')}';
-        urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+        urlAvatar = widget.info['useraction']['avatar_100']  ?? '';
+        nameUser =  widget.info['useraction']['name'];
       }
     }
 
@@ -108,7 +108,7 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
             child: Row(
               mainAxisAlignment: isProperty ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
-                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                viewImageAvatar(size: size, urlAvatar: urlAvatar, name: nameUser),
                 Flexible(
                   fit: FlexFit.loose,
                   child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),
@@ -125,7 +125,8 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
 
     bool isProperty = false;
     String title = translate(context: context, text: 'youSentAnInvitation');
-    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? '';
+    String nameUser = widget.info['usernotification']['name'];
 
     if(widget.info['info'] != null){
       title = '${translate(context: context, text: 'youSentInvitation')} ${widget.info['info']['contact']['name']} ${widget.info['info']['contact']['surname'] ?? ''}';
@@ -136,8 +137,9 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
       isProperty = true;
     }else{
       //TAREA NUEVA QUE SE ME FUE ASIGNADA
-      urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+      urlAvatar = widget.info['useraction']['avatar_100']  ?? '';
       title = '${translate(context: context, text: 'youReceivedInvitationFrom')} ${widget.info['useraction']['name']} ${widget.info['useraction']['surname'] ?? ''}';
+      nameUser = widget.info['useraction']['name'];
     }
 
 
@@ -152,7 +154,7 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
             child: Row(
               mainAxisAlignment: isProperty ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
-                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                viewImageAvatar(size: size, urlAvatar: urlAvatar, name: nameUser),
                 Flexible(
                   fit: FlexFit.loose,
                   child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),
@@ -169,7 +171,8 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
 
     bool isProperty = false;
     String title = '${translate(context: context, text: 'youReceivedInvitationFrom')} ${widget.info['useraction']['name']} ${widget.info['useraction']['surname'] ?? ''}';
-    String urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+    String urlAvatar = widget.info['useraction']['avatar_100']  ?? '';
+    String nameUser = widget.info['useraction']['name'];
 
     return Container(
       width: size.width,
@@ -182,7 +185,7 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
             child: Row(
               mainAxisAlignment: isProperty ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
-                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                viewImageAvatar(size: size, urlAvatar: urlAvatar, name: nameUser),
                 Flexible(
                   fit: FlexFit.loose,
                   child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),
@@ -199,7 +202,8 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
 
     bool isProperty = false;
     String title = translate(context: context, text: 'youAcceptedInvitation');
-    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? '';
+    String nameUser = widget.info['usernotification']['name'];
 
     if(widget.info['info'] != null){
       title = '${translate(context: context, text: 'youAcceptedInvitationOf')} ${widget.info['info']['user']['name']} ${widget.info['info']['user']['surname'] ?? ''}';
@@ -210,10 +214,10 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
       isProperty = true;
     }else{
       //TAREA NUEVA QUE SE ME FUE ASIGNADA
-      urlAvatar = avatarImage;
       if(widget.info['info'] != null){
-        urlAvatar = widget.info['info']['contact']['avatar_100']  ?? avatarImage;
+        urlAvatar = widget.info['info']['contact']['avatar_100']  ?? '';
         title = '${widget.info['info']['contact']['name']} ${widget.info['info']['contact']['surname'] ?? ''} ${translate(context: context,text: 'acceptedInvitation')}';
+        nameUser = widget.info['info']['contact']['name'];
       }
     }
 
@@ -229,7 +233,7 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
             child: Row(
               mainAxisAlignment: isProperty ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
-                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                viewImageAvatar(size: size, urlAvatar: urlAvatar, name: nameUser),
                 Flexible(
                   fit: FlexFit.loose,
                   child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),
@@ -246,8 +250,8 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
 
     bool isProperty = false;
     String title = translate(context: context, text: 'rejectedInvitation');
-    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
-
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? '';
+    String nameUser = widget.info['usernotification']['name'];
     if(widget.info['info'] != null){
       title = '${translate(context: context, text: 'youRejectedInvitationFrom')} ${widget.info['info']['contact']['name']} ${widget.info['info']['contact']['surname'] ?? ''}';
     }
@@ -257,7 +261,8 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
       isProperty = true;
     }else{
       //TAREA NUEVA QUE SE ME FUE ASIGNADA
-      urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+      urlAvatar = widget.info['useraction']['avatar_100']  ?? '';
+      nameUser = widget.info['useraction']['name'];
       if(widget.info['info'] != null){
         title = '${widget.info['info']['user']['name']} ${widget.info['info']['user']['surname'] ?? ''} ${translate(context: context, text: 'rejectedInvitation')}';
       }
@@ -276,7 +281,7 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
             child: Row(
               mainAxisAlignment: isProperty ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
-                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                viewImageAvatar(size: size, urlAvatar: urlAvatar, name: nameUser),
                 Flexible(
                   fit: FlexFit.loose,
                   child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),
@@ -293,8 +298,8 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
 
     bool isProperty = false;
     String title = translate(context: context, text: 'deletedInvitation');
-    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? avatarImage;
-
+    String urlAvatar = widget.info['usernotification']['avatar_100']  ?? '';
+    String nameUser = widget.info['usernotification']['name'];
     if(widget.info['info'] != null){
       title = '${translate(context: context, text: 'youDeletedInvitationSentTo')} ${widget.info['info']['contact']['name']} ${widget.info['info']['contact']['surname'] ?? ''}';
     }
@@ -304,7 +309,8 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
       isProperty = true;
     }else{
       //TAREA NUEVA QUE SE ME FUE ASIGNADA
-      urlAvatar = widget.info['useraction']['avatar_100']  ?? avatarImage;
+      urlAvatar = widget.info['useraction']['avatar_100']  ?? '';
+      nameUser = widget.info['useraction']['name'];
       if(widget.info['info'] != null){
         title = '${widget.info['info']['user']['name']} ${widget.info['info']['user']['surname'] ?? ''} ${translate(context: context, text: 'deletedTheInvitation')}';
       }
@@ -323,7 +329,7 @@ class _BinnacleInvitationState extends State<BinnacleInvitation> {
             child: Row(
               mainAxisAlignment: isProperty ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
-                viewImageAvatar(size: size, urlAvatar: urlAvatar),
+                viewImageAvatar(size: size, urlAvatar: urlAvatar, name: nameUser),
                 Flexible(
                   fit: FlexFit.loose,
                   child: Text(title, softWrap: true, overflow: TextOverflow.fade,style: styleTitle,),
