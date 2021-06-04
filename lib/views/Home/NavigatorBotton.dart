@@ -857,8 +857,8 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   _inicializarDataHome() async {
     List<Map<String,dynamic>> mapAll = [];
     List<Map<String,dynamic>> mapAllAux = [];
-    Map<String,String> countTaskForProject = await DatabaseProvider.db.getTaskForProjects();
 
+    //OBTENER TAREAS ASIGNADAS POR PROYECTO
     Map<int,List<Tarea>> mapTaskAsinged = {};
     listRecibidos.forEach((element) {
       int idProject = element.project_id ?? 0;
@@ -867,25 +867,36 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         mapTaskAsinged[idProject].add(element);
       }
     });
-
+    //OBTENER TAREAS ENVIADAS POR PROYECTO
+    Map<int,List<Tarea>> mapTaskSendForProject = {};
+    listEnviados.forEach((element) {
+      int idProject = element.project_id ?? 0;
+      if(mapTaskSendForProject[idProject] == null){ mapTaskSendForProject[idProject] = [];}
+      if(element.finalized == 0 && myUser != null && myUser.id != element.user_responsability_id){
+        mapTaskSendForProject[idProject].add(element);
+      }
+    });
+    //AGREGAR USUARIOS DATA HOME
     listaUser.forEach((element) {
       mapAll.add({'info' : element,'type' : 'user','date' : element.updatedAt});
       mapAllAux.add({'info' : element,'type' : 'user','date' : element.updatedAt});
     });
+    //AGREGAR PROYECTOS DATA HOME
+    for(int x = 0; x < listProjects.length; x++){
+      Caso element = listProjects[x];
 
-    listProjects.forEach((element) {
-      String cant = '0';
-      if(countTaskForProject[element.id.toString()] != null){
-        cant = countTaskForProject[element.id.toString()].toString();
+      List<Tarea> cantTaskSend = [];
+      if(mapTaskSendForProject[element.id] != null){
+        cantTaskSend = mapTaskSendForProject[element.id];
       }
-      String cantAssigned = '0';
+      List<Tarea> cantTaskAssigned = [];
       if(mapTaskAsinged[element.id] != null){
-        cantAssigned = '${mapTaskAsinged[element.id].length}';
+        cantTaskAssigned = mapTaskAsinged[element.id];
       }
-      mapAll.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTask' : cant, 'cantAssigned' : cantAssigned});
-      mapAllAux.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTask' : cant, 'cantAssigned' : cantAssigned});
-    });
-
+      mapAll.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTaskAssigned' : cantTaskAssigned, 'cantTaskSend' : cantTaskSend});
+      mapAllAux.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTaskAssigned' : cantTaskAssigned, 'cantTaskSend' : cantTaskSend});
+    }
+    //UNIR USUARIO Y PROYECTO AL HOME
     if(mapAll.isNotEmpty){
       List listWidgetsHomeAux = [];
       for(int j = 0; j < mapAll.length; j++){

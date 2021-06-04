@@ -23,6 +23,7 @@ import 'package:walkietaskv2/utils/task_sound.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
+import 'package:walkietaskv2/views/Chat/chat_for_project.dart';
 import 'package:walkietaskv2/views/Tareas/Create/detalles_tareas_user.dart';
 import 'package:walkietaskv2/views/Chat/ChatForTarea.dart';
 import 'package:walkietaskv2/views/Tareas/add_name_task.dart';
@@ -245,7 +246,7 @@ class _CreateTaskState extends State<CreateTask> {
 
     users.add(SizedBox(height: alto * 0.03,));
 
-    //listWidgetsHome.add({ 'info' : element, 'type' : 'project' || 'user', 'date' : element.updated_at, 'cantTask' : cant, 'cantAssigned' : cantAssigned});
+    //listWidgetsHome.add({ 'info' : element, 'type' : 'project' || 'user', 'date' : element.updated_at, 'cantTaskAssigned' : cantTaskAssigned, 'cantTaskSend' : cantTaskSend});
     listWidgetsHome.forEach((element) {
       if(element['type'] == 'user'){
         Usuario user = element['info'];
@@ -369,12 +370,23 @@ class _CreateTaskState extends State<CreateTask> {
 
         String nameProject = project.name ?? '';
         bool favorite = project.is_priority == 1;
-        String cantTask = element['cantTask'] ?? '0';
-        String cantAssigned = element['cantAssigned'] ?? '0';
+        String cantTask = '${element['cantTaskAssigned'].length + element['cantTaskSend'].length}' ?? '0';
+        String cantAssigned = '${element['cantTaskAssigned'].length}' ?? '0';
+
+        bool blueOrRed = true;
+        for(int x = 0; x < element['cantTaskAssigned'].length; x++){
+          Tarea taskAssigned = element['cantTaskAssigned'][x];
+          if(taskAssigned.deadline.isNotEmpty){
+            DateTime dateEnd = DateTime.parse(taskAssigned.deadline);
+            if(dateEnd.difference(DateTime.now()).inDays > 0){
+              blueOrRed = false;
+            }
+          }
+        }
 
         users.add(
           InkWell(
-            onTap: () {},
+            onTap: () => goToChatProject(project,element),
             child: Slidable(
               actionPane: SlidableDrawerActionPane(),
               actionExtentRatio: 0.25,
@@ -412,8 +424,40 @@ class _CreateTaskState extends State<CreateTask> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text('${translate(context: context, text: 'tasks')}: $cantTask',style: textStylePrimaryLitle,textAlign: TextAlign.right,),
-                          Text('${translate(context: context, text: 'assigned')}: $cantAssigned',style: textStylePrimaryLitle, textAlign: TextAlign.right,),
+                          Opacity(
+                            opacity: cantTask == '0' ? 0.5 : 1,
+                            child: Text('${translate(context: context, text: 'tasks')}: $cantTask',style: textStylePrimaryLitle,textAlign: TextAlign.right,),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              cantAssigned == '0' ? Container() :
+                              blueOrRed ? Container() :
+                              Container(
+                                padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                                height: alto * 0.02,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                              cantAssigned == '0' ? Container() : blueOrRed ?
+                              Container(
+                                margin: EdgeInsets.only(right: ancho * 0.01),
+                                child: Icon(Icons.circle, color: WalkieTaskColors.color_76ADE3,size: alto * 0.015,),
+                              ) :
+                              Container(
+                                margin: EdgeInsets.only(right: ancho * 0.01),
+                                child: Icon(Icons.circle, color: WalkieTaskColors.color_EA7575,size: alto * 0.015,),
+                              ),
+                              Opacity(
+                                opacity: cantAssigned == '0' ? 0.5 : 1,
+                                child: Text('${translate(context: context, text: 'assigned')}: $cantAssigned',style: textStylePrimaryLitle, textAlign: TextAlign.right,),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -660,122 +704,198 @@ class _CreateTaskState extends State<CreateTask> {
 
     users.add(SizedBox(height: alto * 0.03,));
 
-    listUser.forEach((user) {
+    listWidgetsHome.forEach((element) {
+      if(element['type'] == 'user'){
+        Usuario user = element['info'];
+        if(widget.myUserRes == null || widget.myUserRes.id == null || user.id == widget.myUserRes.id || user.contact == 0) return Container();
 
-      if(widget.myUserRes.id == null || user.id == widget.myUserRes.id || user.contact == 0) return Container();
+        if((!user.name.toLowerCase().contains(controlleBuscador.text.toLowerCase())) &&
+            (!user.surname.toLowerCase().contains(controlleBuscador.text.toLowerCase()))) return Container();
 
-      if((!user.name.toLowerCase().contains(controlleBuscador.text.toLowerCase())) &&
-          (!user.surname.toLowerCase().contains(controlleBuscador.text.toLowerCase()))) return Container();
-
-      String userName = user != null ? user.name ?? '' : '';
-      Widget avatarUserWidget = avatarWidget(alto: alto,text: userName.isEmpty ? '' : userName.substring(0,1).toUpperCase());
-      if(user != null){
-        if(user != null && user.avatar_100 != ''){
-          avatarUserWidget = avatarWidgetImage(alto: alto,pathImage: user.avatar_100);
+        String userName = user != null ? user.name ?? '' : '';
+        Widget avatarUserWidget = avatarWidget(alto: alto,text: userName.isEmpty ? '' : userName.substring(0,1).toUpperCase());
+        if(user != null){
+          if(user != null && user.avatar_100 != ''){
+            avatarUserWidget = avatarWidgetImage(alto: alto,pathImage: user.avatar_100);
+          }
         }
-      }
 
-      bool favorite = user.fijo == 1;
+        bool favorite = user.fijo == 1;
 
-      String dateDiff = translate(context: context, text: 'noDate');
-      int cantRecived = 0;
-      int cantSend = 0;
-      bool redColor = false;
-      if(mapDataUserHome[user.id] != null){
-        if(mapDataUserHome[user.id][0] != ''){
-          dateDiff = getDayDiff(mapDataUserHome[user.id][0]);
-          redColor = dateDiff.contains('-');
+        String dateDiff = translate(context: context, text: 'noDate');
+        int cantRecived = 0;
+        int cantSend = 0;
+        bool redColor = false;
+        if(mapDataUserHome[user.id] != null){
+          if(mapDataUserHome[user.id][0] != ''){
+            dateDiff = getDayDiff(mapDataUserHome[user.id][0]);
+            redColor = dateDiff.contains('-');
+            dateDiff = dateDiff.replaceAll('-', '');
+          }
+
+          mapDataUserHome[user.id][1].forEach((task){
+            if(task.finalized != 1){ cantRecived++; }
+          });
+          mapDataUserHome[user.id][2].forEach((task){
+            if(task.finalized != 1){ cantSend++; }
+          });
         }
-        cantRecived = mapDataUserHome[user.id][1].length;
-        cantSend = mapDataUserHome[user.id][2].length;
-      }
 
-      users.add(
-        InkWell(
-          onTap: (){
-            _onTapUser(user, false);
-            _closeSearch();
-          },
-          child: Slidable(
-            actionPane: SlidableDrawerActionPane(),
-            actionExtentRatio: 0.25,
-            child: Container(
-              width: ancho,
-              margin: EdgeInsets.only(bottom: alto * 0.01, right: ancho * 0.03),
-              child: Row(
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(left: ancho * 0.03, right: ancho * 0.03),
-                    child: Stack(
-                      children: <Widget>[
-                        Center(
-                          child: Container(
-                            decoration: new BoxDecoration(
-                              color: bordeCirculeAvatar, // border color
-                              shape: BoxShape.circle,
+        users.add(
+          InkWell(
+            onTap: () => _onTapUser(user, false),
+            child: Slidable(
+              actionPane: SlidableDrawerActionPane(),
+              actionExtentRatio: 0.25,
+              child: Container(
+                width: ancho,
+                margin: EdgeInsets.only(bottom: alto * 0.01, right: ancho * 0.03, left: ancho * 0.03),
+                child: Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(right: ancho * 0.03),
+                      child: Stack(
+                        children: <Widget>[
+                          Center(
+                            child: Container(
+                              decoration: new BoxDecoration(
+                                color: bordeCirculeAvatar, // border color
+                                shape: BoxShape.circle,
+                              ),
+                              child: avatarUserWidget,
                             ),
-                            child: avatarUserWidget,
                           ),
-                        ),
-                        favorite ? Align(
-                          alignment: Alignment.center,
-                          child: Container(
-                            margin: EdgeInsets.only(top: alto * 0.035, left: ancho * 0.08),
-                            child: Icon(Icons.star,color: WalkieTaskColors.yellow, size: alto * 0.03,),
-                          ),
-                        ) : Container(),
-                      ],
+                          favorite ? Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              margin: EdgeInsets.only(top: alto * 0.035, left: ancho * 0.08),
+                              child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
+                            ),
+                          ) : Container(),
+                        ],
+                      ),
                     ),
-                  ),
-                  Expanded(child: Text('${user.name} ${user.surname}', style: textStylePrimaryBold,)),
-                  Container(
-                    width: ancho * 0.3,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        redColor ?
-                        Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-                                height: alto * 0.02,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
-                                    fit: BoxFit.contain,
+                    Expanded(child: Text('${user.name} ${user.surname}', style: textStylePrimaryBoldName,)),
+                    Container(
+                      width: ancho * 0.3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          redColor ?
+                          Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                                  height: alto * 0.02,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                                      fit: BoxFit.contain,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(width: ancho * 0.02),
-                              Text(dateDiff.replaceAll('-', ''),style: textStylePrimaryLitleRed,)
-                            ],
-                          ),
-                        )
-                            :
-                        Text(dateDiff.replaceAll('-', ''),style: textStylePrimaryLitleBold,),
-                        Text('${translate(context: context, text: 'received')}: $cantRecived',style: textStylePrimaryLitle,),
-                        Text('${translate(context: context, text: 'sent_2')}: $cantSend',style: textStylePrimaryLitle,),
-                      ],
+                                SizedBox(width: ancho * 0.02),
+                                Text(dateDiff,style: textStylePrimaryLitleRed,)
+                              ],
+                            ),
+                          )
+                              :
+                          Text(dateDiff,style: textStylePrimaryLitleBold,),
+                          Text('${translate(context: context, text: 'received')}: $cantRecived',style: textStylePrimaryLitle,textAlign: TextAlign.right,),
+                          Text('${translate(context: context, text: 'sent_2')}: $cantSend',style: textStylePrimaryLitle, textAlign: TextAlign.right,),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+              actions: <Widget>[
+                _buttonSliderAction(user.fijo == 0 ? translate(context: context, text: 'highlight') : translate(context: context, text: 'forget'),Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1, user),
+              ],
             ),
-            actions: <Widget>[
-              _buttonSliderAction(user.fijo == 0 ? translate(context: context, text: 'highlight') : translate(context: context, text: 'forget'),Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),WalkieTaskColors.yellow,WalkieTaskColors.white,1, user),
-            ],
           ),
-        ),
+        );
+        users.add(
+            Container(
+              padding: EdgeInsets.only(left: ancho * 0.06, right: ancho * 0.06),
+              child: Divider(),
+            )
+        );
+      }
+      if(element['type'] == 'project'){
+        Caso project = element['info'];
+        if(widget.myUserRes == null || widget.myUserRes.id == null || project == null ) return Container();
 
-      );
-      users.add(
-          Container(
-            padding: EdgeInsets.only(left: ancho * 0.06, right: ancho * 0.06),
-            child: Divider(),
-          )
-      );
+        if(!project.name.toLowerCase().contains(controlleBuscador.text.toLowerCase())) return Container();
+
+        String nameProject = project.name ?? '';
+        bool favorite = project.is_priority == 1;
+        String cantTask = element['cantTask'] ?? '0';
+        String cantAssigned = element['cantAssigned'] ?? '0';
+
+        users.add(
+          InkWell(
+            onTap: () => goToChatProject(project,element),
+            child: Slidable(
+              actionPane: SlidableDrawerActionPane(),
+              actionExtentRatio: 0.25,
+              child: Container(
+                width: ancho,
+                margin: EdgeInsets.only(bottom: alto * 0.01, right: ancho * 0.03, left: ancho * 0.03),
+                child: Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(right: ancho * 0.03),
+                      child: Stack(
+                        children: <Widget>[
+                          Center(
+                            child: Container(
+                              decoration: new BoxDecoration(
+                                color: bordeCirculeAvatar, // border color
+                                shape: BoxShape.circle,
+                              ),
+                              child: avatarWidgetProject(alto: alto, radius: 0.03, text: '${nameProject.isEmpty ? '' : nameProject.substring(0,1).toUpperCase()}'),
+                            ),
+                          ),
+                          favorite ? Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              margin: EdgeInsets.only(top: alto * 0.035, left: ancho * 0.08),
+                              child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
+                            ),
+                          ) : Container(),
+                        ],
+                      ),
+                    ),
+                    Expanded(child: Text('${project.name}', style: textStylePrimaryBoldName,)),
+                    Container(
+                      width: ancho * 0.3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text('${translate(context: context, text: 'tasks')}: $cantTask',style: textStylePrimaryLitle,textAlign: TextAlign.right,),
+                          Text('${translate(context: context, text: 'assigned')}: $cantAssigned',style: textStylePrimaryLitle, textAlign: TextAlign.right,),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                _buttonSliderActionProjects(favorite ? translate(context: context, text: 'highlight') : translate(context: context, text: 'forget'),Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1, project),
+              ],
+            ),
+          ),
+        );
+        users.add(
+            Container(
+              padding: EdgeInsets.only(left: ancho * 0.06, right: ancho * 0.06),
+              child: Divider(),
+            )
+        );
+      }
     });
 
     if(users.length == 1){
@@ -1043,7 +1163,7 @@ class _CreateTaskState extends State<CreateTask> {
     );
   }
 
-  void clickTarea(Tarea tarea) async {
+  void clickTarea(Tarea tarea,) async {
     widget.blocAudioChangePage.inList.add({'page' : bottonSelect.opcion1});
     try{
       if(tarea.name.isEmpty){
@@ -1069,6 +1189,15 @@ class _CreateTaskState extends State<CreateTask> {
     }catch(e){
       print(e.toString());
     }
+  }
+
+  void goToChatProject(Caso project,Map<String,dynamic> widgetHome){
+    Navigator.push(context, new MaterialPageRoute(
+        builder: (BuildContext context) =>
+        new ChatForProject(
+          project: project,
+          widgetHome: widgetHome,
+        )));
   }
 
   Future<void> updateDateProject(int idPRojects) async{

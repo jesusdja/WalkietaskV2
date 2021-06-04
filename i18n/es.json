@@ -112,7 +112,7 @@
   "noFinishedTasks" : "No hay tareas finalizadas",
   "noInformation" : "Sin datos en la bitácora.",
   "noInternetConnection" : "Parece que no hay señal de internet, por favor intentar de nuevo cuando lo haya.",
-  "NoMatchesFoundUsers" : "No se encontraron coincidencias con usuarios",
+  "NoMatchesFoundUsers" : "No se encontraron coincidencias con usuarios o proyectos",
   "noName" : "Sin nombre",
   "noPersonalReminder" : "Sin recordatorio personal",
   "noProjectAssigned" : "Sin proyecto asignado",

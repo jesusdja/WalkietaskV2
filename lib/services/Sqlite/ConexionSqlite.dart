@@ -471,13 +471,14 @@ class DatabaseProvider{
     return res;
   }
   //OBTENER TODAS LAS TAREAS POR PROYECTO
-  Future<Map<String,String>> getTaskForProjects() async {
-    Map<String,String> result = {};
+  Future<List<Tarea>> getTaskForProjects(int idProject) async {
+    List<Tarea> result = [];
     final db = await database;
     try{
-      List<Map> list = await db.rawQuery('SELECT project_id, COUNT(project_id) as cant FROM Tareas WHERE finalized = 0 GROUP BY project_id');
+      List<Map> list = await db.rawQuery('SELECT * FROM Tareas WHERE finalized = 0 AND project_id = $idProject');
       list.forEach((mapa){
-        result[mapa['project_id'].toString()] = mapa['cant'].toString();
+        Tarea tarea = new Tarea.fromMap(mapa);
+        result.add(tarea);
       });
     }catch(e){
       print(e.toString());
