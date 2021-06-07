@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/models/Caso.dart';
+import 'package:walkietaskv2/models/Chat/ChatTareas.dart';
+import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/services/Firebase/chat_project_firebase.dart';
+import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
@@ -8,10 +13,11 @@ import 'package:walkietaskv2/views/Chat/widgets_chat_for_project/chat_project.da
 
 class ChatForProject extends StatefulWidget {
 
-  ChatForProject({ @required this.project, @required this.widgetHome});
+  ChatForProject({ @required this.project, @required this.widgetHome, @required this.blocCasos});
 
   final Caso project;
   final Map<String,dynamic> widgetHome;
+  final BlocCasos blocCasos;
 
   @override
   _ChatForProjectState createState() => _ChatForProjectState();
@@ -24,13 +30,12 @@ class _ChatForProjectState extends State<ChatForProject> {
   double alto = 0;
   double ancho = 0;
   String idMyUser = '0';
-
   Caso project;
   Map<String,dynamic> widgetHome;
-
   int page = 0;
-
   List<Widget> _pages = [];
+  List<Usuario> listUser = [];
+  bool loadData = true;
 
   @override
   void initState() {
@@ -49,6 +54,44 @@ class _ChatForProjectState extends State<ChatForProject> {
 
   initialUser() async {
     idMyUser = await SharedPrefe().getValue('unityIdMyUser');
+    listUser = await DatabaseProvider.db.getAllUser();
+
+    ChatTareas chatProject;
+    try{
+      ChatTareas chatVery = await ChatProjectFirebase().checkChat(project.id.toString());
+      if(chatVery != null){
+        chatProject = chatVery;
+      }else{
+        ChatTareas chat = new ChatTareas(
+          id: '',
+          idTarea: project.id.toString(),
+          idUser: project.user_id.toString(),
+          idFromUser: project.userprojects,
+          mensajes: new Map<String,dynamic>(),
+          task: project.toMap(),
+        );
+        ChatTareas chatTareaNew = await ChatProjectFirebase().createChat(chat);
+        if(chatTareaNew != null){
+          chatProject = chatTareaNew;
+        }else{
+          print('NO CREADO');
+        }
+      }
+    }catch(_){}
+
+    _pages = [
+      ChatProject(
+        project: project,
+        chatProject: chatProject,
+        listUser: listUser,
+        blocCasos: widget.blocCasos,
+      ),
+      Container(),
+      Container(),
+    ];
+
+    loadData = false;
+
     setState(() {});
   }
 
@@ -68,12 +111,21 @@ class _ChatForProjectState extends State<ChatForProject> {
       )
     );
   }
+
   Widget body(){
     return Container(
       width: ancho,
       child: Column(
         children: [
           header(),
+          loadData ?
+          Container(
+            width: ancho,
+            height: alto * 0.5,
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          ) :
           Flexible(
             child: pageViewContainer(),
           )
@@ -123,13 +175,6 @@ class _ChatForProjectState extends State<ChatForProject> {
   }
 
   Widget pageViewContainer(){
-
-    _pages = [
-      ChatProject(),
-      Container(),
-      Container(),
-    ];
-
     return PageView(
       controller: controllerPage,
       onPageChanged: (int index) async{

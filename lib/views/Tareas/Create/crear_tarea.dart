@@ -638,7 +638,7 @@ class _CreateTaskState extends State<CreateTask> {
 
     return Container(
       width: ancho,
-      height: alto < 600 ? alto * 0.66 : alto * 0.7,
+      height: alto <= 600 ? alto * 0.66 : alto * 0.7,
       //color: Colors.amber,
       child: Column(
         children: [
@@ -1197,6 +1197,7 @@ class _CreateTaskState extends State<CreateTask> {
         new ChatForProject(
           project: project,
           widgetHome: widgetHome,
+          blocCasos: widget.blocCasos,
         )));
   }
 

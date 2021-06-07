@@ -17,6 +17,7 @@ class Caso extends Equatable{
   String updated_at;
   String deleted_at;
   String nameCompany;
+  String userprojects;
 
   Caso(
       {this.id,
@@ -34,7 +35,8 @@ class Caso extends Equatable{
         this.created_at,
         this.updated_at,
         this.deleted_at,
-        this.nameCompany
+        this.nameCompany,
+        this.userprojects
       });
 
   Caso.fromJson(Map<String, dynamic> json) {
@@ -62,26 +64,6 @@ class Caso extends Equatable{
     return false;
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['serial'] = this.serial;
-    data['imei'] = this.imei;
-    data['boleta'] = this.boleta;
-    data['name'] = this.name;
-    data['is_priority'] = this.is_priority;
-    data['active'] = this.active;
-    data['system'] = this.system;
-    data['company_id'] = this.company_id;
-    data['status_id'] = this.status_id;
-    data['customer_id'] = this.customer_id;
-    data['user_id'] = this.user_id;
-    data['created_at'] = this.created_at;
-    data['updated_at'] = this.updated_at;
-    data['deleted_at'] = this.deleted_at;
-    return data;
-  }
-
   Caso.fromMap(Map snapshot) :
         id = snapshot['id'],
         serial = snapshot['serial'],
@@ -98,26 +80,9 @@ class Caso extends Equatable{
         created_at = snapshot['created_at'],
         updated_at = snapshot['updated_at'],
         deleted_at = snapshot['deleted_at'],
-        nameCompany = snapshot['nameCompany']
+        nameCompany = snapshot['nameCompany'],
+        userprojects = snapshot['userprojects']
   ;
-
-  Caso.map(dynamic obj) {
-    this.id = obj['id'];
-    this.serial = obj['serial'];
-    this.imei = obj['imei'];
-    this.boleta = obj['boleta'];
-    this.name = obj['name'];
-    this.is_priority = obj['is_priority'];
-    this.active = obj['active'];
-    this.system = obj['system'];
-    this.company_id = obj['company_id'];
-    this.status_id = obj['status_id'];
-    this.customer_id = obj['customer_id'];
-    this.user_id = obj['user_id'];
-    this.created_at = obj['created_at'];
-    this.updated_at = obj['updated_at'];
-    this.deleted_at = obj['deleted_at'];
-  }
 
   Map<String, dynamic> toMap() => {
     'id' : id,
@@ -136,6 +101,7 @@ class Caso extends Equatable{
     'updated_at' : updated_at,
     'deleted_at' : deleted_at,
     'nameCompany' : nameCompany,
+    'userprojects' : userprojects,
   };
 
   @override
@@ -155,7 +121,8 @@ class Caso extends Equatable{
   created_at,
   updated_at,
   deleted_at,
-  nameCompany
+  nameCompany,
+  userprojects
   ];
 
   @override

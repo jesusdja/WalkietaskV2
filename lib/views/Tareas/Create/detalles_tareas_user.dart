@@ -203,7 +203,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
       }
     });
 
-    double heightTop = alto < 600 ? alto * 0.74 : alto * 0.76;
+    double heightTop = alto <= 600 ? alto * 0.74 : alto * 0.76;
 
     return Container(
       width: ancho,
