@@ -372,6 +372,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           blocAudioChangePage: blocAudioChangePage,
           listWidgetsHome: listWidgetsHome,
           blocCasos: blocCasos,
+          push: push,
         ) : Container(child: Cargando(translate(context: context,text: 'updatingTasks'),context),);
       case bottonSelect.opcion2:
         return loadTaskSend ? listRecibidos.length != 0 ?

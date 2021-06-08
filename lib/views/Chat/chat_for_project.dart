@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
+import 'package:walkietaskv2/bloc/blocProgress.dart';
+import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Chat/ChatTareas.dart';
+import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/services/Firebase/Notification/push_notifications_provider.dart';
 import 'package:walkietaskv2/services/Firebase/chat_project_firebase.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
@@ -10,14 +14,32 @@ import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Chat/widgets_chat_for_project/chat_project.dart';
+import 'package:walkietaskv2/views/Chat/widgets_chat_for_project/task_for_users.dart';
+import 'package:walkietaskv2/views/Tareas/ListadoTareasRecibidas.dart';
 
 class ChatForProject extends StatefulWidget {
 
-  ChatForProject({ @required this.project, @required this.widgetHome, @required this.blocCasos});
+  ChatForProject({
+    @required this.project,
+    @required this.widgetHome,
+    @required this.blocCasos,
+    @required this.mapIdUser,
+    @required this.push,
+    @required this.myUser,
+    @required this.listaCasos,
+    @required this.blocTaskReceived,
+    @required this.blocAudioChangePage,
+  });
 
   final Caso project;
   final Map<String,dynamic> widgetHome;
   final BlocCasos blocCasos;
+  final Map<int,Usuario> mapIdUser;
+  final PushProvider push;
+  final BlocTask blocTaskReceived;
+  final List<Caso> listaCasos;
+  final Usuario myUser;
+  final BlocProgress blocAudioChangePage;
 
   @override
   _ChatForProjectState createState() => _ChatForProjectState();
@@ -78,6 +100,26 @@ class _ChatForProjectState extends State<ChatForProject> {
       }
     }catch(_){}
 
+    List<Tarea> listA = [];
+    List<Tarea> listB = [];
+    List<Tarea> listTask = [];
+
+    widgetHome['cantTaskAssigned'].forEach((element) { listA.add(element); listB.add(element); });
+    widgetHome['cantTaskSend'].forEach((element) { listA.add(element); listB.add(element);});
+
+    for(int x = 0; x < listA.length; x++){
+      int pos = 0;
+      DateTime date1 = DateTime.parse(listA[x].updated_at);
+      for(int x1 = 0; x1 < listB.length; x1++){
+        DateTime date2 = DateTime.parse(listA[x1].updated_at);
+        if(date2.isAfter(date1)){
+          pos = x1;
+        }
+      }
+      listTask.add(listB[pos]);
+      listB.removeAt(pos);
+    }
+
     _pages = [
       ChatProject(
         project: project,
@@ -85,7 +127,11 @@ class _ChatForProjectState extends State<ChatForProject> {
         listUser: listUser,
         blocCasos: widget.blocCasos,
       ),
-      Container(),
+      TaskForUsers(
+        project: project,
+        widgetHome: widgetHome,
+        mapIdUser: widget.mapIdUser,
+      ),
       Container(),
     ];
 

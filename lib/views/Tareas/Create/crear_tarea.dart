@@ -13,6 +13,7 @@ import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/services/Firebase/Notification/push_notifications_provider.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/services/provider/home_provider.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
@@ -48,6 +49,7 @@ class CreateTask extends StatefulWidget {
     @required this.blocAudioChangePage,
     @required this.listWidgetsHome,
     @required this.blocCasos,
+    @required this.push,
   });
 
   final Map<int,Usuario> mapIdUserRes;
@@ -65,6 +67,7 @@ class CreateTask extends StatefulWidget {
   final UpdateData updateData;
   final BlocProgress blocAudioChangePage;
   final List<dynamic> listWidgetsHome;
+  final PushProvider push;
 
   @override
   _CreateTaskState createState() => _CreateTaskState();
@@ -1198,6 +1201,12 @@ class _CreateTaskState extends State<CreateTask> {
           project: project,
           widgetHome: widgetHome,
           blocCasos: widget.blocCasos,
+          mapIdUser: mapIdUser,
+          push: widget.push,
+          myUser: widget.myUserRes,
+          blocAudioChangePage: widget.blocAudioChangePage,
+          blocTaskReceived: widget.blocTaskReceived,
+          listaCasos: widget.listaCasosRes,
         )));
   }
 
