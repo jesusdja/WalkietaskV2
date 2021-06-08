@@ -240,5 +240,7 @@
   "text_title" : "About",
   "text_about" : "Walkietask was created by Imprevia / Nóvaq.\nIf you want to report a bug please write us to dev@imprevia.com.",
   "lang_es" : "Spanish",
-  "lang_en" : "English"
+  "lang_en" : "English",
+  "sendTextAssignment" : "Send text assignment",
+  "submitAudioAssignment" : "Submit audio assignment"
 }

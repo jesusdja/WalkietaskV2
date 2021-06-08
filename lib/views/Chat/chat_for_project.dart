@@ -51,7 +51,6 @@ class _ChatForProjectState extends State<ChatForProject> {
     controllerPage.dispose();
   }
 
-
   initialUser() async {
     idMyUser = await SharedPrefe().getValue('unityIdMyUser');
     listUser = await DatabaseProvider.db.getAllUser();

@@ -42,6 +42,8 @@ class _ChatProjectState extends State<ChatProject> {
   List<Usuario> listUser;
   Image avatarUser;
 
+  bool viewOptionCreateTask = false;
+
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   ItemScrollController _scrollController = ItemScrollController();
 
@@ -93,10 +95,28 @@ class _ChatProjectState extends State<ChatProject> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          !viewOptionCreateTask ? Container() :
           Container(
-            width: ancho * 0.1,
-            height: alto * 0.1,
-            color: Colors.red,
+            width: ancho,
+            margin: EdgeInsets.only(right: ancho * 0.5),
+            padding: EdgeInsets.only(left: ancho * 0.01,bottom: alto * 0.015, top: alto * 0.015),
+            decoration: BoxDecoration(
+              color: colorFondoSend,
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(10.0),
+                bottomRight: Radius.circular(0.0),
+                topLeft: Radius.circular(0.0),
+                bottomLeft: Radius.circular(0.0)
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                containerOption(1),
+                SizedBox(height: alto * 0.02,),
+                containerOption(2)
+              ],
+            ),
           ),
           Container(
             color: colorFondoSend,
@@ -106,7 +126,11 @@ class _ChatProjectState extends State<ChatProject> {
                 Container(
                   child: IconButton(
                     icon: Icon(Icons.add_circle_outline,color: WalkieTaskColors.color_4D9DFA,),
-                    onPressed: (){},
+                    onPressed: (){
+                      setState(() {
+                        viewOptionCreateTask = !viewOptionCreateTask;
+                      });
+                    },
                   ),
                 ),
                 Expanded(
@@ -142,6 +166,41 @@ class _ChatProjectState extends State<ChatProject> {
         ],
       ),
     );
+  }
+
+  Widget containerOption(int type){
+    IconData icon = Icons.title;
+    String title = translate(context: context, text: 'sendTextAssignment');
+    if(type == 2){
+      icon = Icons.mic;
+      title = translate(context: context, text: 'submitAudioAssignment');
+    }
+    return Container(
+      width: ancho,
+      child: Row(
+        children: [
+          Icon(icon,color: WalkieTaskColors.primary,size: alto * 0.03,),
+          SizedBox(width: ancho * 0.02,),
+          Expanded(
+            child: InkWell(
+              child: Text(title,style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.018,spacing: 0.4),),
+              onTap: () => containerOptionOnTap(type),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void containerOptionOnTap(int type){
+    viewOptionCreateTask = false;
+    setState(() {});
+    if(type == 1){
+
+    }
+    if(type == 2){
+
+    }
   }
 
   Future<void> sendMessage() async {
@@ -333,31 +392,5 @@ class _ChatProjectState extends State<ChatProject> {
       ),
     );
   }
-
-  Widget messages2(){
-    return Container(
-      width: ancho,
-      height: alto * 0.9,
-      margin: EdgeInsets.only(bottom: alto * 0.06),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Container(width: ancho,height: alto * 0.1,color: Colors.teal,),
-            Container(width: ancho,height: alto * 0.1,color: Colors.white,),
-            Container(width: ancho,height: alto * 0.1,color: Colors.teal,),
-            Container(width: ancho,height: alto * 0.1,color: Colors.white,),
-            Container(width: ancho,height: alto * 0.1,color: Colors.teal,),
-            Container(width: ancho,height: alto * 0.1,color: Colors.white,),
-            Container(width: ancho,height: alto * 0.1,color: Colors.teal,),
-            Container(width: ancho,height: alto * 0.1,color: Colors.white,),
-            Container(width: ancho,height: alto * 0.1,color: Colors.teal,),
-            Container(width: ancho,height: alto * 0.1,color: Colors.white,),
-          ],
-        ),
-      ),
-    );
-  }
-
 
 }
