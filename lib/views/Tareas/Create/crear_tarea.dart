@@ -390,7 +390,7 @@ class _CreateTaskState extends State<CreateTask> {
         String photoProjectAvatar = element['photoProjectAvatar'];
         Widget avatar = avatarWidgetProject(alto: alto, radius: 0.03, text: '${nameProject.isEmpty ? '' : nameProject.substring(0,1).toUpperCase()}');
         if(project.image_500 != null && project.image_500.isNotEmpty){
-          avatar = avatarWidgetProject(alto: alto, radius: 0.03, text: '${project.name.isEmpty ? '' : project.name.substring(0,1).toUpperCase()}');
+          avatar = avatarWidgetImage(alto: alto, radius: 0.03, pathImage: project.image_500);
         }
         if(photoProjectAvatar !=null && photoProjectAvatar.isNotEmpty){
           avatar = avatarWidgetImageLocal(alto: alto, radius: 0.03,pathImage: photoProjectAvatar);

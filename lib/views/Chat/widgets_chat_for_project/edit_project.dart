@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
@@ -205,7 +207,7 @@ class _EditProjectState extends State<EditProject> {
 
     Widget avatar = avatarWidgetProject(alto: alto, radius: 0.13, text: '${project.name.isEmpty ? '' : project.name.substring(0,1).toUpperCase()}',);
     if(project.image_500 != null && project.image_500.isNotEmpty){
-      avatar = avatarWidgetProject(alto: alto, radius: 0.13, text: '${project.name.isEmpty ? '' : project.name.substring(0,1).toUpperCase()}');
+      avatar = avatarWidgetImage(alto: alto, radius: 0.13, pathImage: project.image_500);
     }
     if(photoProjectAvatar !=null && photoProjectAvatar.isNotEmpty){
       avatar = avatarWidgetImageLocal(alto: alto, radius: 0.13,pathImage: photoProjectAvatar);
@@ -266,10 +268,17 @@ class _EditProjectState extends State<EditProject> {
         PickedFile _imageFile = media as PickedFile;
         File croppedImage = await ViewImage().croppedImageView(_imageFile.path, cropStyle: CropStyle.circle);
         if(croppedImage != null){
-          await SharedPrefe().setStringValue('${project.id}Photo', _imageFile.path);
-          photoProjectAvatar = _imageFile.path;
+          await SharedPrefe().setStringValue('${project.id}Photo', croppedImage.path);
+          photoProjectAvatar = croppedImage.path;
           setState(() {});
           widget.blocCasos.inList.add(true);
+
+          try{
+            var response = await conexionHttp().httpSendImageProject(croppedImage.path,project.id);
+            var value = jsonDecode(response.body);
+          }catch(e){
+            print('_onTapPhoto: ${e.toString()}');
+          }
         }
       }
     },

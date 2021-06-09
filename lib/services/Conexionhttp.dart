@@ -966,4 +966,25 @@ class conexionHttp{
     }
     return response;
   }
+
+  Future<http.Response> httpSendImageProject(String path, int idProject) async {
+    String token  = await obtenerToken();
+    Map<String, String> headers = {
+      'Authorization': 'Bearer $token'
+    };
+
+    var response;
+    try {
+      final imageUp = http.MultipartRequest('POST',Uri.parse('$enlace/api/auth/projects/$idProject/uploadprojectphoto'));
+      imageUp.headers.addAll(headers);
+      final file = await http.MultipartFile.fromPath('photo', path,);
+      imageUp.files.add(file);
+      imageUp.fields['_method'] = 'PUT';
+      final streamedResponse = await imageUp.send();
+      response = await http.Response.fromStream(streamedResponse);
+    } catch (ex) {
+      print(ex.toString());
+    }
+    return response;
+  }
 }
