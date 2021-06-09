@@ -1,21 +1,39 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:walkietaskv2/bloc/blocCasos.dart';
+import 'package:walkietaskv2/bloc/blocProgress.dart';
+import 'package:walkietaskv2/bloc/blocTareas.dart';
+import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
+import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/views/Tareas/Create/detalles_tareas_user_bottom.dart';
+import 'package:walkietaskv2/views/Tareas/Create/new_task_user.dart';
 
 class SelectedUserSendTask extends StatefulWidget {
 
   SelectedUserSendTask({
     @required this.widgetHome,
     @required this.isAudio,
+    @required this.listaCasos,
+    @required this.blocIndicatorProgress,
+    @required this.blocTaskReceived,
+    @required this.blocTaskSend,
+    @required this.updateData,
   });
 
   final Map<String,dynamic> widgetHome;
   final bool isAudio;
+  final List<Caso> listaCasos;
+  final BlocProgress blocIndicatorProgress;
+  final BlocTask blocTaskReceived;
+  final BlocTask blocTaskSend;
+  final UpdateData updateData;
 
   @override
   _SelectedUserSendTaskState createState() => _SelectedUserSendTaskState();
@@ -33,6 +51,7 @@ class _SelectedUserSendTaskState extends State<SelectedUserSendTask> {
   List<Usuario> usersForProject = [];
   bool loadData = true;
   Usuario selectedUser;
+  BlocCasos blocTab = new BlocCasos();
 
   @override
   void initState() {
@@ -80,6 +99,20 @@ class _SelectedUserSendTaskState extends State<SelectedUserSendTask> {
       child: Scaffold(
         appBar: _appBarH(),
         body: body(),
+        bottomNavigationBar: selectedUser != null ? !widget.isAudio ?
+        bottomNavigationBarText() :
+        BottomDetailsTask(
+          user: selectedUser,
+          isPersonal: false,
+          listaCasos: widget.listaCasos,
+          blocIndicatorProgress: widget.blocIndicatorProgress,
+          blocTaskReceived: widget.blocTaskReceived,
+          blocTaskSend: widget.blocTaskSend,
+          updateData: widget.updateData,
+          blocTab: blocTab,
+          isTaskProject: true,
+          projectToCreateTaskForProject: widgetHome['info'],
+        ) : null,
       )
     );
   }
@@ -225,6 +258,71 @@ class _SelectedUserSendTaskState extends State<SelectedUserSendTask> {
       ],
       elevation: 0,
       backgroundColor: colorFondoChat,
+    );
+  }
+
+  Widget bottomNavigationBarText(){
+    return Container(
+      color: Colors.grey[100],
+      padding: EdgeInsets.only(left: ancho * 0.02),
+      width: ancho,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+            child: Text('${translate(context: context, text: 'newTask')} ${selectedUser.name}:', style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022, color: WalkieTaskColors.primary, spacing: 1, fontWeight: FontWeight.bold),maxLines: 2,)
+          ),
+          _buttonText(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buttonText(){
+    return InkWell(
+      onTap: () async {
+        var result = await Navigator.push(context, new MaterialPageRoute(
+            builder: (BuildContext context) =>
+            new NewTaskForUser(
+              user: selectedUser,
+              isPersonal: false,
+              pathAudio: '',
+              listaCasos: widget.listaCasos,
+              blocIndicatorProgress: widget.blocIndicatorProgress,
+              mapMinSeg: {},
+              projectToCreateTaskForProject: widgetHome['info'],
+            )));
+        if(result){
+          widget.updateData.actualizarListaEnviados(widget.blocTaskSend, null);
+          widget.updateData.actualizarListaRecibidos(widget.blocTaskReceived, null);
+          Navigator.of(context).pop(true);
+        }
+      },
+      child: Container(
+        height: alto * 0.08,
+        color: Colors.transparent,
+        child: Center(
+          child: Container(
+            margin: EdgeInsets.only(left: ancho * 0.02, right: ancho * 0.04),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  height: alto * 0.03,
+                  width: alto * 0.025,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: ViewImage().assetsImage("assets/image/Icon_text.png", color: WalkieTaskColors.primary).image,
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ),
+                ),
+                Text(translate(context: context,text: 'text'), style: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.016, color: WalkieTaskColors.primary, spacing: 0.5, fontWeight: FontWeight.bold),)
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

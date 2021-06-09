@@ -30,6 +30,7 @@ class NewTaskForUser extends StatefulWidget {
   final List<Caso> listaCasos;
   final BlocProgress blocIndicatorProgress;
   final Map mapMinSeg;
+  final Caso projectToCreateTaskForProject;
 
   NewTaskForUser({
     @required this.user,
@@ -38,6 +39,7 @@ class NewTaskForUser extends StatefulWidget {
     @required this.listaCasos,
     @required this.blocIndicatorProgress,
     @required this.mapMinSeg,
+    this.projectToCreateTaskForProject,
   });
 
   @override
@@ -104,6 +106,10 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
   @override
   void initState() {
     super.initState();
+
+    if(widget.projectToCreateTaskForProject != null){
+      mapcasoSelect[widget.projectToCreateTaskForProject.id] = true;
+    }
 
     user = widget.user;
     isPersonal = widget.isPersonal;
@@ -259,16 +265,30 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
             //textInputAction: TextInputAction.done,
           ),
         ));
-    widgets.add(Container(
+    widgets.add(
+    widget.projectToCreateTaskForProject != null ? Container() :
+    Container(
       width: ancho,
       margin: EdgeInsets.only(top: alto * 0.01),
       child: _buscadorCasos(),
-    ));
-    widgets.add(Container(
+    )
+    );
+    widgets.add(
+    widget.projectToCreateTaskForProject != null ? Container() :
+    Container(
       width: ancho,
       margin: EdgeInsets.only(top: alto * 0.01),
       child: _listadocasos(),
     ));
+    widgets.add(
+    widget.projectToCreateTaskForProject != null ? Container(
+      width: ancho,
+      margin: EdgeInsets.only(top: alto * 0.02,right: ancho * 0.05,bottom: alto * 0.01),
+      child: Text('${translate(context: context, text: 'projects').replaceAll('s','')}: ${widget.projectToCreateTaskForProject.name}',textAlign: TextAlign.left,
+          style: textStylePrimary),
+    ) :
+    Container()
+    );
     widgets.add(SizedBox(height: alto * 0.02,));
     widgets.add(Container(
       width: ancho,

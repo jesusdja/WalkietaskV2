@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
+import 'package:walkietaskv2/bloc/blocProgress.dart';
+import 'package:walkietaskv2/bloc/blocTareas.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Chat/ChatMessenger.dart';
 import 'package:walkietaskv2/models/Chat/ChatTareas.dart';
@@ -24,13 +26,23 @@ class ChatProject extends StatefulWidget {
     @required this.chatProject,
     @required this.listUser,
     @required this.blocCasos,
-    @required this.widgetHome
+    @required this.widgetHome,
+    @required this.listaCasos,
+    @required this.blocIndicatorProgress,
+    @required this.blocTaskSend,
+    @required this.blocTaskReceived,
+    @required this.updateData,
   });
   final Caso project;
   final ChatTareas chatProject;
   final List<Usuario> listUser;
   final BlocCasos blocCasos;
   final Map<String,dynamic> widgetHome;
+  final List<Caso> listaCasos;
+  final BlocProgress blocIndicatorProgress;
+  final BlocTask blocTaskReceived;
+  final BlocTask blocTaskSend;
+  final UpdateData updateData;
 
   @override
   _ChatProjectState createState() => _ChatProjectState();
@@ -208,6 +220,11 @@ class _ChatProjectState extends State<ChatProject> {
         new SelectedUserSendTask(
           widgetHome: widget.widgetHome,
           isAudio: type == 2,
+          listaCasos: widget.listaCasos,
+          blocIndicatorProgress: widget.blocIndicatorProgress,
+          blocTaskReceived: widget.blocTaskReceived,
+          blocTaskSend: widget.blocTaskSend,
+          updateData: widget.updateData,
         )));
   }
 

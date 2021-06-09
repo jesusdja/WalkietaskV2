@@ -1206,7 +1206,10 @@ class _CreateTaskState extends State<CreateTask> {
           myUser: widget.myUserRes,
           blocAudioChangePage: widget.blocAudioChangePage,
           blocTaskReceived: widget.blocTaskReceived,
+          blocTaskSend: widget.blocTaskSend,
           listaCasos: widget.listaCasosRes,
+          blocIndicatorProgress: widget.blocIndicatorProgress,
+          updateData: widget.updateData,
         )));
   }
 

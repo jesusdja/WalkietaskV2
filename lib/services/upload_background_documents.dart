@@ -53,26 +53,34 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
       //await Future.delayed(Duration(seconds: 3));
       blocIndicatorProgress.inList.add({'progressIndicator' : 0.9, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
       if(value['status_code'] == 201){
-        //ELIMINAR AUDIO
-        final file = File(data[2]);
-        file.openRead();
-        bool exist = await file.exists();
-        if(exist){
-          await File(data[2]).delete();
-          print('SE ELIMINO EL AUDIO');
-        }
-        //ELIMINAR TAREA DE LISTA
-        List<String> listDocumentsNoSend = [];
-        for(int x1 = 0; x1 < listDocuments.length; x1++){
-          if(x != x1){ listDocumentsNoSend.add(listDocuments[x]); }
-        }
-        await SharedPrefe().setStringListValue('WalListDocument',listDocumentsNoSend);
-        await Future.delayed(Duration(seconds: 1));
-        blocIndicatorProgress.inList.add({'progressIndicator' : 1, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
         print('CREADO - ${data[1]}');
       }else{
         print('NO CREADO - ${data[1]}');
       }
+
+      // //ELIMINAR AUDIO
+      // final file = File(data[2]);
+      // file.openRead();
+      // bool exist = await file.exists();
+      // if(exist){
+      //   await File(data[2]).delete();
+      //   print('SE ELIMINO EL AUDIO');
+      // }
+      // //ELIMINAR TAREA DE LISTA
+      // List<String> listDocumentsNoSend = [];
+      // for(int x1 = 0; x1 < listDocuments.length; x1++){
+      //   if(x != x1){ listDocumentsNoSend.add(listDocuments[x]); }
+      // }
+      //await SharedPrefe().setStringListValue('WalListDocument',listDocumentsNoSend);
+      await Future.delayed(Duration(seconds: 1));
+      blocIndicatorProgress.inList.add({
+        'progressIndicator' : 1,
+        'viewIndicatorProgress' : true,
+        'cant' : (listDocuments.length - x),
+        'error' : value['status_code'] == 500,
+        'errorMessage' : value['message'] ?? 'Error al enviar tarea'
+      });
+
     }catch(e){
       print(e.toString());
       print('NO CREADO - ${data[1]}');

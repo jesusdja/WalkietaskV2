@@ -28,6 +28,8 @@ class BottomDetailsTask extends StatefulWidget {
   final BlocTask blocTaskSend;
   final BlocTask blocTaskReceived;
   final BlocCasos blocTab;
+  bool isTaskProject;
+  final Caso projectToCreateTaskForProject;
 
   BottomDetailsTask({
     @required this.user,
@@ -38,6 +40,8 @@ class BottomDetailsTask extends StatefulWidget {
     @required this.blocTaskSend,
     @required this.blocTaskReceived,
     this.blocTab,
+    this.isTaskProject = false,
+    this.projectToCreateTaskForProject,
   });
 
   @override
@@ -75,7 +79,6 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
   @override
   void initState() {
     super.initState();
-    user = widget.user;
     updateData = widget.updateData;
     pathinicial();
   }
@@ -91,6 +94,8 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
 
     alto = MediaQuery.of(context).size.height;
     ancho = MediaQuery.of(context).size.width;
+
+    user = widget.user;
 
     textStyleBlue = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.022, color: WalkieTaskColors.primary, spacing: 1, fontWeight: FontWeight.bold);
     textStyleBlueLitle = WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.016, color: WalkieTaskColors.primary, spacing: 0.5, fontWeight: FontWeight.bold);
@@ -110,7 +115,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
               child: Text('${translate(context: context, text: 'newTask')} ${user.name}:', style: textStyleBlue,maxLines: 2,),
             ),
           ),
-          grabando ? Container( height: 20, ) : _buttonText(),
+          grabando ? Container( height: 20, ) : widget.isTaskProject ? Container( height: 20, ) : _buttonText(),
           _buttonAudio(),
         ],
       ),
@@ -272,11 +277,15 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
                 'mostrarMinutosEspera' : m,
                 'segundoEspera' : s,
               },
+              projectToCreateTaskForProject: widget.projectToCreateTaskForProject,
             )));
         if(result2){
           updateData.actualizarListaEnviados(widget.blocTaskSend, null);
           updateData.actualizarListaRecibidos(widget.blocTaskReceived, null);
           widget.blocTab.inList.add(true);
+          if(widget.isTaskProject){
+            Navigator.of(context).pop(true);
+          }
         }
       }else{
         showAlert(translate(context: context,text: 'noAudio'),WalkieTaskColors.color_E07676);

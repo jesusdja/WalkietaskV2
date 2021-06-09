@@ -6,6 +6,7 @@ import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Chat/ChatTareas.dart';
 import 'package:walkietaskv2/models/Tarea.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Firebase/Notification/push_notifications_provider.dart';
 import 'package:walkietaskv2/services/Firebase/chat_project_firebase.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
@@ -27,7 +28,10 @@ class ChatForProject extends StatefulWidget {
     @required this.myUser,
     @required this.listaCasos,
     @required this.blocTaskReceived,
+    @required this.blocTaskSend,
     @required this.blocAudioChangePage,
+    @required this.blocIndicatorProgress,
+    @required this.updateData,
   });
 
   final Caso project;
@@ -36,9 +40,12 @@ class ChatForProject extends StatefulWidget {
   final Map<int,Usuario> mapIdUser;
   final PushProvider push;
   final BlocTask blocTaskReceived;
+  final BlocTask blocTaskSend;
   final List<Caso> listaCasos;
   final Usuario myUser;
   final BlocProgress blocAudioChangePage;
+  final BlocProgress blocIndicatorProgress;
+  final UpdateData updateData;
 
   @override
   _ChatForProjectState createState() => _ChatForProjectState();
@@ -126,6 +133,11 @@ class _ChatForProjectState extends State<ChatForProject> {
         listUser: listUser,
         blocCasos: widget.blocCasos,
         widgetHome: widgetHome,
+        listaCasos: widget.listaCasos,
+        blocIndicatorProgress: widget.blocIndicatorProgress,
+        blocTaskSend: widget.blocTaskSend,
+        blocTaskReceived: widget.blocTaskReceived,
+        updateData: widget.updateData,
       ),
       TaskForUsers(
         project: project,

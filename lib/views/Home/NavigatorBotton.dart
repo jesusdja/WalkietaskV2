@@ -22,6 +22,7 @@ import 'package:walkietaskv2/utils/Cargando.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/DialogAlert.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/avatar_widget.dart';
 import 'package:walkietaskv2/utils/flushbar_notification.dart';
 import 'package:walkietaskv2/utils/order_tasks.dart';
@@ -1003,6 +1004,9 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     try {
       // ignore: cancel_subscriptions
       streamSubscriptionProgress = blocIndicatorProgress.outList.listen((newVal) {
+        if(newVal['error'] != null && newVal['error']){
+          showAlert('${newVal['errorMessage']}' ?? 'Error al enviar tarea',Colors.red[400],sec: 5);
+        }
         progressIndicator = double.parse('${newVal['progressIndicator']}');
         cant = int.parse('${newVal['cant']}');
         viewIndicatorProgress = newVal['viewIndicatorProgress'];
