@@ -244,5 +244,6 @@
   "sendTextAssignment" : "Send text assignment",
   "submitAudioAssignment" : "Submit audio assignment",
   "selectUser" : "Select user",
-  "noUsersToSubmitTasks" : "There are no users to submit tasks"
+  "noUsersToSubmitTasks" : "There are no users to submit tasks",
+  "members" : "Members"
 }

@@ -244,5 +244,6 @@
   "sendTextAssignment" : "Enviar tarea de texto",
   "submitAudioAssignment" : "Enviar tarea de audio",
   "selectUser" : "Seleccionar usuario",
-  "noUsersToSubmitTasks" : "No existen usuarios para enviar tareas"
+  "noUsersToSubmitTasks" : "No existen usuarios para enviar tareas",
+  "members" : "Miembros"
 }
