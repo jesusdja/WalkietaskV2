@@ -1,11 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/gallery_camera_dialog.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
+import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 
 class EditProject extends StatefulWidget {
@@ -13,10 +20,12 @@ class EditProject extends StatefulWidget {
   EditProject({
     @required this.project,
     @required this.widgetHome,
+    @required this.blocCasos,
   });
 
   final Caso project;
   final Map<String,dynamic> widgetHome;
+  final BlocCasos blocCasos;
 
   @override
   _EditProjectState createState() => _EditProjectState();
@@ -35,6 +44,7 @@ class _EditProjectState extends State<EditProject> {
   List<Usuario> usersForProject = [];
   bool loadData = true;
   bool isCreateProject = false;
+  String photoProjectAvatar;
 
   @override
   void initState() {
@@ -67,6 +77,9 @@ class _EditProjectState extends State<EditProject> {
         });
       }
     });
+
+    photoProjectAvatar = await SharedPrefe().getValue('${project.id}Photo');
+
     loadData = false;
 
     setState(() {});
@@ -192,8 +205,12 @@ class _EditProjectState extends State<EditProject> {
 
     Widget avatar = avatarWidgetProject(alto: alto, radius: 0.13, text: '${project.name.isEmpty ? '' : project.name.substring(0,1).toUpperCase()}',);
     if(project.image_500 != null && project.image_500.isNotEmpty){
-      avatar = avatarWidgetProject(alto: alto, radius: 0.03, text: '${project.name.isEmpty ? '' : project.name.substring(0,1).toUpperCase()}');
+      avatar = avatarWidgetProject(alto: alto, radius: 0.13, text: '${project.name.isEmpty ? '' : project.name.substring(0,1).toUpperCase()}');
     }
+    if(photoProjectAvatar !=null && photoProjectAvatar.isNotEmpty){
+      avatar = avatarWidgetImageLocal(alto: alto, radius: 0.13,pathImage: photoProjectAvatar);
+    }
+
     return Container(
       margin: EdgeInsets.symmetric(vertical: alto * 0.05,horizontal: ancho * 0.1),
       child: InkWell(
@@ -233,10 +250,29 @@ class _EditProjectState extends State<EditProject> {
             ),
           ],
         ),
-        onTap: isCreateProject ? (){
-
-        } : null,
+        onTap: isCreateProject ? () => _onTapPhoto() : null,
       ),
+    );
+  }
+
+  void _onTapPhoto(){
+    final callback = Navigator.push(context, new MaterialPageRoute(
+        builder: (BuildContext context) => GalleryCameraDialog(
+          isVideo: false,
+        ))
+    );
+    callback.then((media) async {
+      if(media != null) {
+        PickedFile _imageFile = media as PickedFile;
+        File croppedImage = await ViewImage().croppedImageView(_imageFile.path, cropStyle: CropStyle.circle);
+        if(croppedImage != null){
+          await SharedPrefe().setStringValue('${project.id}Photo', _imageFile.path);
+          photoProjectAvatar = _imageFile.path;
+          setState(() {});
+          widget.blocCasos.inList.add(true);
+        }
+      }
+    },
     );
   }
 

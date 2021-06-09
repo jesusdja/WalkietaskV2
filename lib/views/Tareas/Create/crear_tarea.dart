@@ -249,7 +249,7 @@ class _CreateTaskState extends State<CreateTask> {
 
     users.add(SizedBox(height: alto * 0.03,));
 
-    //listWidgetsHome.add({ 'info' : element, 'type' : 'project' || 'user', 'date' : element.updated_at, 'cantTaskAssigned' : cantTaskAssigned, 'cantTaskSend' : cantTaskSend});
+    //listWidgetsHome.add({ 'info' : element, 'type' : 'project' || 'user', 'date' : element.updated_at, 'cantTaskAssigned' : cantTaskAssigned, 'cantTaskSend' : cantTaskSend, 'photoProjectAvatar' : photoProjectAvatar});
     listWidgetsHome.forEach((element) {
       if(element['type'] == 'user'){
         Usuario user = element['info'];
@@ -387,6 +387,15 @@ class _CreateTaskState extends State<CreateTask> {
           }
         }
 
+        String photoProjectAvatar = element['photoProjectAvatar'];
+        Widget avatar = avatarWidgetProject(alto: alto, radius: 0.03, text: '${nameProject.isEmpty ? '' : nameProject.substring(0,1).toUpperCase()}');
+        if(project.image_500 != null && project.image_500.isNotEmpty){
+          avatar = avatarWidgetProject(alto: alto, radius: 0.03, text: '${project.name.isEmpty ? '' : project.name.substring(0,1).toUpperCase()}');
+        }
+        if(photoProjectAvatar !=null && photoProjectAvatar.isNotEmpty){
+          avatar = avatarWidgetImageLocal(alto: alto, radius: 0.03,pathImage: photoProjectAvatar);
+        }
+
         users.add(
           InkWell(
             onTap: () => goToChatProject(project,element),
@@ -408,7 +417,7 @@ class _CreateTaskState extends State<CreateTask> {
                                 color: bordeCirculeAvatar, // border color
                                 shape: BoxShape.circle,
                               ),
-                              child: avatarWidgetProject(alto: alto, radius: 0.03, text: '${nameProject.isEmpty ? '' : nameProject.substring(0,1).toUpperCase()}'),
+                              child: avatar,
                             ),
                           ),
                           favorite ? Align(

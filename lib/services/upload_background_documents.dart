@@ -58,20 +58,20 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
         print('NO CREADO - ${data[1]}');
       }
 
-      // //ELIMINAR AUDIO
-      // final file = File(data[2]);
-      // file.openRead();
-      // bool exist = await file.exists();
-      // if(exist){
-      //   await File(data[2]).delete();
-      //   print('SE ELIMINO EL AUDIO');
-      // }
-      // //ELIMINAR TAREA DE LISTA
-      // List<String> listDocumentsNoSend = [];
-      // for(int x1 = 0; x1 < listDocuments.length; x1++){
-      //   if(x != x1){ listDocumentsNoSend.add(listDocuments[x]); }
-      // }
-      //await SharedPrefe().setStringListValue('WalListDocument',listDocumentsNoSend);
+      //ELIMINAR AUDIO
+      final file = File(data[2]);
+      file.openRead();
+      bool exist = await file.exists();
+      if(exist){
+        await File(data[2]).delete();
+        print('SE ELIMINO EL AUDIO');
+      }
+      //ELIMINAR TAREA DE LISTA
+      List<String> listDocumentsNoSend = [];
+      for(int x1 = 0; x1 < listDocuments.length; x1++){
+        if(x != x1){ listDocumentsNoSend.add(listDocuments[x]); }
+      }
+      await SharedPrefe().setStringListValue('WalListDocument',listDocumentsNoSend);
       await Future.delayed(Duration(seconds: 1));
       blocIndicatorProgress.inList.add({
         'progressIndicator' : 1,

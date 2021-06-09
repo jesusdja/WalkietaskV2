@@ -43,6 +43,15 @@ Widget avatarWidgetImage({@required double alto, @required String pathImage, dou
   );
 }
 
+Widget avatarWidgetImageLocal({@required double alto, @required String pathImage, double radius = 0.03}){
+  return Container(
+    child: CircleAvatar(
+      radius: alto * radius,
+      backgroundImage: Image.asset(pathImage).image,
+    ),
+  );
+}
+
 Future<String> obtenerToken() async {
 
   String token  = await SharedPrefe().getValue('unityToken');

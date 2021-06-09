@@ -281,6 +281,7 @@ class _ChatForProjectState extends State<ChatForProject> {
                         new EditProject(
                           widgetHome: widgetHome,
                           project: project,
+                          blocCasos: widget.blocCasos,
                         )));
                   },
                 ),

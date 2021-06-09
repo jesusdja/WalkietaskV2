@@ -896,8 +896,11 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
         if(mapTaskAsinged[element.id] != null){
           cantTaskAssigned = mapTaskAsinged[element.id];
         }
-        mapAll.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTaskAssigned' : cantTaskAssigned, 'cantTaskSend' : cantTaskSend});
-        mapAllAux.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTaskAssigned' : cantTaskAssigned, 'cantTaskSend' : cantTaskSend});
+
+        String photoProjectAvatar = await SharedPrefe().getValue('${element.id}Photo');
+
+        mapAll.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTaskAssigned' : cantTaskAssigned, 'cantTaskSend' : cantTaskSend, 'photoProjectAvatar' : photoProjectAvatar});
+        mapAllAux.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTaskAssigned' : cantTaskAssigned, 'cantTaskSend' : cantTaskSend, 'photoProjectAvatar' : photoProjectAvatar});
       }
       //UNIR USUARIO Y PROYECTO AL HOME
       if(mapAll.isNotEmpty){
