@@ -15,7 +15,6 @@ import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Chat/widgets_chat_for_project/chat_project.dart';
 import 'package:walkietaskv2/views/Chat/widgets_chat_for_project/task_for_users.dart';
-import 'package:walkietaskv2/views/Tareas/ListadoTareasRecibidas.dart';
 
 class ChatForProject extends StatefulWidget {
 
@@ -126,6 +125,7 @@ class _ChatForProjectState extends State<ChatForProject> {
         chatProject: chatProject,
         listUser: listUser,
         blocCasos: widget.blocCasos,
+        widgetHome: widgetHome,
       ),
       TaskForUsers(
         project: project,

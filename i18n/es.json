@@ -242,5 +242,7 @@
   "lang_es" : "Español",
   "lang_en" : "Ingles",
   "sendTextAssignment" : "Enviar tarea de texto",
-  "submitAudioAssignment" : "Enviar tarea de audio"
+  "submitAudioAssignment" : "Enviar tarea de audio",
+  "selectUser" : "Seleccionar usuario",
+  "noUsersToSubmitTasks" : "No existen usuarios para enviar tareas"
 }

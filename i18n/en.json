@@ -242,5 +242,7 @@
   "lang_es" : "Spanish",
   "lang_en" : "English",
   "sendTextAssignment" : "Send text assignment",
-  "submitAudioAssignment" : "Submit audio assignment"
+  "submitAudioAssignment" : "Submit audio assignment",
+  "selectUser" : "Select user",
+  "noUsersToSubmitTasks" : "There are no users to submit tasks"
 }

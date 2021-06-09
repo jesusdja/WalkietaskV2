@@ -15,14 +15,22 @@ import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
+import 'package:walkietaskv2/views/Chat/widgets_chat_for_project/selected_users.dart';
 
 class ChatProject extends StatefulWidget {
 
-  ChatProject({@required this.project, @required this.chatProject, @required this.listUser, @required this.blocCasos});
+  ChatProject({
+    @required this.project,
+    @required this.chatProject,
+    @required this.listUser,
+    @required this.blocCasos,
+    @required this.widgetHome
+  });
   final Caso project;
   final ChatTareas chatProject;
   final List<Usuario> listUser;
   final BlocCasos blocCasos;
+  final Map<String,dynamic> widgetHome;
 
   @override
   _ChatProjectState createState() => _ChatProjectState();
@@ -195,12 +203,12 @@ class _ChatProjectState extends State<ChatProject> {
   void containerOptionOnTap(int type){
     viewOptionCreateTask = false;
     setState(() {});
-    if(type == 1){
-
-    }
-    if(type == 2){
-
-    }
+    Navigator.push(context, new MaterialPageRoute(
+        builder: (BuildContext context) =>
+        new SelectedUserSendTask(
+          widgetHome: widget.widgetHome,
+          isAudio: type == 2,
+        )));
   }
 
   Future<void> sendMessage() async {
