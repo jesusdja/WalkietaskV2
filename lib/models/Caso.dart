@@ -18,6 +18,9 @@ class Caso extends Equatable{
   String deleted_at;
   String nameCompany;
   String userprojects;
+  String image_100;
+  String image_500;
+  String image_800;
 
   Caso(
       {this.id,
@@ -33,6 +36,9 @@ class Caso extends Equatable{
         this.customer_id,
         this.user_id,
         this.created_at,
+        this.image_100,
+        this.image_500,
+        this.image_800,
         this.updated_at,
         this.deleted_at,
         this.nameCompany,
@@ -53,6 +59,9 @@ class Caso extends Equatable{
     customer_id = isnullOrvacio(json['customer_id']) ? 0 : json['customer_id'];
     user_id = isnullOrvacio(json['user_id']) ? 0 : json['user_id'];
     created_at = isnullOrvacio(json['created_at']) ? '' : json['created_at'];
+    image_100 = isnullOrvacio(json['image_100']) ? '' : json['image_100'];
+    image_500 = isnullOrvacio(json['image_500']) ? '' : json['image_500'];
+    image_800 = isnullOrvacio(json['image_800']) ? '' : json['image_800'];
     updated_at = isnullOrvacio(json['updated_at']) ? '' : json['updated_at'];
     deleted_at = isnullOrvacio(json['deleted_at']) ? '' : json['deleted_at'];
   }
@@ -78,6 +87,9 @@ class Caso extends Equatable{
         customer_id = snapshot['customer_id'],
         user_id = snapshot['user_id'],
         created_at = snapshot['created_at'],
+        image_100 = snapshot['image_100'],
+        image_500 = snapshot['image_500'],
+        image_800 = snapshot['image_800'],
         updated_at = snapshot['updated_at'],
         deleted_at = snapshot['deleted_at'],
         nameCompany = snapshot['nameCompany'],
@@ -98,6 +110,9 @@ class Caso extends Equatable{
     'customer_id' : customer_id,
     'user_id' : user_id,
     'created_at' : created_at,
+    'image_100' : image_100,
+    'image_500' : image_500,
+    'image_800' : image_800,
     'updated_at' : updated_at,
     'deleted_at' : deleted_at,
     'nameCompany' : nameCompany,
@@ -119,6 +134,9 @@ class Caso extends Equatable{
   customer_id,
   user_id,
   created_at,
+  image_100,
+  image_500,
+  image_800,
   updated_at,
   deleted_at,
   nameCompany,

@@ -15,6 +15,7 @@ import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Chat/widgets_chat_for_project/chat_project.dart';
+import 'package:walkietaskv2/views/Chat/widgets_chat_for_project/edit_project.dart';
 import 'package:walkietaskv2/views/Chat/widgets_chat_for_project/task_for_users.dart';
 
 class ChatForProject extends StatefulWidget {
@@ -269,9 +270,19 @@ class _ChatForProjectState extends State<ChatForProject> {
                   child: Text('$nombreUser',style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02, color: WalkieTaskColors.color_3C3C3C),textAlign: TextAlign.center,),
               ),
               Center(
-                child: Container(
-                  margin: EdgeInsets.only(left: ancho * 0.02, right: ancho * 0.02),
-                  child: Icon(Icons.info_outline, size: alto * 0.03,color: WalkieTaskColors.color_4EA0F0,),
+                child: InkWell(
+                  child: Container(
+                    margin: EdgeInsets.only(left: ancho * 0.02, right: ancho * 0.02),
+                    child: Icon(Icons.info_outline, size: alto * 0.03,color: WalkieTaskColors.color_4EA0F0,),
+                  ),
+                  onTap: (){
+                    Navigator.push(context, new MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                        new EditProject(
+                          widgetHome: widgetHome,
+                          project: project,
+                        )));
+                  },
                 ),
               ),
             ],
