@@ -13,7 +13,9 @@ import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/services/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
+import 'package:walkietaskv2/utils/DialogAlert.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/gallery_camera_dialog.dart';
 import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
@@ -54,13 +56,15 @@ class _EditProjectState extends State<EditProject> {
   bool isCreateProject = false;
   String photoProjectAvatar;
   StreamSubscription streamSubscriptionCasos;
+  Map<int,bool> mapDeleteLoad = {};
+  bool deleteProjectLoad = false;
 
   @override
   void initState() {
     super.initState();
-    initialUser();
     project = widget.project;
     widgetHome = widget.widgetHome;
+    initialUser();
     _inicializarPatronBlocCasos();
   }
 
@@ -72,27 +76,30 @@ class _EditProjectState extends State<EditProject> {
   }
 
   initialUser() async {
-    idMyUser = await SharedPrefe().getValue('unityIdMyUser');
-    isCreateProject = project.user_id.toString() == idMyUser;
-    listUser = await DatabaseProvider.db.getAllUser();
-    usersForProject = [];
-    String usersProjects = project.userprojects ?? '';
-    List<String> data = usersProjects.split('|');
-    data.forEach((idUserProject) {
-      if(idUserProject != idMyUser){
-        listUser.forEach((element) {
-          if(element.id.toString() == idUserProject){
-            usersForProject.add(element);
-          }
-        });
-      }
-    });
+    if(project != null){
+      idMyUser = await SharedPrefe().getValue('unityIdMyUser');
+      isCreateProject = project.user_id.toString() == idMyUser;
+      listUser = await DatabaseProvider.db.getAllUser();
+      usersForProject = [];
+      String usersProjects = project.userprojects ?? '';
+      List<String> data = usersProjects.split('|');
+      data.forEach((idUserProject) {
+        if(idUserProject != idMyUser){
+          listUser.forEach((element) {
+            if(element.id.toString() == idUserProject){
+              usersForProject.add(element);
+              mapDeleteLoad[element.id] = false;
+            }
+          });
+        }
+      });
 
-    photoProjectAvatar = await SharedPrefe().getValue('${project.id}Photo');
+      photoProjectAvatar = await SharedPrefe().getValue('${project.id}Photo');
 
-    loadData = false;
+      loadData = false;
 
-    setState(() {});
+      setState(() {});
+    }
   }
 
   @override
@@ -107,13 +114,13 @@ class _EditProjectState extends State<EditProject> {
       },
       child: Scaffold(
         appBar: _appBarH(),
-        body: body(),
+        body: project == null ? Container() : body(),
       )
     );
   }
 
   Widget _appBarH(){
-    String nombreUser = project.name ?? '';
+    String nombreUser = project == null ? '' : project.name ?? '';
     return AppBar(
       leading: InkWell(
         onTap: () async {
@@ -193,13 +200,26 @@ class _EditProjectState extends State<EditProject> {
               ),
             ) :
             listUsersView(),
-            !isCreateProject ? Container() : Container(
+            !isCreateProject ? Container() :
+            deleteProjectLoad ?
+            Container(
+              width: ancho,
+              margin: EdgeInsets.symmetric(horizontal: ancho * 0.3,vertical: alto * 0.04),
+              child: Center(
+                child: Container(
+                  width: ancho * 0.06,
+                  height: alto * 0.03,
+                  child: Center(child: CircularProgressIndicator(),),
+                ),
+              ),
+            ) :
+            Container(
               width: ancho,
               margin: EdgeInsets.symmetric(horizontal: ancho * 0.3,vertical: alto * 0.04),
               child: RoundedButton(
                 backgroundColor: WalkieTaskColors.color_E07676,
                 title: '${translate(context: context,text: 'delete')} ${translate(context: context,text: 'projects').replaceAll('s','')}',
-                onPressed: () {},
+                onPressed: () => deleteProject(),
                 radius: 5.0,
                 height: alto * 0.04,
                 textStyle: WalkieTaskStyles().styleHelveticaneueRegular(size: alto * 0.02,color: WalkieTaskColors.white,fontWeight: FontWeight.bold,spacing: 1),
@@ -316,7 +336,19 @@ class _EditProjectState extends State<EditProject> {
                 Expanded(
                   child: Text(userName,style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.024),textAlign: TextAlign.left,),
                 ),
-                !isCreateProject ? Container() : Container(
+                !isCreateProject ? Container() :
+                mapDeleteLoad[user.id] ?
+                Container(
+                  margin: EdgeInsets.only(right: ancho * 0.1),
+                  child: Center(
+                    child: Container(
+                      height: alto * 0.03,
+                      width: alto * 0.03,
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                ) :
+                Container(
                   margin: EdgeInsets.only(right: ancho * 0.1),
                   child: InkWell(
                     radius: alto * 0.03,
@@ -324,7 +356,7 @@ class _EditProjectState extends State<EditProject> {
                       padding: EdgeInsets.all(alto * 0.02),
                       child: Icon(Icons.delete_outline,size: alto * 0.04,color: WalkieTaskColors.color_E07676,),
                     ),
-                    onTap: (){},
+                    onTap: () => deleteUserProject(user.id),
                   ),
                 ),
               ],
@@ -371,6 +403,63 @@ class _EditProjectState extends State<EditProject> {
         )));
     if(res){
       updateDateProject(project.id);
+    }
+  }
+
+  Future<void> deleteUserProject(int idUser) async{
+
+    mapDeleteLoad[idUser] = true;
+    setState(() {});
+
+    //await Future.delayed(Duration(seconds: 3));
+
+    try{
+      var response = await conexionHttp().httpDeleteUserForProject(project.id,idUser);
+      var value = jsonDecode(response.body);
+      if(value['status_code'] == 200){
+        updateDateProject(project.id);
+      }else{
+        showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
+      }
+    }catch(e){
+      print(e.toString());
+      showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
+    }
+
+    await Future.delayed(Duration(seconds: 2));
+
+    mapDeleteLoad[idUser] = false;
+    setState(() {});
+  }
+
+  Future<void> deleteProject() async{
+    deleteProjectLoad = true;
+    setState(() {});
+
+    bool res = false;
+    res = await alertDeleteElement(context, '¿${translate(context: context, text: 'sureDeleteProject')} "${project.name}"?');
+    if(res != null && res){
+      try{
+        var response = await conexionHttp().httpDeleteProject(project.id);
+        var value = jsonDecode(response.body);
+        if(value['status_code'] == 200){
+          int res = await DatabaseProvider.db.deleteProjectCase(project.id);
+          if(res != 0){
+            widget.blocCasos.inList.add(true);
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
+          }
+        }else{
+          showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
+        }
+      }catch(e){
+        print(e.toString());
+        showAlert(translate(context: context, text: 'connectionError'),WalkieTaskColors.color_E07676);
+      }
+    }
+    deleteProjectLoad = false;
+    if(mounted){
+      setState(() {});
     }
   }
 

@@ -134,7 +134,9 @@ class _ChatForProjectState extends State<ChatForProject> {
 
     loadData = false;
 
-    setState(() {});
+    if(mounted){
+      setState(() {});
+    }
   }
 
   @override
@@ -249,7 +251,7 @@ class _ChatForProjectState extends State<ChatForProject> {
   }
 
   Widget _appBarH(){
-    String nombreUser = project.name ?? '';
+    String nombreUser = project == null ? '' : project.name ?? '';
     return AppBar(
       leading: InkWell(
         onTap: () async {
