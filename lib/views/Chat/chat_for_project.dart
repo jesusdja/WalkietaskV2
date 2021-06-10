@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
@@ -65,6 +67,8 @@ class _ChatForProjectState extends State<ChatForProject> {
   List<Widget> _pages = [];
   List<Usuario> listUser = [];
   bool loadData = true;
+  StreamSubscription streamSubscriptionCasos;
+  ChatTareas chatProject;
 
   @override
   void initState() {
@@ -72,19 +76,20 @@ class _ChatForProjectState extends State<ChatForProject> {
     initialUser();
     project = widget.project;
     widgetHome = widget.widgetHome;
+    _inicializarPatronBlocCasos();
   }
 
   @override
   void dispose() {
     super.dispose();
     controllerPage.dispose();
+    streamSubscriptionCasos?.cancel();
   }
 
   initialUser() async {
     idMyUser = await SharedPrefe().getValue('unityIdMyUser');
     listUser = await DatabaseProvider.db.getAllUser();
 
-    ChatTareas chatProject;
     try{
       ChatTareas chatVery = await ChatProjectFirebase().checkChat(project.id.toString());
       if(chatVery != null){
@@ -127,6 +132,17 @@ class _ChatForProjectState extends State<ChatForProject> {
       listB.removeAt(pos);
     }
 
+    loadData = false;
+
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    ancho = MediaQuery.of(context).size.width;
+    alto = MediaQuery.of(context).size.height;
+
     _pages = [
       ChatProject(
         project: project,
@@ -147,17 +163,6 @@ class _ChatForProjectState extends State<ChatForProject> {
       ),
       Container(),
     ];
-
-    loadData = false;
-
-    setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    ancho = MediaQuery.of(context).size.width;
-    alto = MediaQuery.of(context).size.height;
 
     return GestureDetector(
       onTap: () {
@@ -279,9 +284,10 @@ class _ChatForProjectState extends State<ChatForProject> {
                     Navigator.push(context, new MaterialPageRoute(
                         builder: (BuildContext context) =>
                         new EditProject(
-                          widgetHome: widgetHome,
+                          widgetHome: widget.widgetHome,
                           project: project,
                           blocCasos: widget.blocCasos,
+                          myUser: widget.myUser,
                         )));
                   },
                 ),
@@ -293,6 +299,24 @@ class _ChatForProjectState extends State<ChatForProject> {
       elevation: 0,
       backgroundColor: colorFondoChat,
     );
+  }
+
+  _inicializarPatronBlocCasos(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionCasos = widget.blocCasos.outList.listen((newVal) {
+        if(newVal){
+          updateProject();
+
+        }
+      });
+    } catch (e) {}
+  }
+
+  updateProject() async {
+    project = await  DatabaseProvider.db.getCodeIdCase(project.id.toString());
+    setState(() {});
+    initialUser();
   }
 }
 

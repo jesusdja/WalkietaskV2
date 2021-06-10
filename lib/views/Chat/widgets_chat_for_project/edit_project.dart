@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -7,8 +8,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
 import 'package:walkietaskv2/models/Caso.dart';
 import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/services/ActualizacionDatos.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
+import 'package:walkietaskv2/services/upload_background_documents.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
 import 'package:walkietaskv2/utils/gallery_camera_dialog.dart';
@@ -16,6 +19,7 @@ import 'package:walkietaskv2/utils/rounded_button.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
+import 'package:walkietaskv2/views/proyects/add_proyects.dart';
 
 class EditProject extends StatefulWidget {
 
@@ -23,11 +27,13 @@ class EditProject extends StatefulWidget {
     @required this.project,
     @required this.widgetHome,
     @required this.blocCasos,
+    @required this.myUser,
   });
 
   final Caso project;
   final Map<String,dynamic> widgetHome;
   final BlocCasos blocCasos;
+  final Usuario myUser;
 
   @override
   _EditProjectState createState() => _EditProjectState();
@@ -47,6 +53,7 @@ class _EditProjectState extends State<EditProject> {
   bool loadData = true;
   bool isCreateProject = false;
   String photoProjectAvatar;
+  StreamSubscription streamSubscriptionCasos;
 
   @override
   void initState() {
@@ -54,21 +61,22 @@ class _EditProjectState extends State<EditProject> {
     initialUser();
     project = widget.project;
     widgetHome = widget.widgetHome;
-
+    _inicializarPatronBlocCasos();
   }
 
   @override
   void dispose() {
     super.dispose();
     controllerPage.dispose();
+    streamSubscriptionCasos?.cancel();
   }
 
   initialUser() async {
     idMyUser = await SharedPrefe().getValue('unityIdMyUser');
     isCreateProject = project.user_id.toString() == idMyUser;
     listUser = await DatabaseProvider.db.getAllUser();
-
-    String usersProjects = widgetHome['info'].userprojects ?? '';
+    usersForProject = [];
+    String usersProjects = project.userprojects ?? '';
     List<String> data = usersProjects.split('|');
     data.forEach((idUserProject) {
       if(idUserProject != idMyUser){
@@ -174,7 +182,7 @@ class _EditProjectState extends State<EditProject> {
                   ],
                 ),
               ),
-              onTap: (){},
+              onTap: () => addUserProject(),
             ),
             loadData ?
             Container(
@@ -273,12 +281,12 @@ class _EditProjectState extends State<EditProject> {
           setState(() {});
           widget.blocCasos.inList.add(true);
 
-          try{
-            var response = await conexionHttp().httpSendImageProject(croppedImage.path,project.id);
-            var value = jsonDecode(response.body);
-          }catch(e){
-            print('_onTapPhoto: ${e.toString()}');
-          }
+          List listA = await SharedPrefe().getValue('WalListPhotosProjects') ?? [];
+          List<String> listB = [];
+          listA.forEach((element) {listB.add(element);});
+          listB.add('${project.id}|${croppedImage.path}|');
+          await SharedPrefe().setStringListValue('WalListPhotosProjects',listB);
+          uploadBackPhotoProjects();
         }
       }
     },
@@ -343,6 +351,56 @@ class _EditProjectState extends State<EditProject> {
         children: listW,
       ),
     );
+  }
+
+  Future<void> addUserProject() async{
+    List listU = [];
+    usersForProject.forEach((element) {
+      listU.add({'users' : element.toMap()});
+    });
+    listU.add({'users' : widget.myUser.toMap()});
+
+    bool res = await Navigator.push(context, new MaterialPageRoute(
+        builder: (BuildContext context) =>
+        new AddProyects(
+          myUserRes: widget.myUser,
+          listUserRes: listUser,
+          blocPage: null,
+          proyect: project,
+          listUsersExist: listU,
+        )));
+    if(res){
+      updateDateProject(project.id);
+    }
+  }
+
+  Future<void> updateDateProject(int idPRojects) async{
+    try{
+      var response = await conexionHttp().httpUpdateDateProject(idPRojects);
+      var value = jsonDecode(response.body);
+      if(value['status_code'] == 200){
+        UpdateData().actualizarCasos(widget.blocCasos);
+      }
+    }catch(e){
+      print(e.toString());
+    }
+  }
+
+  _inicializarPatronBlocCasos(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionCasos = widget.blocCasos.outList.listen((newVal) {
+        if(newVal){
+          updateProject();
+        }
+      });
+    } catch (e) {}
+  }
+
+  updateProject() async {
+    project = await  DatabaseProvider.db.getCodeIdCase(project.id.toString());
+    setState(() {});
+    initialUser();
   }
 }
 

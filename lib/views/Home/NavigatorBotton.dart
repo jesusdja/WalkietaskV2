@@ -213,6 +213,11 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     if(listDocuments2.isNotEmpty){
       uploadUpdateUser();
     }
+
+    List<dynamic> listDocuments3 = await SharedPrefe().getValue('WalListPhotosProjects') ?? [];
+    if(listDocuments3.isNotEmpty){
+      uploadBackPhotoProjects();
+    }
   }
 
   Future<void> reconection() async {

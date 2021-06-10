@@ -967,7 +967,7 @@ class conexionHttp{
     return response;
   }
 
-  Future<http.Response> httpSendImageProject(String path, int idProject) async {
+  Future<http.Response> httpSendImageProject(String path, String idProject) async {
     String token  = await obtenerToken();
     Map<String, String> headers = {
       'Authorization': 'Bearer $token'
