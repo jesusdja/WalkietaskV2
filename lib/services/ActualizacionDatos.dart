@@ -240,6 +240,49 @@ class UpdateData{
     }
   }
 
+  actualizarListaTareasPorProyecto(BlocTask blocTaskForProject) async {
+    print('actualizarListaTareasPorProyecto');
+    try{
+      var response = await conexionHispanos.httpListTareasPorProyecto();
+      var value = jsonDecode(response.body);
+      List<dynamic> tareas = value["tasks"];
+      bool entre = false;
+      for(int x = 0; x < tareas.length; x++){
+        Tarea tarea = Tarea.fromJson(tareas[x]);
+        //EXTRAER VARIABLE DE USUARIO FIJO
+        Tarea taskVery = await  DatabaseProvider.db.getCodeIdTask('${tarea.id}');
+        bool diffTask = false;
+        if(taskVery != null){
+          Duration diff1 = DateTime.parse(tarea.updated_at).difference(DateTime.now());
+          Duration diff2 = DateTime.parse(taskVery.updated_at).difference(DateTime.now());
+          diffTask = diff1.inSeconds > diff2.inSeconds;
+        }
+
+        if(taskVery == null || tarea != taskVery || diffTask) {
+          entre = true;
+          if(taskVery != null){
+            Duration diff1 = DateTime.parse(tarea.updated_at).difference(DateTime.now());
+            Duration diff2 = DateTime.parse(taskVery.updated_at).difference(DateTime.now());
+            tarea.updated_at = diff1.inSeconds < diff2.inSeconds ? taskVery.updated_at : tarea.updated_at;
+          }
+
+          if (taskVery == null) {
+            await DatabaseProvider.db.saveTask(tarea);
+          } else {
+            tarea.order = taskVery.order;
+            await DatabaseProvider.db.updateTask(tarea);
+          }
+        }
+      }
+
+      if(entre){
+        blocTaskForProject.inList.add(true);
+      }
+    }catch(e){
+      print('SIN CONEXION PARA ACTUALIZAR TAREAS POR PROYECTO');
+    }
+  }
+
   actualizarCasos(BlocCasos blocCasos) async {
     print('actualizarCasos');
     bool entre = false;

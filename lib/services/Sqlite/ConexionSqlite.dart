@@ -485,4 +485,36 @@ class DatabaseProvider{
     }
     return result;
   }
+
+  //OBTENER TODAS LAS TAREAS CON PROYECTO
+  Future<List<Tarea>> getTaskWithProjects() async {
+    List<Tarea> result = [];
+    final db = await database;
+    try{
+      List<Map> list = await db.rawQuery('SELECT * FROM Tareas WHERE finalized = 0 AND project_id != 0');
+      list.forEach((mapa){
+        Tarea tarea = new Tarea.fromMap(mapa);
+        result.add(tarea);
+      });
+    }catch(e){
+      print(e.toString());
+    }
+    return result;
+  }
+  //OBTENER TODAS LAS TAREAS CON PROYECTO
+  Future<List<Tarea>> getAssignedTaskWithProjects() async {
+    List<Tarea> result = [];
+    final db = await database;
+    String myId = await SharedPrefe().getValue('unityIdMyUser');
+    try{
+      List<Map> list = await db.rawQuery('SELECT * FROM Tareas WHERE finalized = 0 AND project_id != 0 AND user_responsability_id = $myId');
+      list.forEach((mapa){
+        Tarea tarea = new Tarea.fromMap(mapa);
+        result.add(tarea);
+      });
+    }catch(e){
+      print(e.toString());
+    }
+    return result;
+  }
 }

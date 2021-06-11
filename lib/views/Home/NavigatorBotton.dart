@@ -75,6 +75,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
   BlocUser blocUser;
   BlocTask blocTaskSend;
   BlocTask blocTaskReceived;
+  BlocTask blocTaskForProject = BlocTask();
   BlocCasos blocCasos;
   BlocCasos blocInvitation;
   BlocProgress blocIndicatorProgress;
@@ -87,6 +88,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
 
   StreamSubscription streamSubscriptionUser;
   StreamSubscription streamSubscriptionTaskSend;
+  StreamSubscription streamSubscriptionTaskForProject;
   StreamSubscription streamSubscriptionTaskRecived;
   StreamSubscription streamSubscriptionCasos;
   StreamSubscription streamSubscriptionInvitation;
@@ -142,6 +144,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     _inicializarPatronBlocUser();
     _inicializarPatronBlocTaskRecived();
     _inicializarPatronBlocTaskSend();
+    _inicializarPatronBlocTaskForProject();
     _inicializarPatronBlocInvitation();
     _inicializarPatronBlocCasos();
     _inicializarPatronBlocProgress();
@@ -161,6 +164,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     updateData.actualizarCasos(blocCasos);
     updateData.actualizarListaInvitationSent(blocInvitation, blocConection);
     updateData.actualizarListaInvitationReceived(blocInvitation, blocConection, blocVerifyFirst: blocVerifyFirst);
+    updateData.actualizarListaTareasPorProyecto(blocTaskForProject);
 
     mapNavigatorBotton[bottonSelect.opcion1] = true;
     mapNavigatorBotton[bottonSelect.opcion2] = false;
@@ -181,6 +185,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     try{
       streamSubscriptionUser?.cancel();
       streamSubscriptionTaskSend?.cancel();
+      streamSubscriptionTaskForProject?.cancel();
       streamSubscriptionTaskRecived?.cancel();
       streamSubscriptionCasos?.cancel();
       streamSubscriptionInvitation?.cancel();
@@ -190,6 +195,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       streamSubscriptionVerify?.cancel();
       blocUser.dispose();
       blocTaskSend.dispose();
+      blocTaskForProject.dispose();
       blocTaskReceived.dispose();
       blocCasos.dispose();
       blocInvitation.dispose();
@@ -511,6 +517,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     if(page == bottonSelect.opcion1){
       updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
       updateData.actualizarListaEnviados(blocTaskSend, blocConection);
+      updateData.actualizarListaTareasPorProyecto(blocTaskForProject);
     }
     if(page == bottonSelect.opcion2){
       updateData.actualizarListaRecibidos(blocTaskReceived, blocConection);
@@ -865,47 +872,48 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     List<Map<String,dynamic>> mapAll = [];
     List<Map<String,dynamic>> mapAllAux = [];
 
+    List<Tarea> listR = await DatabaseProvider.db.getTaskWithProjects();
+    List<Tarea> listR2 = await DatabaseProvider.db.getAssignedTaskWithProjects();
+
     try{
-      //OBTENER TAREAS ASIGNADAS POR PROYECTO
-      Map<int,List<Tarea>> mapTaskAsinged = {};
-      listRecibidos.forEach((element) {
-        int idProject = element.project_id ?? 0;
-        if(mapTaskAsinged[idProject] == null){ mapTaskAsinged[idProject] = [];}
-        if(element.finalized == 0){
-          mapTaskAsinged[idProject].add(element);
-        }
-      });
-      //OBTENER TAREAS ENVIADAS POR PROYECTO
-      Map<int,List<Tarea>> mapTaskSendForProject = {};
-      listEnviados.forEach((element) {
-        int idProject = element.project_id ?? 0;
-        if(mapTaskSendForProject[idProject] == null){ mapTaskSendForProject[idProject] = [];}
-        if(element.finalized == 0 && myUser != null && myUser.id != element.user_responsability_id){
-          mapTaskSendForProject[idProject].add(element);
-        }
-      });
       //AGREGAR USUARIOS DATA HOME
       listaUser.forEach((element) {
         mapAll.add({'info' : element,'type' : 'user','date' : element.updatedAt});
         mapAllAux.add({'info' : element,'type' : 'user','date' : element.updatedAt});
       });
+
+
+      //OBTENER TAREAS CON PROYECTO
+      Map<int,List<Tarea>> mapTaskWithProject = {};
+      listR.forEach((element) {
+        int idProject = element.project_id ?? 0;
+        if(mapTaskWithProject[idProject] == null){ mapTaskWithProject[idProject] = [];}
+        mapTaskWithProject[idProject].add(element);
+      });
+      //OBTENER MIS TAREAS CON PROYECTO
+      Map<int,List<Tarea>> mapAssignedTaskWithProject = {};
+      listR2.forEach((element) {
+        int idProject = element.project_id ?? 0;
+        if(mapAssignedTaskWithProject[idProject] == null){ mapAssignedTaskWithProject[idProject] = [];}
+        mapAssignedTaskWithProject[idProject].add(element);
+      });
       //AGREGAR PROYECTOS DATA HOME
       for(int x = 0; x < listProjects.length; x++){
         Caso element = listProjects[x];
 
-        List<Tarea> cantTaskSend = [];
-        if(mapTaskSendForProject[element.id] != null){
-          cantTaskSend = mapTaskSendForProject[element.id];
+        List<Tarea> cantTaskToProject = [];
+        if(mapTaskWithProject[element.id] != null){
+          cantTaskToProject = mapTaskWithProject[element.id];
         }
         List<Tarea> cantTaskAssigned = [];
-        if(mapTaskAsinged[element.id] != null){
-          cantTaskAssigned = mapTaskAsinged[element.id];
+        if(mapAssignedTaskWithProject[element.id] != null){
+          cantTaskAssigned = mapAssignedTaskWithProject[element.id];
         }
 
         String photoProjectAvatar = await SharedPrefe().getValue('${element.id}Photo');
 
-        mapAll.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTaskAssigned' : cantTaskAssigned, 'cantTaskSend' : cantTaskSend, 'photoProjectAvatar' : photoProjectAvatar});
-        mapAllAux.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTaskAssigned' : cantTaskAssigned, 'cantTaskSend' : cantTaskSend, 'photoProjectAvatar' : photoProjectAvatar});
+        mapAll.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTaskAssigned' : cantTaskAssigned, 'cantTaskToProject' : cantTaskToProject, 'photoProjectAvatar' : photoProjectAvatar});
+        mapAllAux.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTaskAssigned' : cantTaskAssigned, 'cantTaskToProject' : cantTaskToProject, 'photoProjectAvatar' : photoProjectAvatar});
       }
       //UNIR USUARIO Y PROYECTO AL HOME
       if(mapAll.isNotEmpty){
@@ -991,6 +999,16 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       streamSubscriptionTaskSend = blocTaskSend.outList.listen((newVal) {
         if(newVal){
           _inicializarTaskSend();
+        }
+      });
+    } catch (e) {}
+  }
+  _inicializarPatronBlocTaskForProject(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionTaskForProject = blocTaskForProject.outList.listen((newVal) {
+        if(newVal){
+          _inicializarDataHome();
         }
       });
     } catch (e) {}

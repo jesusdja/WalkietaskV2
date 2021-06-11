@@ -20,7 +20,24 @@ class conexionHttp{
     try{
       response = http.get(
           '$enlace/api/auth/tasks/myreceivedtasks',
-        headers: requestHeaders
+          headers: requestHeaders
+      );
+    }catch(ex){
+      print(ex.toString());
+    }
+    return response;
+  }
+
+  Future<http.Response> httpListTareasPorProyecto() async{
+    String token  = await obtenerToken();
+    var response;
+    Map<String, String> requestHeaders = {
+      'Authorization': 'Bearer $token'
+    };
+    try{
+      response = http.get(
+          '$enlace/api/auth/tasks/mytasksatallprojects',
+          headers: requestHeaders
       );
     }catch(ex){
       print(ex.toString());

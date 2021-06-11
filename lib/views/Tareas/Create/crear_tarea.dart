@@ -249,7 +249,7 @@ class _CreateTaskState extends State<CreateTask> {
 
     users.add(SizedBox(height: alto * 0.03,));
 
-    //listWidgetsHome.add({ 'info' : element, 'type' : 'project' || 'user', 'date' : element.updated_at, 'cantTaskAssigned' : cantTaskAssigned, 'cantTaskSend' : cantTaskSend, 'photoProjectAvatar' : photoProjectAvatar});
+    //listWidgetsHome.add({ 'info' : element, 'type' : 'project' || 'user', 'date' : element.updated_at, 'cantTaskAssigned' : cantTaskAssigned, 'cantTaskToProject' : cantTaskToProject, 'photoProjectAvatar' : photoProjectAvatar});
     listWidgetsHome.forEach((element) {
       if(element['type'] == 'user'){
         Usuario user = element['info'];
@@ -373,7 +373,7 @@ class _CreateTaskState extends State<CreateTask> {
 
         String nameProject = project.name ?? '';
         bool favorite = project.is_priority == 1;
-        String cantTask = '${element['cantTaskAssigned'].length + element['cantTaskSend'].length}' ?? '0';
+        String cantTask = '${element['cantTaskToProject'].length}' ?? '0';
         String cantAssigned = '${element['cantTaskAssigned'].length}' ?? '0';
 
         bool blueOrRed = true;
