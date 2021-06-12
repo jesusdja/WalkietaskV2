@@ -148,7 +148,17 @@ class _ChatForProjectState extends State<ChatForProject> {
         listaCasos: widget.listaCasos,
         myUser: widget.myUser,
       ),
-      Container(),
+      TaskForUsers(
+        project: project,
+        widgetHome: widget.widgetHome,
+        mapIdUser: widget.mapIdUser,
+        blocAudioChangePage: widget.blocAudioChangePage,
+        blocTaskReceived: widget.blocTaskReceived,
+        push: widget.push,
+        listaCasos: widget.listaCasos,
+        myUser: widget.myUser,
+        isTaskAssigned: true,
+      ),
     ];
 
     return GestureDetector(
