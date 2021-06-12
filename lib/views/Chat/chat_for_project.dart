@@ -112,26 +112,6 @@ class _ChatForProjectState extends State<ChatForProject> {
       }
     }catch(_){}
 
-    List<Tarea> listA = [];
-    List<Tarea> listB = [];
-    List<Tarea> listTask = [];
-
-    widgetHome['cantTaskAssigned'].forEach((element) { listA.add(element); listB.add(element); });
-    widgetHome['cantTaskSend'].forEach((element) { listA.add(element); listB.add(element);});
-
-    for(int x = 0; x < listA.length; x++){
-      int pos = 0;
-      DateTime date1 = DateTime.parse(listA[x].updated_at);
-      for(int x1 = 0; x1 < listB.length; x1++){
-        DateTime date2 = DateTime.parse(listA[x1].updated_at);
-        if(date2.isAfter(date1)){
-          pos = x1;
-        }
-      }
-      listTask.add(listB[pos]);
-      listB.removeAt(pos);
-    }
-
     loadData = false;
 
     if(mounted){
@@ -160,8 +140,13 @@ class _ChatForProjectState extends State<ChatForProject> {
       ),
       TaskForUsers(
         project: project,
-        widgetHome: widgetHome,
+        widgetHome: widget.widgetHome,
         mapIdUser: widget.mapIdUser,
+        blocAudioChangePage: widget.blocAudioChangePage,
+        blocTaskReceived: widget.blocTaskReceived,
+        push: widget.push,
+        listaCasos: widget.listaCasos,
+        myUser: widget.myUser,
       ),
       Container(),
     ];
@@ -171,6 +156,7 @@ class _ChatForProjectState extends State<ChatForProject> {
         FocusScope.of(context).requestFocus(new FocusNode());
       },
       child: Scaffold(
+        backgroundColor: colorChat,
         appBar: _appBarH(),
         body: body(),
       )
@@ -188,7 +174,11 @@ class _ChatForProjectState extends State<ChatForProject> {
             width: ancho,
             height: alto * 0.5,
             child: Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  WalkieTaskColors.white,
+                ),
+              ),
             ),
           ) :
           Flexible(
@@ -201,7 +191,7 @@ class _ChatForProjectState extends State<ChatForProject> {
 
   Widget header(){
 
-    String cantTask = '${widgetHome['cantTaskAssigned'].length + widgetHome['cantTaskSend'].length}' ?? '';
+    String cantTask = '${widgetHome['cantTaskToProject'].length}' ?? '';
     String cantAssigned = '${widgetHome['cantTaskAssigned'].length}' ?? '';
     cantTask = cantTask == '0' ? '' : '($cantTask)';
     cantAssigned = cantAssigned == '0' ? '' : '($cantAssigned)';

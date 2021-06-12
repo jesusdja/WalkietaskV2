@@ -245,5 +245,6 @@
   "submitAudioAssignment" : "Enviar tarea de audio",
   "selectUser" : "Seleccionar usuario",
   "noUsersToSubmitTasks" : "No existen usuarios para enviar tareas",
-  "members" : "Miembros"
+  "members" : "Miembros",
+  "sentBy" : "Enviado por"
 }

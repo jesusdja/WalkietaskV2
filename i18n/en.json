@@ -245,5 +245,6 @@
   "submitAudioAssignment" : "Submit audio assignment",
   "selectUser" : "Select user",
   "noUsersToSubmitTasks" : "There are no users to submit tasks",
-  "members" : "Members"
+  "members" : "Members",
+  "sentBy" : "Sent by"
 }
