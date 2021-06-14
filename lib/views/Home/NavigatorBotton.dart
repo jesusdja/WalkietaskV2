@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/App.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
@@ -734,7 +735,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                           height: alto * 0.08,
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: ViewImage().assetsImage("assets/image/LogoWN.png").image,
+                              image: Image.asset("assets/image/LogoWN.png").image,
                               fit: BoxFit.contain,
                             ),
                           ),

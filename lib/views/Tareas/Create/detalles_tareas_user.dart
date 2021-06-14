@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
@@ -373,7 +374,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                                   height: alto * 0.02,
                                   decoration: BoxDecoration(
                                     image: DecorationImage(
-                                      image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                                      image: Image.asset("assets/image/icono-fuego.png").image,
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -536,7 +537,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                                   height: alto * 0.02,
                                   decoration: BoxDecoration(
                                     image: DecorationImage(
-                                      image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                                      image: Image.asset("assets/image/icono-fuego.png").image,
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -675,7 +676,7 @@ class _DetailsTasksForUserState extends State<DetailsTasksForUser> {
                                 height: alto * 0.02,
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
-                                    image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                                    image: Image.asset("assets/image/icono-fuego.png").image,
                                     fit: BoxFit.contain,
                                   ),
                                 ),

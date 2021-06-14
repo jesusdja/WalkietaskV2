@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
@@ -63,7 +65,7 @@ class _AbboutState extends State<Abbout> {
       height: alto * 0.23,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: ViewImage().assetsImage("assets/image/LogoWN.png").image,
+          image: Image.asset("assets/image/LogoWN.png").image,
           fit: BoxFit.contain,
         ),
       ),

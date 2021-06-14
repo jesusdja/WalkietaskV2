@@ -394,8 +394,8 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
                     style: BorderStyle.solid,
                   ),
                   image: DecorationImage(
-                    image: ViewImage().assetsImage(_pathAdjunto, color: WalkieTaskColors.primary).image,
-                    fit: BoxFit.fitHeight,
+                    image: Image.file(File(_pathAdjunto), color: WalkieTaskColors.primary).image,
+                    fit: BoxFit.fill,
                   ),
                 ),
               ),
@@ -442,8 +442,9 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
               ),
               onTap: () async {
                 try{
-                  _pathAdjunto = await FilePicker.getFilePath(type: FileType.ANY, fileExtension: '');
-                  if(_pathAdjunto != null){
+                  FilePickerResult result = await FilePicker.platform.pickFiles();
+                  if(result != null){
+                    _pathAdjunto = result.files.single.path;
                     _fileNameAdjunto = _pathAdjunto.split('/').last;
                     setState(() {});
                   }
@@ -915,7 +916,7 @@ class _NewTaskForUserState extends State<NewTaskForUser> {
       width: alto * 0.05,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: ViewImage().assetsImage("assets/image/$name.png",).image,
+          image: Image.asset("assets/image/$name.png").image,
           fit: BoxFit.fitHeight,
         ),
       ),

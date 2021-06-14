@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -242,7 +243,7 @@ class _LoginHomeState extends State<LoginHome> {
       height: alto * 0.23,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: ViewImage().assetsImage("assets/image/LogoWN.png").image,
+          image: Image.asset("assets/image/LogoWN.png").image,
           fit: BoxFit.contain,
         ),
       ),

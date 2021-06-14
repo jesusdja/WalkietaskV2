@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
@@ -312,7 +314,7 @@ class _SelectedUserSendTaskState extends State<SelectedUserSendTask> {
                   width: alto * 0.025,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: ViewImage().assetsImage("assets/image/Icon_text.png", color: WalkieTaskColors.primary).image,
+                      image: Image.asset("assets/image/Icon_text.png", color: WalkieTaskColors.primary).image,
                       fit: BoxFit.fitHeight,
                     ),
                   ),

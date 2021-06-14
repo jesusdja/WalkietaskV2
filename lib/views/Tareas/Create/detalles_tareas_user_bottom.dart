@@ -156,7 +156,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
                   width: alto * 0.025,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: ViewImage().assetsImage("assets/image/Icon_text.png", color: WalkieTaskColors.primary).image,
+                      image: Image.asset("assets/image/Icon_text.png", color: WalkieTaskColors.primary).image,
                       fit: BoxFit.fitHeight,
                     ),
                   ),
@@ -197,7 +197,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
                   width: alto * 0.025,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: ViewImage().assetsImage("assets/image/micro_red.png",).image,
+                      image: Image.asset("assets/image/micro_red.png").image,
                       fit: BoxFit.fitHeight,
                     ),
                   ),
@@ -207,7 +207,7 @@ class _BottomDetailsTaskState extends State<BottomDetailsTask> {
                   width: alto * 0.025,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: ViewImage().assetsImage("assets/image/Icon_microphone_blue.png",).image,
+                      image: Image.asset("assets/image/Icon_microphone_blue.png").image,
                       fit: BoxFit.fitHeight,
                     ),
                   ),

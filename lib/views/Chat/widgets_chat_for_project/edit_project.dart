@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as pathServide;
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -296,17 +297,26 @@ class _EditProjectState extends State<EditProject> {
         PickedFile _imageFile = media as PickedFile;
         File croppedImage = await ViewImage().croppedImageView(_imageFile.path, cropStyle: CropStyle.circle);
         if(croppedImage != null){
-          await SharedPrefe().setStringValue('${project.id}Photo', croppedImage.path);
-          photoProjectAvatar = croppedImage.path;
-          setState(() {});
-          widget.blocCasos.inList.add(true);
+          try{
+            File fileSave = File(croppedImage.path);
+            Directory directory = await getApplicationDocumentsDirectory();
+            String _fileNameAdjunto = croppedImage.path.split('/').last;
+            File fileNew = await fileSave.copy('${directory.path}/$_fileNameAdjunto');
 
-          List listA = await SharedPrefe().getValue('WalListPhotosProjects') ?? [];
-          List<String> listB = [];
-          listA.forEach((element) {listB.add(element);});
-          listB.add('${project.id}|${croppedImage.path}|');
-          await SharedPrefe().setStringListValue('WalListPhotosProjects',listB);
-          uploadBackPhotoProjects();
+            await SharedPrefe().setStringValue('${project.id}Photo', fileNew.path);
+            photoProjectAvatar = croppedImage.path;
+            setState(() {});
+            widget.blocCasos.inList.add(true);
+
+            List listA = await SharedPrefe().getValue('WalListPhotosProjects') ?? [];
+            List<String> listB = [];
+            listA.forEach((element) {listB.add(element);});
+            listB.add('${project.id}|${croppedImage.path}|');
+            await SharedPrefe().setStringListValue('WalListPhotosProjects',listB);
+            uploadBackPhotoProjects();
+          }catch(e){
+            print('_onTapPhoto: ${e.toString()}');
+          }
         }
       }
     },

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -181,7 +182,7 @@ class _CreateTaskState extends State<CreateTask> {
               height: alto * 0.25,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: ViewImage().assetsImage("assets/image/image_home_empty.png").image,
+                  image: Image.asset("assets/image/image_home_empty.png").image,
                   fit: BoxFit.contain,
                 ),
               ),
@@ -334,7 +335,7 @@ class _CreateTaskState extends State<CreateTask> {
                                   height: alto * 0.02,
                                   decoration: BoxDecoration(
                                     image: DecorationImage(
-                                      image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                                      image: Image.asset("assets/image/icono-fuego.png").image,
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -450,7 +451,7 @@ class _CreateTaskState extends State<CreateTask> {
                                 height: alto * 0.02,
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
-                                    image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                                    image: Image.asset("assets/image/icono-fuego.png").image,
                                     fit: BoxFit.contain,
                                   ),
                                 ),
@@ -535,7 +536,7 @@ class _CreateTaskState extends State<CreateTask> {
               width: alto * 0.06,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: ViewImage().assetsImage("assets/image/icon_personal.png").image,
+                  image: Image.asset("assets/image/icon_personal.png").image,
                   fit: BoxFit.fill,
                 ),
               ),
@@ -563,7 +564,7 @@ class _CreateTaskState extends State<CreateTask> {
                           height: alto * 0.02,
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                              image: Image.asset("assets/image/icono-fuego.png").image,
                               fit: BoxFit.contain,
                             ),
                           ),
@@ -803,7 +804,7 @@ class _CreateTaskState extends State<CreateTask> {
                                   height: alto * 0.02,
                                   decoration: BoxDecoration(
                                     image: DecorationImage(
-                                      image: ViewImage().assetsImage("assets/image/icono-fuego.png").image,
+                                      image: Image.asset("assets/image/icono-fuego.png").image,
                                       fit: BoxFit.contain,
                                     ),
                                   ),

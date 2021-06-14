@@ -112,7 +112,10 @@ Future<void> uploadBackPhotoProjects() async {
       if(response.statusCode == 200){
         List<String> listDocumentsNoSend = [];
         for(int x1 = 0; x1 < listDocuments.length; x1++){
-          if(x != x1){ listDocumentsNoSend.add(listDocuments[x]); }
+          if(x != x1){
+            listDocumentsNoSend.add(listDocuments[x]);
+            print('ELIMINADO ${listDocuments[x]} - FOTO PROYECTO.');
+          }
         }
         await SharedPrefe().setStringListValue('WalListPhotosProjects',listDocumentsNoSend);
       }

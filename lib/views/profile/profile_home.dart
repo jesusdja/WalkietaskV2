@@ -410,7 +410,7 @@ class _ProfileHomeState extends State<ProfileHome> {
               width: ancho * 0.25,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: ViewImage().assetsImage("assets/image/reminder$index.png").image,
+                  image: Image.asset("assets/image/reminder$index.png").image,
                   fit: BoxFit.fitHeight,
                 ),
               ),

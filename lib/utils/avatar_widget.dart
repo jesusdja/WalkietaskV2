@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/view_image.dart';
@@ -7,8 +9,7 @@ Widget avatarCircule(Color borde, String rutaImage,double radiu){
       child: CircleAvatar(
         radius: radiu,
         backgroundColor: WalkieTaskColors.white,
-        backgroundImage: ViewImage()
-            .assetsImage('assets/image/$rutaImage')
+        backgroundImage: Image.asset('assets/image/$rutaImage')
             .image,
       ),
       padding: const EdgeInsets.all(2.0), // borde width
@@ -24,9 +25,7 @@ Widget avatarCirculeNet(Color borde, String rutaImage,double radiu){
     res = Container(
         child: CircleAvatar(
           radius: radiu,
-          backgroundImage: ViewImage()
-              .netWork(rutaImage)
-              .image,
+          backgroundImage: Image.network(rutaImage).image,
         ),
         padding: const EdgeInsets.all(2.0), // borde width
         decoration: new BoxDecoration(
