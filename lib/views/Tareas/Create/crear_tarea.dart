@@ -1171,6 +1171,7 @@ class _CreateTaskState extends State<CreateTask> {
         if(res == 1){
           widget.blocCasos.inList.add(true);
           updateDateProject(project.id);
+          await  DatabaseProvider.db.updateDateCase(project.id.toString());
         }
       },
     );

@@ -832,8 +832,9 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     List<Tarea> listS = await DatabaseProvider.db.getAllSendTask();
     listEnviados = await OrderTask().orderListSend(listS);
     loadTaskSend = true;
-    _inicializarUser();
     setState(() {});
+    _inicializarUser();
+    _inicializarCasos()();
   }
   _inicializarTaskSend() async {
     List<Tarea> listS = await DatabaseProvider.db.getAllSendTask();
@@ -843,8 +844,9 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     List<Tarea> listR = await DatabaseProvider.db.getAllRecevidTask();
     listRecibidos = await OrderTask().orderListReceived(listR);
     loadTaskRecived = true;
-    _inicializarUser();
     setState(() {});
+    _inicializarUser();
+    _inicializarCasos()();
   }
   _inicializarUser() async {
     listaUser = await  DatabaseProvider.db.getAllUser();

@@ -211,10 +211,22 @@ class DatabaseProvider{
   Future<int> updateCase(Caso caso) async {
     var dbClient = await  database;
     int res = 0;
-    String date = DateTime.now().toString();
-    caso.updated_at = date;
     try{
       res = await dbClient.update('Casos', caso.toMap(),where: 'id = ?', whereArgs: [caso.id]);
+    }catch(e){
+      print(e.toString());
+    }
+    return res;
+  }
+
+  //MODIFICAR TAREA
+  Future<int> updateDateCase(String idCase) async {
+    var dbClient = await  database;
+    int res = 0;
+    String date = DateTime.now().toString();
+    try{
+      res = await dbClient.update('Casos',{'updated_at' : date},where: 'id = ?', whereArgs: [idCase]);
+      print(res);
     }catch(e){
       print(e.toString());
     }
@@ -430,6 +442,9 @@ class DatabaseProvider{
     int res = 0;
     updateUserDate(tarea.user_id, 3);
     updateUserDate(tarea.user_responsability_id, 3);
+    if(tarea.project_id != 0){
+      updateDateCase(tarea.project_id.toString());
+    }
     try{
       res = await dbClient.update('Tareas', tarea.toMap(),where: 'id = ?', whereArgs: [tarea.id]);
     }catch(e){

@@ -266,8 +266,7 @@ class _ChatProjectState extends State<ChatProject> {
                 Usuario userSendNoti = await DatabaseProvider.db.getCodeIdUser(usersShowNotification[x]);
                 if (userSendNoti.fcmToken != null && userSendNoti.fcmToken.isNotEmpty) {
                   await HttpPushNotifications().httpSendMessagero(userSendNoti.fcmToken, project.id.toString(), description: sms,isProject: true);
-                  project.updated_at = DateTime.now().toString();
-                  await DatabaseProvider.db.updateCase(project);
+                  await DatabaseProvider.db.updateDateCase(project.id.toString());
                   UpdateData().actualizarCasos(widget.blocCasos);
                 }
               }catch(e){
