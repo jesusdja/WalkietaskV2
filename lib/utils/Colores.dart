@@ -32,11 +32,13 @@ class WalkieTaskColors {
   static const Color color_8CD59B = Color(0xFF8CD59B);
 }
 
-Color colorfondotext = Color(0xFFCAEDC7);
+Color colorfondotextChatProject = Color(0xffD2E5F8); //Color colorfondotext = Color(0xFFCAEDC7);
+Color colorfondotextChatTask = Color(0xFFCAEDC7);
 Color colorSliderListo = Color(0xFF89BD7D);
 Color colorSonidoAct = Color(0xFF76B7F8);
 Color colorButtonBlueAT = Color(0xFF76B7F8);
-Color colorChat = Color(0xFF8298C3);
+Color colorChatProject = Color(0xFFFFFFFF); //
+Color colorChatTask = Color(0xFF8298C3);
 Color colorSliderTrabajando = Color(0xFF8DA6DE);
 
 Color colorfondoDetalle = Color(0xFFFFFFFF);

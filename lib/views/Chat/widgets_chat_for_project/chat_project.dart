@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -88,18 +90,25 @@ class _ChatProjectState extends State<ChatProject> {
     ancho = MediaQuery.of(context).size.width;
     alto = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      backgroundColor: colorChat,
-      body: Stack(
-        children: [
-          messages(),
-          Positioned.fill(
-            child: Align(
-                alignment: Alignment.bottomCenter,
-                child: _textFieldSend(),
+    return GestureDetector(
+      onTap: () {
+        viewOptionCreateTask = false;
+        setState(() {});
+        FocusScope.of(context).requestFocus(new FocusNode());
+      },
+      child: Scaffold(
+        backgroundColor: colorChatProject,
+        body: Stack(
+          children: [
+            messages(),
+            Positioned.fill(
+              child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: _textFieldSend(),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -159,7 +168,10 @@ class _ChatProjectState extends State<ChatProject> {
                     child: TextField(
                       controller: _controllerChatSms,
                       maxLines: null,
-                      onTap: (){},
+                      onTap: (){
+                        viewOptionCreateTask = false;
+                        setState(() {});
+                      },
                       style: WalkieTaskStyles().stylePrimary(size: alto * 0.02, color: WalkieTaskColors.color_4D4D4D,spacing: 1,fontWeight: FontWeight.bold),
                       textCapitalization: TextCapitalization.sentences,
                       decoration: new InputDecoration(
@@ -229,6 +241,10 @@ class _ChatProjectState extends State<ChatProject> {
   }
 
   Future<void> sendMessage() async {
+
+    viewOptionCreateTask = false;
+    setState(() {});
+
     if(_controllerChatSms.text.isNotEmpty){
 
       DateTime now = DateTime.now();
@@ -367,10 +383,17 @@ class _ChatProjectState extends State<ChatProject> {
     TextStyle style = WalkieTaskStyles().stylePrimary(size: alto * 0.016);
 
     return Container(
-      margin: lateralDer ? EdgeInsets.only(right: ancho * 0.2) : EdgeInsets.only(left: ancho * 0.2),
+      margin: lateralDer ? EdgeInsets.only(right: ancho * 0.2,bottom: alto * 0.015) : EdgeInsets.only(left: ancho * 0.2,bottom: alto * 0.015),
       //height: MediaQuery.of(context).size.height * 0.05,
-      child: Card(
-        color: opa ? WalkieTaskColors.color_FFF5B3 : lateralDer ? Colors.white : colorfondotext,
+      child: Container(
+        decoration: BoxDecoration(
+          color: opa ? WalkieTaskColors.color_FFF5B3 : lateralDer ? Colors.white : colorfondotextChatProject,
+          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          border: new Border.all(
+            width: 1,
+            color: lateralDer ? WalkieTaskColors.color_E2E2E2 : colorfondotextChatProject,
+          ),
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
           child: Column(
@@ -383,7 +406,7 @@ class _ChatProjectState extends State<ChatProject> {
                   lateralDer ? Container(
                     child: imagenAvatar != null ? CircleAvatar(
                       radius: alto * 0.025,
-                      backgroundImage: imagenAvatar.image,
+                      backgroundImage: imagenAvatar != null ? imagenAvatar.image : null,
                     ) :
                     avatarWidget(alto: alto, radius:  0.025, text: initialName),
                   ) : Container(),
@@ -401,7 +424,7 @@ class _ChatProjectState extends State<ChatProject> {
                         :
                     CircleAvatar(
                       radius: alto * 0.025,
-                      backgroundImage: imagenAvatar.image,
+                      backgroundImage: imagenAvatar != null ? imagenAvatar.image : null,
                     ),
                   ) : Container(),
                 ],
@@ -416,5 +439,4 @@ class _ChatProjectState extends State<ChatProject> {
       ),
     );
   }
-
 }

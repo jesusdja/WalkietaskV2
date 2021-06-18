@@ -14,6 +14,7 @@ import 'package:walkietaskv2/services/Firebase/chat_project_firebase.dart';
 import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/Globales.dart';
+import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Chat/widgets_chat_for_project/chat_project.dart';
@@ -69,6 +70,7 @@ class _ChatForProjectState extends State<ChatForProject> {
   bool loadData = true;
   StreamSubscription streamSubscriptionCasos;
   ChatTareas chatProject;
+  StreamSubscription streamSubscriptionProgress;
 
   @override
   void initState() {
@@ -77,6 +79,7 @@ class _ChatForProjectState extends State<ChatForProject> {
     project = widget.project;
     widgetHome = widget.widgetHome;
     _inicializarPatronBlocCasos();
+    _initPatronBlocProgress();
   }
 
   @override
@@ -84,6 +87,7 @@ class _ChatForProjectState extends State<ChatForProject> {
     super.dispose();
     controllerPage.dispose();
     streamSubscriptionCasos?.cancel();
+    streamSubscriptionProgress?.cancel();
   }
 
   initialUser() async {
@@ -166,7 +170,7 @@ class _ChatForProjectState extends State<ChatForProject> {
         FocusScope.of(context).requestFocus(new FocusNode());
       },
       child: Scaffold(
-        backgroundColor: colorChat,
+        backgroundColor: colorChatProject,
         appBar: _appBarH(),
         body: body(),
       )
@@ -221,12 +225,21 @@ class _ChatForProjectState extends State<ChatForProject> {
   Widget titleHeader({@required String title, @required bool selected,@required int pos}){
     return InkWell(
       child: Container(
-        color: selected ? WalkieTaskColors.color_4D4D4D : WalkieTaskColors.color_B7B7B7,
+        color: WalkieTaskColors.white,
         padding: EdgeInsets.all(alto * 0.015),
-        child: Text(
-          title,
-          style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02,color: !selected ? WalkieTaskColors.color_4D4D4D : WalkieTaskColors.color_B7B7B7),
-          textAlign: TextAlign.center,
+        child: Column(
+          children: [
+            Text(
+              title,
+              style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.02,color: WalkieTaskColors.color_4D4D4D),
+              textAlign: TextAlign.center,
+            ),
+            Container(
+              margin: EdgeInsets.only(top: alto * 0.002),
+              width: ancho,height: alto * 0.006,
+              color: !selected ? Colors.white : WalkieTaskColors.primary,
+            ),
+          ],
         ),
       ),
       onTap: () => _goToPage(pos),
@@ -300,6 +313,7 @@ class _ChatForProjectState extends State<ChatForProject> {
       ],
       elevation: 0,
       backgroundColor: colorFondoChat,
+      bottom: _indicatorProgress(),
     );
   }
 
@@ -309,7 +323,6 @@ class _ChatForProjectState extends State<ChatForProject> {
       streamSubscriptionCasos = widget.blocCasos.outList.listen((newVal) {
         if(newVal){
           updateProject();
-
         }
       });
     } catch (e) {}
@@ -319,6 +332,142 @@ class _ChatForProjectState extends State<ChatForProject> {
     project = await  DatabaseProvider.db.getCodeIdCase(project.id.toString());
     setState(() {});
     initialUser();
+  }
+
+  void _initPatronBlocProgress(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionProgress = widget.blocIndicatorProgress.outList.listen((newVal) {
+        if(newVal['error'] != null && newVal['error']){
+          showAlert('${newVal['errorMessage']}' ?? 'Error al enviar tarea',Colors.red[400],sec: 5);
+        }
+        progressIndicator = double.parse('${newVal['progressIndicator']}');
+        cant = int.parse('${newVal['cant']}');
+        viewIndicatorProgress = newVal['viewIndicatorProgress'];
+        if(progressIndicator == 1.0){
+          _inicializarDataHome();
+        }
+        setState(() {});
+      });
+    } catch (e) {}
+  }
+
+  int cant = 0;
+  double progressIndicator = 0;
+  bool viewIndicatorProgress = false;
+  Widget _indicatorProgress(){
+
+    String textCant = 'Enviando tarea...';
+    if(cant > 1){
+      textCant = 'Enviando tareas($cant)...';
+    }
+
+    return viewIndicatorProgress ? PreferredSize(
+      preferredSize: Size.fromHeight(alto * 0.05),
+      child: Container(
+        color: colorfondoSelectUser,
+        height: alto * 0.05,
+        width: ancho,
+        padding: EdgeInsets.only(left: ancho * 0.05, right: ancho * 0.05),
+        child: Row(
+          children: <Widget>[
+            Container(
+              child: Text(textCant, style: WalkieTaskStyles().styleHelveticaNeueBold(size: alto * 0.021, color: WalkieTaskColors.color_969696),),
+            ),
+            Expanded(
+              child: Container(
+                decoration: new BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(50)),
+                  border: new Border.all(
+                    width: 2,
+                    color: WalkieTaskColors.primary,
+                  ),
+                ),
+                child: LinearProgressIndicator(
+                  backgroundColor: WalkieTaskColors.white,
+                  valueColor: AlwaysStoppedAnimation<Color>(WalkieTaskColors.primary),
+                  value: progressIndicator,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ) :
+    PreferredSize(
+        preferredSize: Size.fromHeight(0),
+        child: Container()
+    );
+  }
+
+  _inicializarDataHome() async {
+    List<Usuario> listaUser = await  DatabaseProvider.db.getAllUser();
+    listaUser = orderUserForDate(listaUser);
+    List<Caso> listProjects = await  DatabaseProvider.db.getMyProjects();
+
+    List listWidgetsHome = await getListDataHome(listaUser: listaUser,listProjects: listProjects);
+    for(int x = 0; x < listWidgetsHome.length; x++){
+      if(listWidgetsHome[x]['info'].id == project.id){
+        widgetHome = listWidgetsHome[x];
+        x = listWidgetsHome.length;
+      }
+    }
+    setState(() {});
+  }
+
+  List<Usuario> orderUserForDate(List<Usuario> listUser){
+    List<Usuario> users = [];
+    Map<int,Usuario> contacts = {};
+    Map<int,Usuario> contacts2 = {};
+
+    listUser.forEach((element) {
+      if(element.contact == 1){ contacts[element.id] = element; contacts2[element.id] = element; }
+    });
+
+    for(int x = 1; x < contacts.length; x++){
+      int idMax = 0;
+      String dateMax = '';
+
+      contacts2.forEach((key, value) {
+        if(value.updatedAt.isNotEmpty){
+          if(dateMax.isEmpty){
+            idMax = key;
+            dateMax = value.updatedAt;
+          }else{
+            DateTime dateCreate = DateTime.parse(dateMax);
+            Duration difDays = dateCreate.difference(DateTime.now());
+
+            DateTime dateCreate2 = DateTime.parse(value.updatedAt);
+            Duration difDays2 = dateCreate2.difference(DateTime.now());
+
+            if(difDays2.inSeconds > difDays.inSeconds){
+              idMax = key;
+              dateMax = value.updatedAt;
+            }
+          }
+        }
+      });
+
+      contacts2.remove(idMax);
+      if(contacts[idMax] != null){
+        users.add(contacts[idMax]);
+      }
+    }
+
+    contacts.forEach((key, value) {
+      bool isHere = false;
+      users.forEach((element) {
+        if(element.id == key){
+          isHere = true;
+        }
+      });
+      if(!isHere){
+        users.add(value);
+      }
+    });
+    return users;
   }
 }
 

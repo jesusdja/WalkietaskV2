@@ -1,6 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/main.dart';
+import 'package:walkietaskv2/models/Caso.dart';
+import 'package:walkietaskv2/models/Tarea.dart';
+import 'package:walkietaskv2/models/Usuario.dart';
+import 'package:walkietaskv2/services/Sqlite/ConexionSqlite.dart';
 import 'package:walkietaskv2/utils/Colores.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
@@ -92,6 +96,97 @@ Future<Image> getPhotoUser() async {
     photo = Image.file(File(pathPhoto));
   }
   return photo;
+}
+
+Future<List> getListDataHome({@required List<Usuario> listaUser,@required List<Caso> listProjects,}) async {
+  List<Map<String,dynamic>> mapAll = [];
+  List<Map<String,dynamic>> mapAllAux = [];
+  List listWidgetsHome = [];
+
+  List<Tarea> listR = await DatabaseProvider.db.getTaskWithProjects();
+  List<Tarea> listR2 = await DatabaseProvider.db.getAssignedTaskWithProjects();
+
+  try{
+    //AGREGAR USUARIOS DATA HOME
+    listaUser.forEach((element) {
+      mapAll.add({'info' : element,'type' : 'user','date' : element.updatedAt});
+      mapAllAux.add({'info' : element,'type' : 'user','date' : element.updatedAt});
+    });
+
+
+    //OBTENER TAREAS CON PROYECTO
+    Map<int,List<Tarea>> mapTaskWithProject = {};
+    listR.forEach((element) {
+      int idProject = element.project_id ?? 0;
+      if(mapTaskWithProject[idProject] == null){ mapTaskWithProject[idProject] = [];}
+      mapTaskWithProject[idProject].add(element);
+    });
+    //OBTENER MIS TAREAS CON PROYECTO
+    Map<int,List<Tarea>> mapAssignedTaskWithProject = {};
+    listR2.forEach((element) {
+      int idProject = element.project_id ?? 0;
+      if(mapAssignedTaskWithProject[idProject] == null){ mapAssignedTaskWithProject[idProject] = [];}
+      mapAssignedTaskWithProject[idProject].add(element);
+    });
+    //AGREGAR PROYECTOS DATA HOME
+    for(int x = 0; x < listProjects.length; x++){
+      Caso element = listProjects[x];
+
+      List<Tarea> cantTaskToProject = [];
+      if(mapTaskWithProject[element.id] != null){
+        cantTaskToProject = mapTaskWithProject[element.id];
+      }
+      List<Tarea> cantTaskAssigned = [];
+      if(mapAssignedTaskWithProject[element.id] != null){
+        cantTaskAssigned = mapAssignedTaskWithProject[element.id];
+      }
+
+      String photoProjectAvatar = await SharedPrefe().getValue('${element.id}Photo');
+
+      mapAll.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTaskAssigned' : cantTaskAssigned, 'cantTaskToProject' : cantTaskToProject, 'photoProjectAvatar' : photoProjectAvatar});
+      mapAllAux.add({ 'info' : element, 'type' : 'project', 'date' : element.updated_at, 'cantTaskAssigned' : cantTaskAssigned, 'cantTaskToProject' : cantTaskToProject, 'photoProjectAvatar' : photoProjectAvatar});
+    }
+    //UNIR USUARIO Y PROYECTO AL HOME
+    if(mapAll.isNotEmpty){
+      List listWidgetsHomeAux = [];
+      for(int j = 0; j < mapAll.length; j++){
+        String dateStrg = mapAllAux[0]['date'] == '' ? DateTime.now().toString() : mapAllAux[0]['date'];
+        DateTime dateOne = DateTime.parse(dateStrg);
+        int pos = 0;
+        for(int x1 = 0; x1 < mapAllAux.length; x1++){
+          String dateStrg2 = mapAllAux[x1]['date'] == '' ? DateTime.now().toString() : mapAllAux[x1]['date'];
+          DateTime dateTwo = DateTime.parse(dateStrg2);
+          if(dateTwo.isAfter(dateOne)){
+            pos = x1;
+          }
+        }
+        listWidgetsHomeAux.add(mapAllAux[pos]);
+        mapAllAux.removeAt(pos);
+      }
+
+
+      listWidgetsHomeAux.forEach((element) {
+        if(element['type'] == 'user' && element['info'].fijo == 1){
+          listWidgetsHome.add(element);
+        }
+        if(element['type'] == 'project' && element['info'].is_priority == 1){
+          listWidgetsHome.add(element);
+        }
+      });
+      listWidgetsHomeAux.forEach((element) {
+        if(element['type'] == 'user' && element['info'].fijo == 0){
+          listWidgetsHome.add(element);
+        }
+        if(element['type'] == 'project' && element['info'].is_priority == 0){
+          listWidgetsHome.add(element);
+        }
+      });
+    }
+  }catch(e){
+    print('_inicializarDataHome: ${e.toString()}');
+  }
+
+  return listWidgetsHome;
 }
 
 

@@ -226,7 +226,6 @@ class DatabaseProvider{
     String date = DateTime.now().toString();
     try{
       res = await dbClient.update('Casos',{'updated_at' : date},where: 'id = ?', whereArgs: [idCase]);
-      print(res);
     }catch(e){
       print(e.toString());
     }

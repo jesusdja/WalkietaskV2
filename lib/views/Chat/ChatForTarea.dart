@@ -208,7 +208,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
         setState(() {});
       },
       child: Scaffold(
-        backgroundColor: colorChat,
+        backgroundColor: colorChatTask,
         appBar: viewAppBar ? _appBarH() : null,
         body: SafeArea(
           child: Stack(
@@ -481,16 +481,25 @@ class _ChatForTareaState extends State<ChatForTarea> {
     if(userFrom != null && userFrom.avatar_100 != null && userFrom.avatar_100 != ''){
       imagenAvatar = Image.network(userFrom.avatar_100);
     }else{
-      initialName = userFrom.name.isEmpty ? '' : userFrom.name.substring(0,1).toUpperCase();
+      if(userFrom != null && userFrom.name != null){
+        initialName = userFrom.name.isEmpty ? '' : userFrom.name.substring(0,1).toUpperCase();
+      }
     }
 
     TextStyle style = WalkieTaskStyles().stylePrimary(size: alto * 0.016);
 
     return Container(
-      margin: lateralDer ? EdgeInsets.only(right: ancho * 0.2) : EdgeInsets.only(left: ancho * 0.2),
+      margin: lateralDer ? EdgeInsets.only(right: ancho * 0.2,bottom: alto * 0.015) : EdgeInsets.only(left: ancho * 0.2,bottom: alto * 0.015),
       //height: MediaQuery.of(context).size.height * 0.05,
-      child: Card(
-        color: opa ? WalkieTaskColors.color_FFF5B3 : lateralDer ? Colors.white : colorfondotext,
+      child: Container(
+        decoration: BoxDecoration(
+          color: opa ? WalkieTaskColors.color_FFF5B3 : lateralDer ? Colors.white : colorfondotextChatTask,
+          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          border: new Border.all(
+            width: 1,
+            color: lateralDer ? WalkieTaskColors.color_E2E2E2 : colorfondotextChatTask,
+          ),
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
           child: Column(
@@ -503,7 +512,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                   lateralDer ? Container(
                     child: imagenAvatar != null ? CircleAvatar(
                       radius: alto * 0.025,
-                      backgroundImage: imagenAvatar.image,
+                      backgroundImage: imagenAvatar != null ? imagenAvatar.image : null,
                     ) :
                     avatarWidget(alto: alto, radius:  0.025, text: initialName),
                   ) : Container(),
@@ -518,7 +527,7 @@ class _ChatForTareaState extends State<ChatForTarea> {
                   !lateralDer ? Container(
                     child: CircleAvatar(
                       radius: alto * 0.025,
-                      backgroundImage: imagenAvatar.image,
+                      backgroundImage: imagenAvatar != null ? imagenAvatar.image : null,
                     ),
                   ) : Container(),
                 ],

@@ -295,8 +295,12 @@ class _SelectedUserSendTaskState extends State<SelectedUserSendTask> {
               projectToCreateTaskForProject: widgetHome['info'],
             )));
         if(result){
-          widget.updateData.actualizarListaEnviados(widget.blocTaskSend, null);
-          widget.updateData.actualizarListaRecibidos(widget.blocTaskReceived, null);
+          try{
+            Caso project = widget.widgetHome['info'];
+            await DatabaseProvider.db.updateDateCase(project.id.toString());
+          }catch(e){
+            print('_buttonText: ${e.toString()}');
+          }
           Navigator.of(context).pop(true);
         }
       },
