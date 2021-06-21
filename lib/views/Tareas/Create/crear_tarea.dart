@@ -236,7 +236,7 @@ class _CreateTaskState extends State<CreateTask> {
             delegate: SliverChildListDelegate([
               iconBuscador ? Container() : posPersonal == 1 ? SizedBox(height: alto * 0.02,) : Container(),
               iconBuscador ? Container() : posPersonal == 1 ? _reminderPersonal() : Container(),
-              iconBuscador ? resultSearch() : _users()
+              iconBuscador ? resultSearch() : _dataHomeWidgets()
             ]),
           ),
         ],
@@ -244,7 +244,7 @@ class _CreateTaskState extends State<CreateTask> {
     );
   }
 
-  Widget _users(){
+  Widget _dataHomeWidgets(){
 
     List<Widget> users = [];
 
@@ -254,235 +254,17 @@ class _CreateTaskState extends State<CreateTask> {
     listWidgetsHome.forEach((element) {
       if(element['type'] == 'user'){
         Usuario user = element['info'];
-        if(widget.myUserRes == null || widget.myUserRes.id == null || user.id == widget.myUserRes.id || user.contact == 0) return Container();
-
-        String userName = user != null ? user.name ?? '' : '';
-        Widget avatarUserWidget = avatarWidget(alto: alto,text: userName.isEmpty ? '' : userName.substring(0,1).toUpperCase());
-        if(user != null){
-          if(user != null && user.avatar_100 != ''){
-            avatarUserWidget = avatarWidgetImage(alto: alto,pathImage: user.avatar_100);
-          }
-        }
-
-        bool favorite = user.fijo == 1;
-
-        String dateDiff = translate(context: context, text: 'noDate');
-        int cantRecived = 0;
-        int cantSend = 0;
-        bool redColor = false;
-        if(mapDataUserHome[user.id] != null){
-          if(mapDataUserHome[user.id][0] != ''){
-            dateDiff = getDayDiff(mapDataUserHome[user.id][0]);
-            redColor = dateDiff.contains('-');
-            dateDiff = dateDiff.replaceAll('-', '');
-          }
-
-          mapDataUserHome[user.id][1].forEach((task){
-            if(task.finalized != 1){ cantRecived++; }
-          });
-          mapDataUserHome[user.id][2].forEach((task){
-            if(task.finalized != 1){ cantSend++; }
-          });
-        }
-
+        users.add(cardUser(user));
         users.add(
-          InkWell(
-            onTap: () => _onTapUser(user, false),
-            child: Slidable(
-              actionPane: SlidableDrawerActionPane(),
-              actionExtentRatio: 0.25,
-              child: Container(
-                width: ancho,
-                margin: EdgeInsets.only(bottom: alto * 0.01, right: ancho * 0.03, left: ancho * 0.03),
-                child: Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(right: ancho * 0.03),
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Container(
-                              decoration: new BoxDecoration(
-                                color: bordeCirculeAvatar, // border color
-                                shape: BoxShape.circle,
-                              ),
-                              child: avatarUserWidget,
-                            ),
-                          ),
-                          favorite ? Align(
-                            alignment: Alignment.center,
-                            child: Container(
-                              margin: EdgeInsets.only(top: alto * 0.035, left: ancho * 0.08),
-                              child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
-                            ),
-                          ) : Container(),
-                        ],
-                      ),
-                    ),
-                    Expanded(child: Text('${user.name} ${user.surname}', style: textStylePrimaryBoldName,)),
-                    Container(
-                      width: ancho * 0.3,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          redColor ?
-                          Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-                                  height: alto * 0.02,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: Image.asset("assets/image/icono-fuego.png").image,
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: ancho * 0.02),
-                                Text(dateDiff,style: textStylePrimaryLitleRed,)
-                              ],
-                            ),
-                          )
-                              :
-                          Text(dateDiff,style: textStylePrimaryLitleBold,),
-                          Text('${translate(context: context, text: 'received')}: $cantRecived',style: textStylePrimaryLitle,textAlign: TextAlign.right,),
-                          Text('${translate(context: context, text: 'sent_2')}: $cantSend',style: textStylePrimaryLitle, textAlign: TextAlign.right,),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                _buttonSliderAction(user.fijo == 0 ? translate(context: context, text: 'highlight') : translate(context: context, text: 'forget'),Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1, user),
-              ],
-            ),
-          ),
-        );
-        users.add(
-            Container(
-              padding: EdgeInsets.only(left: ancho * 0.06, right: ancho * 0.06),
-              child: Divider(),
-            )
+          Container(
+            padding: EdgeInsets.only(left: ancho * 0.06, right: ancho * 0.06),
+            child: Divider(),
+          )
         );
       }
       if(element['type'] == 'project'){
         Caso project = element['info'];
-        if(widget.myUserRes == null || widget.myUserRes.id == null || project == null ) return Container();
-
-        String nameProject = project.name ?? '';
-        bool favorite = project.is_priority == 1;
-        String cantTask = '${element['cantTaskToProject'].length}' ?? '0';
-        String cantAssigned = '${element['cantTaskAssigned'].length}' ?? '0';
-
-        bool blueOrRed = true;
-        for(int x = 0; x < element['cantTaskAssigned'].length; x++){
-          Tarea taskAssigned = element['cantTaskAssigned'][x];
-          if(taskAssigned.deadline.isNotEmpty){
-            DateTime dateEnd = DateTime.parse(taskAssigned.deadline);
-            if(dateEnd.difference(DateTime.now()).inDays > 0){
-              blueOrRed = false;
-            }
-          }
-        }
-
-        String photoProjectAvatar = element['photoProjectAvatar'];
-        Widget avatar = avatarWidgetProject(alto: alto, radius: 0.03, text: '${nameProject.isEmpty ? '' : nameProject.substring(0,1).toUpperCase()}');
-        if(project.image_500 != null && project.image_500.isNotEmpty){
-          avatar = avatarWidgetImage(alto: alto, radius: 0.03, pathImage: project.image_500);
-        }
-        if(photoProjectAvatar !=null && photoProjectAvatar.isNotEmpty){
-          avatar = avatarWidgetImageLocal(alto: alto, radius: 0.03,pathImage: photoProjectAvatar);
-        }
-
-        users.add(
-          InkWell(
-            onTap: () => goToChatProject(project,element),
-            child: Slidable(
-              actionPane: SlidableDrawerActionPane(),
-              actionExtentRatio: 0.25,
-              child: Container(
-                width: ancho,
-                margin: EdgeInsets.only(bottom: alto * 0.01, right: ancho * 0.03, left: ancho * 0.03),
-                child: Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(right: ancho * 0.03),
-                      child: Stack(
-                        children: <Widget>[
-                          Center(
-                            child: Container(
-                              decoration: new BoxDecoration(
-                                color: bordeCirculeAvatar, // border color
-                                shape: BoxShape.circle,
-                              ),
-                              child: avatar,
-                            ),
-                          ),
-                          favorite ? Align(
-                            alignment: Alignment.center,
-                            child: Container(
-                              margin: EdgeInsets.only(top: alto * 0.035, left: ancho * 0.08),
-                              child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
-                            ),
-                          ) : Container(),
-                        ],
-                      ),
-                    ),
-                    Expanded(child: Text('${project.name}', style: textStylePrimaryBoldName,)),
-                    Container(
-                      width: ancho * 0.3,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Opacity(
-                            opacity: cantTask == '0' ? 0.5 : 1,
-                            child: Text('${translate(context: context, text: 'tasks')}: $cantTask',style: textStylePrimaryLitle,textAlign: TextAlign.right,),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              cantAssigned == '0' ? Container() :
-                              blueOrRed ? Container() :
-                              Container(
-                                padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
-                                height: alto * 0.02,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: Image.asset("assets/image/icono-fuego.png").image,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                              ),
-                              cantAssigned == '0' ? Container() : blueOrRed ?
-                              Container(
-                                margin: EdgeInsets.only(right: ancho * 0.01),
-                                child: Icon(Icons.circle, color: WalkieTaskColors.color_76ADE3,size: alto * 0.015,),
-                              ) :
-                              Container(
-                                margin: EdgeInsets.only(right: ancho * 0.01),
-                                child: Icon(Icons.circle, color: WalkieTaskColors.color_EA7575,size: alto * 0.015,),
-                              ),
-                              Opacity(
-                                opacity: cantAssigned == '0' ? 0.5 : 1,
-                                child: Text('${translate(context: context, text: 'assigned')}: $cantAssigned',style: textStylePrimaryLitle, textAlign: TextAlign.right,),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                _buttonSliderActionProjects(favorite ? translate(context: context, text: 'highlight') : translate(context: context, text: 'forget'),Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1, project),
-              ],
-            ),
-          ),
-        );
+        users.add(cardProject(project,element));
         users.add(
             Container(
               padding: EdgeInsets.only(left: ancho * 0.06, right: ancho * 0.06),
@@ -504,6 +286,230 @@ class _CreateTaskState extends State<CreateTask> {
           mainAxisSize: MainAxisSize.max,
           children:  users,
         ),
+      ),
+    );
+  }
+
+  Widget cardUser(Usuario user){
+
+    if(widget.myUserRes == null || widget.myUserRes.id == null || user.id == widget.myUserRes.id || user.contact == 0) return Container();
+
+    String userName = user != null ? user.name ?? '' : '';
+    Widget avatarUserWidget = avatarWidget(alto: alto,text: userName.isEmpty ? '' : userName.substring(0,1).toUpperCase());
+    if(user != null){
+      if(user != null && user.avatar_100 != ''){
+        avatarUserWidget = avatarWidgetImage(alto: alto,pathImage: user.avatar_100);
+      }
+    }
+
+    bool favorite = user.fijo == 1;
+
+    String dateDiff = translate(context: context, text: 'noDate');
+    int cantRecived = 0;
+    int cantSend = 0;
+    bool redColor = false;
+    if(mapDataUserHome[user.id] != null){
+      if(mapDataUserHome[user.id][0] != ''){
+        dateDiff = getDayDiff(mapDataUserHome[user.id][0]);
+        redColor = dateDiff.contains('-');
+        dateDiff = dateDiff.replaceAll('-', '');
+      }
+
+      mapDataUserHome[user.id][1].forEach((task){
+        if(task.finalized != 1){ cantRecived++; }
+      });
+      mapDataUserHome[user.id][2].forEach((task){
+        if(task.finalized != 1){ cantSend++; }
+      });
+    }
+
+    return InkWell(
+      onTap: () => _onTapUser(user, false),
+      child: Slidable(
+        actionPane: SlidableDrawerActionPane(),
+        actionExtentRatio: 0.25,
+        child: Container(
+          width: ancho,
+          margin: EdgeInsets.only(bottom: alto * 0.01, right: ancho * 0.03, left: ancho * 0.03),
+          child: Row(
+            children: [
+              Container(
+                margin: EdgeInsets.only(right: ancho * 0.03),
+                child: Stack(
+                  children: <Widget>[
+                    Center(
+                      child: Container(
+                        decoration: new BoxDecoration(
+                          color: bordeCirculeAvatar, // border color
+                          shape: BoxShape.circle,
+                        ),
+                        child: avatarUserWidget,
+                      ),
+                    ),
+                    favorite ? Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        margin: EdgeInsets.only(top: alto * 0.035, left: ancho * 0.08),
+                        child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
+                      ),
+                    ) : Container(),
+                  ],
+                ),
+              ),
+              Expanded(child: Text('${user.name} ${user.surname}', style: textStylePrimaryBoldName,)),
+              Container(
+                width: ancho * 0.3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    redColor ?
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                            height: alto * 0.02,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: Image.asset("assets/image/icono-fuego.png").image,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: ancho * 0.02),
+                          Text(dateDiff,style: textStylePrimaryLitleRed,)
+                        ],
+                      ),
+                    )
+                        :
+                    Text(dateDiff,style: textStylePrimaryLitleBold,),
+                    Text('${translate(context: context, text: 'received')}: $cantRecived',style: textStylePrimaryLitle,textAlign: TextAlign.right,),
+                    Text('${translate(context: context, text: 'sent_2')}: $cantSend',style: textStylePrimaryLitle, textAlign: TextAlign.right,),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          _buttonSliderAction(user.fijo == 0 ? translate(context: context, text: 'highlight') : translate(context: context, text: 'forget'),Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1, user),
+        ],
+      ),
+    );
+  }
+
+  Widget cardProject(Caso project, Map<String,dynamic> element){
+
+    if(widget.myUserRes == null || widget.myUserRes.id == null || project == null ) return Container();
+
+    String nameProject = project.name ?? '';
+    bool favorite = project.is_priority == 1;
+    String cantTask = '${element['cantTaskToProject'].length}' ?? '0';
+    String cantAssigned = '${element['cantTaskAssigned'].length}' ?? '0';
+
+    bool blueOrRed = true;
+    for(int x = 0; x < element['cantTaskAssigned'].length; x++){
+      Tarea taskAssigned = element['cantTaskAssigned'][x];
+      if(taskAssigned.deadline.isNotEmpty){
+        DateTime dateEnd = DateTime.parse(taskAssigned.deadline);
+        if(dateEnd.difference(DateTime.now()).inDays >= 0){
+          blueOrRed = false;
+        }
+      }
+    }
+
+    String photoProjectAvatar = element['photoProjectAvatar'];
+    Widget avatar = avatarWidgetProject(alto: alto, radius: 0.03, text: '${nameProject.isEmpty ? '' : nameProject.substring(0,1).toUpperCase()}');
+    if(project.image_500 != null && project.image_500.isNotEmpty){
+      avatar = avatarWidgetImage(alto: alto, radius: 0.03, pathImage: project.image_500);
+    }
+    if(photoProjectAvatar !=null && photoProjectAvatar.isNotEmpty){
+      avatar = avatarWidgetImageLocal(alto: alto, radius: 0.03,pathImage: photoProjectAvatar);
+    }
+
+    return InkWell(
+      onTap: () => goToChatProject(project,element),
+      child: Slidable(
+        actionPane: SlidableDrawerActionPane(),
+        actionExtentRatio: 0.25,
+        child: Container(
+          width: ancho,
+          margin: EdgeInsets.only(bottom: alto * 0.01, right: ancho * 0.03, left: ancho * 0.03),
+          child: Row(
+            children: [
+              Container(
+                margin: EdgeInsets.only(right: ancho * 0.03),
+                child: Stack(
+                  children: <Widget>[
+                    Center(
+                      child: Container(
+                        decoration: new BoxDecoration(
+                          color: bordeCirculeAvatar, // border color
+                          shape: BoxShape.circle,
+                        ),
+                        child: avatar,
+                      ),
+                    ),
+                    favorite ? Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        margin: EdgeInsets.only(top: alto * 0.035, left: ancho * 0.08),
+                        child: Icon(Icons.star,color: WalkieTaskColors.color_FAE438, size: alto * 0.03,),
+                      ),
+                    ) : Container(),
+                  ],
+                ),
+              ),
+              Expanded(child: Text('${project.name}', style: textStylePrimaryBoldName,)),
+              Container(
+                width: ancho * 0.3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Opacity(
+                      opacity: cantTask == '0' ? 0.5 : 1,
+                      child: Text('${translate(context: context, text: 'tasks')}: $cantTask',style: textStylePrimaryLitle,textAlign: TextAlign.right,),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        cantAssigned == '0' ? Container() :
+                        blueOrRed ? Container() :
+                        Container(
+                          padding: EdgeInsets.only(left: ancho * 0.01, right: ancho * 0.01),
+                          height: alto * 0.02,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: Image.asset("assets/image/icono-fuego.png").image,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                        cantAssigned == '0' ? Container() : blueOrRed ?
+                        Container(
+                          margin: EdgeInsets.only(right: ancho * 0.01),
+                          child: Icon(Icons.circle, color: WalkieTaskColors.color_76ADE3,size: alto * 0.015,),
+                        ) :
+                        Container(
+                          margin: EdgeInsets.only(right: ancho * 0.01),
+                          child: Icon(Icons.circle, color: WalkieTaskColors.color_EA7575,size: alto * 0.015,),
+                        ),
+                        Opacity(
+                          opacity: cantAssigned == '0' ? 0.5 : 1,
+                          child: Text('${translate(context: context, text: 'assigned')}: $cantAssigned',style: textStylePrimaryLitle, textAlign: TextAlign.right,),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          _buttonSliderActionProjects(favorite ? translate(context: context, text: 'highlight') : translate(context: context, text: 'forget'),Icon(Icons.star,color: WalkieTaskColors.white,size: alto * 0.045,),Colors.yellow[600],WalkieTaskColors.white,1, project),
+        ],
       ),
     );
   }
