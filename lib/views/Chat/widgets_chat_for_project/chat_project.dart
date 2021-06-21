@@ -224,20 +224,20 @@ class _ChatProjectState extends State<ChatProject> {
     );
   }
 
-  void containerOptionOnTap(int type){
+  Future<void> containerOptionOnTap(int type) async {
     viewOptionCreateTask = false;
     setState(() {});
-    Navigator.push(context, new MaterialPageRoute(
-        builder: (BuildContext context) =>
-        new SelectedUserSendTask(
-          widgetHome: widget.widgetHome,
-          isAudio: type == 2,
-          listaCasos: widget.listaCasos,
-          blocIndicatorProgress: widget.blocIndicatorProgress,
-          blocTaskReceived: widget.blocTaskReceived,
-          blocTaskSend: widget.blocTaskSend,
-          updateData: widget.updateData,
-        )));
+    await Navigator.push(context, new MaterialPageRoute(
+      builder: (BuildContext context) =>
+      new SelectedUserSendTask(
+        widgetHome: widget.widgetHome,
+        isAudio: type == 2,
+        listaCasos: widget.listaCasos,
+        blocIndicatorProgress: widget.blocIndicatorProgress,
+        blocTaskReceived: widget.blocTaskReceived,
+        blocTaskSend: widget.blocTaskSend,
+        updateData: widget.updateData,
+      )));
   }
 
   Future<void> sendMessage() async {
@@ -321,7 +321,7 @@ class _ChatProjectState extends State<ChatProject> {
                 height: alto * 0.9,
                 width: ancho,
                 child: Center(child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  valueColor: AlwaysStoppedAnimation<Color>(WalkieTaskColors.primary),
                 ),),
               );
             }
@@ -387,11 +387,11 @@ class _ChatProjectState extends State<ChatProject> {
       //height: MediaQuery.of(context).size.height * 0.05,
       child: Container(
         decoration: BoxDecoration(
-          color: opa ? WalkieTaskColors.color_FFF5B3 : lateralDer ? Colors.white : colorfondotextChatProject,
+          color: opa ? WalkieTaskColors.color_FFF5B3 : lateralDer ? colorfondotextChatProject : Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
           border: new Border.all(
             width: 1,
-            color: lateralDer ? WalkieTaskColors.color_E2E2E2 : colorfondotextChatProject,
+            color: lateralDer ? colorfondotextChatProject : WalkieTaskColors.color_E2E2E2,
           ),
         ),
         child: Padding(

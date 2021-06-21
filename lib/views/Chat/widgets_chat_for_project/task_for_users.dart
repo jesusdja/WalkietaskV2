@@ -201,33 +201,15 @@ class _TaskForUsersState extends State<TaskForUsers> {
 
   List<Tarea> getListTask(){
     List<Tarea> listTaskToProjectAux = [];
-    if(isTaskAssigned){
-      widget.widgetHome['cantTaskToProject'].forEach((element) {
-        if(element.is_priority_responsability == 1 &&
-            widget.myUser != null &&
-            widget.myUser.id != null &&
-            widget.myUser.id == element.user_responsability_id
-        ){
-          listTaskToProjectAux.add(element);
-        }
-      });
-      widget.widgetHome['cantTaskToProject'].forEach((element) {
-        if(element.is_priority_responsability == 0 &&
-            widget.myUser != null &&
-            widget.myUser.id != null &&
-            widget.myUser.id == element.user_responsability_id
-        ){
-          listTaskToProjectAux.add(element);
-        }
-      });
-    }else{
-      widget.widgetHome['cantTaskToProject'].forEach((element) {
-        if(element.is_priority_responsability == 1){
-          listTaskToProjectAux.add(element);
-        }
-      });
-      widget.widgetHome['cantTaskToProject'].forEach((element) {
-        if(element.is_priority_responsability == 0){
+
+    if(widget.widgetHome['cantTaskToProject'] == null) return [];
+
+    List<Tarea> listTaskReverse = widget.widgetHome['cantTaskToProject'].reversed.toList();
+    print('');
+    for(int x = 1; x >= 0; x--){
+      listTaskReverse.forEach((element) {
+        if((!isTaskAssigned && element.is_priority_responsability == x) ||
+            (isTaskAssigned && element.is_priority_responsability == x && widget.myUser != null && widget.myUser.id != null && widget.myUser.id == element.user_responsability_id)){
           listTaskToProjectAux.add(element);
         }
       });
@@ -383,7 +365,6 @@ class _TaskForUsersState extends State<TaskForUsers> {
               print(e.toString());
             }
             widget.blocTaskReceived.inList.add(true);
-            await Future.delayed(Duration(seconds: 2));
             setState(() {});
           }
         }
@@ -397,7 +378,6 @@ class _TaskForUsersState extends State<TaskForUsers> {
                 widget.blocTaskReceived.inList.add(true);
                 await conexionHttp().httpTaskInit(tarea.id);
                 UpdateData().actualizarListaRecibidos(widget.blocTaskReceived, null);
-                await Future.delayed(Duration(seconds: 2));
                 setState(() {});
               }
             }else{
@@ -418,7 +398,6 @@ class _TaskForUsersState extends State<TaskForUsers> {
                 widget.blocTaskReceived.inList.add(true);
                 await conexionHttp().httpTaskFinalized(tarea.id);
                 UpdateData().actualizarListaRecibidos(widget.blocTaskReceived, null);
-                await Future.delayed(Duration(seconds: 2));
                 setState(() {});
               }
             }catch(e){

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +22,6 @@ import 'package:walkietaskv2/utils/WidgetsUtils.dart';
 import 'package:walkietaskv2/utils/format_deadline.dart';
 import 'package:walkietaskv2/utils/task_sound.dart';
 import 'package:walkietaskv2/utils/textfield_generic.dart';
-import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/views/Chat/chat_for_project.dart';
 import 'package:walkietaskv2/views/Tareas/Create/detalles_tareas_user.dart';
@@ -51,6 +49,7 @@ class CreateTask extends StatefulWidget {
     @required this.listWidgetsHome,
     @required this.blocCasos,
     @required this.push,
+    @required this.blocTaskForProject,
   });
 
   final Map<int,Usuario> mapIdUserRes;
@@ -69,6 +68,7 @@ class CreateTask extends StatefulWidget {
   final BlocProgress blocAudioChangePage;
   final List<dynamic> listWidgetsHome;
   final PushProvider push;
+  final BlocTask blocTaskForProject;
 
   @override
   _CreateTaskState createState() => _CreateTaskState();
@@ -1221,6 +1221,7 @@ class _CreateTaskState extends State<CreateTask> {
           listaCasos: widget.listaCasosRes,
           blocIndicatorProgress: widget.blocIndicatorProgress,
           updateData: widget.updateData,
+          blocTaskForProject: widget.blocTaskForProject,
         )));
   }
 

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:walkietaskv2/App.dart';
 import 'package:walkietaskv2/bloc/blocCasos.dart';
@@ -28,7 +27,6 @@ import 'package:walkietaskv2/utils/avatar_widget.dart';
 import 'package:walkietaskv2/utils/flushbar_notification.dart';
 import 'package:walkietaskv2/utils/order_tasks.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
-import 'package:walkietaskv2/utils/view_image.dart';
 import 'package:walkietaskv2/utils/walkietask_style.dart';
 import 'package:walkietaskv2/utils/finish_app.dart';
 import 'package:walkietaskv2/views/Chat/ChatForTarea.dart';
@@ -386,6 +384,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
           listWidgetsHome: listWidgetsHome,
           blocCasos: blocCasos,
           push: push,
+          blocTaskForProject: blocTaskForProject,
         ) : Container(child: Cargando(translate(context: context,text: 'updatingTasks'),context),);
       case bottonSelect.opcion2:
         return loadTaskSend ? listRecibidos.length != 0 ?

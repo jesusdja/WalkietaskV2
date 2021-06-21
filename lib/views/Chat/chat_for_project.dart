@@ -36,6 +36,7 @@ class ChatForProject extends StatefulWidget {
     @required this.blocAudioChangePage,
     @required this.blocIndicatorProgress,
     @required this.updateData,
+    @required this.blocTaskForProject,
   });
 
   final Caso project;
@@ -50,6 +51,7 @@ class ChatForProject extends StatefulWidget {
   final BlocProgress blocAudioChangePage;
   final BlocProgress blocIndicatorProgress;
   final UpdateData updateData;
+  final BlocTask blocTaskForProject;
 
   @override
   _ChatForProjectState createState() => _ChatForProjectState();
@@ -71,6 +73,8 @@ class _ChatForProjectState extends State<ChatForProject> {
   StreamSubscription streamSubscriptionCasos;
   ChatTareas chatProject;
   StreamSubscription streamSubscriptionProgress;
+  StreamSubscription streamSubscriptionTask;
+  StreamSubscription streamSubscriptionTaskProjects;
 
   @override
   void initState() {
@@ -80,6 +84,7 @@ class _ChatForProjectState extends State<ChatForProject> {
     widgetHome = widget.widgetHome;
     _inicializarPatronBlocCasos();
     _initPatronBlocProgress();
+    _initPatronBlocTask();
   }
 
   @override
@@ -88,6 +93,8 @@ class _ChatForProjectState extends State<ChatForProject> {
     controllerPage.dispose();
     streamSubscriptionCasos?.cancel();
     streamSubscriptionProgress?.cancel();
+    streamSubscriptionTask?.cancel();
+    streamSubscriptionTaskProjects?.cancel();
   }
 
   initialUser() async {
@@ -144,7 +151,7 @@ class _ChatForProjectState extends State<ChatForProject> {
       ),
       TaskForUsers(
         project: project,
-        widgetHome: widget.widgetHome,
+        widgetHome: widgetHome,
         mapIdUser: widget.mapIdUser,
         blocAudioChangePage: widget.blocAudioChangePage,
         blocTaskReceived: widget.blocTaskReceived,
@@ -317,41 +324,6 @@ class _ChatForProjectState extends State<ChatForProject> {
     );
   }
 
-  _inicializarPatronBlocCasos(){
-    try {
-      // ignore: cancel_subscriptions
-      streamSubscriptionCasos = widget.blocCasos.outList.listen((newVal) {
-        if(newVal){
-          updateProject();
-        }
-      });
-    } catch (e) {}
-  }
-
-  updateProject() async {
-    project = await  DatabaseProvider.db.getCodeIdCase(project.id.toString());
-    setState(() {});
-    initialUser();
-  }
-
-  void _initPatronBlocProgress(){
-    try {
-      // ignore: cancel_subscriptions
-      streamSubscriptionProgress = widget.blocIndicatorProgress.outList.listen((newVal) {
-        if(newVal['error'] != null && newVal['error']){
-          showAlert('${newVal['errorMessage']}' ?? 'Error al enviar tarea',Colors.red[400],sec: 5);
-        }
-        progressIndicator = double.parse('${newVal['progressIndicator']}');
-        cant = int.parse('${newVal['cant']}');
-        viewIndicatorProgress = newVal['viewIndicatorProgress'];
-        if(progressIndicator == 1.0){
-          _inicializarDataHome();
-        }
-        setState(() {});
-      });
-    } catch (e) {}
-  }
-
   int cant = 0;
   double progressIndicator = 0;
   bool viewIndicatorProgress = false;
@@ -400,6 +372,58 @@ class _ChatForProjectState extends State<ChatForProject> {
         preferredSize: Size.fromHeight(0),
         child: Container()
     );
+  }
+
+  _inicializarPatronBlocCasos(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionCasos = widget.blocCasos.outList.listen((newVal) {
+        if(newVal){
+          updateProject();
+        }
+      });
+    } catch (e) {}
+  }
+
+  updateProject() async {
+    if(mounted){
+      project = await  DatabaseProvider.db.getCodeIdCase(project.id.toString());
+      setState(() {});
+      initialUser();
+    }
+  }
+
+  void _initPatronBlocProgress(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionProgress = widget.blocIndicatorProgress.outList.listen((newVal) {
+        if(mounted){
+          if(newVal['error'] != null && newVal['error']){
+            showAlert('${newVal['errorMessage']}' ?? 'Error al enviar tarea',Colors.red[400],sec: 5);
+          }
+          progressIndicator = double.parse('${newVal['progressIndicator']}');
+          cant = int.parse('${newVal['cant']}');
+          viewIndicatorProgress = newVal['viewIndicatorProgress'];
+          if(progressIndicator == 1.0){
+
+          }
+          setState(() {});
+        }
+      });
+    } catch (e) {}
+  }
+
+  void _initPatronBlocTask(){
+    try {
+      // ignore: cancel_subscriptions
+      streamSubscriptionTaskProjects = widget.blocTaskForProject.outList.listen((newVal) {
+        _inicializarDataHome();
+      });
+
+      streamSubscriptionTask = widget.blocTaskReceived.outList.listen((newVal) {
+        _inicializarDataHome();
+      });
+    } catch (e) {}
   }
 
   _inicializarDataHome() async {
