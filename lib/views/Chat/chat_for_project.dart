@@ -212,8 +212,8 @@ class _ChatForProjectState extends State<ChatForProject> {
 
   Widget header(){
 
-    String cantTask = '${widgetHome['cantTaskToProject'].length}' ?? '';
-    String cantAssigned = '${widgetHome['cantTaskAssigned'].length}' ?? '';
+    String cantTask = widgetHome['cantTaskToProject'] != null ? '${widgetHome['cantTaskToProject'].length}' ?? '0' : '0';
+    String cantAssigned = widgetHome['cantTaskAssigned'] != null ? '${widgetHome['cantTaskAssigned'].length}' ?? '0' : '0';
     cantTask = cantTask == '0' ? '' : '($cantTask)';
     cantAssigned = cantAssigned == '0' ? '' : '($cantAssigned)';
 
@@ -430,10 +430,9 @@ class _ChatForProjectState extends State<ChatForProject> {
     List<Usuario> listaUser = await  DatabaseProvider.db.getAllUser();
     listaUser = orderUserForDate(listaUser);
     List<Caso> listProjects = await  DatabaseProvider.db.getMyProjects();
-
     List listWidgetsHome = await getListDataHome(listaUser: listaUser,listProjects: listProjects);
     for(int x = 0; x < listWidgetsHome.length; x++){
-      if(listWidgetsHome[x]['info'].id == project.id){
+      if(listWidgetsHome[x]['type'] == 'project' && listWidgetsHome[x]['info'].id == project.id){
         widgetHome = listWidgetsHome[x];
         x = listWidgetsHome.length;
       }
