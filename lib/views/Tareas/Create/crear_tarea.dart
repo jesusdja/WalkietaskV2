@@ -413,7 +413,7 @@ class _CreateTaskState extends State<CreateTask> {
       Tarea taskAssigned = element['cantTaskAssigned'][x];
       if(taskAssigned.deadline.isNotEmpty){
         DateTime dateEnd = DateTime.parse(taskAssigned.deadline);
-        if(dateEnd.difference(DateTime.now()).inDays >= 0){
+        if(dateEnd.difference(DateTime.now()).inDays < 0){
           blueOrRed = false;
         }
       }

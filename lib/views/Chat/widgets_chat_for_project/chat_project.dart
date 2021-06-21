@@ -282,28 +282,15 @@ class _ChatProjectState extends State<ChatProject> {
                 Usuario userSendNoti = await DatabaseProvider.db.getCodeIdUser(usersShowNotification[x]);
                 if (userSendNoti.fcmToken != null && userSendNoti.fcmToken.isNotEmpty) {
                   await HttpPushNotifications().httpSendMessagero(userSendNoti.fcmToken, project.id.toString(), description: sms,isProject: true);
-                  await DatabaseProvider.db.updateDateCase(project.id.toString());
-                  UpdateData().actualizarCasos(widget.blocCasos);
                 }
               }catch(e){
                 print(e.toString());
               }
             }
           }
-
-          //ENVIAR CHAT DE PROYECTO A BITACORA
-          // try{
-          //   Map<String,dynamic> body = {
-          //     "user_id" : idSend.toString(),
-          //     "document_id" : tarea.id.toString(),
-          //     "message" : sms,
-          //     'type' : 'smstask',
-          //     'created_at' : '$formattedDate $formattedHours'
-          //   };
-          //   await conexionHttp().httpBinacleSaveChat(body);
-          // }catch(e){
-          //   print(e.toString());
-          // }
+          await DatabaseProvider.db.updateDateCase(project.id.toString());
+          //UpdateData().actualizarCasos(widget.blocCasos);
+          widget.blocCasos.inList.add(true);
         }catch(e){
           print(e.toString());
         }

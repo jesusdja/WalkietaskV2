@@ -295,13 +295,16 @@ class UpdateData{
         Caso casoVery = await  DatabaseProvider.db.getCodeIdCase('${caso.id}');
         //caso.nameCompany = listcasos[x]['customers'] != null ? listcasos[x]['customers']['name'] : '';
         caso.is_priority = casoVery == null ? 0 : casoVery.is_priority ?? 0;
-        DateTime dateCaso = DateTime.parse(caso.updated_at);
-        DateTime dateCasoVery = casoVery != null ? DateTime.parse(casoVery.updated_at) : null;
-        if(casoVery != null && dateCasoVery.isAfter(dateCaso)){
-          caso.updated_at = casoVery.updated_at;
-        }
-        if(caso != casoVery ) {
+
+        if(caso != casoVery ){
           entre = true;
+
+          DateTime dateCaso = DateTime.parse(caso.updated_at);
+          DateTime dateCasoVery = casoVery != null ? DateTime.parse(casoVery.updated_at) : null;
+          if(casoVery != null && dateCasoVery.isAfter(dateCaso)){
+            caso.updated_at = casoVery.updated_at;
+          }
+
           if (casoVery == null) {
             await DatabaseProvider.db.saveCase(caso);
           } else {

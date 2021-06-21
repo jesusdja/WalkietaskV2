@@ -87,7 +87,7 @@ class _EditProjectState extends State<EditProject> {
       data.forEach((idUserProject) {
         if(idUserProject != idMyUser){
           listUser.forEach((element) {
-            if(element.id.toString() == idUserProject){
+            if(element.id.toString() == idUserProject && mapDeleteLoad[element.id] == null){
               usersForProject.add(element);
               mapDeleteLoad[element.id] = false;
             }

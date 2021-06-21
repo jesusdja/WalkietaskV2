@@ -240,6 +240,7 @@ class _LoginHomeState extends State<LoginHome> {
 
   Widget _logo(){
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: ancho * 0.05),
       height: alto * 0.23,
       decoration: BoxDecoration(
         image: DecorationImage(

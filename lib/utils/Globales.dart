@@ -156,31 +156,26 @@ Future<List> getListDataHome({@required List<Usuario> listaUser,@required List<C
         for(int x1 = 0; x1 < mapAllAux.length; x1++){
           String dateStrg2 = mapAllAux[x1]['date'] == '' ? DateTime.now().toString() : mapAllAux[x1]['date'];
           DateTime dateTwo = DateTime.parse(dateStrg2);
+          print('${dateTwo.toString()} -  isAfter  - ${dateOne.toString()} === ${dateTwo.isAfter(dateOne)}');
           if(dateTwo.isAfter(dateOne)){
             pos = x1;
+            dateOne = dateTwo;
           }
         }
         listWidgetsHomeAux.add(mapAllAux[pos]);
         mapAllAux.removeAt(pos);
       }
 
-
-      listWidgetsHomeAux.forEach((element) {
-        if(element['type'] == 'user' && element['info'].fijo == 1){
-          listWidgetsHome.add(element);
-        }
-        if(element['type'] == 'project' && element['info'].is_priority == 1){
-          listWidgetsHome.add(element);
-        }
-      });
-      listWidgetsHomeAux.forEach((element) {
-        if(element['type'] == 'user' && element['info'].fijo == 0){
-          listWidgetsHome.add(element);
-        }
-        if(element['type'] == 'project' && element['info'].is_priority == 0){
-          listWidgetsHome.add(element);
-        }
-      });
+      for(int x = 1; x >= 0; x--){
+        listWidgetsHomeAux.forEach((element) {
+          if(element['type'] == 'user' && element['info'].fijo == x){
+            listWidgetsHome.add(element);
+          }
+          if(element['type'] == 'project' && element['info'].is_priority == x){
+            listWidgetsHome.add(element);
+          }
+        });
+      }
     }
   }catch(e){
     print('_inicializarDataHome: ${e.toString()}');
