@@ -68,11 +68,13 @@ class _SelectedUserSendTaskState extends State<SelectedUserSendTask> {
 
     String usersProjects = widgetHome['info'].userprojects ?? '';
     List<String> data = usersProjects.split('|');
+    Map<int,bool> mapChekUser = {};
     data.forEach((idUserProject) {
       if(idUserProject != idMyUser){
         listUser.forEach((element) {
-          if(element.id.toString() == idUserProject){
+          if(element.id.toString() == idUserProject && mapChekUser[element.id] == null){
             usersForProject.add(element);
+            mapChekUser[element.id] = true;
           }
         });
       }

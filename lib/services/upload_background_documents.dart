@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:walkietaskv2/bloc/blocProgress.dart';
 import 'package:walkietaskv2/services/AWS.dart';
 import 'package:walkietaskv2/services/Conexionhttp.dart';
+import 'package:walkietaskv2/services/Firebase/chat_project_firebase.dart';
 import 'package:walkietaskv2/utils/shared_preferences.dart';
 
 Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
@@ -53,6 +54,9 @@ Future<void> uploadBackDocuments(BlocProgress blocIndicatorProgress) async {
       //await Future.delayed(Duration(seconds: 3));
       blocIndicatorProgress.inList.add({'progressIndicator' : 0.9, 'viewIndicatorProgress' : true, 'cant' : (listDocuments.length - x)});
       if(value['status_code'] == 201){
+
+        ChatProjectFirebase().createTaskForProject(value['project_id'], true, value['user_responsability_id'], 0);
+
         print('CREADO - ${data[1]}');
       }else{
         print('NO CREADO - ${data[1]}');

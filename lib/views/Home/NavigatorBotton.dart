@@ -1000,9 +1000,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
       // ignore: cancel_subscriptions
       streamSubscriptionVerify = blocVerifyFirst.outList.listen((newVal) {
         posVery = posVery + newVal;
-        if(posVery == 2){
-          verifyNewTaskInvitation();
-        }
         setState(() {});
       });
     } catch (e) {}
@@ -1142,6 +1139,7 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
                   argumento['table'] == 'addToProject')){
             String subTitle = 'Te agregó a un proyecto: ';
             viewNotiLocalProjects(subTitle, argumento['idDoc']);
+            updateData.actualizarCasos(blocCasos);
           }
 
           if(argumento['type'] == '1' &&
@@ -1354,25 +1352,6 @@ class _NavigatorBottonPageState extends State<NavigatorBottonPage> {
     }catch(e){
       print(e.toString());
     }
-  }
-
-  Future<void> verifyNewTaskInvitation() async {
-    setState(() {});
-    // int first = await SharedPrefe().getValue('first');
-    // if(first == null || first == 0){
-    //   await SharedPrefe().setIntValue('first', 1);
-    //   //TAREAS
-    //   List<dynamic> listTaskNew = await SharedPrefe().getValue('notiListTask') ?? [];
-    //   if(listTaskNew.isNotEmpty){
-    //     updateNoti(0, true);
-    //   }
-    //   //INVITACIONES
-    //   bool yesVery = await SharedPrefe().getValue('notiContacts') ?? false;
-    //   if(yesVery){
-    //     updateNoti(1, true);
-    //     updateNoti(2, true);
-    //   }
-    // }
   }
 
   validateInvitation(List<InvitationModel> list) async {

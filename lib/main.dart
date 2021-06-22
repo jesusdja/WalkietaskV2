@@ -57,6 +57,7 @@ class MyApp2 extends StatelessWidget {
           GlobalWidgetsLocalizations.delegate,
         ],
         home: App(),
+        title: 'Titivo',
         theme: ThemeData(
           fontFamily: 'helveticaneue',
         )

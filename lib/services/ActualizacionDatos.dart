@@ -306,6 +306,7 @@ class UpdateData{
           }
 
           if (casoVery == null) {
+            caso.updated_at = DateTime.now().toString();
             await DatabaseProvider.db.saveCase(caso);
           } else {
             await DatabaseProvider.db.updateCase(caso);

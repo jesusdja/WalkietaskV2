@@ -156,7 +156,6 @@ Future<List> getListDataHome({@required List<Usuario> listaUser,@required List<C
         for(int x1 = 0; x1 < mapAllAux.length; x1++){
           String dateStrg2 = mapAllAux[x1]['date'] == '' ? DateTime.now().toString() : mapAllAux[x1]['date'];
           DateTime dateTwo = DateTime.parse(dateStrg2);
-          print('${dateTwo.toString()} -  isAfter  - ${dateOne.toString()} === ${dateTwo.isAfter(dateOne)}');
           if(dateTwo.isAfter(dateOne)){
             pos = x1;
             dateOne = dateTwo;
