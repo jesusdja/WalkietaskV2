@@ -70,9 +70,9 @@ class _LoginHomeState extends State<LoginHome> {
           SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                SizedBox(height: alto * 0.15,),
+                SizedBox(height: alto * 0.125,),
                 _logo(),
-                SizedBox(height: alto * 0.15,),
+                SizedBox(height: alto * 0.125,),
                 _form(),
                 SizedBox(height: alto * 0.15,),
                 _viewRegistre(context),
@@ -240,13 +240,30 @@ class _LoginHomeState extends State<LoginHome> {
 
   Widget _logo(){
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: ancho * 0.05),
-      height: alto * 0.23,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: Image.asset("assets/image/LogoWN.png").image,
-          fit: BoxFit.contain,
-        ),
+      width: ancho,
+      child: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: ancho * 0.05),
+            height: alto * 0.18,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: Image.asset("assets/image/icon_app.png").image,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: ancho * 0.2),
+            height: alto * 0.1,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: Image.asset("assets/image/LogoN.png").image,
+                fit: BoxFit.contain,
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
